@@ -1,0 +1,39 @@
+<project default="jar">
+	
+	<property file="build.properties"/>
+	
+	<property name="src"      value="./src" />
+	<property name="bin"      value="./target/classes" />
+	<property name="target"   value="./target" />
+	<property name="jar"      value="${target}/${project.name}-${project.version}.jar" />
+	<property name="deploy_dir"  value="../(dist)" />
+	
+	<path id="classpath">
+	  <fileset dir="${deploy_dir}">
+		  <include name="**/*.jar"/>
+	  </fileset>
+	</path>
+
+	<!-- ============================================================================== -->
+
+	<target name="compile">
+		<delete dir="${bin}" /> 
+		<mkdir  dir="${bin}" />
+		<javac srcdir="${src}" destdir="${bin}" excludes="test/**"  >
+			<classpath refid="classpath"/>
+		</javac>
+		
+	</target>
+		  
+	<target name="jar" depends="compile">
+		<echo message="Project : name = ${project.name} version = ${project.version} " />
+		<echo message="JAR file : ${jar}  " />
+		<delete file="${jar}" />
+		<jar    destfile="${jar}"  basedir="${bin}"  includes="**/*.class" excludes="test/*.class" />
+	</target>
+	
+	<target name="deploy" depends="jar">
+		<copy file="${jar}" todir="${deploy_dir}"/>
+	</target>
+	
+</project>
