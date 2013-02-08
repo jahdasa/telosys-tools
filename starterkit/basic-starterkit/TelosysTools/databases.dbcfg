@@ -1,0 +1,222 @@
+<!-- ============================================================== -->
+<!--  TELOSYS DATABASES CONFIGURATION                               -->
+<!--  This file is used both by Telosys Framework and Telosys Tools -->
+<!-- ============================================================== -->
+
+<!-- "databases" tag attributes :
+ . maxId       : maximum database id ( 0 to 100 ), default : 10
+ . defaultId   : default database to use when no ID is specified ( 0 to maxId ), default : 0
+-->
+
+<databases maxId="4" defaultId="0" >
+
+	<!-- "db" tag attributes :
+	. id     : the database id ( from 0 to maxId )
+	
+	. name   : the symbolic name ( anything )
+	
+	. driver : the JDBC driver class name
+	
+	. url    : the JDBC URL for connection
+	
+	. isolationLevel : JDBC values ( see Java Constants in "java.sql.Connection" ) :
+		. "TRANSACTION_NONE" 
+		. "TRANSACTION_READ_UNCOMMITTED"  ( Possible problem : Dirty Read + Unreapatable Read + Phantom Read / Performance : FASTEST )
+		. "TRANSACTION_READ_COMMITTED"    ( Possible problem : Unreapatable Read + Phantom Read              / Performance : FAST )
+		. "TRANSACTION_REPEATABLE_READ"   ( Possible problem : Phantom Read                                  / Performance : MEDIUM )
+		. "TRANSACTION_SERIALIZABLE"      ( Possible problem : none                                          / Performance : SLOW )
+		( Default : TRANSACTION_READ_COMMITTED )
+		
+	. poolSize : the initial size of the pool for this database 
+	
+	. daoregistry : DAO registry class name ( since v 1.0 )
+	                Specific registry class for this DataBase
+	                e.g. : "org.demo.env.DAORegistryForDB1"
+	                
+	. daoclass    : DAO class name pattern for dynamic registry ( since v 1.0 )
+	                Dynamic registry using the given DAO class name pattern
+	                e.g. : "org.demo.vo.dao.${BEANNAME}DAO", "org.demo.vo.dao.db1.${BEANNAME}DAO"
+	                
+    . recordclass : fully qualified name pattern for VO bean ( since v 1.0 )
+                    e.g. : "org.demo.vo.bean.${BEANNAME}", "org.demo.vo.bean.db1.${BEANNAME}"
+	-->
+
+<!-- ============================================ -->
+<!--        APP SERVER DATASOURCE (JNDI)          -->
+<!-- ============================================ -->
+<!--
+	<db id = "0" 
+		name   = "My DataSource" 
+		datasource = "java:comp/env/jdbc/mydatasource" />
+-->
+
+<!-- ============================================ -->
+<!--  CUSTOM CLASS (Specific Connection Provider) -->
+<!-- ============================================ -->
+<!-- 
+    Useful to use a specific connections pool 
+    The custom class is loaded and instantiated by Telosys
+    It must implements the ConnectionProvider interface 
+ -->
+<!--
+	<db id = "0" 
+		name   = "Custom class MyConnectionProvider" 
+		customclass = "org.demo.env.MyConnectionProvider" />
+-->
+
+
+<!-- ============================================ -->
+<!--                     DERBY                    -->
+<!-- ============================================ -->
+<!-- The JDBC Driver is in "derbyclient.jar". -->
+	<db id = "0" 
+			name   = "DERBY - TelosysBookStore DB" 
+			driver = "org.apache.derby.jdbc.ClientDriver" 
+			url    = "jdbc:derby://localhost:1527/bookstore" 
+			isolationLevel = "" 
+			poolSize       = "10" >
+			    <property name="user"      value="root" />
+				<property name="password"  value="admin" />
+				<metadata catalog="" schema="ROOT" table-name-pattern="%" table-types="TABLE   VIEW  " />
+	</db>
+
+<!-- ============================================ -->
+<!--                    SQLSERVER                     -->
+<!-- ============================================ -->
+<!-- The JDBC Driver is in "sqljdbc.jar" -->
+
+<!--
+url    = "jdbc:sqlserver://10.226.156.26;databaseName=cqc" 
+-->
+        <!-- IN <metadata> "!" means "null" for catalog and schema -->
+<!--
+<db id = "1" 
+    name   = "Microsoft SQL Server - CQC" 
+    driver = "com.microsoft.sqlserver.jdbc.SQLServerDriver" 
+    url    = "jdbc:sqlserver://10.226.156.26" 
+    isolationLevel = "TRANSACTION_READ_COMMITTED" 
+    poolSize       = "3" >
+        <property name="user"      value="cqc" />
+        <property name="password"  value="cqc" />
+        <metadata catalog="cqc"  schema="dbo"  table-name-pattern="%"  table-types="TABLE   " />
+</db>
+-->
+
+<!-- ============================================ -->
+<!--                    MYSQL                     -->
+<!-- ============================================ -->
+<!-- The JDBC Driver is in "mysql-connector-java-x.x.x-bin.jar" -->
+<!--
+	<db id = "0" 
+		name   = "MySQL - Bookstore" 
+		driver = "com.mysql.jdbc.Driver" 
+		url    = "jdbc:mysql://localhost:3306/bookstore" 
+		isolationLevel = "TRANSACTION_REPEATABLE_READ" 
+		poolSize       = "3" >
+			<property name="user"      value="root" />
+			<property name="password"  value="" />
+			<metadata catalog=""  schema=""  table-name-pattern="%"  table-types="TABLE   VIEW  " />
+	</db>
+-->
+
+<!-- ============================================ -->
+<!--                    HSQL-DB                   -->
+<!-- ============================================ -->
+<!--
+	<db id = "0" 
+		name   = "HSQLDB - TelosysBookStore DB" 
+		driver = "org.hsqldb.jdbcDriver" 
+		url    = "jdbc:hsqldb:hsql://localhost:9001/bookstore" 
+		isolationLevel = "" 
+		poolSize       = "3" >
+			<property name="user"      value="root" />
+			<property name="password"  value="" />
+			<metadata catalog="" schema="PUBLIC" table-name-pattern="%" table-types="TABLE   VIEW  " />
+	</db>
+-->
+
+<!-- ============================================ -->
+<!--            ORACLE 8i, 9i, 10g, 11g           -->
+<!-- ============================================ -->
+<!-- The JDBC Driver is in "ojdbc14.jar" or "ojdbc5.jar (JDK 1.5) or "ojdbc6.jar" (JDK 1.6)
+     ( or "classes12.jar" or "classes12.zip" for 8i ) -->
+<!--
+	<db id = "0" 
+		name   = "Oracle - TelosysBookStore DB" 
+		driver = "oracle.jdbc.driver.OracleDriver" 
+		url    = "jdbc:oracle:thin:@localhost:1521:bookstore"
+		isolationLevel = "TRANSACTION_READ_COMMITTED" 
+		poolSize       = "3" >
+			<property name="user"      value="demo" />
+			<property name="password"  value="demo" />
+			<metadata catalog="" schema="BOOKSTORE" table-name-pattern="%" table-types="TABLE   VIEW  " />
+	</db>		
+-->
+
+<!-- ============================================ -->
+<!--           INTERSYSTEMS CACHE DB              -->
+<!-- ============================================ -->
+<!-- The JDBC Driver is in "CacheDB.jar". Don't forget to set the default schema in Cache -->
+<!--
+	<db id = "0" 
+		name   = "InterSystems Cache DB 2010.2" 
+		driver = "com.intersys.jdbc.CacheDriver" 
+		url    = "jdbc:Cache://localhost:1972/SAMPLES" 
+		isolationLevel = "" 
+		poolSize       = "4" >
+		    <property name="user"     value="_system" />
+			<property name="password" value="SYS"     />
+			<metadata catalog=""  schema="Sample" table-name-pattern="%" table-types="TABLE   VIEW  " />
+	</db>
+-->
+
+<!-- ============================================ -->
+<!--                 INGRES 10                    -->
+<!-- ============================================ -->
+<!--
+	<db id = "0" 
+		name   = "INGRES - TelosysBookStore DB" 
+		driver = "ca.ingres.jdbc.IngresDriver" 
+		url    = "jdbc:ingres://localhost:117/bookstore" 
+		isolationLevel = "" 
+		poolSize       = "3" >
+		    <property name="user"     value="demo" />
+			<property name="password" value="demo" />
+			<metadata catalog=""  schema="ROOT"  table-name-pattern="%"  table-types="TABLE   VIEW  " />
+	</db>
+-->
+	
+<!-- ============================================ -->
+<!--                 POSTGRESQL                   -->
+<!-- ============================================ -->
+<!--
+	<db id = "0" 
+		name   = "POSTGRESQL - TelosysBookStore DB" 
+		driver = "org.postgresql.Driver" 
+		url    = "jdbc:postgresql://localhost:5432/bookstore" 
+		isolationLevel = "" 
+		poolSize       = "3" >
+		    <property name="user"     value="demo" />
+			<property name="password" value="demo" />
+			<metadata catalog=""  schema=""  table-name-pattern="%"  table-types="TABLE   VIEW  " />
+	</db>
+-->
+	
+<!-- ============================================ -->
+<!--                 IBM DB2                      -->
+<!-- ============================================ -->
+<!--
+	<db id = "0" 
+		name   = "DB2 - TelosysBookStore DB" 
+		driver = "com.ibm.db2.jcc.DB2Driver" 
+		url    = "jdbc:db2://sysmvs1.stl.ibm.com:5021/bookstore" 
+		isolationLevel = "" 
+		poolSize       = "3" >
+		    <property name="user"     value="db2adm" />
+			<property name="password" value="db2adm" />
+			<metadata catalog=""  schema=""  table-name-pattern="%"  table-types="TABLE   VIEW  " />
+	</db>
+-->
+	
+	
+</databases>

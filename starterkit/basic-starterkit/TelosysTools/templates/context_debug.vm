@@ -1,0 +1,123 @@
+
+GENERATOR VARIABLES :
+=====================
+
+* GENERATOR 
+\$generator.name    = $generator.name
+\$generator.version = $generator.version 
+
+* CURRENT DATE AND TIME 
+\$today.date = $today.date
+\$today.time = $today.time
+\$today.date("dd/MM/yyyy") = $today.date("dd/MM/yyyy")
+\$today.time("HH:mm")      = $today.date("HH:mm")
+
+
+GENERATOR CONSTANTS FOR SPECIAL CHARACTERS :
+============================================
+${DOLLAR}DOLLAR = ${DOLLAR}
+${DOLLAR}SHARP  = ${SHARP}
+${DOLLAR}AMP    = ${AMP}
+${DOLLAR}QUOT   = ${QUOT}
+${DOLLAR}LT     = ${LT}
+${DOLLAR}GT     = ${GT}
+${DOLLAR}LBRACE = ${LBRACE}
+${DOLLAR}RBRACE = ${RBRACE}
+
+GENERATOR CONSTANTS USABLE AS METHODS PARAMETERS :
+==================================================
+${DOLLAR}const.KEY      =  $const.KEY
+${DOLLAR}const.NOT_KEY  =  $const.NOT_KEY
+
+${DOLLAR}const.TEXT     =  $const.TEXT
+${DOLLAR}const.NOT_TEXT =  $const.NOT_TEXT
+
+${DOLLAR}const.IN_LINKS     = $const.IN_LINKS
+${DOLLAR}const.NOT_IN_LINKS = $const.NOT_IN_LINKS
+
+${DOLLAR}const.IN_SELECTED_LINKS      = $const.IN_SELECTED_LINKS
+${DOLLAR}const.NOT_IN_SELECTED_LINKS  = $const.NOT_IN_SELECTED_LINKS
+
+${DOLLAR}const.NULL       = $const.NULL  ## Not evaluated
+
+${DOLLAR}const.getKEY()     = $const.getKEY()
+${DOLLAR}const.getNOT_KEY() = $const.getNOT_KEY() 
+${DOLLAR}const.getNULL()    = ERROR Velocity !  ## ERROR Velocity  $const.getNULL()   
+
+
+PROJECT VARIABLES :
+===================
+
+* PROJECT CONFIGURATION :
+\$project.srcFolder = $project.srcFolder
+\$project.webFolder = $project.webFolder
+\$project.packageForBean = $project.packageForBean
+
+Project variables ( \$project.variables ) :
+#foreach( $var in $project.variables )
+   ${DOLLAR}$var.name = $var.value
+#end
+
+
+ENTITY VARIABLES :
+==================
+
+* BEAN CLASS
+\$beanClass.name            = $beanClass.name
+\$beanClass.package         = $beanClass.package
+\$beanClass.superClass      = $beanClass.superClass
+\$beanClass.sqlTable        = $beanClass.sqlTable
+\$beanClass.databaseCatalog = $beanClass.databaseCatalog
+\$beanClass.databaseSchema  = $beanClass.databaseSchema
+
+* BEAN CLASS ATTRIBUTES ( \$beanClass.attributes )
+#set ($attributes = $beanClass.attributes )
+## array.size() is available since Velocity 1.6
+${DOLLAR}beanClass.attributes.size() = $beanClass.attributes.size() 
+${DOLLAR}attributes.size() = $attributes.size() 
+
+* BEAN CLASS JPA ANNOTATIONS ( \$beanClass.jpaAnnotations )
+$beanClass.jpaAnnotations(2)
+
+* BEAN CLASS AUTOINCREMTED PRIMARY KEY ?
+## $beanClass.getAutoincrementedKeyAttribute() ## ERROR Velocity 
+## #if ( $beanClass.autoincrementedKeyAttribute == $const.NULL )  ## ERROR Velocity 
+## No autoincremented primary key
+## #else
+## \$beanClass.autoincrementedKeyAttribute.databaseName = $beanClass.autoincrementedKeyAttribute.databaseName
+## #end
+
+KEY ATTRIBUTES : 
+#foreach( $field in $beanClass.keyAttributes )
+ . $field.name : type = $field.type , auto-incremented = $field.isAutoIncremented()
+#end
+
+#foreach( $field in $beanClass.attributes )
+ ------------------------------
+ Field : $field.name
+ ------------------------------
+ Java :
+  \$field.name   = $field.name
+  \$field.type   = $field.type
+  \$field.getter = $field.getter
+  \$field.setter = $field.setter
+ Java bean validation annotations :
+$field.beanValidationAnnotations(2)
+ Java bean validation annotations JSR303 only :
+$field.beanValidationAnnotationsJSR303(2)
+ JPA annotations :
+$field.jpaAnnotations(2)
+
+ Database :
+  \$field.isKeyElement() = $field.isKeyElement()
+  \$field.isAutoIncremented() = $field.isAutoIncremented()
+  \$field.isUsedInForeignKey() = $field.isUsedInForeignKey()
+  \$field.databaseName = $field.databaseName
+  \$field.databaseType = $field.databaseType
+  \$field.jdbcTypeCode = $field.jdbcTypeCode
+  \$field.databaseSize = $field.databaseSize
+  \$field.isDatabaseNotNull = $field.isDatabaseNotNull
+  \$field.hasDatabaseDefaultValue() = $field.hasDatabaseDefaultValue()
+  \$field.databaseDefaultValue = $field.databaseDefaultValue
+
+#end

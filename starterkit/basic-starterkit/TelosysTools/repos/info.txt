@@ -1,0 +1,2 @@
+This directory is the default directory 
+to store the database repository for the DAO Generator

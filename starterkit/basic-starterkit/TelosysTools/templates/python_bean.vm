@@ -1,0 +1,19 @@
+${SHARP} Screen Context Data class 
+${SHARP} Created on $today.date ( Time $today.time )
+
+
+${SHARP}
+${SHARP} This class defines the ${beanClass.name} object 
+${SHARP}
+ 
+class ${beanClass.name}:
+	
+     ${SHARP} Default constructor.
+	def __init__(self):
+		pass
+     
+	def __init__(self #foreach( $field in $beanClass.attributes ),$field.name #end):
+		${SHARP} super(${beanClass.name}Data,self).__init__();
+		#foreach( $field in $beanClass.attributes )
+self.$field.name = $field.name;
+		#end
