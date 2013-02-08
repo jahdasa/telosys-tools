@@ -1,0 +1,29 @@
+Before :
+ Check plugin version  in "plugin.xml"
+ Check feature version and plugin version  in "feature.xml" 
+
+How to generate the "Update Site" :
+
+1) Clean the existing artifacts with ANT : "build_clean.xml"
+ 
+2) Standard Eclipse Build 
+ - Open the file "site.xml"
+ - Verify version
+ - Click "Build All"
+ 
+ Files generated :
+  . features/TelosysToolsFeature_x.x.x.jar
+  . plugins/TelosysTools_x.x.x.jar
+  . content.jar   (1 file : content.xml)
+  . artifacts.jar (1 file : artifacts.xml)
+ 
+ 3) Use ANT to package the site in a ZIP file 
+ - Verify version in "build_dist.xml" 
+ - Run "build_dist.xml" ANT BUILD
+ Result : dist/TelosysTools-X.X.X-UpdateSite.zip
+ 
+---------------------------------------------------------
+ Plugin Installation / Eclipse :
+ . Unzip / directory
+ . In Eclipse : Installation / "Local Site" -> this directory
+--------------------------------------------------------- 
