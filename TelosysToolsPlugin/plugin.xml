@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+   <!-- WIZARDS -->
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            name="Telosys Tools"
+            id="TelosysWizard" />
+            
+      <!-- Beans Wizards -->
+      <wizard
+            category="TelosysWizard"
+            class="org.telosys.tools.eclipse.plugin.wizards.vobean.NewVOWizard"
+            icon="icons/sample.gif"
+            id="org.telosys.tools.eclipse.plugin.wizards.vobean.NewVOWizard"
+            name="Java Bean"/>
+            
+      <!--
+      <wizard
+            category="TelosysWizard"
+            class="org.telosys.tools.eclipse.plugin.wizards.volist.NewVOListWizard"
+            icon="icons/sample.gif"
+            id="org.telosys.tools.eclipse.plugin.wizards.volist.NewVOListWizard"
+            name="Telosys V.O. List"/>
+            
+      <wizard
+            category="TelosysWizard"
+            class="org.telosys.tools.eclipse.plugin.wizards.xmlmapper.NewXmlMapperWizard"
+            icon="icons/sample.gif"
+            id="org.telosys.tools.eclipse.plugin.wizards.xmlmapper.NewXmlMapperWizard"
+            name="Telosys V.O. XML mapper"/>
+      -->
+      
+      <!-- Screens Wizards -->
+	<!--
+      <wizard
+            category="TelosysWizard"
+            class="org.telosys.tools.eclipse.plugin.wizards.screendata.NewScreenDataWizard"
+            icon="icons/sample.gif"
+            id="org.telosys.tools.eclipse.plugin.wizards.screendata.NewScreenDataWizard"
+            name="Telosys Screen Data"/>
+      <wizard
+            category="TelosysWizard"
+            class="org.telosys.tools.eclipse.plugin.wizards.screenmanager.NewScreenManagerWizard"
+            icon="icons/sample.gif"
+            id="org.telosys.tools.eclipse.plugin.wizards.screenmanager.NewScreenManagerWizard"
+            name="Telosys Screen Manager"/>
+      <wizard
+            category="TelosysWizard"
+            class="org.telosys.tools.eclipse.plugin.wizards.screenprocedures.NewScreenProceduresWizard"
+            icon="icons/sample.gif"
+            id="org.telosys.tools.eclipse.plugin.wizards.screenprocedures.NewScreenProceduresWizard"
+            name="Telosys Screen Procedures"/>
+      <wizard
+            category="TelosysWizard"
+            class="org.telosys.tools.eclipse.plugin.wizards.screentriggers.NewScreenTriggersWizard"
+            icon="icons/sample.gif"
+            id="org.telosys.tools.eclipse.plugin.wizards.screentriggers.NewScreenTriggersWizard"
+            name="Telosys Screen Triggers"/>
+	-->
+      <!-- Services Wizards -->
+	<!--
+      <wizard
+            category="TelosysWizard"
+            class="org.telosys.tools.eclipse.plugin.wizards.service.NewServiceWizard"
+            icon="icons/sample.gif"
+            id="org.telosys.tools.eclipse.plugin.wizards.service.NewServiceWizard"
+            name="Telosys Service"/>
+	-->
+      <!-- Dataset Wizards -->
+      <!--
+      <wizard
+            category="TelosysWizard"
+            class="org.telosys.tools.eclipse.plugin.wizards.dataset.NewDataSetWizard"
+            icon="icons/sample.gif"
+            id="org.telosys.tools.eclipse.plugin.wizards.dataset.NewDataSetWizard"
+            name="Telosys Dataset"/>
+		-->
+		  
+   </extension>
+
+  <!-- PROPERTY PAGES -->
+   <extension
+         id="org.telosys.tools.eclipse.plugin.properties.PropertiesPage"
+         name="Telosys Tools properties"
+         point="org.eclipse.ui.propertyPages">
+      <page
+            adaptable="true"
+            objectClass="org.eclipse.core.resources.IProject"
+            class="org.telosys.tools.eclipse.plugin.config.view.PropertiesPage"
+            name="Telosys Tools"
+            id="org.telosys.tools.eclipse.plugin.config.view.PropertiesPage"/>
+   </extension>
+
+  <!-- EDITORS -->
+  <extension
+         id="org.telosys.tools.eclipse.plugin.editors.dbrep.RepositoryEditor"
+         name="Repository"
+         point="org.eclipse.ui.editors">
+      <editor
+            id="org.telosys.tools.eclipse.plugin.editors.dbrep.RepositoryEditor"
+            class="org.telosys.tools.eclipse.plugin.editors.dbrep.RepositoryEditor"
+            icon="icons/dbrep.gif"
+            default="true"
+            name="Repository editor"
+            extensions="rep,dbrep"/>
+      <editor
+            id="org.telosys.tools.eclipse.plugin.editors.dbconfig.DbConfigEditor"
+            class="org.telosys.tools.eclipse.plugin.editors.dbconfig.DbConfigEditor"
+            icon="icons/dbconfig.gif"
+            default="true"
+            name="Dbconfig editor"
+            extensions="dbcfg"/>
+   </extension>
+   
+</plugin>
