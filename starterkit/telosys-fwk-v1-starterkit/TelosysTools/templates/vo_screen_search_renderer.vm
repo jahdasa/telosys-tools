@@ -1,0 +1,55 @@
+<%@ page language="java" pageEncoding="iso-8859-1" contentType="text/html; charset=iso-8859-1" %>
+<%@ taglib uri="/telosys" prefix="t" %>   
+
+## ########## Concat the PK fields to produce something like "'@{.code}', '@{.other}'"
+#set ( $pkfields = "" )
+#foreach( $field in $beanClass.keyAttributes )
+#if ( $pkfields != "" ) #set ( $pkfields = $pkfields.concat(", ") ) #end 
+#set ( $pkfields = $pkfields.concat("'@{.$field.name}'") )
+#end
+## ##########
+## <%-- Velocity debug : pkfields = $pkfields --%>
+
+## ##########
+#macro( setstyle $f )
+#if     ( $f.type == "String" ) #set ( $style = "text-align: left;" )
+#elseif ( $f.type == "Date"   ) #set ( $style = "text-align: left;" )
+#elseif ( $f.type == "Time"   ) #set ( $style = "text-align: left;" )
+#else #set ( $style = "text-align: right;" )
+#end
+#end
+## ##########
+#macro( setwidth $f )
+#set( $width = 10 )## default width
+#set( $integer = 0 )## just for "parseInt"
+#if ( $f.guiMaxLength != "" )
+#set( $width = $integer.parseInt($f.guiMaxLength) * 11 )
+#end
+#if ( $width > 200 )
+#set( $width = 200 )## max width
+#end
+#end
+## ##########
+
+<t:list width="600" >  
+
+<t:listhead >
+<t:listrow height="24" >
+#foreach( $field in $beanClass.attributes )
+#setstyle($field)
+#setwidth($field)
+ <t:listcell style="$style" width="${width}" >$field.name</t:listcell> <%-- $field.type  $field.guiMaxLength --%>
+#end
+</t:listrow >
+</t:listhead >
+
+<t:listbody data="search_result" scope="request"  height="200">  <%-- The "search_result" request attribute is set by the Java procedure class --%>
+<t:listrow onclick="itemSelected( $pkfields )" >  <%-- The "itemSelected()" function is defined in the screen behavior (JavaScript) --%>
+#foreach( $field in $beanClass.attributes )
+#setstyle($field)
+ <t:listcell style="$style" ><t:out v="@{.$field.name}" /></t:listcell> <%-- $field.type --%>
+#end
+</t:listrow >
+</t:listbody >
+
+</t:list>

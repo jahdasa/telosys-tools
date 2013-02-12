@@ -1,0 +1,49 @@
+/*
+ * Screen Context Data class 
+ * Created on $today.date ( Time $today.time )
+ */
+
+package org.demo.screen.${beanClass.name.toLowerCase()} ;
+
+import org.objectweb.telosys.common.TelosysException;
+import org.objectweb.telosys.screen.core.StandardScreenData;
+
+import $beanClass.fullName;
+
+/**
+ * This class defines the Screen Context Data elements 
+ *
+ * @author xx
+ *
+ */
+public class ${beanClass.name}Data extends StandardScreenData 
+{
+
+    private static final long serialVersionUID = 1L;
+    
+	//--------------------------------------------------------------
+	// Element(s) name(s)
+	//--------------------------------------------------------------
+	public final static String ${beanClass.name.toUpperCase()} = "${beanClass.name.toLowerCase()}";
+	
+    /**
+     * Default constructor.
+     */
+	public ${beanClass.name}Data() throws TelosysException 
+	{
+		super();
+		defineElement(${beanClass.name.toUpperCase()}, ${beanClass.name}.class);
+	}
+	
+	//--------------------------------------------------------------
+	// Element(s) getter(s)/setter(s)
+	//--------------------------------------------------------------	
+    public ${beanClass.name} get${beanClass.name}()
+    {
+        return (${beanClass.name}) getElement(${beanClass.name.toUpperCase()}); 
+    }
+    public void set${beanClass.name}(${beanClass.name} v)
+    {
+    	setElement(${beanClass.name.toUpperCase()}, v);
+    }
+}

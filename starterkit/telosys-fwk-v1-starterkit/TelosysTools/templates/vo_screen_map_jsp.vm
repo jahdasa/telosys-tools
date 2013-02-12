@@ -1,0 +1,45 @@
+<%-- Screen Map for ${beanClass.name} entity      --%>
+<%-- Created on $today.date ( Time $today.time )  --%>
+<%@ taglib uri="/telosys" prefix="t" %> 
+
+<!--
+[ScreenConfig]
+
+// specific context : name, id, action
+// contextname = S003
+// contextid   = -1
+ contextaction = open
+
+// specific template 
+// template = TplElements.jsp
+
+// template values
+${DOLLAR}title = ${beanClass.name}
+// ${DOLLAR}element1 = (Element 1)
+// ${DOLLAR}element2 = (Element 2)
+
+// template parts
+// %part1 =   /screen/parts/msg1.inc
+
+[/ScreenConfig]
+-->
+
+<t:screenbody style="position: relative; width: 100%; height: 100%; overflow: auto;" 
+ data="${beanClass.name.toLowerCase()}" >
+
+ <t:label x="10" y="10"  txt="${beanClass.name}" style="font: bold 18pt Arial" />
+
+ <t:set x="10"  y="60" ygap="40" /> 
+#foreach( $attr in $beanClass.attributes )
+ <t:label y="y++" txt="$attr.name : " />
+#end
+
+ <t:set x="200" y="60" ygap="40" /> 
+#foreach( $attr in $beanClass.attributes )
+ <t:field y="y++" id="$attr.name" data="#" value="" $attr.guiTypeAttribute $attr.guiMaxLengthAttribute $attr.guiMinMaxAttributes /> #if ( $attr.keyElement ) <%-- PRIMARY KEY --%> #end
+ 
+#end
+
+ <t:include path="/include/search_result_panel.jsp" />
+
+</t:screenbody>
