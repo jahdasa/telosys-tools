@@ -31,27 +31,16 @@ public class VariablesUtil
 	 */
 	public static Variable[] getVariablesFromProperties( Properties properties )
 	{
-		return getVariablesFromProperties(properties, PROJECT_VARIABLE_PREFIX);
-	}
-	
-	/**
-	 * Get an array of variables from the given properties
-	 * @param properties
-	 * @param prefix
-	 * @return
-	 */
-	public static Variable[] getVariablesFromProperties( Properties properties, String prefix )
-	{
 		LinkedList<Variable> list = new LinkedList<Variable>();
 		Enumeration<Object> e = properties.keys() ;
 		
 		while ( e.hasMoreElements() )
 		{
 			String key = (String) e.nextElement() ;
-			if ( key.startsWith( prefix ) )
+			if ( key.startsWith( PROJECT_VARIABLE_PREFIX ) )
 			{
 				String sVarValue = properties.getProperty(key);
-				String sVarName = key.substring( prefix.length() ) ;
+				String sVarName = key.substring( PROJECT_VARIABLE_PREFIX.length() ) ;
 				Variable newItem = new Variable(sVarName, sVarValue );
 				
 				//--- Insert in ascending order 
@@ -90,6 +79,25 @@ public class VariablesUtil
 		}
 	}
 	
+	public static Variable getVariableFromProperties( String variableName, Properties properties )
+	{
+		if ( null == variableName ) {
+			throw new IllegalArgumentException("Variable name argument is null");
+		}
+		if ( null == properties ) {
+			throw new IllegalArgumentException("Properties argument is null");
+		}
+		if ( variableName.length() > 0 ) {
+			String sPropName = PROJECT_VARIABLE_PREFIX + variableName ;
+			String value = (String) properties.get(sPropName);
+			Variable variable = new Variable(variableName, value);
+			return variable ;
+		}
+		else {
+			return null ;
+		}
+	}
+	
 	/**
 	 * Put the given variables in the properties, using the standard project prefix <br>
 	 * All the given variable names are supposed to be valid.
@@ -99,32 +107,45 @@ public class VariablesUtil
 	 */
 	public static int putVariablesInProperties( Variable[] variables, Properties properties )
 	{
-		return putVariablesInProperties( variables, properties, PROJECT_VARIABLE_PREFIX );
+		int count = 0 ;
+		if ( null == variables ) return 0 ;
+		if ( null == properties ) {
+			throw new IllegalArgumentException("Properties argument is null");
+		}
+//		for ( int i = 0 ; i < variables.length ; i++ )
+//		{
+//			Variable v = variables[i];
+//			String sVarName = v.getName();
+//			String sPropName = prefix + sVarName ;
+//			if ( sPropName.trim().length() > 0 )
+//			{
+//				properties.put(sPropName, v.getValue() );
+//				count++;
+//			}
+//		}
+		for ( Variable var : variables ) {
+			putVariableInProperties(var, properties);
+			count++ ;
+		}
+		return count ;
 	}
 	
 	/**
-	 * Put the given variables in the properties, using the default prefix <br>
-	 * All the given variable names are supposed to be valid.
-	 * @param variables
+	 * Put the given variable in the properties, using the standard project prefix <br> 
+	 * @param variable
 	 * @param properties
-	 * @param prefix
-	 * @return the number of variables stored in the properties
 	 */
-	public static int putVariablesInProperties( Variable[] variables, Properties properties, String prefix )
-	{
-		int count = 0 ;
-		if ( null == variables ) return 0 ;
-		for ( int i = 0 ; i < variables.length ; i++ )
-		{
-			Variable v = variables[i];
-			String sVarName = v.getName();
-			String sPropName = prefix + sVarName ;
-			if ( sPropName.trim().length() > 0 )
-			{
-				properties.put(sPropName, v.getValue() );
-				count++;
-			}
+	public static void putVariableInProperties( Variable variable, Properties properties ) {
+		if ( null == variable ) {
+			throw new IllegalArgumentException("Variable argument is null");
 		}
-		return count ;
+		if ( null == properties ) {
+			throw new IllegalArgumentException("Properties argument is null");
+		}
+		String variableName = variable.getName().trim();
+		if ( variableName.length() > 0 ) {
+			String sPropName = PROJECT_VARIABLE_PREFIX + variableName ;
+			properties.put(sPropName, variable.getValue() );
+		}
 	}
 }
