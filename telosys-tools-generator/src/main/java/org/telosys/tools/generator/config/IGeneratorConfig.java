@@ -26,7 +26,7 @@ import org.telosys.tools.generator.context.ProjectConfiguration;
  */
 public interface IGeneratorConfig {
 
-	public String getVOPackage() ;
+//	public String getVOPackage() ;
 	
     /**
      * Returns the full path directory where the project is located
@@ -40,11 +40,11 @@ public interface IGeneratorConfig {
 	 */
 	public String getTemplatesFolderFullPath();
 	
-	/**
-	 * Returns the specific variables to be put in the context
-	 * @return
-	 */
-	public Variable[] getProjectVariables();
+//	/**
+//	 * Returns the specific variables to be put in the context
+//	 * @return
+//	 */
+//	public Variable[] getProjectVariables();
 	
 	/**
 	 * Returns the project configuration to be set in the generator's context 

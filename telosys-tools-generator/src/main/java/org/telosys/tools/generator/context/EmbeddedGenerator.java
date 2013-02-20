@@ -20,6 +20,7 @@ import java.util.List;
 import org.telosys.tools.commons.TelosysToolsLogger;
 import org.telosys.tools.generator.Generator;
 import org.telosys.tools.generator.GeneratorException;
+import org.telosys.tools.generator.GeneratorVersion;
 import org.telosys.tools.generator.config.IGeneratorConfig;
 import org.telosys.tools.generator.target.TargetDefinition;
 import org.telosys.tools.repository.model.Entity;
@@ -79,7 +80,7 @@ public class EmbeddedGenerator {
 	
 	public String getVersion()
     {
-        return "2.0.0";
+        return GeneratorVersion.GENERATOR_VERSION ;
     }
 	
 	public void generate(String entityName, String outputFile, String outputFolder, String templateFile) throws GeneratorException

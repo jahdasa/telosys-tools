@@ -51,7 +51,11 @@ public class JavaBeanClass extends JavaClass
 	
 	private final static List<JavaBeanClassLink>      VOID_LINKS_LIST    = new LinkedList<JavaBeanClassLink>();
 	
-	private List<String>                       _imports     = null ; // The imports for this class ( list of "java.xx.Class" )
+	// The imports for all fields of this class ( list of "java.xx.Class" )
+	private List<String>                       _importsForAllFields = VOID_STRINGS_LIST ; 
+	// The imports required when using only the "key fields" of this class ( list of "java.xx.Class" )
+	private List<String>                       _importsForKeyFields = VOID_STRINGS_LIST ; 
+	
 	private LinkedList<JavaBeanClassAttribute> _attributes  = null ; // The attributes for this class ( ALL ATTRIBUTES )
 	
     private String     _sDatabaseTable   = null ; // Table name this class is mapped with
@@ -222,13 +226,19 @@ public class JavaBeanClass extends JavaClass
 	 */
 	public List<String> getImports() 
 	{
-		if ( _imports != null )
-		{
-			return _imports ;
-		}
-		return VOID_STRINGS_LIST ;
+//		if ( _importsForAllFields != null )
+//		{
+//			return _importsForAllFields ;
+//		}
+//		return VOID_STRINGS_LIST ;
+		return _importsForAllFields ;
 	}
-
+	
+	public List<String> getImportsForKeyFields() 
+	{
+		return _importsForKeyFields ;
+	}
+	
 	/**
 	 * Returns an array of imports JPA
 	 * @return
@@ -660,7 +670,8 @@ public class JavaBeanClass extends JavaClass
 	 * Returns true if this class has at least one "long text" attribute
 	 * @return
 	 */
-	public boolean getHasTextAttribute() 
+	//public boolean getHasTextAttribute() 
+	public boolean hasTextAttribute() 
 	{
     	if ( _attributes != null )
     	{
@@ -677,12 +688,32 @@ public class JavaBeanClass extends JavaClass
     	return false ;
 	}
 	
+	/**
+	 * Returns true if the key is composed of more than one attribute 
+	 * @return
+	 */
 	public boolean hasCompositePrimaryKey() 
 	{
 		if ( _keyAttributes != null ) {
 			return _keyAttributes.size() > 1 ;
 		}
 		return false ; // No key attributes
+	}
+	
+	/**
+	 * Returns true if one of the key attributes is "auto-incremented" 
+	 * @return
+	 */
+	public boolean hasAutoIncrementedKey() 
+	{
+		if ( _keyAttributes != null ) {
+			for ( JavaBeanClassAttribute keyAttribute : _keyAttributes ) {
+				if ( keyAttribute.isAutoIncremented() ) {
+					return true ; 
+				}
+			}
+		}
+		return false ; 
 	}
 	
 	public JavaBeanClassAttribute getAutoincrementedKeyAttribute() 
@@ -732,19 +763,26 @@ public class JavaBeanClass extends JavaClass
 	}
 	
 	/**
-	 * Init the imports list
+	 * Initialize the imports required for all fields 
 	 * @param imports
 	 */
-    private void setImports(JavaBeanClassImports imports) 
+    private void setImportsForAllFields(JavaBeanClassImports imports) 
 	{
-		if ( imports != null )
-		{
-			// Reset ALL => create a new list
-			_imports = new LinkedList<String>();
-			_imports.addAll( imports.getList() );
-		}
+		// Reset ALL => create a new list
+		_importsForAllFields = new LinkedList<String>();
+		_importsForAllFields.addAll( imports.getList() );
 	}
     
+    /**
+	 * Initialize the imports required for the key fields of the class 
+     * @param imports
+     */
+    private void setImportsForKeyFields(JavaBeanClassImports imports) 
+	{
+		// Reset ALL => create a new list
+		_importsForKeyFields = new LinkedList<String>();
+		_importsForKeyFields.addAll( imports.getList() );
+	}    
 
 	/**
 	 * Init the Jpa imports list
@@ -801,19 +839,25 @@ public class JavaBeanClass extends JavaClass
 		//--- Build the list of the "NON KEY" attributes
 		_nonKeyAttributes = buildAttributesList ( false ); 
 		
-		//--- Define the imports required for this class 
-		JavaBeanClassImports javaImports = new JavaBeanClassImports();
+		//--- Define the imports required for all the fields of this class 
+		JavaBeanClassImports javaImportsForAllFields = new JavaBeanClassImports();
+		JavaBeanClassImports javaImportsForKeyFields = new JavaBeanClassImports();
 		
 		for ( JavaBeanClassAttribute attribute : _attributes ) {
-			javaImports.declareType( attribute.getFullType() ); // register the type to import if necessary
+			javaImportsForAllFields.declareType( attribute.getFullType() ); // register the type to import if necessary
+			if ( attribute.isKeyElement() ) {
+				javaImportsForKeyFields.declareType( attribute.getFullType() );
+			}
 		}
 		
 		//--- Extract potential collided types ( and retrieve the list of collided full types )
-		LinkedList<String> collidedTypes = javaImports.extractDuplicatedShortNames();
+		LinkedList<String> collidedTypes = javaImportsForAllFields.extractDuplicatedShortNames();
+		javaImportsForKeyFields.extractDuplicatedShortNames();
 
 		//--- Set imports list for the current class
-		this.setImports(javaImports);
-
+		this.setImportsForAllFields(javaImportsForAllFields);
+		this.setImportsForKeyFields(javaImportsForKeyFields);
+		
 		//--- If there's collided types => Chech each attribute type 
 		if ( collidedTypes != null )
 		{

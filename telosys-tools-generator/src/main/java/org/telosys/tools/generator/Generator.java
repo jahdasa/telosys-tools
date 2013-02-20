@@ -37,6 +37,7 @@ import org.telosys.tools.commons.Variable;
 import org.telosys.tools.generator.config.IGeneratorConfig;
 import org.telosys.tools.generator.context.Const;
 import org.telosys.tools.generator.context.EmbeddedGenerator;
+import org.telosys.tools.generator.context.Fn;
 import org.telosys.tools.generator.context.JavaBeanClass;
 import org.telosys.tools.generator.context.JavaClass;
 import org.telosys.tools.generator.context.Loader;
@@ -194,29 +195,30 @@ public class Generator {
 		log("initContext()..." );
 
 		//--- Special Characters  [LGU 2012-11-29 ]
-		_velocityContext.put("DOLLAR", "$"  );
-		_velocityContext.put("SHARP",  "#"  );
-		_velocityContext.put("AMP",    "&"  ); // ampersand 
-		_velocityContext.put("QUOT",   "\"" ); // double quotation mark
-		_velocityContext.put("LT",     "<"  ); // less-than sign
-		_velocityContext.put("GT",     ">"  ); // greater-than sign
-		_velocityContext.put("LBRACE", "{"  ); // left brace
-		_velocityContext.put("RBRACE", "}"  ); // right brace
+		_velocityContext.put(ContextName.DOLLAR , "$"  );
+		_velocityContext.put(ContextName.SHARP,   "#"  );
+		_velocityContext.put(ContextName.AMP,     "&"  ); // ampersand 
+		_velocityContext.put(ContextName.QUOT,    "\"" ); // double quotation mark
+		_velocityContext.put(ContextName.LT,      "<"  ); // less-than sign
+		_velocityContext.put(ContextName.GT,      ">"  ); // greater-than sign
+		_velocityContext.put(ContextName.LBRACE,  "{"  ); // left brace
+		_velocityContext.put(ContextName.RBRACE,  "}"  ); // right brace
 		
 		//--- Set the standard Velocity variables in the context
-		_velocityContext.put("generator", new EmbeddedGenerator());  // Limited generator without generation capability 
-		_velocityContext.put("today", new Today()); // Current date and time 
-		_velocityContext.put("const", new Const()); // Constants (static values)
-		_velocityContext.put(GeneratorConst.CURRENT_CLASS_CONTEXT_NAME, null);
+		_velocityContext.put(ContextName.GENERATOR,     new EmbeddedGenerator());  // Limited generator without generation capability 
+		_velocityContext.put(ContextName.TODAY,         new Today()); // Current date and time 
+		_velocityContext.put(ContextName.CONST,         new Const()); // Constants (static values)
+		_velocityContext.put(ContextName.FN,            new Fn());    // Utility function
+		_velocityContext.put(ContextName.CLASS, null);
 		
 		ProjectConfiguration projectConfiguration = generatorConfig.getProjectConfiguration();
 		
 		//--- Set the dynamic loader 
 		Loader loader = new Loader(projectConfiguration, _velocityContext);
-		_velocityContext.put("loader", loader);
+		_velocityContext.put(ContextName.LOADER, loader);
 		
 		//--- Set the "$project" variable in the context
-		_velocityContext.put("project", projectConfiguration);
+		_velocityContext.put(ContextName.PROJECT, projectConfiguration);
 		
 		//--- Get the project variables and put them in the context	
 		Variable[] projectVariables = projectConfiguration.getVariables();
@@ -242,7 +244,7 @@ public class Generator {
 	public void setSelectedEntitiesInContext( List<JavaBeanClass> javaBeanClasses )
 	{
 		if ( javaBeanClasses != null ) {
-			_velocityContext.put(GeneratorConst.SELECTED_ENTITIES_CONTEXT_NAME, javaBeanClasses);
+			_velocityContext.put(ContextName.SELECTED_ENTITIES, javaBeanClasses);
 		}
 	}
 	
@@ -254,7 +256,7 @@ public class Generator {
 	 */
 	public void setJavaClassTargetInContext(JavaClass javaClass) 
 	{
-		_velocityContext.put(GeneratorConst.CURRENT_CLASS_CONTEXT_NAME, javaClass);
+		_velocityContext.put(ContextName.CLASS, javaClass);
 	}
 	
 	/**
@@ -365,12 +367,12 @@ public class Generator {
 
 		//---------- Set additional objects in the Velocity Context
 		//--- Set the "$target"  in the context 
-		_velocityContext.put("target", target);
+		_velocityContext.put(ContextName.TARGET, target);
 		//--- Set the "$beanClass"  in the context ( the Java Bean Class for this target )
-		_velocityContext.put(GeneratorConst.BEAN_CLASS_CONTEXT_NAME, javaBeanClass );
+		_velocityContext.put(ContextName.BEAN_CLASS, javaBeanClass );
 		//--- Set the "$generator"  in the context ( "real" embedded generator )
 		EmbeddedGenerator embeddedGenerator = new EmbeddedGenerator(repositoryModel, _generatorConfig, _logger, generatedTargets );
-		_velocityContext.put("generator", embeddedGenerator );
+		_velocityContext.put(ContextName.GENERATOR, embeddedGenerator );
 		
 		//---------- Generate the target in memory
 		InputStream is = generateInMemory();

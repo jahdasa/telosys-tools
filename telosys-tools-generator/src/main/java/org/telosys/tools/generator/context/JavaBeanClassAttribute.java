@@ -1034,7 +1034,8 @@ public class JavaBeanClassAttribute
 		return "" ;
     }
     
-    public boolean getHasDefaultValue() // Velocity : $attrib.hasDefaultValue
+    //public boolean getHasDefaultValue() // Velocity : $attrib.hasDefaultValue
+    public boolean hasDefaultValue() // Velocity : $attrib.hasDefaultValue()
     {
     	return ( _sDefaultValue != null ) ;
     }

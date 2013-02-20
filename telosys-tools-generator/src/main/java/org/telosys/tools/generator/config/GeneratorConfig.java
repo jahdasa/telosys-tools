@@ -15,10 +15,13 @@
  */
 package org.telosys.tools.generator.config;
 
+import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.Properties;
 
 import org.telosys.tools.commons.Variable;
 import org.telosys.tools.commons.VariablesUtil;
+import org.telosys.tools.generator.ContextName;
 import org.telosys.tools.generator.context.ProjectConfiguration;
 
 /**
@@ -35,8 +38,8 @@ public class GeneratorConfig implements IGeneratorConfig
 	
 	private Variable[] _projectVariables ;
 	
-	private String _sSourceFolder ;
-	private String _sWebContentFolder ;
+//	private String _sSourceFolder ;
+//	private String _sWebContentFolder ;
 	
 	private String _sTemplatesFolder ;
 	
@@ -47,25 +50,48 @@ public class GeneratorConfig implements IGeneratorConfig
 		_sProjectLocation = sProjectLocation;
 		
 		//--- Files folders
-    	_sSourceFolder       = prop.getProperty(GeneratorConfigConst.SOURCE_FOLDER, _sSourceFolder);
-    	_sWebContentFolder   = prop.getProperty(GeneratorConfigConst.WEB_CONTENT_FOLDER, _sWebContentFolder);
+//    	_sSourceFolder       = prop.getProperty(GeneratorConfigConst.SOURCE_FOLDER, _sSourceFolder);
+//    	_sWebContentFolder   = prop.getProperty(GeneratorConfigConst.WEB_CONTENT_FOLDER, _sWebContentFolder);
     	_sTemplatesFolder    = prop.getProperty(GeneratorConfigConst.TEMPLATES_FOLDER, _sTemplatesFolder);
 		
 		//--- Packages names
     	_sPackageVO        = prop.getProperty(GeneratorConfigConst.PACKAGE_VO, _sPackageVO);
     	
-    	//--- Project user defined variables
-    	_projectVariables = VariablesUtil.getVariablesFromProperties( prop );
+    	//--- All variables : specific project variables + folders 
+    	Hashtable<String, String> allVariables = new Hashtable<String, String>();
+    	
+    	//--- 1) Project user defined variables
+    	Variable[] specificVariables = VariablesUtil.getVariablesFromProperties( prop );
+    	for ( Variable v : specificVariables ) {
+    		allVariables.put(v.getName(), v.getValue());
+    	}
+    	//--- 2) Folders ( at the end to override specific variables if any )
+    	allVariables.put( ContextName.SRC,      prop.getProperty(ContextName.SRC,      "") );
+    	allVariables.put( ContextName.RES,      prop.getProperty(ContextName.RES,      "") );
+    	allVariables.put( ContextName.WEB,      prop.getProperty(ContextName.WEB,      "") );
+    	allVariables.put( ContextName.TEST_SRC, prop.getProperty(ContextName.TEST_SRC, "") );
+    	allVariables.put( ContextName.TEST_RES, prop.getProperty(ContextName.TEST_RES, "") );
+    	
+    	//--- 3) Get all variables to buil the array
+    	LinkedList<Variable> variablesList = new LinkedList<Variable>();
+    	for ( String varName : allVariables.keySet() ) {
+    		String varValue = allVariables.get(varName) ;
+    		variablesList.add( new Variable( varName, varValue) ) ;
+    	}
+    	Variable[] allVariablesArray = variablesList.toArray( new Variable[0] );
+    	
+    	//_projectVariables = VariablesUtil.getVariablesFromProperties( prop );
+    	_projectVariables = allVariablesArray ;
     	
 	}
 
-	//---------------------------------------------------------------------
-	// Specific variables
-	//---------------------------------------------------------------------
-	public Variable[] getProjectVariables() 
-	{
-		return _projectVariables ;
-	}
+//	//---------------------------------------------------------------------
+//	// Specific variables
+//	//---------------------------------------------------------------------
+//	public Variable[] getProjectVariables() 
+//	{
+//		return _projectVariables ;
+//	}
 
 	//---------------------------------------------------------------------
 	// Project Configuration for Generator context
@@ -73,7 +99,8 @@ public class GeneratorConfig implements IGeneratorConfig
 	public ProjectConfiguration getProjectConfiguration() 
 	{
 		ProjectConfiguration projectConfiguration = new ProjectConfiguration( 
-				_sSourceFolder, _sWebContentFolder, getTemplatesFolderFullPath(),
+				//_sSourceFolder, _sWebContentFolder, 
+				getTemplatesFolderFullPath(),
 				_sPackageVO, 
 				_projectVariables );
 		
@@ -143,11 +170,11 @@ public class GeneratorConfig implements IGeneratorConfig
     	}
 	}
 
-	//---------------------------------------------------------------------
-	// Packages
-	//---------------------------------------------------------------------
-	public String getVOPackage() {
-		return _sPackageVO ;
-	}
+//	//---------------------------------------------------------------------
+//	// Packages
+//	//---------------------------------------------------------------------
+//	public String getVOPackage() {
+//		return _sPackageVO ;
+//	}
 
 }

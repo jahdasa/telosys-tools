@@ -28,8 +28,8 @@ public class ProjectConfiguration
 {
 	private final static Variable[] VOID_VARIABLES = new Variable[0];
 	
-	private final String srcFolder ;
-	private final String webFolder ;
+//	private final String srcFolder ;
+//	private final String webFolder ;
 	private final String templatesFolderFullPath ;
 	
 	private final String packageForBean ;
@@ -38,13 +38,14 @@ public class ProjectConfiguration
 	
     //---------------------------------------------------------------------------
 
-	public ProjectConfiguration(String srcFolder, String webFolder, String templatesFolderFullPath,
+	public ProjectConfiguration( // String srcFolder, String webFolder, 
+			String templatesFolderFullPath,
 			String packageForBean, 
 			Variable[] projectVariables ) 
 	{
 		super();
-		this.srcFolder = srcFolder;
-		this.webFolder = webFolder;
+//		this.srcFolder = srcFolder;
+//		this.webFolder = webFolder;
 		this.templatesFolderFullPath = templatesFolderFullPath ;
 		
 		this.packageForBean = packageForBean;
@@ -54,15 +55,15 @@ public class ProjectConfiguration
 
 	//---------------------------------------------------------------------------
 
-	public String getSrcFolder()
-    {
-        return srcFolder ;
-    }
-
-    public String getWebFolder()
-    {
-        return webFolder ;
-    }
+//	public String getSrcFolder()
+//    {
+//        return srcFolder ;
+//    }
+//
+//    public String getWebFolder()
+//    {
+//        return webFolder ;
+//    }
 
     /**
      * Returns the templates folder with full path

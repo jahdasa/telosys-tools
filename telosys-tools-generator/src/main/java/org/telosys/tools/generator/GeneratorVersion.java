@@ -16,24 +16,12 @@
 package org.telosys.tools.generator;
 
 /**
- * Generator constants definition
+ * Generator version
  * 
  * @author Laurent Guerin
  *  
  */
-public class GeneratorConst {
+public class GeneratorVersion {
 
-	public final static String BEAN_CLASS_CONTEXT_NAME        = "beanClass" ;
-
-	public final static String SELECTED_ENTITIES_CONTEXT_NAME = "selectedEntities" ;
-	
-	public final static String CURRENT_CLASS_CONTEXT_NAME     = "class" ;
-
-	
-	public final static int JAVA_CLASS_TYPE_UNDEFINED = 0 ;
-	public final static int JAVA_CLASS_TYPE_BEAN      = 1 ;
-	public final static int JAVA_CLASS_TYPE_LIST      = 2 ;
-	public final static int JAVA_CLASS_TYPE_DAO       = 3 ;
-	public final static int JAVA_CLASS_TYPE_CONVERTER = 4 ;
-	
+	public final static String GENERATOR_VERSION = "2.0.3" ;
 }

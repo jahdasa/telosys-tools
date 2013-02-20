@@ -18,6 +18,7 @@ package org.telosys.tools.generator.context;
 import java.util.LinkedList;
 
 import org.telosys.tools.commons.Variable;
+import org.telosys.tools.generator.ContextName;
 
 /**
  * Reserved variable names
@@ -30,17 +31,38 @@ public class VariableNames {
 	// TODO : update the variable names list
 	private final static String[] RESERVED_NAMES =
 	{
-		//--- Generator variables
-		"generator", "today",
+		//--- Special characters 
+		ContextName.DOLLAR,
+		ContextName.SHARP,
+		ContextName.AMP,
+		ContextName.QUOT,
+		ContextName.LT,
+		ContextName.GT,
+		ContextName.LBRACE,
+		ContextName.RBRACE,
+
+		//--- FOLDERS predefined variables names ( v 2.0.3 )
+		ContextName.SRC,
+		ContextName.RES,
+		ContextName.WEB,
+		ContextName.TEST_SRC,
+		ContextName.TEST_RES,
 		
-		//--- Project variables
-		"project",
+		//--- Objects
+		ContextName.GENERATOR , 
+		ContextName.TODAY ,
+		ContextName.CONST , 
+		ContextName.FN ,
+		ContextName.LOADER ,
+		ContextName.PROJECT ,
 		
-		//--- Entity variables
-		"class", 
-		"beanClass", "listClass", "daoClass", "xmlClass",
-		
+		//--- Current Entity/Target objects
+		ContextName.TARGET ,
+		ContextName.BEAN_CLASS ,
+		ContextName.SELECTED_ENTITIES ,
+
 		//--- Wizards variables
+		ContextName.CLASS ,
 		"context", 
 		"screendata",
 		"triggers"
