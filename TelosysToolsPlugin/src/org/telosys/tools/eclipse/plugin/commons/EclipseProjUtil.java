@@ -5,8 +5,10 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -337,5 +339,31 @@ public class EclipseProjUtil {
 		}
     	return null ;
     }
+
+    /**
+     * Returns all the source folders for the given project 
+     * @param project
+     * @return
+     */
+    public static String[] getSrcFolders(IProject project) {
+    	LinkedList<String> srcFolders = new LinkedList<String>();
+        IJavaProject javaProject = JavaCore.create(project);
+        IClasspathEntry[] entries;
+		try {
+			entries = javaProject.getRawClasspath();
+		} catch (Exception e) {
+			MsgBox.error("Cannot get JavaProject raw class path !");
+			return new String[0];
+		}
+        for (IClasspathEntry classPathEntry : entries ) {
+            if (classPathEntry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+                IPath path = classPathEntry.getPath();
+                IFolder srcFolder = project.getWorkspace().getRoot().getFolder(path);
+    			IPath relativePath = srcFolder.getProjectRelativePath() ; // "src", "src/main/java", ... 
+    			srcFolders.add(relativePath.toString());
+            }
+        }        
+        return srcFolders.toArray(new String[0]);
+    }	
     
 }

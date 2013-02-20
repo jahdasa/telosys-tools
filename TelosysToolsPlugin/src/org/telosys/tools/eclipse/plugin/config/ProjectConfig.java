@@ -12,13 +12,15 @@ import org.telosys.tools.commons.Variable;
 import org.telosys.tools.commons.VariablesUtil;
 import org.telosys.tools.eclipse.plugin.MyPlugin;
 import org.telosys.tools.eclipse.plugin.commons.MsgBox;
+import org.telosys.tools.generator.ContextName;
 import org.telosys.tools.generator.GeneratorException;
+import org.telosys.tools.generator.config.GeneratorConfigConst;
 import org.telosys.tools.generator.target.TargetDefinition;
 import org.telosys.tools.generator.target.TargetsFile;
 
 /**
- * Telosys Tools project configuration 
- * This class provides the configuration loaded from the properties file
+ * Telosys Tools project configuration <br>
+ * This class provides the configuration loaded from the properties file <br>
  * for a project of the current workspace
  *   
  * @author Laurent GUERIN
@@ -39,30 +41,21 @@ public class ProjectConfig
 // [22-Jan-2012] Removed	
 //	private String _sTelosysPropFile    = "WebContent/WEB-INF/conf/telosys.properties" ;
 	
-	private String _sSourceFolder       = "src" ;
-	private String _sWebContentFolder   = "WebContent" ;
+//	private String _sSourceFolder       = "src" ;
+//	private String _sWebContentFolder   = "WebContent" ;
 	private String _sTemplatesFolder    = "TelosysTools/templates" ; 
 	private String _sRepositoriesFolder = "TelosysTools/repos" ; 
 	
 	//----------------------------------------------------------------------------------------
 	// [22-Jan-2012] Removed	
 	//--- Packages 	
-	private String _sPackageVOBean         = "org.demo.vo.bean" ;
-//	
-//	private String _sPackageVOList         = "org.demo.vo.list" ;
-//	
-//	private String _sPackageXmlMapper      = "org.demo.vo.xml" ;
-//	
-//	private String _sPackageDAO            = "org.demo.vo.dao" ;
-//	
-//	
-//	private String _sPackageScreenData       = "org.demo.screen" ;
-//	
-//	private String _sPackageScreenManager    = "org.demo.screen" ;
-//	
-//	private String _sPackageScreenProcedures = "org.demo.screen" ;
-//	
-//	private String _sPackageScreenTriggers   = "org.demo.screen" ;
+	private String _sPackageVOBean = "org.demo.vo.bean" ;
+
+	private String _SRC      =  "" ;
+	private String _RES      =  "" ;
+	private String _WEB      =  "" ;
+	private String _TEST_SRC =  "" ;
+	private String _TEST_RES =  "" ;
 	
 	//----------------------------------------------------------------------------------------
 	//--- Classes names
@@ -157,12 +150,20 @@ public class ProjectConfig
     	}
     	
     	// Init with the given properties, use original values as default values
-    	_sSourceFolder = prop.getProperty(PropName.SOURCE_FOLDER, _sSourceFolder);
-    	_sWebContentFolder = prop.getProperty(PropName.WEB_CONTENT_FOLDER, _sWebContentFolder);
-    	_sTemplatesFolder = prop.getProperty(PropName.TEMPLATES_FOLDER, _sTemplatesFolder);
+//    	_sSourceFolder = prop.getProperty(PropName.SOURCE_FOLDER, _sSourceFolder);
+//    	_sWebContentFolder = prop.getProperty(PropName.WEB_CONTENT_FOLDER, _sWebContentFolder);
+    	_sTemplatesFolder = prop.getProperty(GeneratorConfigConst.TEMPLATES_FOLDER, _sTemplatesFolder);
     	_sRepositoriesFolder = prop.getProperty(PropName.REPOS_FOLDER, _sRepositoriesFolder);
     	
-    	_sPackageVOBean = prop.getProperty(PropName.PACKAGE_VO, _sPackageVOBean);
+    	//--- Packages 
+    	_sPackageVOBean = prop.getProperty(GeneratorConfigConst.PACKAGE_VO, _sPackageVOBean);
+
+    	//--- Folders  
+    	_SRC      =  prop.getProperty(ContextName.SRC,      _SRC);
+    	_RES      =  prop.getProperty(ContextName.RES,      _RES);
+    	_WEB      =  prop.getProperty(ContextName.WEB,      _WEB);
+    	_TEST_SRC =  prop.getProperty(ContextName.TEST_SRC, _TEST_SRC);
+    	_TEST_RES =  prop.getProperty(ContextName.TEST_RES, _TEST_RES);
     	
     	//--- Project user defined variables
     	//_projectVariables = initProjectVariables( prop ); // Can be null
@@ -187,13 +188,25 @@ public class ProjectConfig
     //==============================================================================
     // Folders 
     //==============================================================================
-    public String getSourceFolder()
+    public String getSRC()
 	{
-    	return _sSourceFolder;
+    	return _SRC;
 	}
-    public String getWebContentFolder()
+    public String getRES()
 	{
-    	return _sWebContentFolder;
+    	return _RES;
+	}
+    public String getWEB()
+	{
+    	return _WEB;
+	}
+    public String getTEST_RES()
+	{
+    	return _TEST_RES;
+	}
+    public String getTEST_SRC()
+	{
+    	return _TEST_SRC;
 	}
     public String getTemplatesFolder()
 	{

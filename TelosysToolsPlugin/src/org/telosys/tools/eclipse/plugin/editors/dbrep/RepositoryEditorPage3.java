@@ -25,12 +25,13 @@ import org.telosys.tools.repository.model.Link;
 import org.telosys.tools.repository.model.RepositoryModel;
 
 /**
+ * Page 3 of the editor <br>
+ * 
+ * Links management  
  * 
  */
 /* package */ class RepositoryEditorPage3 extends RepositoryEditorPage 
 {
-//	private final static int BASIC_TABLE_STYLE = SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL 
-//							| SWT.SINGLE | SWT.HIDE_SELECTION | SWT.FULL_SELECTION ;
 
 	private Button ckFilterOwningSide  ;
 	private Button ckFilterInverseSide ;
@@ -98,7 +99,6 @@ import org.telosys.tools.repository.model.RepositoryModel;
 			//---------------------------------------------------------------
 			// Line 1 - Column 1 : The page title
 			//---------------------------------------------------------------
-			//Util.setPageTitle(scrolledFormBody, "Telosys repository - Database : " + _repEditor.getDatabaseTitle() ) ;
 			Util.setPageTitle(scrolledFormBody, "Links between entities"  ) ;
 	
 			//---------------------------------------------------------------
@@ -109,7 +109,6 @@ import org.telosys.tools.repository.model.RepositoryModel;
 			//---------------------------------------------------------------
 			// Line 3 - Column 1 : The list of links
 			//---------------------------------------------------------------
-//			createLinks(scrolledFormBody);
 			//--- Set the composite height
 			GridData gd = new GridData (GridData.FILL_HORIZONTAL);
 			gd.heightHint = 400 ;
@@ -135,7 +134,6 @@ import org.telosys.tools.repository.model.RepositoryModel;
 			linksView.populate( links );
 			
 			refreshCount();
-			//linksCount.setText( "" + linksView.getSize() + "/" + links.size() );
 			
 		}
 		catch ( Throwable tex ) {
@@ -472,9 +470,6 @@ import org.telosys.tools.repository.model.RepositoryModel;
 		int n = 0 ;
 		RepositoryModel repositoryModel = getRepositoryModel();
 		
-//		TelosysToolsLogger telosysToolsLogger = Convert.toTelosysToolsLogger( getLogger() );
-//		
-//		LinksGenerator linksGenerator = new LinksGenerator(telosysToolsLogger);
 		LinksGenerator linksGenerator = new LinksGenerator(getLogger());
 
 		try {

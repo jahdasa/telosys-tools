@@ -2,10 +2,13 @@ package org.telosys.tools.eclipse.plugin.config.view;
 
 import java.util.Properties;
 
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -22,11 +25,15 @@ import org.eclipse.ui.dialogs.PropertyPage;
 import org.telosys.tools.commons.Variable;
 import org.telosys.tools.commons.VariablesUtil;
 import org.telosys.tools.eclipse.plugin.MyPlugin;
+import org.telosys.tools.eclipse.plugin.commons.EclipseProjUtil;
 import org.telosys.tools.eclipse.plugin.commons.MsgBox;
 import org.telosys.tools.eclipse.plugin.commons.PluginLogger;
 import org.telosys.tools.eclipse.plugin.config.ProjectConfig;
 import org.telosys.tools.eclipse.plugin.config.ProjectConfigManager;
 import org.telosys.tools.eclipse.plugin.config.PropName;
+import org.telosys.tools.generator.ContextName;
+import org.telosys.tools.generator.GeneratorVersion;
+import org.telosys.tools.generator.config.GeneratorConfigConst;
 import org.telosys.tools.generator.context.VariableNames;
 
 /**
@@ -36,6 +43,8 @@ import org.telosys.tools.generator.context.VariableNames;
  */
 public class PropertiesPage extends PropertyPage {
 
+	private final static String WEB_CONTENT = "WebContent" ;
+
     //private final static String PLUGIN_PROPERTIES_FILE = "telosys-tools.cfg";
     
     //--- Tab "General"
@@ -43,8 +52,8 @@ public class PropertiesPage extends PropertyPage {
 	private Text _tProjectLocation = null;
 	private Text _tWorkspaceLocation = null ;
 	
-	private Text _tSourceFolder = null ;
-	private Text _tWebContentFolder = null ;
+//	private Text _tSourceFolder = null ;
+//	private Text _tWebContentFolder = null ;
 	private Text _tTemplatesFolder = null ;
 	private Text _tRepositoriesFolder = null ;
 //	private Text _tTelosysProp = null ;
@@ -284,6 +293,7 @@ public class PropertiesPage extends PropertyPage {
 			createTabGeneral(tabFolder);
 			createTabPackages(tabFolder); 
 			// createTabClassesNames(tabFolder); // TODO : remove method ??
+			createTabFolders(tabFolder); 
 			createTabVariables(tabFolder);
 			createTabAdvanced(tabFolder);
 			createTabAboutPlugin(tabFolder);
@@ -308,7 +318,7 @@ public class PropertiesPage extends PropertyPage {
 	private void createTabGeneral(TabFolder tabFolder) 
 	{
 		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
-		tabItem.setText("General");
+		tabItem.setText(" General ");
 		
 		Composite tabContent = new Composite(tabFolder, SWT.NONE);
 		tabContent.setLayout(new GridLayout(3, false));
@@ -335,9 +345,9 @@ public class PropertiesPage extends PropertyPage {
 		
 		//-------------------------------------------------------------------------------
 		
-		_tSourceFolder = createTextField(tabContent, "Source folder :") ;
-
-		_tWebContentFolder = createTextField(tabContent, "Web content folder :") ;
+//		_tSourceFolder = createTextField(tabContent, "Source folder :") ;
+//
+//		_tWebContentFolder = createTextField(tabContent, "Web content folder :") ;
 
 //		_tTelosysProp = createTextField(tabContent, "Telosys properties file :") ;
 		
@@ -351,7 +361,7 @@ public class PropertiesPage extends PropertyPage {
 	 */
 	private void createTabPackages(TabFolder tabFolder) {
 		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
-		tabItem.setText("Packages");
+		tabItem.setText(" Packages ");
 		
 		Composite tabContent = new Composite(tabFolder, SWT.NONE);
 		tabContent.setLayout(new GridLayout(3, false));
@@ -371,32 +381,73 @@ public class PropertiesPage extends PropertyPage {
 	}
 	
 	//------------------------------------------------------------------------------------------
+	private Text _tSrcFolder = null ;
+	private Text _tResFolder = null ;
+	private Text _tWebFolder = null ;
+	private Text _tTestSrcFolder = null ;
+	private Text _tTestResFolder = null ;
+	
 	/**
-	 * Creates the "Classes names" TabItem
+	 * Creates the "Folders" TabItem
 	 * @param tabFolder
 	 */
-	private void createTabClassesNames(TabFolder tabFolder) {
+	private void createTabFolders(TabFolder tabFolder) {
 		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
-		tabItem.setText("Classes names");
+		tabItem.setText(" Folders ");
 		
 		Composite tabContent = new Composite(tabFolder, SWT.NONE);
 		tabContent.setLayout(new GridLayout(3, false));
 		tabItem.setControl(tabContent);
 
-//		String sSyntax = "Syntax : Prefix${" + ConfigDefaults.BEANNAME + "}Suffix " ;
-//		
-//		_tVOListClassName = createTextField(tabContent, "VOList class ") ;
-//		createTwoLabels(tabContent, "", 
-//				sSyntax + " ( default : '" + ConfigDefaults.DEFAULT_LIST_CLASS_NAME + "' )");
-//
-//		_tDAOClassName = createTextField(tabContent, "DAO class ") ;
-//		createTwoLabels(tabContent, "", 
-//				sSyntax + " ( default : '" + ConfigDefaults.DEFAULT_DAO_CLASS_NAME + "' )");
-//
-//		_tXmlMapperClassName = createTextField(tabContent, "XML mapper class ") ;
-//		createTwoLabels(tabContent, "", 
-//				sSyntax + " ( default : '" + ConfigDefaults.DEFAULT_XML_MAPPER_CLASS_NAME + "' )");
+		createSingleLabel(tabContent, "Define here the project folders variables ");
+		_tSrcFolder = createTextField(tabContent, "Sources",      "${SRC}") ;
+		_tResFolder = createTextField(tabContent, "Resources ",   "${RES}") ;
+		_tWebFolder = createTextField(tabContent, "Web content ", "${WEB}" ) ;
+
+		_tTestSrcFolder = createTextField(tabContent, "Tests sources  ",  "${TEST_SRC}") ;
+		_tTestResFolder = createTextField(tabContent, "Tests resources ", "${TEST_RES}") ;
+		
+		createTabFoldersButtons(tabContent);
+		
+		createOneLabel(tabContent, "" ); 
+		createOneLabel(tabContent, "Project source folders : " ); 
+
+		IProject project = this.getCurrentProject();
+		String[] srcFolders = EclipseProjUtil.getSrcFolders(project);
+		for ( String srcFolder : srcFolders ) {
+			createOneLabel(tabContent, " . " + srcFolder );
+		}
+
 	}
+	
+    
+//	//------------------------------------------------------------------------------------------
+//	/**
+//	 * Creates the "Classes names" TabItem
+//	 * @param tabFolder
+//	 */
+//	private void createTabClassesNames(TabFolder tabFolder) {
+//		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
+//		tabItem.setText("Classes names");
+//		
+//		Composite tabContent = new Composite(tabFolder, SWT.NONE);
+//		tabContent.setLayout(new GridLayout(3, false));
+//		tabItem.setControl(tabContent);
+//
+////		String sSyntax = "Syntax : Prefix${" + ConfigDefaults.BEANNAME + "}Suffix " ;
+////		
+////		_tVOListClassName = createTextField(tabContent, "VOList class ") ;
+////		createTwoLabels(tabContent, "", 
+////				sSyntax + " ( default : '" + ConfigDefaults.DEFAULT_LIST_CLASS_NAME + "' )");
+////
+////		_tDAOClassName = createTextField(tabContent, "DAO class ") ;
+////		createTwoLabels(tabContent, "", 
+////				sSyntax + " ( default : '" + ConfigDefaults.DEFAULT_DAO_CLASS_NAME + "' )");
+////
+////		_tXmlMapperClassName = createTextField(tabContent, "XML mapper class ") ;
+////		createTwoLabels(tabContent, "", 
+////				sSyntax + " ( default : '" + ConfigDefaults.DEFAULT_XML_MAPPER_CLASS_NAME + "' )");
+//	}
 	
 	//------------------------------------------------------------------------------------------
 	/**
@@ -406,7 +457,7 @@ public class PropertiesPage extends PropertyPage {
 	private void createTabVariables(TabFolder tabFolder) 
 	{
 		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
-		tabItem.setText("Variables");
+		tabItem.setText(" Variables ");
 		
 		/*
 		 +----------------+---------+
@@ -500,7 +551,7 @@ public class PropertiesPage extends PropertyPage {
 	 */
 	private void createTabAdvanced(TabFolder tabFolder) {
 		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
-		tabItem.setText("Advanced");
+		tabItem.setText(" Advanced ");
 
 		Composite tabContent = new Composite(tabFolder, SWT.NONE);
 		tabContent.setLayout(new GridLayout(5, false));
@@ -518,7 +569,7 @@ public class PropertiesPage extends PropertyPage {
 	private void createTabAboutPlugin(TabFolder tabFolder) 
 	{
 		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
-		tabItem.setText("About plugin");
+		tabItem.setText(" About plugin ");
 		
 		Composite tabContent = new Composite(tabFolder, SWT.NONE);
 		tabContent.setLayout(new GridLayout(3, false));
@@ -553,8 +604,109 @@ public class PropertiesPage extends PropertyPage {
 		t.setEnabled(false);
 		t.setText( MyPlugin.getTemplatesDirectory() );
 		
+		t = createTextField(tabContent, "Generator version :") ;
+		t.setEnabled(false);
+		t.setText( GeneratorVersion.GENERATOR_VERSION );
 	}	
 	
+	//------------------------------------------------------------------------------------------
+	private void createTabFoldersButtons(Composite composite ){
+		//--- Creates the Label 
+		Label label = new Label(composite, SWT.NONE);
+		label.setText("");
+		Label label2 = new Label(composite, SWT.NONE);
+		label2.setText("");
+		
+		//--- Creates the buttons
+		Composite buttons = new Composite(composite, SWT.NONE);
+		buttons.setLayout(new FillLayout());
+
+		Button mavenButton = new Button(buttons, SWT.PUSH);
+		mavenButton.setText("Maven folders");
+		mavenButton.addSelectionListener(new SelectionListener() 
+    	{
+            public void widgetSelected(SelectionEvent arg0)
+            {
+            	_tSrcFolder.setText("src/main/java");
+            	_tResFolder.setText("src/main/resources");
+            	_tWebFolder.setText("src/main/webapp");
+            	_tTestSrcFolder.setText("src/test/java");
+            	_tTestResFolder.setText("src/test/resources");
+            }
+            public void widgetDefaultSelected(SelectionEvent arg0)
+            {
+            }
+        }
+		);
+
+		Button projectButton = new Button(buttons, SWT.PUSH);
+		projectButton.setText("Project folders");
+		projectButton.setData(this);
+		projectButton.addSelectionListener(new SelectionListener() 
+    	{
+            public void widgetSelected(SelectionEvent event)
+            {
+            	//Object source = event.getSource();
+            	//MsgBox.info("source : " + source.getClass().getCanonicalName() );
+            	Button b = (Button) event.getSource() ;
+            	PropertiesPage page = (PropertiesPage) b.getData() ;
+            	_tSrcFolder.setText( getProjectSourceFolder(page) );
+            	_tResFolder.setText("");
+            	_tWebFolder.setText( getProjectWebContentFolder(page) );
+            	_tTestSrcFolder.setText("");
+            	_tTestResFolder.setText("");
+            }
+            public void widgetDefaultSelected(SelectionEvent event)
+            {
+            }
+        }
+		);
+		
+	}
+	//------------------------------------------------------------------------------------------
+	/**
+	 * Try to determine the project source folder  
+	 * @param page
+	 * @return
+	 */
+	private String getProjectSourceFolder(PropertiesPage page) {
+		IProject project = page.getCurrentProject();
+		String[] srcFolders = EclipseProjUtil.getSrcFolders(project);
+		String projectSourceFolder = null ;
+		if ( srcFolders.length == 1 ) {
+			projectSourceFolder = srcFolders[0] ;
+		}
+		else if ( srcFolders.length > 1 ) {
+    		for ( String srcFolder : srcFolders ) {
+    			if ( "src".equals(srcFolder) ) {
+    				projectSourceFolder = "src" ;
+    				break;
+    			}
+    		}
+    		if ( null == projectSourceFolder ) {
+    			projectSourceFolder = srcFolders[0] ; // the first one 
+    		}
+		}
+		if ( null == projectSourceFolder ) { // still undefined 
+			projectSourceFolder = "src" ;
+		}
+		return projectSourceFolder ;
+	}
+	
+	private String getProjectWebContentFolder(PropertiesPage page) {
+		IProject project = page.getCurrentProject();
+		IFolder folder = project.getFolder(WEB_CONTENT);
+		if ( folder.exists() ) {
+			// Exists 
+			return WEB_CONTENT ;
+		}
+//		IResource res = EclipseProjUtil.getResource(project, "/"+WEB_CONTENT);
+//		if ( res != null ) {
+//			// Exists 
+//			return WEB_CONTENT ;
+//		}
+		return "" ;
+	}	
 	//------------------------------------------------------------------------------------------
 	private Text createTextField(Composite composite, String sLabel) {
 		//--- Creates the Label 
@@ -567,14 +719,35 @@ public class PropertiesPage extends PropertyPage {
 	}
 
 	//------------------------------------------------------------------------------------------
-//	private Label createSingleLabel(Composite composite, String sLabel) {
-//		//--- Creates the Label 
-//		Label label = new Label(composite, SWT.NONE);
-//		label.setText(sLabel);
-//		label.setLayoutData(getColSpan(3));
-//		return label;
-//	}
+	private Text createTextField(Composite composite, String label1, String label2) {
+		//--- Creates the Label 1
+		Label label = new Label(composite, SWT.NONE);
+		label.setText(label1);
+		//--- Creates the Label 2 
+		label = new Label(composite, SWT.NONE);
+		label.setText(label2);
+		//--- Creates the Text field 
+		Text textField = new Text(composite, SWT.BORDER);
+		textField.setLayoutData(getColSpan(1));
+		return textField;
+	}
 
+	//------------------------------------------------------------------------------------------
+	private Label createSingleLabel(Composite composite, String sLabel) {
+		//--- Creates the Label 
+		Label label = new Label(composite, SWT.NONE);
+		label.setText(sLabel);
+		label.setLayoutData(getColSpan(3));
+		return label;
+	}
+
+	//------------------------------------------------------------------------------------------
+	private void createOneLabel(Composite composite, String labelText) {
+		//--- Creates the Label 
+		Label label = new Label(composite, SWT.NONE);
+		label.setText(labelText);
+		label.setLayoutData(getColSpan(3));
+	}
 	//------------------------------------------------------------------------------------------
 	private void createTwoLabels(Composite composite, String sLabel1, String sLabel2) {
 		//--- Creates the 1st Label 
@@ -822,26 +995,22 @@ public class PropertiesPage extends PropertyPage {
 		//_tPluginConfigFile.setText( ProjectConfigManager.getCurrentProjectConfigFileName() );
 		_tPluginConfigFile.setText( projectConfig.getPluginConfigFile() );
 		
-		_tSourceFolder.setText( projectConfig.getSourceFolder() );
-		_tWebContentFolder.setText ( projectConfig.getWebContentFolder() );
+//		_tSourceFolder.setText( projectConfig.getSourceFolder() );
+//		_tWebContentFolder.setText ( projectConfig.getWebContentFolder() );
 //		_tTelosysProp.setText( projectConfig.getTelosysPropFile() );
 		_tTemplatesFolder.setText( projectConfig.getTemplatesFolder() );
 		_tRepositoriesFolder.setText( projectConfig.getRepositoriesFolder() );
 		
 		//--- Tab "Packages"
 		_tBeanPackage.setText( projectConfig.getPackageForVOBean() );
-//		_tVOListPackage.setText( projectConfig.getPackageForVOList() );
-//		_tDaoPackage.setText( projectConfig.getPackageForDAO() );
-//		_tXmlMapperPackage.setText( projectConfig.getPackageForXmlMapper() );
-//		_tScreenDataPackage.setText( projectConfig.getPackageForScreenData() );
-//		_tScreenManagerPackage.setText( projectConfig.getPackageForScreenManager() );
-//		_tScreenProceduresPackage.setText(projectConfig.getPackageForScreenProcedures() );
-//		_tScreenTriggersPackage.setText( projectConfig.getPackageForScreenTriggers() );
 		
-//		//--- Tab "Classes names"
-//		_tVOListClassName.setText( projectConfig.getClassNameForVOList() );
-//		_tXmlMapperClassName.setText( projectConfig.getClassNameForXmlMapper() );
-//		_tDAOClassName.setText( projectConfig.getClassNameForDAO() );
+		//--- Tab "Folders" ( considered as pre-defined variables )
+		_tSrcFolder.setText( projectConfig.getSRC() ) ;
+		_tResFolder.setText( projectConfig.getRES() ) ;
+		_tWebFolder.setText( projectConfig.getWEB() ) ;
+		_tTestSrcFolder.setText( projectConfig.getTEST_SRC() ) ;
+		_tTestResFolder.setText( projectConfig.getTEST_RES() ) ;
+
 		
 		//--- Tab "Variables"
 		//VariableItem[] items = projectConfig.getProjectVariables();
@@ -895,32 +1064,22 @@ public class PropertiesPage extends PropertyPage {
 		log("fieldsToProperties ...");
 		
 		//--- Tab "General"
-		props.put(PropName.SOURCE_FOLDER,     _tSourceFolder.getText() );
-		props.put(PropName.WEB_CONTENT_FOLDER,_tWebContentFolder.getText() );
-		props.put(PropName.TEMPLATES_FOLDER,  _tTemplatesFolder.getText() );
-		props.put(PropName.REPOS_FOLDER,      _tRepositoriesFolder.getText() );
-//		props.put(PropName.TELOSYS_PROP_FILE, _tTelosysProp.getText() );
+		props.put(GeneratorConfigConst.TEMPLATES_FOLDER,  _tTemplatesFolder.getText() );
+		props.put(PropName.REPOS_FOLDER,                  _tRepositoriesFolder.getText() );
 				
-//		//--- Tab "Packages"
-		props.put(PropName.PACKAGE_VO,              _tBeanPackage.getText());
-//		props.put(PropName.PACKAGE_VO_LIST,         _tVOListPackage.getText());
-//		props.put(PropName.PACKAGE_DAO,             _tDaoPackage.getText());
-//		props.put(PropName.PACKAGE_XML_MAPPER,      _tXmlMapperPackage.getText());
-//		
-//		props.put(PropName.PACKAGE_SCREEN_DATA,       _tScreenDataPackage.getText());
-//		props.put(PropName.PACKAGE_SCREEN_MANAGER,    _tScreenManagerPackage.getText());
-//		props.put(PropName.PACKAGE_SCREEN_PROCEDURES, _tScreenProceduresPackage.getText());
-//		props.put(PropName.PACKAGE_SCREEN_TRIGGERS,   _tScreenTriggersPackage.getText());
+		//--- Tab "Packages"
+		props.put(GeneratorConfigConst.PACKAGE_VO,        _tBeanPackage.getText());
 		
-//		//--- Tab "Classes names"
-//		props.put(PropName.CLASS_NAME_XML_MAPPER, _tXmlMapperClassName.getText() ); 
-//		props.put(PropName.CLASS_NAME_VO_LIST,    _tVOListClassName.getText() ); 
-//		props.put(PropName.CLASS_NAME_DAO,        _tDAOClassName.getText() ); 
-		
+		//--- Tab "Folders" ( considered as pre-defined variables )
+		props.put(ContextName.SRC,       _tSrcFolder.getText() );
+		props.put(ContextName.RES,       _tResFolder.getText() );
+		props.put(ContextName.WEB,       _tWebFolder.getText() );
+		props.put(ContextName.TEST_SRC,  _tTestSrcFolder.getText() );
+		props.put(ContextName.TEST_RES,  _tTestResFolder.getText() );
+
 		//--- Tab "Variables"		
 		log("propertiesToFields : variables ...");
 
-		//Variable[] variables = (Variable[]) _variablesTable.getItems();
 		Object[] items = _variablesTable.getItems();
 		Variable[] variables = new Variable[items.length];
 		for ( int i = 0 ; i < items.length ; i++ )

@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.telosys.tools.commons.TelosysToolsLogger;
+import org.telosys.tools.commons.Variable;
 import org.telosys.tools.eclipse.plugin.commons.MsgBox;
 import org.telosys.tools.eclipse.plugin.commons.TelosysPluginException;
 import org.telosys.tools.generator.Generator;
@@ -115,7 +116,9 @@ public class GenerationTaskWithProgress implements IRunnableWithProgress
 			MsgBox.error("Cannot build selected entities ", e1);
 			return ;
 		}
-
+		
+		Variable[] projectVariables = _generatorConfig.getProjectConfiguration().getVariables();
+		
 		// count = total number of work units into which the main task is been subdivided
 		progressMonitor.beginTask("Bulk generation in progress", totalWorkTasks ); 
 			
@@ -130,45 +133,13 @@ public class GenerationTaskWithProgress implements IRunnableWithProgress
 				for ( TargetDefinition genericTarget : entityTargets ) {
 					
 					//--- Get a specialized target for the current entity
-					Target target = new Target( genericTarget, entity.getName(), entity.getBeanJavaClass(), _generatorConfig.getProjectVariables() );
-
+//					Target target = new Target( genericTarget, entity.getName(), 
+//							entity.getBeanJavaClass(), _generatorConfig.getProjectVariables() );
+					Target target = new Target( genericTarget, entity.getName(), 
+							entity.getBeanJavaClass(), projectVariables );
+					
 					generateTarget(progressMonitor, target, selectedEntities); 
 					
-				/***
-					_logger.log(this, "run : entity " + entityName + "' : target file '" + target.getFile() + "' ");
-					
-					progressMonitor.subTask("Entity '" + entityName + "' : target file '" + target.getFile() + "' ");
-					
-					//--- Possible multiple generated targets for one main target (with embedded generator)
-					LinkedList<Target> generatedTargets = new LinkedList<Target>();
-					try {
-						Generator generator = new Generator(target, _generatorConfig, _logger);
-						generator.setSelectedEntitiesInContext(selectedEntities); // New [2013-02-04]
-						generator.generateTarget(target, _repositoryModel, generatedTargets);						
-						
-					} catch (GeneratorException e) {
-						// if the "run" method must propagate a checked exception, 
-						// it should wrap it inside an InvocationTargetException; 
-						throw new InvocationTargetException(e);
-					}
-
-					//--- Refresh the generated files
-					for ( Target generatedTarget : generatedTargets ) {
-						_logger.log(this, "Refresh generated target : " + generatedTarget.getFile() );
-
-						String outputFileNameInProject = generatedTarget.getOutputFileNameInProject() ;
-						IFile iFile = _project.getFile( outputFileNameInProject );
-						try {
-							iFile.refreshLocal(IResource.DEPTH_ZERO, null);
-						} catch (CoreException e) {
-							MsgBox.error("Cannot refresh file \n " + outputFileNameInProject );
-							throw new InterruptedException("Cannot refresh file.");
-						}
-						
-						//--- One more file : increment result count
-						_result++ ;
-					}
-					***/
 				}
 //				//--- One TARGET done
 //				// Notifies that a given number of work unit of the main task has been completed. 
@@ -185,7 +156,8 @@ public class GenerationTaskWithProgress implements IRunnableWithProgress
 		
 		//--- Finally, generate the "ONCE" targets ( NEW in version 2.0.3 / Feb 2013 )
 		for ( TargetDefinition genericTarget : onceTargets ) {
-			Target target = new Target( genericTarget, "", "", _generatorConfig.getProjectVariables() );
+			//Target target = new Target( genericTarget, "", "", _generatorConfig.getProjectVariables() );
+			Target target = new Target( genericTarget, "", "", projectVariables );
 			generateTarget(progressMonitor, target, selectedEntities); 
 		}
 		

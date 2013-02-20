@@ -16,16 +16,14 @@ import org.telosys.tools.eclipse.plugin.commons.Util;
 import org.telosys.tools.eclipse.plugin.config.ProjectConfig;
 
 /**
+ * Page 3 of the editor <br>
+ * 
+ * Shows the project configuration 
  * 
  */
 /* package */ class RepositoryEditorPage4 extends RepositoryEditorPage 
 {
 
-	//private RepositoryEditor _repEditor = null ; // Ref on the Editor this page belongs to
-
-		
-//	private Color _backgroundColor = null ;
-	
 	/**
 	 * @param editor
 	 * @param id
@@ -33,8 +31,6 @@ import org.telosys.tools.eclipse.plugin.config.ProjectConfig;
 	 */
 	public RepositoryEditorPage4(FormEditor editor, String id, String title) {
 		super(editor, id, title);
-		//super(editor, id, null); // ERROR if title is null
-		//_repEditor = (RepositoryEditor) editor;
 		PluginLogger.log(this, "constructor(.., '"+id+"', '"+ title +"')..." );		
 	}
 
@@ -44,22 +40,15 @@ import org.telosys.tools.eclipse.plugin.config.ProjectConfig;
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		
-		//RepositoryEditor repEditor = (RepositoryEditor) getEditor();
-		
 		log(this, "createFormContent(..)..." );
-//		Control pageControl = getPartControl();
 		
-//		Display display = pageControl.getDisplay();
-//		_backgroundColor = display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);		
-//		pageControl.setBackground(_backgroundColor ) ;
-		
-		//ProjectConfig config = _repEditor.getProjectConfig();
 		ProjectConfig config = getProjectConfig();
 		if ( config == null )
 		{
 			MsgBox.error("ProjectConfig is null");
 			return;
 		}
+		
 		// What do we have here ?
 		// * pageControl (Composite)
 		//  . class  : org.eclipse.ui.forms.widgets.ScrolledForm ( see API JavaDoc )
@@ -76,8 +65,6 @@ import org.telosys.tools.eclipse.plugin.config.ProjectConfig;
 		*/
 		
 		ScrolledForm form = managedForm.getForm();
-		// Page title 
-		// form.setText( "Project configuration" );
 		
 		Composite body = form.getBody(); 
 		// body.getClass() --> org.eclipse.ui.forms.widgets.LayoutComposite
@@ -107,26 +94,14 @@ import org.telosys.tools.eclipse.plugin.config.ProjectConfig;
 		addConfigRow(body, "Project folder :", config.getProjectFolder() );
 		addConfigRow(body, "Plugin configuration file :", config.getPluginConfigFile() );
 
-		addConfigRow(body, "Source folder :", config.getSourceFolder() );		
 		addConfigRow(body, "Templates folder :", config.getTemplatesFolder() );
 		addConfigRow(body, "Templates folder full path :", config.getTemplatesFolderFullPath() );
 		addConfigRow(body, "Repositories folder :", config.getRepositoriesFolder() );
 
 		
 		addConfigRow(body, "", "" );
+		//addConfigRow(body, "Generator version", GeneratorConst.GENERATOR_VERSION );
 		
-//		addConfigRow(body, "Java packages :", "" );
-//		addConfigRow(body, ". Bean package :", config.getPackageForVOBean() );
-//		addConfigRow(body, ". List package :", config.getPackageForVOList() );
-//		addConfigRow(body, ". DAO package :", config.getPackageForDAO() );
-//		addConfigRow(body, ". XML mapper package :", config.getPackageForXmlMapper() );
-		
-// Used only by the wizards
-//		addConfigRow(body, "", "" );
-//		addConfigRow(body, "Classes names :", "" );
-//		addConfigRow(body, ". Bean list :", config.getClassNameForVOList() );
-//		addConfigRow(body, ". Bean DAO :", config.getClassNameForDAO() );
-//		addConfigRow(body, ". Bean converter :", config.getClassNameForXmlMapper() );
 	}
 	
 	//----------------------------------------------------------------------------------------------

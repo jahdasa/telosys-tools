@@ -1,6 +1,5 @@
 package org.telosys.tools.eclipse.plugin.config;
 
-import org.telosys.tools.generator.config.GeneratorConfigConst;
 
 /**
  * @author L Guerin
@@ -16,20 +15,20 @@ public class PropName {
 	//-------------------------------------------------------------------------------
 	// Some properties are also used by the generator => keep the same names 
 	//-------------------------------------------------------------------------------
-    public final static String SOURCE_FOLDER          = GeneratorConfigConst.SOURCE_FOLDER ; // "SourceFolder";
+//    public final static String SOURCE_FOLDER          = GeneratorConfigConst.SOURCE_FOLDER ; // "SourceFolder";
     
-    public final static String WEB_CONTENT_FOLDER     = GeneratorConfigConst.WEB_CONTENT_FOLDER ; // "WebContentFolder";
+//    public final static String WEB_CONTENT_FOLDER     = GeneratorConfigConst.WEB_CONTENT_FOLDER ; // "WebContentFolder";
     
     public final static String REPOS_FOLDER           = "RepositoriesFolder";
 
-    public final static String TEMPLATES_FOLDER       = GeneratorConfigConst.TEMPLATES_FOLDER ; // "TemplatesFolder";
+//    public final static String TEMPLATES_FOLDER       = GeneratorConfigConst.TEMPLATES_FOLDER ; // "TemplatesFolder";
     
     //--- Files 
 //    public final static String DB_CONFIG_FILE         = "dbConfigFile";
 //    public final static String TELOSYS_PROP_FILE       = "TelosysPropFile";
 
     //--- Packages 
-    public final static String PACKAGE_VO             = GeneratorConfigConst.PACKAGE_VO ; // "packageVo";
+//    public final static String PACKAGE_VO             = GeneratorConfigConst.PACKAGE_VO ; // "packageVo";
 //
 //    public final static String PACKAGE_VO_LIST        = GeneratorConfigConst.PACKAGE_VO_LIST ; // "packageVoList";
 //
@@ -55,17 +54,17 @@ public class PropName {
 //    
 //    public final static String CLASS_NAME_XML_MAPPER = "XmlMapperClassName" ;
     
-    //--- Specific Templates 
-    public final static String SPECIFIC_TEMPLATES     = "specificTemplates";
-    
-    public final static String TEMPLATES_DIRECTORY    = "templatesDirectory";
+//    //--- Specific Templates 
+//    public final static String SPECIFIC_TEMPLATES     = "specificTemplates";
+//    
+//    public final static String TEMPLATES_DIRECTORY    = "templatesDirectory";
 
-    //--- Specific Rules Class 
-    public final static String SPECIFIC_INIT_CHECK    = "specificInitCheck";
-
-    public final static String INIT_CHECK_CLASS_DIR   = "initCheckClassDir";
-
-    public final static String INIT_CHECK_CLASS_NAME  = "initCheckClassName";
+//    //--- Specific Rules Class 
+//    public final static String SPECIFIC_INIT_CHECK    = "specificInitCheck";
+//
+//    public final static String INIT_CHECK_CLASS_DIR   = "initCheckClassDir";
+//
+//    public final static String INIT_CHECK_CLASS_NAME  = "initCheckClassName";
 
     //public final static String PROJECT_VARIABLE_PREFIX  = "ProjectVariable."; 
     // moved in VariablesUtil
