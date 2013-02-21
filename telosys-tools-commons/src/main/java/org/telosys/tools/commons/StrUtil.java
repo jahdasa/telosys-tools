@@ -479,4 +479,25 @@ public final class StrUtil
 			return sb.toString();
 		}
 	}	
+	
+	//-------------------------------------------------------------------------------
+	/**
+	 * Returns true if the 2 strings are different
+	 * @param s1
+	 * @param s2
+	 * @return
+	 */
+	public final static boolean different(String s1, String s2 ) {
+		if ( s1 != null ) {
+			if ( null == s2 ) {
+				return true ; // different
+			} 
+			else {
+				return ! s1.equals(s2) ;
+			}
+		}
+		else {
+			return s2 != null ;
+		}
+	}
 }
