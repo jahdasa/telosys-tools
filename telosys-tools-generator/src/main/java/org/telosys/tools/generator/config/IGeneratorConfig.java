@@ -15,7 +15,6 @@
  */
 package org.telosys.tools.generator.config;
 
-import org.telosys.tools.commons.Variable;
 import org.telosys.tools.generator.context.ProjectConfiguration;
 
 /**
