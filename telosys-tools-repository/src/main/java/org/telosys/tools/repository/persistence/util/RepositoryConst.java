@@ -162,6 +162,9 @@ public class RepositoryConst {
 
 	public final static String COLUMN_FORMAT            = "format"; // v 1.0  #LGU 31/08/2011
 	
+	public final static String COLUMN_LABEL             = "label"; // v 2.0.3  #LGU 20/02/2013
+	public final static String COLUMN_INPUT_TYPE        = "inputType"; // v 2.0.3  #LGU 20/02/2013
+	
 	//--------------------------------------------------------------------------------------------------
 	//--- XML <fk> element and attributes
 	public static final String FK        = "fk";

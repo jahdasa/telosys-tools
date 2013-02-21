@@ -98,6 +98,9 @@ public class ColumnWrapper {
 			column.setMaxValue(elem.getAttribute(RepositoryConst.COLUMN_MAX_VALUE));
 		}
 		
+		column.setLabel    ( elem.getAttribute(RepositoryConst.COLUMN_LABEL)     ) ; // #LGU 20/02/2013
+		column.setInputType( elem.getAttribute(RepositoryConst.COLUMN_INPUT_TYPE)) ; // #LGU 20/02/2013
+		
 		return column;
 	}
 
@@ -208,6 +211,9 @@ public class ColumnWrapper {
 				element.setAttribute(RepositoryConst.COLUMN_FORMAT, column.getFormat() );
 			}
 		}
+
+		element.setAttribute(RepositoryConst.COLUMN_LABEL,      column.getLabel()     ); // #LGU 20/02/2013
+		element.setAttribute(RepositoryConst.COLUMN_INPUT_TYPE, column.getInputType() ); // #LGU 20/02/2013
 		
 		return element;
 	}

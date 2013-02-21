@@ -54,4 +54,22 @@ public interface InitializerChecker
     
     public String getAttributeDateType(String sColumnType, int iColumnTypeCode, String sJavaType );
 
+    /**
+     * Returns the Java attribute label for the given column 
+     * @param sColumnName the name of the column in the database
+     * @param sColumnTypeName the native database type
+     * @param iJdbcTypeCode the JDBC type code
+     * @return the attribute name
+     */
+    public String getAttributeLabel(String sColumnName, String sColumnTypeName, int iJdbcTypeCode);
+
+    /**
+     * Returns the Java attribute input type for the given column 
+     * @param sColumnName the name of the column in the database
+     * @param sColumnTypeName the native database type
+     * @param iJdbcTypeCode the JDBC type code
+     * @return the attribute name
+     */
+    public String getAttributeInputType(String sColumnName, String sColumnTypeName, int iJdbcTypeCode, String sJavaType);
+
 }

@@ -415,7 +415,11 @@ public abstract class RepositoryManager extends StandardTool
 		
 		column.setDatabaseDefaultValue( dbCol.getDefaultValue() ); // #LGU 10/08/2011
 
-		//--- Further informations for Java Validator 
+		//--- Further information ( v 2.0.3 )
+		column.setLabel(     _inichk.getAttributeLabel(dbColName, dbTypeName, iJdbcTypeCode) );
+		column.setInputType( _inichk.getAttributeInputType(dbColName, dbTypeName, iJdbcTypeCode, sJavaType));
+		
+		//--- Further information for Java Validator 
 		if ( ! column.isJavaPrimitiveType() ) {
 			if ( dbCol.isNotNull()  ) {
 				column.setJavaNotNull( true );

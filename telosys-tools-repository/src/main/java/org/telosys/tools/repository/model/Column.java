@@ -76,8 +76,11 @@ public class Column implements Comparable<Column>
 	
 	private boolean _bSelected    = true ;  // selected by default
 	
-	//----- SPECIAL DATA for STRING -----
+	//----- SPECIAL DATA for ALL -----
+	private String  _sLabel     = null ;
+	private String  _sInputType = null ;
 	
+	//----- SPECIAL DATA for STRING -----	
 	private boolean _bLongText = false ;  //  
 	private boolean _bNotEmpty = false ;  // notEmpty="true|false" 
 	private boolean _bNotBlank = false ;  // notBlank="true|false" 
@@ -86,9 +89,7 @@ public class Column implements Comparable<Column>
 	private String  _sPattern   = null ;
 	
 	//----- SPECIAL DATA for DATE & TIME -----
-	
 	private String  _sDateType = null ; // "D", "T" or "DT" ( see constants )
-	
 	private boolean _bDatePast   = false ;
 	private boolean _bDateFuture = false ;
 	private boolean _bDateBefore = false ;
@@ -101,7 +102,6 @@ public class Column implements Comparable<Column>
 	private String  _sMaxValue = null ;
 	
 	//----- SPECIAL DATA for BOOLEAN -----
-	
 	private String  _sBooleanTrueValue  = null ; // the special value for TRUE 
 	private String  _sBooleanFalseValue = null ; // the special value for FALSE 
 	
@@ -331,10 +331,6 @@ public class Column implements Comparable<Column>
 	 */
 	public boolean isJavaTypeBoolean() 
 	{
-//		String sJavaType = getJavaType();
-//		if ( "boolean".equals(sJavaType) ) return true ;
-//		if ( "java.lang.Boolean".equals(sJavaType) ) return true ;
-//		return false ;
 		return JavaTypeUtil.isCategoryBoolean( getJavaType() ) ;
 	}
 	
@@ -344,9 +340,6 @@ public class Column implements Comparable<Column>
 	 */
 	public boolean isJavaTypeString() 
 	{
-//		String sJavaType = getJavaType();
-//		if ( "java.lang.String".equals(sJavaType) ) return true ;
-//		return false ;
 		return JavaTypeUtil.isCategoryString( getJavaType() ) ;
 	}
 
@@ -424,14 +417,10 @@ public class Column implements Comparable<Column>
 	public void setPattern(String v) {
 		_sPattern = v ;
 	}
-
-
 	//-----------------------------------------------------------------------------
-	
 	public boolean getSelected() {
 		return _bSelected ;
 	}
-
 	public void setSelected(boolean b) {
 		_bSelected = b ;
 	}
@@ -439,21 +428,33 @@ public class Column implements Comparable<Column>
 	//-----------------------------------------------------------------------------
 	// Special infos
 	//-----------------------------------------------------------------------------
+	public String getLabel() {  // V 2.0.3
+		return _sLabel ;
+	}
+	public void setLabel(String s) { // V 2.0.3
+		_sLabel = s ;
+	}
 	
+	//-----------------------------------------------------------------------------
+	public String getInputType() { // V 2.0.3
+		return _sInputType ;
+	}
+	public void setInputType(String s) { // V 2.0.3
+		_sInputType = s ;
+	}
+	
+	//-----------------------------------------------------------------------------
 	public boolean getLongText() {
 		return _bLongText ;
 	}
-
 	public void setLongText(String flag) {
 		setLongText( "true".equalsIgnoreCase(flag) ) ;
 	}
-	
 	public void setLongText(boolean b) {
 		_bLongText = b ;
 	}
 
 	//-----------------------------------------------------------------------------
-
 	/**
 	 * Returns the special date type : "D", "T", "DT" or "" if none
 	 * @return

@@ -75,6 +75,32 @@ public class DefaultInitializerChecker implements InitializerChecker
             return null;
         }
     }
+    
+    private String toSeparatedWords(String sName)
+    {
+        if (sName != null)
+        {
+            StringBuffer sb = new StringBuffer( sName.length() );
+            String sToken = null;
+            String s = sName.trim(); // to be secure
+            StringTokenizer st = new StringTokenizer(s, "_");
+            int i = 0 ;
+            while (st.hasMoreTokens())
+            {
+            	i++ ;
+                sToken = st.nextToken();
+                if ( i > 1 ) {
+                    sb.append( " " );
+                }
+                sb.append( transformToken( sToken ) );
+            }
+            return sb.toString();
+        }
+        else
+        {
+            return null;
+        }
+    }
 	
     //------------------------------------------------------------------------------
     // Classes
@@ -85,9 +111,6 @@ public class DefaultInitializerChecker implements InitializerChecker
     public String getJavaBeanClassName(String sTableName)
     {
     	return toCamelCase(sTableName);
-    	// First char Upper Case 
-        //return (sTableName.substring(0, 1).toUpperCase() + sTableName.substring(1, sTableName.length()).toLowerCase());
-        //return getValidTableName(sTableName) + "VO";
     }
 
     //------------------------------------------------------------------------------
@@ -161,4 +184,48 @@ public class DefaultInitializerChecker implements InitializerChecker
     	return null ;
     }
     
+    public String getAttributeLabel(String sColumnName, String sColumnTypeName, int iJdbcTypeCode) 
+    {
+        //--- Colum name converted in "Word1 Word2"
+        return toSeparatedWords(sColumnName);
+        
+    }
+    
+    /* (non-Javadoc)
+     * @see org.telosys.tools.repository.config.InitializerChecker#getAttributeInputType(java.lang.String, java.lang.String, int, java.lang.String)
+     */
+    public String getAttributeInputType(String sColumnName, String sColumnTypeName, int iJdbcTypeCode, String sJavaType)
+    {
+    	//--- Returns the HTML 5 input type
+    	switch ( iJdbcTypeCode ) {
+	    	case Types.CHAR :
+	    	case Types.VARCHAR :
+	    	case Types.LONGVARCHAR :
+	    		return "text" ;
+    		
+	    	case Types.NUMERIC :
+	    	case Types.DECIMAL :
+	    	case Types.TINYINT :
+	    	case Types.SMALLINT :
+	    	case Types.INTEGER :
+	    	case Types.BIGINT :    		
+	    	case Types.REAL :
+	    	case Types.FLOAT :
+	    	case Types.DOUBLE :
+	    		return "number" ;
+    		
+    		case Types.DATE :
+    			return "date" ;
+    			
+    		case Types.TIME :
+    			return "time" ;
+    			
+    		case Types.BIT :
+    		case Types.BOOLEAN :
+    			return "checkbox" ;
+    			
+    	}
+    	return "" ;
+    }
+
 }
