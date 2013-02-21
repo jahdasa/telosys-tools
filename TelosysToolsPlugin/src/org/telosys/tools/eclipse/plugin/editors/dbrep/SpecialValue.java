@@ -1,5 +1,6 @@
 package org.telosys.tools.eclipse.plugin.editors.dbrep;
 
+import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.eclipse.plugin.commons.PluginLogger;
 import org.telosys.tools.repository.model.Column;
 
@@ -15,9 +16,14 @@ public abstract class SpecialValue
 
 	protected Column _modelColumn = null ;
 	
-	private boolean  _initialNotNull = false ;
+	//--- Initial values 
+	private final boolean  _initialNotNull ;
 	
-	private String   _initialDefaultValue = null ;
+	private final String   _initialDefaultValue ;
+
+	private final String   _initialLabel ;
+
+	private final String   _initialInputType ;
 
 
 	//---------------------------------------------------------------------
@@ -28,10 +34,12 @@ public abstract class SpecialValue
 	protected SpecialValue( Column modelColumn ) 
 	{
 		_modelColumn    = modelColumn ;
-		
+		//--- Keep initial values 
 		_initialNotNull      = _modelColumn.getJavaNotNull();
-		
 		_initialDefaultValue = _modelColumn.getJavaDefaultValue(); 
+		_initialLabel        = _modelColumn.getLabel() ;
+		_initialInputType    = _modelColumn.getInputType() ;
+		
 	}
 	
 	//---------------------------------------------------------------------
@@ -54,6 +62,8 @@ public abstract class SpecialValue
 	}
 	
 	//---------------------------------------------------------------------
+	// NOT NULL
+	//---------------------------------------------------------------------
 	public boolean isNotNull()
 	{
 		return _modelColumn.getJavaNotNull() ;
@@ -65,6 +75,8 @@ public abstract class SpecialValue
 	}
 	
 	//---------------------------------------------------------------------
+	// DEFAULT VALUE
+	//---------------------------------------------------------------------
 	public String getDefaultValue()
 	{
 		//return _modelColumn.getJavaDefaultValue() ;
@@ -75,6 +87,29 @@ public abstract class SpecialValue
 		_modelColumn.setJavaDefaultValue(v);
 	}
 
+	//---------------------------------------------------------------------
+	// LABEL
+	//---------------------------------------------------------------------
+	public String getLabel()
+	{
+		return emptyIfNull( _modelColumn.getLabel() ) ;
+	}
+	public void setLabel(String v)
+	{
+		_modelColumn.setLabel(v);
+	}
+
+	//---------------------------------------------------------------------
+	// INPUT TYPE
+	//---------------------------------------------------------------------
+	public String getInputType()
+	{
+		return emptyIfNull( _modelColumn.getInputType() ) ;
+	}
+	public void setInputType(String v)
+	{
+		_modelColumn.setInputType(v);
+	}
 
 	//---------------------------------------------------------------------
 	/**
@@ -84,7 +119,9 @@ public abstract class SpecialValue
 	protected boolean hasChanged()
 	{
 		if ( _initialNotNull      != _modelColumn.getJavaNotNull() ) return true ;
-		if ( _initialDefaultValue != _modelColumn.getJavaDefaultValue() ) return true ;
+		if ( StrUtil.different(_initialDefaultValue, _modelColumn.getJavaDefaultValue() ) ) return true ;
+		if ( StrUtil.different(_initialLabel,        _modelColumn.getLabel()            ) ) return true ;
+		if ( StrUtil.different(_initialInputType,    _modelColumn.getInputType()        ) ) return true ;
 		return false ;
 	}
 	
@@ -96,6 +133,8 @@ public abstract class SpecialValue
 	{
 		_modelColumn.setJavaNotNull(_initialNotNull);
 		_modelColumn.setJavaDefaultValue(_initialDefaultValue);
+		_modelColumn.setLabel(_initialLabel );
+		_modelColumn.setInputType(_initialInputType);
 	}
 	
 	//---------------------------------------------------------------------

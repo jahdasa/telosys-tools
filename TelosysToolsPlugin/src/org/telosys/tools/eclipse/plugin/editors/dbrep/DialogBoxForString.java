@@ -31,18 +31,29 @@ public class DialogBoxForString extends DialogBox
 	public DialogBoxForString(Shell parentShell, SpecialValueForString value) 
 	{
 		super(parentShell, value);
+		log( "DialogBoxForString(Shell parentShell, SpecialValueForString value) CONSTRUCTOR" );
 		_value = value ;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.telosys.tools.eclipse.plugin.editors.dbrep.DialogBox#createContents(org.eclipse.swt.widgets.Composite)
+	 * === STEP 1
+	 */
 	protected Control createContents(Composite parent) 
 	{
+		log( "createContents(Composite parent) ..." );
 		Control result = super.createContents(parent);
 		setMessage( "String type and validation rules", IMessageProvider.INFORMATION);
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+	 * === STEP 2
+	 */
 	protected Control createDialogArea(Composite parent) 
 	{
+		log( "createDialogArea(Composite parent) ..." );
 		Composite content = createDialogAreaContainer(parent);
 		createStringTypeGroup(content);
 		createValidationGroup(content);

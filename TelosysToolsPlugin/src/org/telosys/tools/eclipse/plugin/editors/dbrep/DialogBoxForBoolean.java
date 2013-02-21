@@ -33,7 +33,7 @@ public class DialogBoxForBoolean extends DialogBox
 
 	protected Control createContents(Composite parent) 
 	{
-		PluginLogger.log(this, "createContents() ..." );
+		PluginLogger.log(this, "createContents(Composite parent) ..." );
 		
 		Control result = super.createContents(parent);
 		
@@ -45,7 +45,7 @@ public class DialogBoxForBoolean extends DialogBox
 
 	protected Control createDialogArea(Composite parent) 
 	{
-		PluginLogger.log(this, "createDialogArea() ..." );
+		PluginLogger.log(this, "createDialogArea(Composite parent) ..." );
 
 //		Composite content = new Composite(parent, SWT.NONE);
 //

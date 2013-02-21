@@ -4,13 +4,17 @@ import java.math.BigDecimal;
 
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.eclipse.plugin.commons.MsgBox;
 import org.telosys.tools.eclipse.plugin.commons.PluginLogger;
@@ -24,9 +28,11 @@ public abstract class DialogBox extends TitleAreaDialog
 	//--- Current value
 	private SpecialValue _value = null ;
 
-	public abstract boolean onOK();
+	//--- Standard Fields 
+	private Text   _textFieldLabel     = null ;
+	private Text   _textFieldInputType = null ;
 	
-//	public abstract Object getValue();
+	public abstract boolean onOK();
 	
 	public DialogBox(Shell parentShell, SpecialValue value) 
 	{
@@ -75,7 +81,68 @@ public abstract class DialogBox extends TitleAreaDialog
 		
 		content.setLayout(rowLayout);
 		
+		createStandardGroup(content); // New in v 2.0.3
+		
+		//--- Data To View 
+		_textFieldLabel.setText( _value.getLabel() ) ;
+		_textFieldInputType.setText( _value.getInputType() ) ;
+
 		return content ;
+	}
+	
+	/**
+	 * Create a standard group for all types of fields with <br>
+	 *  . field label <br>
+	 *   
+	 * @param container
+	 * @return
+	 */
+	private Group createStandardGroup(Composite container)
+	{
+		log( "createFirstGroup() ..." );
+		Group group = createDialogAreaGroup(container, null );
+
+		//--- Group layout
+		GridLayout gridLayout = new GridLayout();
+		gridLayout.numColumns = 2;
+		gridLayout.makeColumnsEqualWidth = false;
+        group.setLayout(gridLayout);
+
+		GridData gdSpan = new GridData();
+		gdSpan.verticalAlignment = GridData.FILL;
+		gdSpan.grabExcessVerticalSpace = true;
+		gdSpan.horizontalSpan = 2;
+
+		GridData gdLabel = new GridData();
+		//gdLabel.widthHint    = 100 ;
+		//gdLabel.minimumWidth = 100 ;
+        
+		GridData gdText = new GridData();
+		gdText.widthHint = 200 ;
+		gdText.minimumWidth = 200 ;
+
+		Label label ;
+
+		//--- Field label
+		label = new Label(group, SWT.NONE);
+		label.setText("Label : ");
+		label.setLayoutData(gdLabel);
+
+		_textFieldLabel = new Text(group, SWT.BORDER);
+		_textFieldLabel.setText("");
+		_textFieldLabel.setLayoutData(gdText);
+		
+		//--- Field input type
+		label = new Label(group, SWT.NONE);
+		label.setText("Input type : ");
+		label.setLayoutData(gdLabel);
+
+		_textFieldInputType = new Text(group, SWT.BORDER);
+		_textFieldInputType.setText("");
+		_textFieldInputType.setLayoutData(gdText);
+		
+        return group ;
+
 	}
 	
 	/**
@@ -111,6 +178,9 @@ public abstract class DialogBox extends TitleAreaDialog
 		PluginLogger.log(this, " ==== OK Pressed ");
 		if ( onOK() )
 		{
+			_value.setLabel(     _textFieldLabel.getText() ) ;
+			_value.setInputType( _textFieldInputType.getText() ) ;
+
 			super.okPressed();
 		}
 	}
