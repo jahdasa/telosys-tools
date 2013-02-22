@@ -71,6 +71,8 @@ public class GeneratorConfig implements IGeneratorConfig
     	allVariables.put( ContextName.WEB,      prop.getProperty(ContextName.WEB,      "") );
     	allVariables.put( ContextName.TEST_SRC, prop.getProperty(ContextName.TEST_SRC, "") );
     	allVariables.put( ContextName.TEST_RES, prop.getProperty(ContextName.TEST_RES, "") );
+    	allVariables.put( ContextName.DOC,      prop.getProperty(ContextName.DOC,      "") );
+    	allVariables.put( ContextName.TMP,      prop.getProperty(ContextName.TMP,      "") );
     	
     	//--- 3) Get all variables to buil the array
     	LinkedList<Variable> variablesList = new LinkedList<Variable>();

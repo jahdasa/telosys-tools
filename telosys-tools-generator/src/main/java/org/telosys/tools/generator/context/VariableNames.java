@@ -15,6 +15,7 @@
  */
 package org.telosys.tools.generator.context;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 
 import org.telosys.tools.commons.Variable;
@@ -28,7 +29,6 @@ import org.telosys.tools.generator.ContextName;
  */
 public class VariableNames {
 
-	// TODO : update the variable names list
 	private final static String[] RESERVED_NAMES =
 	{
 		//--- Special characters 
@@ -47,6 +47,8 @@ public class VariableNames {
 		ContextName.WEB,
 		ContextName.TEST_SRC,
 		ContextName.TEST_RES,
+		ContextName.DOC,
+		ContextName.TMP,
 		
 		//--- Objects
 		ContextName.GENERATOR , 
@@ -63,18 +65,33 @@ public class VariableNames {
 
 		//--- Wizards variables
 		ContextName.CLASS ,
-		"context", 
-		"screendata",
-		"triggers"
+		"context" 
+//		"context", 
+//		"screendata",
+//		"triggers"
 	} ;
 	
 	/**
-	 * Returns all the variable names used in the Velocity Context
+	 * Returns a copy of all the variable names used in the Velocity Context
 	 * @return
 	 */
 	public final static String[] getReservedNames()
 	{
-		return RESERVED_NAMES ;
+		int n = RESERVED_NAMES.length;
+		String[] newArray = new String[ n ] ;
+		System.arraycopy(RESERVED_NAMES, 0, newArray, 0, n);
+		return newArray ;
+	}
+	
+	/**
+	 * Returns a sorted copy of all the variable names used in the Velocity Context
+	 * @return
+	 */
+	public final static String[] getSortedReservedNames()
+	{
+		String[] names = getReservedNames() ;
+		Arrays.sort(names);
+		return names ;
 	}
 	
 	/**

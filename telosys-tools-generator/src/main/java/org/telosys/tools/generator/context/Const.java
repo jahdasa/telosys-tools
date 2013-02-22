@@ -64,8 +64,5 @@ public class Const {
 	public int getNOT_IN_SELECTED_LINKS() {
 		return    NOT_IN_SELECTED_LINKS ;
 	}
-	
-	public Object getNULL() {
-		return null ;
-	}
+
 }

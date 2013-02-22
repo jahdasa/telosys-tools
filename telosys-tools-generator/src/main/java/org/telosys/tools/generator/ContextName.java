@@ -39,6 +39,8 @@ public class ContextName {
 	public final static String  WEB      = "WEB" ;
 	public final static String  TEST_SRC = "TEST_SRC" ;
 	public final static String  TEST_RES = "TEST_RES" ;
+	public final static String  DOC      = "DOC" ;
+	public final static String  TMP      = "TMP" ;
 	
 	//--- Standard objects names 
 	public final static String  GENERATOR  = "generator" ;

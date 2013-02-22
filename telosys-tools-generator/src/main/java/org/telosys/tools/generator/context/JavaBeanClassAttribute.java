@@ -49,17 +49,18 @@ public class JavaBeanClassAttribute
     private final static String TYPE_DATE = "date" ;
     private final static String TYPE_TIME = "time" ;
     
-	private String  _sName = null ;  // attribute name 
-	private String  _sType = null ;  // Short java type without package, without blank, eg : "int", "BigDecimal", "Date"
-	private String  _sFullType = null ;  // Full java type with package, : "java.math.BigDecimal", "java.util.Date"
+	//--- Basic minimal attribute info -------------------------------------------------
+	private final String  _sName ;  // attribute name 
+	private String        _sType = "" ;  // Short java type without package, without blank, eg : "int", "BigDecimal", "Date"
+	private final String  _sFullType ;  // Full java type with package, : "java.math.BigDecimal", "java.util.Date"
 	
-	private String  _sInitialValue = null;
-	private String  _sGetter = null ;
-	private String  _sSetter = null ;
+	private final String  _sInitialValue ; // can be null 
+	private final String  _sGetter ;
+	private final String  _sSetter ;
 	
-	private String  _sDefaultValue = null ;
+	private final String  _sDefaultValue ; // can be null 
 	
-	//--- Database infos -------------------------------------------------
+	//--- Database info -------------------------------------------------
     private boolean _bKeyElement       = false ;  // True if primary key
     private boolean _bUsedInForeignKey = false ;
     private boolean _bAutoIncremented  = false ;  // True if auto-incremented by the database
@@ -67,36 +68,38 @@ public class JavaBeanClassAttribute
     private String  _sDataBaseType     = null ;  // Column type in the DB table
     private int     _iJdbcTypeCode     = 0 ;     // JDBC type for this column
     private int     _iDatabaseSize     = 0 ;     // Size of this column (if Varchar ) etc..
-    private String  _sDatabaseDefaultValue = null ;  
-    private boolean _bDatabaseNotNull = false ;  // True if "not null" in the database
+    private String  _sDatabaseDefaultValue = null ; // keep null (do not initialize to "" )  
+    private boolean _bDatabaseNotNull  = false ;  // True if "not null" in the database
     
     //--- Further info for ALL ---------------------------------------
-    private boolean _bNotNull = false ;
-    
+    private boolean _bNotNull   = false ;
+    private String  _sLabel     = "" ; // v 2.0.3
+    private String  _sInputType = "" ; // v 2.0.3
+
     //--- Further info for BOOLEAN -----------------------------------
-    private String  _sBooleanTrueValue  = null ; // eg "1", ""Yes"", ""true""
-    private String  _sBooleanFalseValue = null ; // eg "0", ""No"",  ""false""
+    private String  _sBooleanTrueValue  = "" ; // eg "1", ""Yes"", ""true""
+    private String  _sBooleanFalseValue = "" ; // eg "0", ""No"",  ""false""
     
     //--- Further info for DATE/TIME ---------------------------------
-    private int     _iDateType = DATE_ONLY ;  // By default only DATE
-    private boolean _bDatePast   = false ;
-    private boolean _bDateFuture = false ;
-    private boolean _bDateBefore = false ;
-    private String  _sDateBeforeValue = null ;
-    private boolean _bDateAfter  = false ;
-    private String  _sDateAfterValue  = null ;
+    private int     _iDateType        = DATE_ONLY ;  // By default only DATE
+    private boolean _bDatePast        = false ;
+    private boolean _bDateFuture      = false ;
+    private boolean _bDateBefore      = false ;
+    private String  _sDateBeforeValue = "" ;
+    private boolean _bDateAfter       = false ;
+    private String  _sDateAfterValue  = "" ;
 
     //--- Further info for NUMBER ------------------------------------
-    private String  _sMinValue = null ; 
-    private String  _sMaxValue = null ; 
+    private String  _sMinValue = "" ; 
+    private String  _sMaxValue = "" ; 
 
     //--- Further info for STRING ------------------------------------
     private boolean _bLongText  = false ;  // True if must be stored as a separate tag in the XML flow
     private boolean _bNotEmpty  = false ;
     private boolean _bNotBlank  = false ;
-    private String  _sMinLength = null ; 
-    private String  _sMaxLength = null ; 
-    private String  _sPattern = null ; 
+    private String  _sMinLength = "" ; 
+    private String  _sMaxLength = "" ; 
+    private String  _sPattern   = "" ; 
     
     
 	//--- JPA KEY Generation infos -------------------------------------------------
@@ -105,16 +108,16 @@ public class JavaBeanClassAttribute
 	private String  _sGeneratedValueGenerator = null ;
 	
     private boolean _bSequenceGenerator = false ;  // True if SequenceGenerator ( annotation "@SequenceGenerator" )
-	private String  _sSequenceGeneratorName = null ;
-	private String  _sSequenceGeneratorSequenceName = null ;
+	private String  _sSequenceGeneratorName           = null ;
+	private String  _sSequenceGeneratorSequenceName   = null ;
 	private int     _iSequenceGeneratorAllocationSize = -1;
 
     private boolean _bTableGenerator = false ;  // True if TableGenerator ( annotation "@TableGenerator" )
-	private String  _sTableGeneratorName = null ;
-	private String  _sTableGeneratorTable = null ;
-	private String  _sTableGeneratorPkColumnName = null ;
+	private String  _sTableGeneratorName            = null ;
+	private String  _sTableGeneratorTable           = null ;
+	private String  _sTableGeneratorPkColumnName    = null ;
 	private String  _sTableGeneratorValueColumnName = null ;
-	private String  _sTableGeneratorPkColumnValue = null ;
+	private String  _sTableGeneratorPkColumnValue   = null ;
 
 	//--- Annotations : Bean Validation JSR303 -------------------------------------------------
 	private AnnotationsForBeanValidation _annotationsBeanValidation = null ;
@@ -139,7 +142,8 @@ public class JavaBeanClassAttribute
 		_sName = sName ; 
 		_sType = StrUtil.removeAllBlanks(sType);    
 		_sFullType = StrUtil.removeAllBlanks(sFullType);  
-		_sInitialValue = sInitialValue;
+		_sInitialValue = sInitialValue; // can be null 
+		_sDefaultValue = null ; // keep null ( for hasDefaultValue )
 		_sGetter = sGetter ;
 		_sSetter = sSetter ;		
 	}
@@ -151,108 +155,105 @@ public class JavaBeanClassAttribute
 	 */
 	public JavaBeanClassAttribute(final Column column) 
 	{
-		if (column != null) {
-			
-			_sName = column.getJavaName();
-			_sGetter = Util.buildGetter(_sName, _sType);
-			_sSetter = Util.buildSetter(_sName);
-			
-			// TODO gerer les duplicatedShortNames dans Util.shortestType mais dans ce cas a quoi cela peut servir ????
-			_sType = StrUtil.removeAllBlanks(Util.shortestType(column.getJavaType(), new LinkedList<String>()));
-			_sFullType = StrUtil.removeAllBlanks(column.getJavaType());
-			
-			// TODO _sInitialValue
-			_sDefaultValue    = column.getJavaDefaultValue();
-			
-			_sDataBaseName    = column.getDatabaseName() ;
-	        _sDataBaseType    = column.getDatabaseTypeName() ;
-	        _iJdbcTypeCode    = column.getJdbcTypeCode() ;
-	        _bKeyElement      = column.isPrimaryKey() ;
-	        _bUsedInForeignKey = column.isForeignKey();
-	        _bAutoIncremented = column.isAutoIncremented();
-	        _iDatabaseSize    = column.getDatabaseSize() ;
-	        _sDatabaseDefaultValue = column.getDatabaseDefaultValue(); 
-	        _bDatabaseNotNull = column.isDatabaseNotNull();
-	        
-			//--- Further info for ALL
-	        _bNotNull = column.getJavaNotNull();
-	        
-			//--- Further info for BOOLEAN 
-	        _sBooleanTrueValue   = column.getBooleanTrueValue().trim() ;
-			_sBooleanFalseValue  = column.getBooleanFalseValue().trim() ;
-			
-			//--- Further info for NUMBER 
-		    _sMinValue = column.getMinValue() ; 
-		    _sMaxValue = column.getMaxValue() ; 
-
-			//--- Further info for STRING 
-	        _bLongText  = column.getLongText() ;
-	        _bNotEmpty  = column.getNotEmpty();
-	        _bNotBlank  = column.getNotBlank();
-	        _sMaxLength = column.getMaxLength();
-	        _sMinLength = column.getMinLength();
-	        _sPattern   = column.getPattern();
-	        
+		_sName   = column.getJavaName();
+		_sGetter = Util.buildGetter(_sName, _sType);
+		_sSetter = Util.buildSetter(_sName);
+		
+		// TODO gerer les duplicatedShortNames dans Util.shortestType mais dans ce cas a quoi cela peut servir ????
+		_sType     = StrUtil.removeAllBlanks(Util.shortestType(column.getJavaType(), new LinkedList<String>()));
+		_sFullType = StrUtil.removeAllBlanks(column.getJavaType());
+				
+		_sInitialValue    = null ; // TODO : column.getJavaInitialValue()  ???
+		_sDefaultValue    = column.getJavaDefaultValue();
+		
+		_sDataBaseName     = column.getDatabaseName() ;
+        _sDataBaseType     = column.getDatabaseTypeName() ;
+        _iJdbcTypeCode     = column.getJdbcTypeCode() ;
+        _bKeyElement       = column.isPrimaryKey() ;
+        _bUsedInForeignKey = column.isForeignKey();
+        _bAutoIncremented  = column.isAutoIncremented();
+        _iDatabaseSize     = column.getDatabaseSize() ;
+        _sDatabaseDefaultValue = column.getDatabaseDefaultValue(); 
+        _bDatabaseNotNull  = column.isDatabaseNotNull();
         
-			//--- Further info for DATE/TIME 
-			if ( RepositoryConst.SPECIAL_DATE_ONLY.equalsIgnoreCase(column.getDateType()) ) {
-				_iDateType = DATE_ONLY;
-			} else if ( RepositoryConst.SPECIAL_TIME_ONLY.equalsIgnoreCase(column.getDateType()) )  {
-				_iDateType = TIME_ONLY;
-			} else if ( RepositoryConst.SPECIAL_DATE_AND_TIME.equalsIgnoreCase(column.getDateType()) )  {
-				_iDateType = DATE_AND_TIME;
-			} else {
-				_iDateType =  -1  ; // Default : UNKNOWN
-			}
-	        _bDatePast   = column.isDatePast();
-	        _bDateFuture = column.isDateFuture();
-	        _bDateBefore = column.isDateBefore();
-	        _sDateBeforeValue = column.getDateBeforeValue();
-	        _bDateAfter  = column.isDateAfter();
-	        _sDateAfterValue  = column.getDateAfterValue();
-	        
-			//--- Further info for JPA 
-	        if ( column.isAutoIncremented() ) {
-			    _bGeneratedValue = true ;
-				_sGeneratedValueStrategy  = null ; // "AUTO" is the default strategy 
-				_sGeneratedValueGenerator = null ;
-	        } 
-	        else {
-				if (column.getGeneratedValue() != null) {
-				    _bGeneratedValue = true ;
-					_sGeneratedValueStrategy  = column.getGeneratedValue().getStrategy();
-					_sGeneratedValueGenerator = column.getGeneratedValue().getGenerator();
-				}
-	        }
-				        
-			if (column.getTableGenerator() != null) {
-			    _bTableGenerator = true ;
-				_sTableGeneratorName = column.getTableGenerator().getName();
-				_sTableGeneratorTable = column.getTableGenerator().getTable();
-				_sTableGeneratorPkColumnName = column.getTableGenerator().getPkColumnName();
-				_sTableGeneratorValueColumnName = column.getTableGenerator().getValueColumnName();
-				_sTableGeneratorPkColumnValue = column.getTableGenerator().getPkColumnValue();
-			}
+		//--- Further info for ALL
+        _bNotNull   = column.getJavaNotNull();
+        _sLabel     = column.getLabel();
+        _sInputType = column.getInputType();
+        
+		//--- Further info for BOOLEAN 
+        _sBooleanTrueValue   = column.getBooleanTrueValue().trim() ;
+		_sBooleanFalseValue  = column.getBooleanFalseValue().trim() ;
+		
+		//--- Further info for NUMBER 
+	    _sMinValue = column.getMinValue() ; 
+	    _sMaxValue = column.getMaxValue() ; 
 
-			if (column.getSequenceGenerator() != null) {
-			    _bSequenceGenerator = true;
-				_sSequenceGeneratorName = column.getSequenceGenerator().getName();
-				_sSequenceGeneratorSequenceName = column.getSequenceGenerator().getSequenceName();
-				_iSequenceGeneratorAllocationSize = column.getSequenceGenerator().getAllocationSize();
-			}
-			
-			//--- EXTENSION for Bean Validation Annotations 
-			_annotationsBeanValidation = new AnnotationsForBeanValidation(this);
-
-			//--- EXTENSION for JPA Annotations 
-			_annotationsJPA = new AnnotationsForJPA(this);
-
-			//--- EXTENSION for JPA Annotations  with embedded id (no @Id)
-			//_annotationsJPAEmbeddedID = new AnnotationsForJPAEmbeddedID(this);
-
+		//--- Further info for STRING 
+        _bLongText  = column.getLongText() ;
+        _bNotEmpty  = column.getNotEmpty();
+        _bNotBlank  = column.getNotBlank();
+        _sMaxLength = column.getMaxLength();
+        _sMinLength = column.getMinLength();
+        _sPattern   = column.getPattern();
+        
+    
+		//--- Further info for DATE/TIME 
+		if ( RepositoryConst.SPECIAL_DATE_ONLY.equalsIgnoreCase(column.getDateType()) ) {
+			_iDateType = DATE_ONLY;
+		} else if ( RepositoryConst.SPECIAL_TIME_ONLY.equalsIgnoreCase(column.getDateType()) )  {
+			_iDateType = TIME_ONLY;
+		} else if ( RepositoryConst.SPECIAL_DATE_AND_TIME.equalsIgnoreCase(column.getDateType()) )  {
+			_iDateType = DATE_AND_TIME;
 		} else {
-			// TODO exception ???
+			_iDateType =  -1  ; // Default : UNKNOWN
 		}
+        _bDatePast   = column.isDatePast();
+        _bDateFuture = column.isDateFuture();
+        _bDateBefore = column.isDateBefore();
+        _sDateBeforeValue = column.getDateBeforeValue();
+        _bDateAfter  = column.isDateAfter();
+        _sDateAfterValue  = column.getDateAfterValue();
+        
+		//--- Further info for JPA 
+        if ( column.isAutoIncremented() ) {
+		    _bGeneratedValue = true ;
+			_sGeneratedValueStrategy  = null ; // "AUTO" is the default strategy 
+			_sGeneratedValueGenerator = null ;
+        } 
+        else {
+			if (column.getGeneratedValue() != null) {
+			    _bGeneratedValue = true ;
+				_sGeneratedValueStrategy  = column.getGeneratedValue().getStrategy();
+				_sGeneratedValueGenerator = column.getGeneratedValue().getGenerator();
+			}
+        }
+			        
+		if (column.getTableGenerator() != null) {
+		    _bTableGenerator = true ;
+			_sTableGeneratorName = column.getTableGenerator().getName();
+			_sTableGeneratorTable = column.getTableGenerator().getTable();
+			_sTableGeneratorPkColumnName = column.getTableGenerator().getPkColumnName();
+			_sTableGeneratorValueColumnName = column.getTableGenerator().getValueColumnName();
+			_sTableGeneratorPkColumnValue = column.getTableGenerator().getPkColumnValue();
+		}
+
+		if (column.getSequenceGenerator() != null) {
+		    _bSequenceGenerator = true;
+			_sSequenceGeneratorName = column.getSequenceGenerator().getName();
+			_sSequenceGeneratorSequenceName = column.getSequenceGenerator().getSequenceName();
+			_iSequenceGeneratorAllocationSize = column.getSequenceGenerator().getAllocationSize();
+		}
+		
+		//--- EXTENSION for Bean Validation Annotations 
+		_annotationsBeanValidation = new AnnotationsForBeanValidation(this);
+
+		//--- EXTENSION for JPA Annotations 
+		_annotationsJPA = new AnnotationsForJPA(this);
+
+		//--- EXTENSION for JPA Annotations  with embedded id (no @Id)
+		//_annotationsJPAEmbeddedID = new AnnotationsForJPAEmbeddedID(this);
+
 	}
     
 	//-----------------------------------------------------------------------------------------------
@@ -392,14 +393,14 @@ public class JavaBeanClassAttribute
     {
         return _bDatabaseNotNull;
     }
-    /**
-     * Synonym for usage without "()"
-     * @return
-     */
-    public boolean getIsDatabaseNotNull()
-    {
-        return isDatabaseNotNull();
-    }
+//    /**
+//     * Synonym for usage without "()"
+//     * @return
+//     */
+//    public boolean getIsDatabaseNotNull()
+//    {
+//        return isDatabaseNotNull();
+//    }
     
 	//----------------------------------------------------------------------
     public int getJdbcTypeCode()
@@ -427,14 +428,14 @@ public class JavaBeanClassAttribute
     {
         return _bKeyElement;
     }
-    /**
-     * Synonym for usage without "()"
-     * @return
-     */
-    public boolean getIsKeyElement()
-    {
-        return isKeyElement();
-    }
+//    /**
+//     * Synonym for usage without "()"
+//     * @return
+//     */
+//    public boolean getIsKeyElement()
+//    {
+//        return isKeyElement();
+//    }
 
 	//----------------------------------------------------------------------
     /**
@@ -445,14 +446,14 @@ public class JavaBeanClassAttribute
     {
         return _bUsedInForeignKey ;
     }
-    /**
-     * Synonym for usage without "()"
-     * @return
-     */
-    public boolean getIsUsedInForeignKey()
-    {
-        return isKeyElement();
-    }
+//    /**
+//     * Synonym for usage without "()"
+//     * @return
+//     */
+//    public boolean getIsUsedInForeignKey()
+//    {
+//        return isKeyElement();
+//    }
 
     /**
      * Returns true if this attribute is involved in a link Foreign Key <br>
@@ -493,14 +494,14 @@ public class JavaBeanClassAttribute
         return _bAutoIncremented;
     }
     
-    /**
-     * Synonym for usage without "()"
-     * @return
-     */
-    public boolean getIsAutoIncremented()
-    {
-        return isAutoIncremented();
-    }
+//    /**
+//     * Synonym for usage without "()"
+//     * @return
+//     */
+//    public boolean getIsAutoIncremented()
+//    {
+//        return isAutoIncremented();
+//    }
 
 	//----------------------------------------------------------------------
     /**
@@ -511,15 +512,37 @@ public class JavaBeanClassAttribute
     {
         return _bNotNull;
     }
+//    /**
+//     * Synonym for usage without "()"
+//     * @return
+//     */
+//    public boolean getIsNotNull()
+//    {
+//        return isNotNull();
+//    }
+
+	//----------------------------------------------------------------------
     /**
-     * Synonym for usage without "()"
+     * Returns the label defined for this attribute 
+     * @since v 2.0.3
      * @return
      */
-    public boolean getIsNotNull()
+    public String getLabel()
     {
-        return isNotNull();
+        return _sLabel ;
     }
-
+    
+	//----------------------------------------------------------------------
+    /**
+     * Returns the "input type" defined for this attribute 
+     * @since v 2.0.3
+     * @return
+     */
+    public String getInputType()
+    {
+        return _sInputType ;
+    }
+    
 	//----------------------------------------------------------------------
     /**
      * Returns the java type starting by an Upper Case <br>
@@ -917,23 +940,23 @@ public class JavaBeanClassAttribute
 	public boolean isDatePast() {
 		return _bDatePast;
 	}
-	public boolean getIsDatePast() {
-		return isDatePast();
-	}
+//	public boolean getIsDatePast() {
+//		return isDatePast();
+//	}
 
 	public boolean isDateFuture() {
 		return _bDateFuture;
 	}
-	public boolean getIsDateFuture() {
-		return isDateFuture();
-	}
+//	public boolean getIsDateFuture() {
+//		return isDateFuture();
+//	}
 	
 	public boolean isDateBefore() {
 		return _bDateBefore;
 	}
-	public boolean getIsDateBefore() {
-		return isDateBefore();
-	}
+//	public boolean getIsDateBefore() {
+//		return isDateBefore();
+//	}
 	
 	public String getDateBeforeValue() {
 		return _sDateBeforeValue;
@@ -942,9 +965,9 @@ public class JavaBeanClassAttribute
 	public boolean isDateAfter() {
 		return _bDateAfter;
 	}
-	public boolean getIsDateAfter() {
-		return isDateAfter();
-	}
+//	public boolean getIsDateAfter() {
+//		return isDateAfter();
+//	}
 	
 	public String getDateAfterValue() {
 		return _sDateAfterValue;
@@ -960,32 +983,32 @@ public class JavaBeanClassAttribute
     {
         return _bLongText;
     }
-	/**
-	 * Shortcut for usage without "()"
-	 * @return
-	 */
-	public boolean getIsLongText() // Velocity : $attrib.isLongText
-	{
-		return isLongText();
-	}
+//	/**
+//	 * Shortcut for usage without "()"
+//	 * @return
+//	 */
+//	public boolean getIsLongText() // Velocity : $attrib.isLongText
+//	{
+//		return isLongText();
+//	}
 
     public boolean isNotEmpty()
     {
         return _bNotEmpty;
     }
-    public boolean getIsNotEmpty()
-    {
-        return isNotEmpty();
-    }
+//    public boolean getIsNotEmpty()
+//    {
+//        return isNotEmpty();
+//    }
     
     public boolean isNotBlank()
     {
         return _bNotBlank;
     }
-    public boolean getIsNotBlank()
-    {
-        return isNotBlank();
-    }
+//    public boolean getIsNotBlank()
+//    {
+//        return isNotBlank();
+//    }
 	//-----------------------------------------------------------------------------
     /**
      * Returns true if the attribute need a conversion to be stored as an XML attribute value<br>
@@ -1034,7 +1057,6 @@ public class JavaBeanClassAttribute
 		return "" ;
     }
     
-    //public boolean getHasDefaultValue() // Velocity : $attrib.hasDefaultValue
     public boolean hasDefaultValue() // Velocity : $attrib.hasDefaultValue()
     {
     	return ( _sDefaultValue != null ) ;
@@ -1128,15 +1150,15 @@ public class JavaBeanClassAttribute
 		return "getUnsupportedParamType_" + _sType  ;
     }
     
-	public boolean getIsPrimitiveType() // Velocity : $attrib.isPrimitiveType
-	{
-		return isPrimitiveType();
-	}
+//	public boolean getIsPrimitiveType() // Velocity : $attrib.isPrimitiveType
+//	{
+//		return isPrimitiveType();
+//	}
 
-	public boolean getIsJavaLangWrapperType() // Velocity : $attrib.isJavaLangWrapperType
-	{
-		return isJavaLangWrapperType();
-	}
+//	public boolean getIsJavaLangWrapperType() // Velocity : $attrib.isJavaLangWrapperType
+//	{
+//		return isJavaLangWrapperType();
+//	}
 
 	public boolean getTypeIsUsableInXml() // Velocity : $attrib.typeIsUsableInXml
 	{

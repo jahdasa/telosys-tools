@@ -15,6 +15,8 @@
  */
 package org.telosys.tools.generator.context;
 
+import org.telosys.tools.commons.XmlUtil;
+
 /**
  * Set of functions usable in Velocity template with $fn.functionName(...) 
  * 
@@ -23,13 +25,14 @@ package org.telosys.tools.generator.context;
  */
 public class Fn {
 
-	public boolean isNull (Object o) {
-		return null == o ;
-	}
-	
-	public boolean isNotNull (Object o) {
-		return ! isNull(o);
-	}
+// USELESS 
+//	public boolean isNull (Object o) {
+//		return null == o ;
+//	}
+//	
+//	public boolean isNotNull (Object o) {
+//		return ! isNull(o);
+//	}
 	
 	/**
 	 * Returns true is the string is null or void or contains only spaces
@@ -48,8 +51,22 @@ public class Fn {
 		return ! isBlank (s)  ;
 	}
 	
+	/**
+	 * Returns the same string with a double quote at the beginning and at the end
+	 * @param s
+	 * @return
+	 */
 	public String quote(String s) {
 		return "\"" + s + "\"" ;
+	}
+
+	/**
+	 * Converts the given string in a XML string (escape special characters &, <, >, etc ) 
+	 * @param s
+	 * @return
+	 */
+	public String escapeXml(String s) {
+		return XmlUtil.escapeXml(s) ;
 	}
 
 	public String getTab() {
@@ -62,4 +79,6 @@ public class Fn {
 		}
 		return sb.toString();
 	}
+	
+	
 }
