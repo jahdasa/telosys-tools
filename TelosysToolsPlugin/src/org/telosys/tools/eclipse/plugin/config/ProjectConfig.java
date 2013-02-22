@@ -56,6 +56,8 @@ public class ProjectConfig
 	private String _WEB      =  "" ;
 	private String _TEST_SRC =  "" ;
 	private String _TEST_RES =  "" ;
+	private String _DOC      =  "" ;
+	private String _TMP      =  "" ;
 	
 	//----------------------------------------------------------------------------------------
 	//--- Classes names
@@ -164,6 +166,8 @@ public class ProjectConfig
     	_WEB      =  prop.getProperty(ContextName.WEB,      _WEB);
     	_TEST_SRC =  prop.getProperty(ContextName.TEST_SRC, _TEST_SRC);
     	_TEST_RES =  prop.getProperty(ContextName.TEST_RES, _TEST_RES);
+    	_DOC      =  prop.getProperty(ContextName.DOC,      _DOC);
+    	_TMP      =  prop.getProperty(ContextName.TMP,      _TMP);
     	
     	//--- Project user defined variables
     	//_projectVariables = initProjectVariables( prop ); // Can be null
@@ -207,6 +211,14 @@ public class ProjectConfig
     public String getTEST_SRC()
 	{
     	return _TEST_SRC;
+	}
+    public String getDOC()
+	{
+    	return _DOC;
+	}
+    public String getTMP()
+	{
+    	return _TMP;
 	}
     public String getTemplatesFolder()
 	{

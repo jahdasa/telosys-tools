@@ -1,5 +1,6 @@
 package org.telosys.tools.eclipse.plugin.config.view;
 
+import java.util.Arrays;
 import java.util.Properties;
 
 import org.eclipse.core.resources.IFolder;
@@ -367,7 +368,7 @@ public class PropertiesPage extends PropertyPage {
 		tabContent.setLayout(new GridLayout(3, false));
 		tabItem.setControl(tabContent);
 
-		_tBeanPackage = createTextField(tabContent, "Bean class package") ;
+		_tBeanPackage = createTextField(tabContent, "Entity classes package ") ;
 //		_tVOListPackage = createTextField(tabContent, "VO List package") ; 
 //		_tDaoPackage = createTextField(tabContent, "DAO package") ;
 //		_tXmlMapperPackage = createTextField(tabContent, "XML mapper package") ;
@@ -386,6 +387,8 @@ public class PropertiesPage extends PropertyPage {
 	private Text _tWebFolder = null ;
 	private Text _tTestSrcFolder = null ;
 	private Text _tTestResFolder = null ;
+	private Text _tDocFolder = null ;
+	private Text _tTmpFolder = null ;
 	
 	/**
 	 * Creates the "Folders" TabItem
@@ -399,7 +402,7 @@ public class PropertiesPage extends PropertyPage {
 		tabContent.setLayout(new GridLayout(3, false));
 		tabItem.setControl(tabContent);
 
-		createSingleLabel(tabContent, "Define here the project folders variables ");
+		createSingleLabel(tabContent, "Define here the project folders variables (usable in targets and templates)");
 		_tSrcFolder = createTextField(tabContent, "Sources",      "${SRC}") ;
 		_tResFolder = createTextField(tabContent, "Resources ",   "${RES}") ;
 		_tWebFolder = createTextField(tabContent, "Web content ", "${WEB}" ) ;
@@ -407,16 +410,21 @@ public class PropertiesPage extends PropertyPage {
 		_tTestSrcFolder = createTextField(tabContent, "Tests sources  ",  "${TEST_SRC}") ;
 		_tTestResFolder = createTextField(tabContent, "Tests resources ", "${TEST_RES}") ;
 		
+		_tDocFolder = createTextField(tabContent, "Documentation",   "${DOC}" ) ;
+		_tTmpFolder = createTextField(tabContent, "Temporary files", "${TMP}" ) ;
+		
 		createTabFoldersButtons(tabContent);
 		
 		createOneLabel(tabContent, "" ); 
-		createOneLabel(tabContent, "Project source folders : " ); 
-
-		IProject project = this.getCurrentProject();
-		String[] srcFolders = EclipseProjUtil.getSrcFolders(project);
-		for ( String srcFolder : srcFolders ) {
-			createOneLabel(tabContent, " . " + srcFolder );
-		}
+		createOneLabel(tabContent, "If you need more folders define them in the \"Variables\" " );
+		 
+//		createOneLabel(tabContent, "Project source folders : " ); 
+//
+//		IProject project = this.getCurrentProject();
+//		String[] srcFolders = EclipseProjUtil.getSrcFolders(project);
+//		for ( String srcFolder : srcFolders ) {
+//			createOneLabel(tabContent, " . " + srcFolder );
+//		}
 
 	}
 	
@@ -473,7 +481,7 @@ public class PropertiesPage extends PropertyPage {
 		//--- Label ( Col 1 and 2 in the GRID )
 		Label label= new Label(tabContent, SWT.LEFT | SWT.WRAP );
 		label.setFont(tabContent.getFont());
-		label.setText("Define here the project variables usable in templates :");
+		label.setText("Define here the project variables (usable in targets and templates)");
 		GridData gd = new GridData();
 		//gd.heightHint = 300 ;
 		//gd.horizontalAlignment = GridData.FILL;
@@ -497,6 +505,27 @@ public class PropertiesPage extends PropertyPage {
 		//--- Buttons ( Col 2 in the GRID )
 		createTableButtons(tabContent, _variablesTable) ;
 		
+		Button button = new Button(tabContent, SWT.PUSH);
+		button.setText("Show reserved variable names");
+		button.addSelectionListener(new SelectionListener() 
+    	{
+            public void widgetSelected(SelectionEvent arg0)
+            {
+            	String[] reserverdNames = VariableNames.getSortedReservedNames() ;
+            	StringBuffer sb = new StringBuffer();
+            	sb.append("The following names are reserved : \n\n") ;
+            	for ( String name : reserverdNames ) {
+            		sb.append(name);
+            		sb.append(" \n");
+            	}
+            	MsgBox.info(sb.toString());
+            }
+            public void widgetDefaultSelected(SelectionEvent arg0)
+            {
+            }
+        }
+		);
+
 		/*
 		Text t = null ; 
 		t = createTextField(tabContent, "Name :") ;
@@ -875,7 +904,8 @@ public class PropertiesPage extends PropertyPage {
 			t.printStackTrace();
 		}
 	}
-	
+
+/***
 	private void checkTelosysProperties( Properties props ) 
 	{
     	log("checkTelosysProperties(props)... " );
@@ -956,6 +986,7 @@ public class PropertiesPage extends PropertyPage {
 //			}
 		}
 	}
+**/
 	
 	//------------------------------------------------------------------------------------------
 	/*
@@ -1010,6 +1041,8 @@ public class PropertiesPage extends PropertyPage {
 		_tWebFolder.setText( projectConfig.getWEB() ) ;
 		_tTestSrcFolder.setText( projectConfig.getTEST_SRC() ) ;
 		_tTestResFolder.setText( projectConfig.getTEST_RES() ) ;
+		_tDocFolder.setText( projectConfig.getDOC() ) ;
+		_tTmpFolder.setText( projectConfig.getTMP() ) ;
 
 		
 		//--- Tab "Variables"
@@ -1076,6 +1109,8 @@ public class PropertiesPage extends PropertyPage {
 		props.put(ContextName.WEB,       _tWebFolder.getText() );
 		props.put(ContextName.TEST_SRC,  _tTestSrcFolder.getText() );
 		props.put(ContextName.TEST_RES,  _tTestResFolder.getText() );
+		props.put(ContextName.DOC,       _tDocFolder.getText() );
+		props.put(ContextName.TMP,       _tTmpFolder.getText() );
 
 		//--- Tab "Variables"		
 		log("propertiesToFields : variables ...");
