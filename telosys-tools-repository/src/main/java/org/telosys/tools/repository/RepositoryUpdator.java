@@ -188,10 +188,8 @@ public class RepositoryUpdator extends RepositoryManager
 				changesCount = updateRepository(repositoryModel, dbTables);
 
 			} catch (SQLException e) {
-				e.printStackTrace();
 				throw new TelosysToolsException("SQLException", e);
 			} catch (Throwable t) {
-				t.printStackTrace();
 				throw new TelosysToolsException("Exception", t);
 			}
 		}

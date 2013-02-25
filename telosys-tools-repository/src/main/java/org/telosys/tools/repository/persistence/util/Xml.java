@@ -87,7 +87,7 @@ public class Xml
 			try {
 				is.close();
 			} catch (IOException e) {
-				//e.printStackTrace();
+				// NOTHING TO DO 
 			}
 			return doc ;
     	}
@@ -177,7 +177,7 @@ public class Xml
      * Creates an empty DOM document
      * @return
      */
-    public static Document createDomDocument(){
+    public static Document createDomDocument() throws TelosysToolsException {
         
         Document doc = null;
         DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
@@ -186,7 +186,7 @@ public class Xml
             b = f.newDocumentBuilder();
             doc = b.newDocument();
         } catch (ParserConfigurationException e) {
-            e.printStackTrace();
+        	throw new TelosysToolsException("XML error : Cannot create DocumentBuilder ", e);
         }
         
         return doc;
@@ -198,7 +198,7 @@ public class Xml
      * @param file
      * @return
      */
-    public static Document createDomDocument(File file){
+    public static Document createDomDocument(File file) throws TelosysToolsException {
  
         
         DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
@@ -206,11 +206,11 @@ public class Xml
         try {
             doc = f.newDocumentBuilder().parse(file);
         } catch (SAXException e) {
-            e.printStackTrace();
+            throw new TelosysToolsException("XML error : Cannot parse XML file.", e);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new TelosysToolsException("XML error : Cannot parse XML file.", e);
         } catch (ParserConfigurationException e) {
-            e.printStackTrace();
+            throw new TelosysToolsException("XML error : Cannot parse XML file.", e);
         }
         return doc;
     }
