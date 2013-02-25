@@ -1,6 +1,7 @@
 package org.telosys.tools.generator.target;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -31,6 +32,15 @@ public class TargetsFile {
 		targetsFileName = fileName;
 	}
 
+	/**
+	 * Check file existence
+	 * @return true if the file exists, else false
+	 */
+	public boolean exists() {
+		File file = new File(targetsFileName);
+		return file.exists() ;
+	}
+	
 	/**
 	 * Loads the targets definitions from the file
 	 * @return

@@ -34,28 +34,23 @@ public class GeneratorConfig implements IGeneratorConfig
 {
 	public static final String PROJECT_CONFIG_FILE = "telosys-tools.cfg" ;
 	
-	private String _sProjectLocation ; // Project folder ( absolute path )
+	private final String     _sProjectLocation ; // Project folder ( absolute path )
 	
-	private Variable[] _projectVariables ;
+	private final String     _sTemplatesFolder ;
 	
-//	private String _sSourceFolder ;
-//	private String _sWebContentFolder ;
-	
-	private String _sTemplatesFolder ;
-	
-	private String _sPackageVO ;
+	private final String     _sEntityClassPackage ;
 
+	private final Variable[] _projectVariables ;
+	
 	public GeneratorConfig(String sProjectLocation, Properties prop) 
 	{
 		_sProjectLocation = sProjectLocation;
 		
 		//--- Files folders
-//    	_sSourceFolder       = prop.getProperty(GeneratorConfigConst.SOURCE_FOLDER, _sSourceFolder);
-//    	_sWebContentFolder   = prop.getProperty(GeneratorConfigConst.WEB_CONTENT_FOLDER, _sWebContentFolder);
-    	_sTemplatesFolder    = prop.getProperty(GeneratorConfigConst.TEMPLATES_FOLDER, _sTemplatesFolder);
+    	_sTemplatesFolder     = prop.getProperty(GeneratorConfigConst.TEMPLATES_FOLDER, null);
 		
 		//--- Packages names
-    	_sPackageVO        = prop.getProperty(GeneratorConfigConst.PACKAGE_VO, _sPackageVO);
+    	_sEntityClassPackage  = prop.getProperty(GeneratorConfigConst.ENTITIES_PACKAGE, null);
     	
     	//--- All variables : specific project variables + folders 
     	Hashtable<String, String> allVariables = new Hashtable<String, String>();
@@ -74,7 +69,7 @@ public class GeneratorConfig implements IGeneratorConfig
     	allVariables.put( ContextName.DOC,      prop.getProperty(ContextName.DOC,      "") );
     	allVariables.put( ContextName.TMP,      prop.getProperty(ContextName.TMP,      "") );
     	
-    	//--- 3) Get all variables to buil the array
+    	//--- 3) Get all variables to build the array
     	LinkedList<Variable> variablesList = new LinkedList<Variable>();
     	for ( String varName : allVariables.keySet() ) {
     		String varValue = allVariables.get(varName) ;
@@ -82,7 +77,6 @@ public class GeneratorConfig implements IGeneratorConfig
     	}
     	Variable[] allVariablesArray = variablesList.toArray( new Variable[0] );
     	
-    	//_projectVariables = VariablesUtil.getVariablesFromProperties( prop );
     	_projectVariables = allVariablesArray ;
     	
 	}
@@ -103,7 +97,7 @@ public class GeneratorConfig implements IGeneratorConfig
 		ProjectConfiguration projectConfiguration = new ProjectConfiguration( 
 				//_sSourceFolder, _sWebContentFolder, 
 				getTemplatesFolderFullPath(),
-				_sPackageVO, 
+				_sEntityClassPackage, 
 				_projectVariables );
 		
 		return projectConfiguration;

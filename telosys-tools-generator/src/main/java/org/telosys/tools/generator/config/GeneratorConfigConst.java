@@ -22,13 +22,9 @@ package org.telosys.tools.generator.config;
 public class GeneratorConfigConst {
 
     //--- Directories 
-//    public final static String SOURCE_FOLDER          = "SourceFolder";
-    
-//    public final static String WEB_CONTENT_FOLDER     = "WebContentFolder";
-    
-    public final static String TEMPLATES_FOLDER       = "TemplatesFolder";
+    public final static String TEMPLATES_FOLDER  = "TemplatesFolder";
     
     //--- Packages 
-    public final static String PACKAGE_VO             = "packageVo";
+    public final static String ENTITIES_PACKAGE  = "packageVo";
 
 }
