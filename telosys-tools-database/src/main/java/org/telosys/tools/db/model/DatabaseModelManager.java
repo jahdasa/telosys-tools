@@ -42,46 +42,35 @@ public class DatabaseModelManager extends StandardTool
 		
 		MetaDataManager mgr = new MetaDataManager( this.getLogger() );
 		
-		//try {
-			
-			//--- Get the database Meta-Data
-			DatabaseMetaData dbmd = con.getMetaData();		
+		//--- Get the database Meta-Data
+		DatabaseMetaData dbmd = con.getMetaData();		
 
-			//--- Initialize the tables ( table, columns, PK, FK ) 
-			List<TableMetaData> tablesMetaData = mgr.getTables(dbmd, catalog, schema, tableNamePattern, tableTypes);	
-			
-			//--- For each table get columns, primary key and foreign keys
-//			Iterator iter = tablesMetaData.iterator() ;
-//			while ( iter.hasNext() )
-//			{
-//				TableMetaData tableMetaData = (TableMetaData) iter.next();
-			for ( TableMetaData tableMetaData : tablesMetaData ) {
-				//--- Table columns
-				List<ColumnMetaData> columnsMetaData = mgr.getColumns(dbmd, tableMetaData.getCatalogName(), tableMetaData.getSchemaName(), tableMetaData.getTableName() );
-
-				//--- Table primary key columns
-				List<PrimaryKeyColumnMetaData> pkColumnsMetaData = mgr.getPKColumns(dbmd, tableMetaData.getCatalogName(), tableMetaData.getSchemaName(), tableMetaData.getTableName() );
-
-				//--- Table foreign keys columns
-				List<ForeignKeyColumnMetaData> fkColumnsMetaData = mgr.getFKColumns(dbmd, tableMetaData.getCatalogName(), tableMetaData.getSchemaName(), tableMetaData.getTableName() );
-
-				//--- Build the table model
-				DatabaseTable databaseTable = new DatabaseTable(tableMetaData,columnsMetaData,pkColumnsMetaData,fkColumnsMetaData);
-				
-				//--- Set auto-incremented columns if any
-				findAutoIncrementedColums(mgr, con, databaseTable);
-				
-				databaseTables.addTable(databaseTable);
-			}
-			
-			//--- Initialize the stored procedures
-			// in the future ...
-			
-//		} catch (SQLException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		//--- Initialize the tables ( table, columns, PK, FK ) 
+		List<TableMetaData> tablesMetaData = mgr.getTables(dbmd, catalog, schema, tableNamePattern, tableTypes);	
 		
+		//--- For each table get columns, primary key and foreign keys
+		for ( TableMetaData tableMetaData : tablesMetaData ) {
+			//--- Table columns
+			List<ColumnMetaData> columnsMetaData = mgr.getColumns(dbmd, tableMetaData.getCatalogName(), tableMetaData.getSchemaName(), tableMetaData.getTableName() );
+
+			//--- Table primary key columns
+			List<PrimaryKeyColumnMetaData> pkColumnsMetaData = mgr.getPKColumns(dbmd, tableMetaData.getCatalogName(), tableMetaData.getSchemaName(), tableMetaData.getTableName() );
+
+			//--- Table foreign keys columns
+			List<ForeignKeyColumnMetaData> fkColumnsMetaData = mgr.getFKColumns(dbmd, tableMetaData.getCatalogName(), tableMetaData.getSchemaName(), tableMetaData.getTableName() );
+
+			//--- Build the table model
+			DatabaseTable databaseTable = new DatabaseTable(tableMetaData,columnsMetaData,pkColumnsMetaData,fkColumnsMetaData);
+			
+			//--- Set auto-incremented columns if any
+			findAutoIncrementedColums(mgr, con, databaseTable);
+			
+			databaseTables.addTable(databaseTable);
+		}
+		
+		//--- Initialize the stored procedures
+		// in the future ...
+			
 		return databaseTables ;
 	}
 	
