@@ -27,7 +27,7 @@ public class VariablesUtil
 	/**
 	 * Get an array of variables from the given properties, using the standard project prefix <br>
 	 * @param properties
-	 * @return
+	 * @return array of variables (never null)
 	 */
 	public static Variable[] getVariablesFromProperties( Properties properties )
 	{
@@ -47,7 +47,6 @@ public class VariablesUtil
 				ListIterator<Variable> iter = list.listIterator();
 				while ( iter.hasNext() ) 
 				{
-					//Object item = iter.next();
 					Variable item = iter.next();
 					if ( newItem.compareTo(item) <= 0 ) 
 					{
@@ -75,7 +74,7 @@ public class VariablesUtil
 		}
 		else
 		{
-			return null ;
+			return new Variable[0] ;
 		}
 	}
 	
@@ -112,17 +111,6 @@ public class VariablesUtil
 		if ( null == properties ) {
 			throw new IllegalArgumentException("Properties argument is null");
 		}
-//		for ( int i = 0 ; i < variables.length ; i++ )
-//		{
-//			Variable v = variables[i];
-//			String sVarName = v.getName();
-//			String sPropName = prefix + sVarName ;
-//			if ( sPropName.trim().length() > 0 )
-//			{
-//				properties.put(sPropName, v.getValue() );
-//				count++;
-//			}
-//		}
 		for ( Variable var : variables ) {
 			putVariableInProperties(var, properties);
 			count++ ;
