@@ -21,7 +21,6 @@ public class JModel {
 		try {
 			packages = project.getPackageFragments() ;
 		} catch (JavaModelException e) {
-			//e.printStackTrace();
 			MsgBox.error("ERROR in getPackageFragment(..,..) \n"
 					+ "Cannot get project package fragments : JavaModelException" );
 			packages = null ;
@@ -66,7 +65,6 @@ public class JModel {
 			try {
 				sSuperClass = type.getSuperclassName();
 			} catch (JavaModelException e) {
-				//e.printStackTrace();
 				MsgBox.error("ERROR in getSuperClass("+type+") \n"
 						+ "JavaModelException" );
 				
@@ -98,10 +96,8 @@ public class JModel {
 		try {
 			IJavaElement javaElement = (IJavaElement) project.getAdapter(IJavaElement.class);
 			javaProject = javaElement.getJavaProject();
-		} catch (Throwable e) {
-			MsgBox.error("ERROR in toJavaProject("+project+") \n"
-					+ "Throwable : " + e.toString());
-			e.printStackTrace();
+		} catch (Exception e) {
+			MsgBox.error("ERROR in toJavaProject("+project+").", e );
 		}
 		return javaProject ;
 	}

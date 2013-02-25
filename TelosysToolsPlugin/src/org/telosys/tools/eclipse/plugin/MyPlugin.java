@@ -236,8 +236,7 @@ public class MyPlugin
                     resolvedUrl = FileLocator.resolve(pluginRelativeUrl);
                 } catch (IOException e)
                 {
-                    MsgBox.error("Error", "Cannot resolve relative URL " + pluginRelativeUrl +" ! \nException : " + e.getMessage() );
-                    e.printStackTrace();
+                    MsgBox.error("Cannot resolve relative URL '" + pluginRelativeUrl +"' !", e ) ; 
                 }
             }
             else
@@ -266,34 +265,6 @@ public class MyPlugin
     	}
     	return null ;
     	
-//        String sPluginDirectory = null;
-//        //Bundle bundle = getBundle();
-//        if ( $bundle != null )
-//        {
-//            URL pluginRelativeUrl = Platform.find($bundle, new Path(""));
-//            if (pluginRelativeUrl != null)
-//            {
-//                URL resolvedUrl = null;
-//                try
-//                {
-//                    resolvedUrl = Platform.resolve(pluginRelativeUrl);
-//                    sPluginDirectory = resolvedUrl.toString();
-//                } catch (IOException e)
-//                {
-//                    MsgBox.error("Error", "Cannot resolve relative URL " + pluginRelativeUrl +" ! \nException : " + e.getMessage() );
-//                    e.printStackTrace();
-//                }
-//            }
-//            else
-//            {
-//            	MsgBox.error("Cannot get plugin directory : Platform.find() return null !");
-//            }
-//        }
-//        else
-//        {
-//        	MsgBox.error("Cannot get plugin directory ( bundle is null ) !");
-//        }
-//        return sPluginDirectory;
     }
 
     //------------------------------------------------------------------------------------------------
@@ -359,9 +330,7 @@ public class MyPlugin
 			try {
 				imageURL = new URL(baseURL, IMAGES_SUBDIR + "/" + sImageFile );
 			} catch (MalformedURLException e) {
-				MsgBox.error("Cannot get image URL for '" + sImageFile + "' \n"
-						+ "MalformedURLException");
-				e.printStackTrace();
+				MsgBox.error("Cannot get image URL for '" + sImageFile + "'.", e );
 			}
 		}
 		return imageURL ;

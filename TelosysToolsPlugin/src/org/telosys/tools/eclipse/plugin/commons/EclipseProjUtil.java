@@ -275,11 +275,6 @@ public class EclipseProjUtil {
 			MsgBox.error("JavaModelException : \n" + e.getMessage() );
             urls = null;
         }
-//        catch (MalformedURLException e) 
-//        {
-//            e.printStackTrace();
-//            urls = null;
-//        }
 
         return urls;            
     }

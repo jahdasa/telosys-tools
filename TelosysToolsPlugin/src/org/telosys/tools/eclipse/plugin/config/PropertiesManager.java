@@ -120,8 +120,7 @@ public class PropertiesManager {
 			fis = new FileInputStream(propFile);
 			props.load(fis);
 		} catch (IOException ioe) {
-			//ioe.printStackTrace();
-			MsgBox.error(ERR_CANNOT_LOAD + "IOException : \n" + ioe.getMessage() );
+			MsgBox.error(ERR_CANNOT_LOAD + "IOException : \n", ioe );
 		}
 		finally
 		{
@@ -131,7 +130,7 @@ public class PropertiesManager {
 					fis.close();
 				}
 			} catch (IOException e) {
-				//e.printStackTrace();
+				// NOTHING TO DO
 			}
 		}
 		return props;
@@ -177,8 +176,6 @@ public class PropertiesManager {
 			return  ;
 		}
 		
-		//props.list(System.out);
-		
 		FileOutputStream fos = null ;
 		try {
 			//fos = new FileOutputStream(fileName);
@@ -195,7 +192,7 @@ public class PropertiesManager {
 					fos.close();
 				}
 			} catch (IOException e) {
-				//e.printStackTrace();
+				// NOTHING TO DO 
 			}
 		}
 	}

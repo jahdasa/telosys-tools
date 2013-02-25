@@ -320,7 +320,7 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 		log(this, "createTabFolder1() ..." );
 
 		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
-		tabItem.setText(" Configuration ");
+		tabItem.setText("  Configuration  ");
 
 		Composite tabContent = new Composite(tabFolder, SWT.NONE);
 		tabContent.setBackground( getBackgroundColor() );
@@ -379,7 +379,7 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 	{
 		log(this, "createTabFolder2() ..." );
 		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
-		tabItem.setText(" Informations ");
+		tabItem.setText("  Information  ");
 		
 		Composite tabContent = new Composite(tabFolder, SWT.NONE);
 		tabContent.setBackground( getBackgroundColor() );
@@ -388,7 +388,7 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 		
 		//--- Button "Get infos"
 		Button button = new Button(tabContent, SWT.NONE);
-		button.setText("Get infos");
+		button.setText("Get database info");
 		button.setBounds(460, 20, 120, 25);
 
     	button.addSelectionListener( new SelectionListener() 
@@ -443,7 +443,7 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 	{
 		log(this, "createTabFolder3() ..." );
 		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
-		tabItem.setText(" Meta-data ");
+		tabItem.setText("  Meta-data  ");
 		
 		Composite tabContent = new Composite(tabFolder, SWT.NONE);
 		tabContent.setBackground( getBackgroundColor() );
@@ -1592,18 +1592,13 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     		if ( con != null )
     		{
 				try {
-					
-					generateRepository(con, db, projectConfig, repositoryFile, logger ) ;
-					
-					repositoryCreated = true ;
-					
+					repositoryCreated = generateRepository(con, db, projectConfig, repositoryFile, logger ) ;
 				} 
-				catch (Throwable e)  // Catch ALL exceptions 
+				catch (Exception e)  // Catch ALL exceptions 
 				{
 					MsgBox.error("Exception : " + e.getClass() + " \n\n" + e.getMessage() ) ;
 				} 
 				finally {
-					//cm.closeConnection(con);
 					closeConnection(con);
 				}
 
@@ -1623,33 +1618,40 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 		}
     }
     
-    private void generateRepository(Connection con, XmlDatabase db, ProjectConfig projectConfig, 
+    private boolean generateRepository(Connection con, XmlDatabase db, ProjectConfig projectConfig, 
     		IFile repositoryFile,
     		TelosysToolsLogger logger ) 
     {
 		InitializerChecker initchk = new DefaultInitializerChecker();
 		ClassNameProvider classNameProvider = new ProjectClassNameProvider(projectConfig);
 
-		
+		RepositoryModel repo = null ;
+
+		//--- 1) Generate the repository in memory
 		try {
-			
-			//--- 1) Generate the repository in memory
 			RepositoryGenerator generator = new RepositoryGenerator(initchk, classNameProvider, logger) ;			
-			RepositoryModel repo = generator.generate(con, 
+			repo = generator.generate(con, 
 					db.getDatabaseName(), db.getMetadataCatalog(), db.getMetadataSchema(), 
 					db.getMetadataTableNamePattern(), db.getMetadataTableTypes());
+		} catch (TelosysToolsException e) {
+			MsgBox.error("Cannot generate.", e);
+			return false ;
+		}
 			
-			//--- 2) Save the repository in the file
+		//--- 2) Save the repository in the file
+		try {
 			File file = EclipseWksUtil.toFile(repositoryFile);
-			//File file = getRepositoryFile( db.getDatabaseName() );
 			logger.info("Saving repository in file " + file.getAbsolutePath() );
 			StandardFilePersistenceManager pm = new StandardFilePersistenceManager(file, logger);
 			pm.save(repo);
 			logger.info("Repository saved.");
 			
 		} catch (TelosysToolsException e) {
-			e.printStackTrace();
+			MsgBox.error("Cannot save file", e);
+			return false ;
 		}
+
+		return true ;
     }
 
     private int updateRepository(Connection con, XmlDatabase db, ProjectConfig projectConfig, TelosysToolsLogger logger ) 

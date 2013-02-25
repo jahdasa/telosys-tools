@@ -1,6 +1,5 @@
 package org.telosys.tools.eclipse.plugin.config.view;
 
-import java.util.Arrays;
 import java.util.Properties;
 
 import org.eclipse.core.resources.IFolder;
@@ -303,10 +302,9 @@ public class PropertiesPage extends PropertyPage {
 			//--- Init screen fields values
 			initFields();
 		} 
-		catch ( Throwable t )
+		catch ( Exception e )
 		{
-			MsgBox.error("Error in createContents() : " + t.toString());	
-			t.printStackTrace();
+			MsgBox.error("Error in createContents().", e);	
 		}
 		return composite;
 	}
@@ -900,8 +898,8 @@ public class PropertiesPage extends PropertyPage {
 			// REMOVED TEMPORARLY 
 			// TODO : keep it or remove it ?
 			//checkTelosysProperties(props);
-		} catch (Throwable t) {
-			t.printStackTrace();
+		} catch ( Exception e ) {
+			MsgBox.error("Cannot save properties.", e );
 		}
 	}
 

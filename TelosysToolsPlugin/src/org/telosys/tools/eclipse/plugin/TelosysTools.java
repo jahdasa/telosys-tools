@@ -107,52 +107,6 @@ public class TelosysTools extends AbstractUIPlugin
 		super.stop(bundleContext);
 	}
 
-//	/**
-//	 * init the template load all the template
-//	 */
-//	private final void doInitPreferences(BundleContext pbcContext) {
-//		try {
-//			//$preferences = new Preferences();
-//			
-//			// --- Get the templates
-//			Path filePath = new Path( Const.PREF_FILE_NAME );
-//			InputStream is = super.openStream(filePath);
-//
-////			InputStream isInputStream = FileLocator.openStream(pbcContext
-////					.getBundle(), new Path(getFile(Const.TEMPLATES_SUBDIR,
-////					_bcContext)), false);
-//			
-//			// --- Load the templates
-////			$pTemplate_Bundle.load(isInputStream);
-//			//$preferences.load(is);
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//	}
-
-//	/**
-//	 * @param psName
-//	 *            name of the file
-//	 * @param pbcContext
-//	 *            context of the plugin
-//	 * 
-//	 * @return a file like name.properties
-//	 */
-//	private String getFile(String psName, BundleContext pbcContext) {
-//		// --- Put the name in a String Buffer
-//		StringBuffer sbStringBuffer = new StringBuffer(psName);
-//		// --- put an extension
-//		sbStringBuffer.append(".properties");
-//		try {
-//			// --- check if the file exist
-//			InputStream isInputStream = FileLocator.openStream(pbcContext
-//					.getBundle(), new Path(sbStringBuffer.toString()), false);
-//		} catch (IOException e) {
-//		}
-//		return sbStringBuffer.toString();
-//	}
-
-
 	/**
 	 * Returns the current shell
 	 * 

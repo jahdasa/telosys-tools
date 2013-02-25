@@ -144,8 +144,7 @@ public class ClassChooser
 			//printPackagesFragRoots();  // for DEBUG 
 			populateTree(tree);
 		} catch (JavaModelException e) {
-			MsgBox.error("Cannot populate tree from JavaProject ! \n JavaModelException : " + e.getMessage() );
-			e.printStackTrace();
+			MsgBox.error("Cannot populate tree from JavaProject ! \n JavaModelException : " + e );
 		}
 	}
 	

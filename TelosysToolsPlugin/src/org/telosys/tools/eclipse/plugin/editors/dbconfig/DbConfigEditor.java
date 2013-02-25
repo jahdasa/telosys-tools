@@ -45,19 +45,12 @@ public class DbConfigEditor extends FormEditor
 		PluginLogger.log(this, "addPages()..." );
 		DbConfigEditorPage1 page1 = new DbConfigEditorPage1(this, "DbConfigEditorPage1", " Database ");
 		DbConfigEditorPage2 page2 = new DbConfigEditorPage2(this, "DbConfigEditorPage2", " Log viewer");
-//		IFormPage page3 = new RepositoryEditorPage3(this, "RepositoryEditorPage3", " Config ");
 		try {
 			addPage(page1);
 			addPage(page2);
-//			addPage(page3);
-		} catch (PartInitException e) {
-			MsgBox.error("RepositoryEditor : addPage(page) throws PartInitException ");
-			e.printStackTrace();
+		} catch ( Exception e ) {
+			MsgBox.error("addPage(page) Exception ", e);
 		}
-		
-		//Text tLogger = page2.getLoggerText();
-		//_logger = new TextWidgetLogger();
-
 	}
 
 	public boolean isDirty()
@@ -85,11 +78,9 @@ public class DbConfigEditor extends FormEditor
 		monitor.beginTask( "Saving the repository...", IProgressMonitor.UNKNOWN );
 
 		try {
-			//Xml.save(_xmlDocument, _file);
 			_xmlDbConfig.save();
 		} catch (TelosysToolsException e) {
-			MsgBox.error("Cannot save the XML file\n Exception : " + e.getMessage() );
-			//e.printStackTrace();
+			MsgBox.error("Cannot save XML file." + e);
 		}
 		
 		setDirty(false);

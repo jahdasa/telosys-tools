@@ -145,8 +145,7 @@ public class RepositoryEditor extends FormEditor
 			addPage(page3);
 			addPage(page4);
 		} catch (PartInitException e) {
-			MsgBox.error("RepositoryEditor : addPage(page) throws PartInitException ");
-			e.printStackTrace();
+			MsgBox.error("RepositoryEditor : addPage(page) throws PartInitException ", e);
 		}		
 	}
 
