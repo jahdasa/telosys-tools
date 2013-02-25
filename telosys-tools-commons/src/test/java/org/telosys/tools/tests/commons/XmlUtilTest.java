@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 
 import org.telosys.tools.commons.XmlUtil;
 
-public class XmlUtilTests extends TestCase {
+public class XmlUtilTest extends TestCase {
 
 	public void testEscapeXml() {
 		

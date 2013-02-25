@@ -4,7 +4,7 @@ import org.telosys.tools.commons.StrUtil;
 
 import junit.framework.TestCase;
 
-public class StrUtilTests extends TestCase {
+public class StrUtilTest extends TestCase {
 
 	public void testDifferent() {
 		assertTrue( StrUtil.different("aa", "bb") ) ;
