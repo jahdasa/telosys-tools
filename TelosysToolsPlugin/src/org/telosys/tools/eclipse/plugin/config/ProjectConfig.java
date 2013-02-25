@@ -1,5 +1,6 @@
 package org.telosys.tools.eclipse.plugin.config;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
@@ -29,6 +30,8 @@ import org.telosys.tools.generator.target.TargetsFile;
 public class ProjectConfig 
 {
 	public final static String TEMPLATES_CFG = "templates.cfg" ;
+	
+	private final static List<TargetDefinition> VOID_LIST_OF_TARGETS = new LinkedList<TargetDefinition>() ;
 		
 	// The plugin congiguration file : ".../.../telosys-tools.cfg"
 	private String _sPluginConfigFile   = null ; 
@@ -49,7 +52,7 @@ public class ProjectConfig
 	//----------------------------------------------------------------------------------------
 	// [22-Jan-2012] Removed	
 	//--- Packages 	
-	private String _sPackageVOBean = "org.demo.vo.bean" ;
+	private String _sEntitiesPackage = "org.demo.vo.bean" ;
 
 	private String _SRC      =  "" ;
 	private String _RES      =  "" ;
@@ -158,7 +161,7 @@ public class ProjectConfig
     	_sRepositoriesFolder = prop.getProperty(PropName.REPOS_FOLDER, _sRepositoriesFolder);
     	
     	//--- Packages 
-    	_sPackageVOBean = prop.getProperty(GeneratorConfigConst.PACKAGE_VO, _sPackageVOBean);
+    	_sEntitiesPackage = prop.getProperty(GeneratorConfigConst.ENTITIES_PACKAGE, _sEntitiesPackage);
 
     	//--- Folders  
     	_SRC      =  prop.getProperty(ContextName.SRC,      _SRC);
@@ -333,7 +336,7 @@ public class ProjectConfig
 	 */
 	public String getPackageForVOBean() 
 	{
-		return _sPackageVOBean ;
+		return _sEntitiesPackage ;
 	}
 	
 //	/**
@@ -489,31 +492,31 @@ public class ProjectConfig
      * Returns the list of targets defined in "templates.cfg" or null if none
      * @return
      */
-    //public List<SpecificTemplate> getSpecificTemplates()
     public List<TargetDefinition> getTemplates()
 	{
     	return _templates ;
 	}
 
-	//private List<SpecificTemplate> loadSpecificTemplates()
 	private List<TargetDefinition> loadTemplates()
 	{
 		String sTemplatesFolder = getTemplatesFolderFullPath();
 		String sFile = FileUtil.buildFilePath(sTemplatesFolder, TEMPLATES_CFG );
 		
-		//TemplatesFile file = new TemplatesFile(sFile) ;
-		//List<SpecificTemplate> list = file.load();
-		
 		TargetsFile targetsFile = new TargetsFile(sFile) ;
-		List<TargetDefinition> list = null ;
-		try {
-			list = targetsFile.load();
-		} catch (GeneratorException e) {
-			MsgBox.error("Cannot load targets definition from file : \n" + sFile + "\n Exception : " + e.getMessage() );
-			e.printStackTrace();
+		if ( targetsFile.exists() ) {
+			//--- Try to load the targets 
+			List<TargetDefinition> list ;
+			try {
+				list = targetsFile.load();
+			} catch (GeneratorException e) {
+				MsgBox.error("Cannot load targets definition from file : \n" + sFile + "\n Exception : " + e.getMessage() );
+				list = VOID_LIST_OF_TARGETS ;
+			}
+			return list ;
 		}
-
-		return list ;
+		else {
+			return VOID_LIST_OF_TARGETS ;
+		}
 	}	
 
 	/**

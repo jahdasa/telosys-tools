@@ -1101,7 +1101,7 @@ public class PropertiesPage extends PropertyPage {
 		props.put(PropName.REPOS_FOLDER,                  _tRepositoriesFolder.getText() );
 				
 		//--- Tab "Packages"
-		props.put(GeneratorConfigConst.PACKAGE_VO,        _tBeanPackage.getText());
+		props.put(GeneratorConfigConst.ENTITIES_PACKAGE,  _tBeanPackage.getText());
 		
 		//--- Tab "Folders" ( considered as pre-defined variables )
 		props.put(ContextName.SRC,       _tSrcFolder.getText() );
