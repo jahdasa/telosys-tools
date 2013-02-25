@@ -285,13 +285,10 @@ public class Generator {
 		try {
 			template = _velocityEngine.getTemplate(_sTemplateFileName);
 		} catch (ResourceNotFoundException e) {
-			e.printStackTrace();
 			throw new GeneratorException("Cannot get template : ResourceNotFoundException ! ", e );
 		} catch (ParseErrorException e) {
-			e.printStackTrace();
 			throw new GeneratorException("Cannot get template : Velocity ParseErrorException ! ", e );
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new GeneratorException("Cannot get template : Exception ! ", e );
 		}
 		return template;
