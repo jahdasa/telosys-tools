@@ -186,8 +186,6 @@ public class XmlDocument
             b = f.newDocumentBuilder();
             doc = b.newDocument();
         } catch (ParserConfigurationException e) {
-//            MsgBox.error("Cannot create DOM document ! \nException : " + e.getMessage() );
-//            e.printStackTrace();
             throw new TelosysToolsException("Cannot create DOM document", e);
         }
         
@@ -210,16 +208,10 @@ public class XmlDocument
         try {
             doc = f.newDocumentBuilder().parse(file);
         } catch (SAXException e) {
-//            MsgBox.error("Cannot parse file " + file.getName() +" ! \nException : " + e.getMessage() );
-//            e.printStackTrace();
             throw new TelosysToolsException(error, e);
         } catch (IOException e) {
-//            MsgBox.error("Cannot parse file " + file.getName() +" ! \nException : " + e.getMessage() );
-//            e.printStackTrace();
             throw new TelosysToolsException(error, e);
         } catch (ParserConfigurationException e) {
-//            MsgBox.error("Cannot parse file " + file.getName() +" ! \nException : " + e.getMessage() );
-//            e.printStackTrace();
             throw new TelosysToolsException(error, e);
         }
         return doc;

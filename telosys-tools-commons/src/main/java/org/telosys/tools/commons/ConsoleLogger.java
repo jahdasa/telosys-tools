@@ -22,70 +22,10 @@ package org.telosys.tools.commons;
  * @author Laurent GUERIN
  *
  */
-public class ConsoleLogger extends GenericLogger // implements TelosysToolsLogger
+public class ConsoleLogger extends GenericLogger
 {
 	//----------------------------------------------------------------------------------
 	protected void print(String s) {
 		System.out.println(s);
 	}
-	
-//	//----------------------------------------------------------------------------------
-//	public final void log(Object object, String s) {
-//		print("[LOG] " + s + " : " + object);
-//	}
-//	
-//	//----------------------------------------------------------------------------------
-//	public final void log(String s) {
-//		print("[LOG] " + s);
-//	}
-//
-//	//----------------------------------------------------------------------------------
-//	public final void error(String s) {
-//		print("[ERROR] " + s);
-//	}
-//
-//	//----------------------------------------------------------------------------------
-//	public final void info(String s) {
-//		print("[INFO] " + s );
-//	}
-//	
-//	//----------------------------------------------------------------------------------
-//	public void exception (Throwable e) {
-//		print( "----- "  );
-//		print( " Exception : " + e.getClass().getName() );
-//		print( " Message   : " + e.getMessage() );
-//		printStackTrace(e) ;
-//		
-//		Throwable cause = e.getCause() ;
-//		while ( cause != null ) 
-//		{
-//			print( "----- "  );
-//			print( " Cause   : "  + cause.getClass().getName() );
-//			print( " Message : " + cause.getMessage() );
-//			printStackTrace(cause) ;
-//			
-//			cause = cause.getCause();
-//		}
-//	}
-//
-//	private static int STACK_MAX_CALLERS = 1000 ;
-//	
-//    private void printStackTrace(Throwable ex)
-//    {
-//        StackTraceElement stackTrace[] = ex.getStackTrace();
-//        StackTraceElement stackTraceElement = null;
-//        if ( stackTrace.length > 0 )
-//        {
-//            //--- Callers stack ( 1 to N )
-//	        for ( int i = 0 ; i < stackTrace.length && i < STACK_MAX_CALLERS+1 ; i++ )
-//	        {
-//	            stackTraceElement = stackTrace[i];
-//	            int iLineNumber = stackTraceElement.getLineNumber();
-//	            String sLineNumber = "" ;
-//	            if ( iLineNumber > 0 ) sLineNumber = " (line " + iLineNumber + ")" ;
-//	            print( " . " + stackTraceElement.getClassName() + "." + stackTraceElement.getMethodName() + sLineNumber );
-//	        }
-//        }    	
-//    }
-//	
 }
