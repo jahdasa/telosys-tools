@@ -1,9 +1,11 @@
 package org.telosys.tools.eclipse.plugin.config.view;
 
+import java.io.File;
 import java.util.Properties;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
@@ -22,6 +24,8 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PropertyPage;
+import org.telosys.tools.commons.FileUtil;
+import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.commons.Variable;
 import org.telosys.tools.commons.VariablesUtil;
 import org.telosys.tools.eclipse.plugin.MyPlugin;
@@ -30,7 +34,6 @@ import org.telosys.tools.eclipse.plugin.commons.MsgBox;
 import org.telosys.tools.eclipse.plugin.commons.PluginLogger;
 import org.telosys.tools.eclipse.plugin.config.ProjectConfig;
 import org.telosys.tools.eclipse.plugin.config.ProjectConfigManager;
-import org.telosys.tools.eclipse.plugin.config.PropName;
 import org.telosys.tools.generator.ContextName;
 import org.telosys.tools.generator.GeneratorVersion;
 import org.telosys.tools.generator.config.GeneratorConfigConst;
@@ -43,7 +46,8 @@ import org.telosys.tools.generator.context.VariableNames;
  */
 public class PropertiesPage extends PropertyPage {
 
-	private final static String WEB_CONTENT = "WebContent" ;
+	private final static String WEB_CONTENT     = "WebContent" ;
+	private final static String DATABASES_DBCFG = "databases.dbcfg" ;
 
     //private final static String PLUGIN_PROPERTIES_FILE = "telosys-tools.cfg";
     
@@ -56,6 +60,8 @@ public class PropertiesPage extends PropertyPage {
 //	private Text _tWebContentFolder = null ;
 	private Text _tTemplatesFolder = null ;
 	private Text _tRepositoriesFolder = null ;
+	private Text _tDownloadsFolder = null ;
+	
 //	private Text _tTelosysProp = null ;
 	
     //--- Tab "Packages"
@@ -338,20 +344,130 @@ public class PropertiesPage extends PropertyPage {
 		_tPluginConfigFile.setEnabled(false);	
 		
 		//-------------------------------------------------------------------------------
-		_tRepositoriesFolder = createTextField(tabContent, "Repositories folder :") ;
+		_tRepositoriesFolder = createTextField(tabContent, "Models folder :") ;
 
 		_tTemplatesFolder = createTextField(tabContent, "Templates folder :") ;
 		
+		_tDownloadsFolder = createTextField(tabContent, "Downloads folder :") ;
+		
 		//-------------------------------------------------------------------------------
 		
-//		_tSourceFolder = createTextField(tabContent, "Source folder :") ;
-//
-//		_tWebContentFolder = createTextField(tabContent, "Web content folder :") ;
-
+		createTabGeneralButton(tabContent);
+		
 //		_tTelosysProp = createTextField(tabContent, "Telosys properties file :") ;
 		
 		//-------------------------------------------------------------------------------
 	}	
+	//------------------------------------------------------------------------------------------
+	private void createTabGeneralButton(Composite composite ){
+		//--- Creates the void Label 
+		Label label = new Label(composite, SWT.NONE);
+		label.setText("");
+		
+		//--- Creates the Button 
+		Button initButton = new Button(composite, SWT.PUSH);
+		initButton.setText("Init Telosys Tools");
+		initButton.setToolTipText(" Creates the Telosys Tools folders \n"
+				+ " and the databases configuration file \n"
+				+ " if they don't exist");
+		initButton.addSelectionListener(new SelectionListener() 
+    	{
+            public void widgetSelected(SelectionEvent arg0)
+            {
+            	initTelosysToolsEnv();
+            }
+            public void widgetDefaultSelected(SelectionEvent arg0)
+            {
+            }
+        }
+		);
+	}
+	//------------------------------------------------------------------------------------------
+	private void initTelosysToolsEnv(){
+		IProject project = getCurrentProject();
+		StringBuffer sb = new StringBuffer();
+		sb.append("Telosys Tools environment initialized.\n\n");
+		createFolder(project, _tRepositoriesFolder, sb ) ;
+		createFolder(project, _tTemplatesFolder, sb ) ;
+		createFolder(project, _tDownloadsFolder, sb ) ;
+		initDatabasesConfigFile(project, _tTemplatesFolder.getText(), sb);
+		MsgBox.info(sb.toString());
+	}
+	//------------------------------------------------------------------------------------------
+	private void createFolder(IProject project, Text folderText, StringBuffer sb){
+		String folderName = folderText.getText() ;
+		if ( ! StrUtil.nullOrVoid(folderName) )  {
+			folderName = folderName.trim() ;
+			if ( EclipseProjUtil.folderExists(project, folderName) ) {
+				sb.append(". folder '" + folderName + "' exists (not created)");
+			}
+			else {
+				boolean created = EclipseProjUtil.createFolder(project, folderName ) ;	
+				if ( created ) {
+					sb.append(". folder '" + folderName + "' created");
+				}
+				else {
+					sb.append(". folder '" + folderName + "' not created (ERROR)");
+				}
+			}
+		}
+		sb.append("\n");
+	}	
+	//------------------------------------------------------------------------------------------
+	private void initDatabasesConfigFile(IProject project, String sTemplatesFolder, StringBuffer sb){
+		
+		//--- File provided with the plugin distribution
+		String pluginResourcesFolder = MyPlugin.getResourcesDirectory();
+		String  fullFileName = FileUtil.buildFilePath(pluginResourcesFolder, DATABASES_DBCFG );
+		//MsgBox.info("fullFileName : \n" + fullFileName);
+		
+		//--- Destination file (in the project)
+		if ( StrUtil.nullOrVoid(sTemplatesFolder) ) {
+			MsgBox.error("Templates folder is void !");
+			return ;
+		}
+		StringBuffer sbDestination = new StringBuffer();
+		String s = sTemplatesFolder.trim();
+		String[] parts = StrUtil.split(s, '/');
+		for ( int i = 0 ; i < ( parts.length - 1 ) ; i++ ) {
+			if ( i > 0 ) {
+				sbDestination.append("/");
+			}
+			sbDestination.append(parts[i]);
+		}
+		sbDestination.append("/");
+		sbDestination.append(DATABASES_DBCFG);
+		
+		String destinationInProject = sbDestination.toString() ;
+		//--- Destination file (in the filesystem)
+//		IFile ifile = project.getFile( new Path(destinationInProject) ) ;
+//		IPath ipath = ifile.getLocation();
+//		File file = EclipseProjUtil.getAbsolutePath(project, destinationInProject);
+		
+		String destinationAbsolutePath = EclipseProjUtil.getAbsolutePathInFileSystem(project, destinationInProject);
+		MsgBox.info("Destination absolute path : \n" + destinationAbsolutePath );
+		File file = new File(destinationAbsolutePath) ;
+		if ( file.exists() ) {
+			MsgBox.info("File '" + destinationAbsolutePath + "' exists." );
+			sb.append(". file '" + destinationInProject + "' exists (not copied)");
+		}
+		else {
+			MsgBox.info("File '" + destinationAbsolutePath + "' doesn't exist." );
+			//--- Copy in the project folder
+			try {
+				FileUtil.copy(fullFileName, destinationAbsolutePath);
+				EclipseProjUtil.refreshResource(project, destinationInProject);
+				sb.append(". file '" + destinationInProject + "' copied");
+			} catch (Exception e) {
+				MsgBox.error("Cannot copy '" + DATABASES_DBCFG + "' file. \n\n"
+						+ "Source : \n" + fullFileName + "\n" 
+						+ "Destination : \n" + destinationAbsolutePath + "\n" 
+					 ) ;
+				sb.append(". ERROR : cannot copy file '" + destinationInProject + "' ");
+			}
+		}
+		sb.append("\n");
+	}
 	
 	//------------------------------------------------------------------------------------------
 	/**
@@ -627,9 +743,9 @@ public class PropertiesPage extends PropertyPage {
 		t.setEnabled(false);
 		t.setText( MyPlugin.getDirectory() );
 		
-		t = createTextField(tabContent, "Templates dir :") ;
+		t = createTextField(tabContent, "Resources dir :") ;
 		t.setEnabled(false);
-		t.setText( MyPlugin.getTemplatesDirectory() );
+		t.setText( MyPlugin.getResourcesDirectory() );
 		
 		t = createTextField(tabContent, "Generator version :") ;
 		t.setEnabled(false);
@@ -1027,11 +1143,12 @@ public class PropertiesPage extends PropertyPage {
 //		_tSourceFolder.setText( projectConfig.getSourceFolder() );
 //		_tWebContentFolder.setText ( projectConfig.getWebContentFolder() );
 //		_tTelosysProp.setText( projectConfig.getTelosysPropFile() );
-		_tTemplatesFolder.setText( projectConfig.getTemplatesFolder() );
 		_tRepositoriesFolder.setText( projectConfig.getRepositoriesFolder() );
+		_tTemplatesFolder.setText( projectConfig.getTemplatesFolder() );
+		_tDownloadsFolder.setText( projectConfig.getDownloadsFolder() );
 		
 		//--- Tab "Packages"
-		_tBeanPackage.setText( projectConfig.getPackageForVOBean() );
+		_tBeanPackage.setText( projectConfig.getPackageForJavaBeans() );
 		
 		//--- Tab "Folders" ( considered as pre-defined variables )
 		_tSrcFolder.setText( projectConfig.getSRC() ) ;
@@ -1095,8 +1212,9 @@ public class PropertiesPage extends PropertyPage {
 		log("fieldsToProperties ...");
 		
 		//--- Tab "General"
+		props.put(GeneratorConfigConst.REPOS_FOLDER,      _tRepositoriesFolder.getText() );
 		props.put(GeneratorConfigConst.TEMPLATES_FOLDER,  _tTemplatesFolder.getText() );
-		props.put(PropName.REPOS_FOLDER,                  _tRepositoriesFolder.getText() );
+		props.put(GeneratorConfigConst.DOWNLOADS_FOLDER,  _tDownloadsFolder.getText() );
 				
 		//--- Tab "Packages"
 		props.put(GeneratorConfigConst.ENTITIES_PACKAGE,  _tBeanPackage.getText());

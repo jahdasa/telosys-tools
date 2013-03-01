@@ -44,23 +44,22 @@ public class ProjectConfig
 // [22-Jan-2012] Removed	
 //	private String _sTelosysPropFile    = "WebContent/WEB-INF/conf/telosys.properties" ;
 	
-//	private String _sSourceFolder       = "src" ;
-//	private String _sWebContentFolder   = "WebContent" ;
-	private String _sTemplatesFolder    = "TelosysTools/templates" ; 
 	private String _sRepositoriesFolder = "TelosysTools/repos" ; 
+	private String _sTemplatesFolder    = "TelosysTools/templates" ; 
+	private String _sDownloadsFolder    = "TelosysTools/downloads" ; 
 	
 	//----------------------------------------------------------------------------------------
 	// [22-Jan-2012] Removed	
 	//--- Packages 	
-	private String _sEntitiesPackage = "org.demo.vo.bean" ;
+	private String _sEntitiesPackage = "org.demo.bean" ;
 
 	private String _SRC      =  "" ;
 	private String _RES      =  "" ;
 	private String _WEB      =  "" ;
 	private String _TEST_SRC =  "" ;
 	private String _TEST_RES =  "" ;
-	private String _DOC      =  "" ;
-	private String _TMP      =  "" ;
+	private String _DOC      =  "doc" ;
+	private String _TMP      =  "tmp" ;
 	
 	//----------------------------------------------------------------------------------------
 	//--- Classes names
@@ -155,10 +154,9 @@ public class ProjectConfig
     	}
     	
     	// Init with the given properties, use original values as default values
-//    	_sSourceFolder = prop.getProperty(PropName.SOURCE_FOLDER, _sSourceFolder);
-//    	_sWebContentFolder = prop.getProperty(PropName.WEB_CONTENT_FOLDER, _sWebContentFolder);
+    	_sRepositoriesFolder = prop.getProperty(GeneratorConfigConst.REPOS_FOLDER, _sRepositoriesFolder);
     	_sTemplatesFolder = prop.getProperty(GeneratorConfigConst.TEMPLATES_FOLDER, _sTemplatesFolder);
-    	_sRepositoriesFolder = prop.getProperty(PropName.REPOS_FOLDER, _sRepositoriesFolder);
+    	_sDownloadsFolder = prop.getProperty(GeneratorConfigConst.DOWNLOADS_FOLDER, _sDownloadsFolder);
     	
     	//--- Packages 
     	_sEntitiesPackage = prop.getProperty(GeneratorConfigConst.ENTITIES_PACKAGE, _sEntitiesPackage);
@@ -227,6 +225,9 @@ public class ProjectConfig
 	{
     	return _sTemplatesFolder;
 	}
+    public String getDownloadsFolder() {
+    	return _sDownloadsFolder;
+    }
     
     /**
      * Returns the plugin templates directory ( default templates directory ) 
@@ -235,6 +236,15 @@ public class ProjectConfig
     private String getPluginTemplatesFolder()
 	{
     	return MyPlugin.getTemplatesDirectory();
+	}
+    
+    /**
+     * Returns the plugin resources directory ( default templates directory ) 
+     * @return
+     */
+    private String getPluginResourcesFolder()
+	{
+    	return MyPlugin.getResourcesDirectory();
 	}
     
     /**
@@ -331,10 +341,10 @@ public class ProjectConfig
     // Packages 
     //==============================================================================
 	/**
-	 * ie "org.demo.vo.bean"
+	 * ie "org.demo.bean"
 	 * @return 
 	 */
-	public String getPackageForVOBean() 
+	public String getPackageForJavaBeans() 
 	{
 		return _sEntitiesPackage ;
 	}

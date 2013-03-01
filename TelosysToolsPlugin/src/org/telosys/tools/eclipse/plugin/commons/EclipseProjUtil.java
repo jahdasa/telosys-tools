@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -21,6 +22,7 @@ import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.telosys.tools.commons.StrUtil;
 
 
 /**
@@ -78,7 +80,7 @@ public class EclipseProjUtil {
 	 * or null if the resource doesn't exist
 	 * @param project
 	 * @param sPath ( '/aaa/bbb' or 'aaa/bbb' in the project ) 
-	 * @return
+	 * @return the resource ( or null if the resource doesn't exists )
 	 */
 	public static IResource getResource(IProject project, String sPath) 
 	{
@@ -93,7 +95,7 @@ public class EclipseProjUtil {
 	 * or null if the resource doesn't exist
 	 * @param project
 	 * @param path ( '/aaa/bbb' or 'aaa/bbb' in the project ) 
-	 * @return
+	 * @return the resource ( or null if the resource doesn't exists )
 	 */
 	public static IResource getResource(IProject project, Path path) 
 	{
@@ -109,11 +111,41 @@ public class EclipseProjUtil {
 	
 	//----------------------------------------------------------------------------------
 	/**
+	 * Returns the project absolute path relative to the containing workspace <br>
+	 * Example : returns "/myproject/aa/bb/file" for "aa/bb/file"
+	 * @param project
+	 * @param sPath the path in the project 
+	 * @return
+	 */
+	public static String getAbsolutePathInWorkspace(IProject project, String sPath) 
+	{
+		IFile file = project.getFile( new Path(sPath) ) ; 
+		IPath p = file.getFullPath();
+		return p.toString() ;
+	}
+
+	/**
+	 * Returns the filesystem absolute path <br>
+	 * Example : returns "D:/aaa/bbbb/workspace/myproject/aa/bb/file" for "aa/bb/file"
+	 * @param project
+	 * @param sPath
+	 * @return
+	 */
+	public static String getAbsolutePathInFileSystem(IProject project, String sPath) 
+	{
+		IResource resource = project.getFile( new Path(sPath) ) ;
+		IPath ipath = resource.getLocation(); // OS Path ( D:/aaa/bbbb/workspace/myproject/aa/bb/file )
+		File file = ipath.toFile();
+		return file.getAbsolutePath();
+	}
+	
+	//----------------------------------------------------------------------------------
+	/**
 	 * Returns a standard file instance for the given relative path in the project <br>
 	 * or null if the file doesn't exist
 	 * @param project
 	 * @param sPath ( '/aaa/bbb' or 'aaa/bbb' ) 
-	 * @return
+	 * @return the file, or null 
 	 */
 	public static File getResourceAsFile(IProject project, String sPath) 
 	{
@@ -130,7 +162,7 @@ public class EclipseProjUtil {
 	 * @param path ( '/aaa/bbb' or 'aaa/bbb' ) 
 	 * @return 
 	 */
-	public static File getResourceAsFile(IProject project, Path path) 
+	private static File getResourceAsFile(IProject project, Path path) 
 	{
 		File file = null ;
 		log("getResourceAsFile(Path : '" + path + "')");	
@@ -170,22 +202,31 @@ public class EclipseProjUtil {
 	 */
 	public static void refreshResource(IProject project, Path path) 
 	{
-		IResource resource = getResource(project, path);
-		if ( resource != null )
-		{
-			try {
-				resource.refreshLocal(IResource.DEPTH_ZERO, null);
-			} catch (CoreException e) {
-				MsgBox.error("Cannot refresh file '" + path + "' !\n" 
-						+ "CoreException \n"
-						+ e.getMessage() );
-			}
-		}
-		else
-		{
+//		IResource resource = getResource(project, path);
+//		if ( resource != null )
+//		{
+//			try {
+//				resource.refreshLocal(IResource.DEPTH_ZERO, null);
+//			} catch (CoreException e) {
+//				MsgBox.error("Cannot refresh file '" + path + "' !\n" 
+//						+ "CoreException \n"
+//						+ e.getMessage() );
+//			}
+//		}
+//		else
+//		{
+//			MsgBox.error("Cannot refresh file '" + path + "' !\n" 
+//					+ "File not found." );
+//		}
+
+		IResource resource = project.getFile( path ) ;
+		try {
+			resource.refreshLocal(IResource.DEPTH_ZERO, null);
+		} catch (CoreException e) {
 			MsgBox.error("Cannot refresh file '" + path + "' !\n" 
-					+ "File not found." );
+			+ "CoreException \n" + e.getMessage() );
 		}
+		
 	}
 	
     //------------------------------------------------------------------------------------------------
@@ -361,4 +402,71 @@ public class EclipseProjUtil {
         return srcFolders.toArray(new String[0]);
     }	
     
+    /**
+     * Returns true if the folder exists
+     * @param project
+     * @param folderName
+     * @return
+     */
+    public static boolean folderExists(IProject project, String folderName ) {
+        IFolder folder = project.getFolder(folderName);
+        return folder.exists() ;
+    }
+    
+//    /**
+//     * Tries to create the given folder 
+//     * @param project
+//     * @param folderName
+//     * @return true if created, false if already exists (or if an error occurs )
+//     */
+//    public static boolean createFolder(IProject project, String folderName ) {
+//    	boolean created = false ;
+//        IFolder folder = project.getFolder(folderName);
+//        if (!folder.exists())  {
+//    		try {
+//                folder.create(IResource.NONE, true, null);
+//                created = true ;
+//    		} catch (CoreException e) {
+//    			MsgBox.error("Cannot create folder '" + folderName + "' !\n" 
+//    					+ "CoreException \n"
+//    					+ e.getMessage() );
+//    		}
+//        }
+//        return created ;
+//    }
+    
+    /**
+     * Tries to create the given folder ( with all sub-folders if any )
+     * @param project
+     * @param folderName
+     * @return true if created, false if already exists (or if an error occurs )
+     */
+    public static boolean createFolder(IProject project, String folderName ) {
+        if ( project.getFolder(folderName).exists() )  {
+        	// Already exists
+        	return false ;
+        }
+        else {
+        	StringBuffer sb = new StringBuffer();
+        	String[] parts = StrUtil.split(folderName, '/') ;
+        	for ( int i = 0 ; i < parts.length ; i++ ) {
+        		if ( i > 0 ) {
+        			sb.append("/");
+        		}
+        		sb.append(parts[i]);
+                IFolder folder = project.getFolder( sb.toString() );
+                if (!folder.exists())  {
+            		try {
+                        folder.create(IResource.NONE, true, null);
+            		} catch (CoreException e) {
+            			MsgBox.error("Cannot create folder '" + folder.getName() + "' !\n" 
+            					+ "CoreException \n"
+            					+ e.getMessage() );
+            			return false ;
+            		}
+                }
+        	}
+            return true ;
+        }
+    }
 }

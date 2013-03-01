@@ -5,10 +5,15 @@
 	<!-- ============================================================================== -->
 
 	<target name="copy-jars" >
-		
-		 <copy todir="${lib_dir}" overwrite="true" >
+		<echo message="Delete existing jars " />
+		<delete>
+			<fileset dir="${lib_dir}" includes="telosys-tools-*.jar"/>
+		</delete>
 
-		 	<fileset dir="../telosys-tools-commons/target">
+		<echo message="Copy new jars " />
+		<copy todir="${lib_dir}" overwrite="true" >
+
+			<fileset dir="../telosys-tools-commons/target">
 		    	<include name="*.jar"/>
 		    </fileset>
 		    
@@ -24,8 +29,8 @@
 		    	<include name="*.jar"/>
 		    </fileset>
 		 	
-		  </copy>
-		
+		</copy>
+
 	</target>
 
 </project>

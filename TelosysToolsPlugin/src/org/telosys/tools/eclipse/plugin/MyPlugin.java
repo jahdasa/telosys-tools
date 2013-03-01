@@ -17,17 +17,22 @@ import org.telosys.tools.eclipse.plugin.commons.MsgBox;
 import org.telosys.tools.eclipse.plugin.commons.PluginLogger;
 
 /**
+ * Utility methods for the current Eclipse Plugin 
+ * 
  * @author Laurent GUERIN
  *  
  */
 public class MyPlugin
 {
     //------------------------------------------------------------------------------------------------
-	// --- name of the directory and file of properties of the templates
-	private static final String TEMPLATES_SUBDIR = "templates";
+	//--- Templates folder embedded in the Eclipse Plugin
+	private static final String TEMPLATES_PLUGIN_FOLDER  = "templates";
 
-	// --- name of the directory and file of properties of the templates
-	private static final String IMAGES_SUBDIR = "icons";
+	//--- Icons folder embedded in the Eclipse Plugin
+	private static final String IMAGES_PLUGIN_FOLDER     = "icons";
+
+	//--- Resources folder embedded in the Eclipse Plugin
+	private static final String RESOURCES_PLUGIN_FOLDER  = "resources";
 
     //------------------------------------------------------------------------------------------------
     private static String $sPluginId = "(no-id)" ;
@@ -98,8 +103,9 @@ public class MyPlugin
 		PluginLogger.log(" Plugin directory URL = " + getBaseURLAsString() );
 		
 		PluginLogger.log(" Plugin directory = " + getDirectory() );
-		PluginLogger.log(" Plugin icons directory = " + getImagesDirectory() );
+		PluginLogger.log(" Plugin icons directory     = " + getImagesDirectory() );
 		PluginLogger.log(" Plugin templates directory = " + getTemplatesDirectory() );
+		PluginLogger.log(" Plugin resources directory = " + getResourcesDirectory() );
 		
     }
     
@@ -218,7 +224,7 @@ public class MyPlugin
 	
     //------------------------------------------------------------------------------------------------
     /**
-     * Returns the plugin base URL ( ie "file:/c:/eclipse/plugins/myplugin" ) 
+     * Returns the plugin base URL ( ie "file:/c:/xxx/xxx/eclipse/plugins/myplugin" ) 
      * @return
      */
     private static URL getBaseURL()
@@ -253,7 +259,7 @@ public class MyPlugin
 
     //------------------------------------------------------------------------------------------------
     /**
-     * Returns the plugin base URL as a String ( ie "file:/c:/eclipse/plugins/myplugin" ) 
+     * Returns the plugin base URL as a String ( ie "file:/c:/xxx/xxx/eclipse/plugins/myplugin" ) 
      * @return
      */
     public static String getBaseURLAsString()
@@ -269,7 +275,7 @@ public class MyPlugin
 
     //------------------------------------------------------------------------------------------------
     /**
-     * @return Ecplise plugin directory ( ie : "c:/eclipse/plugins/myplugin" )
+     * @return Ecplise plugin directory ( ie : "c:/xxx/xxx/eclipse/plugins/myplugin" )
      */
     public static String getDirectory()
     {
@@ -288,14 +294,14 @@ public class MyPlugin
     //------------------------------------------------------------------------------------------------
     /**
      * @return Ecplise plugin template directory ( ie :
-     *         "c:/eclipse/plugins/myplugin/templates" )
+     *         "c:/xxx/xxx/eclipse/plugins/myplugin/templates" )
      */
     public static String getTemplatesDirectory()
     {
         String sPluginDir = getDirectory();
         if ( sPluginDir != null )
         {
-        	return sPluginDir + TEMPLATES_SUBDIR;
+        	return sPluginDir + TEMPLATES_PLUGIN_FOLDER;
         }
         return null ;
     }
@@ -303,14 +309,29 @@ public class MyPlugin
     //------------------------------------------------------------------------------------------------
     /**
      * @return Ecplise plugin icons directory ( ie :
-     *         "c:/eclipse/plugins/myplugin/icons" )
+     *         "c:/xxx/xxx/eclipse/plugins/myplugin/icons" )
      */
     public static String getImagesDirectory()
     {
         String sPluginDir = getDirectory();
         if ( sPluginDir != null )
         {
-        	return sPluginDir + IMAGES_SUBDIR;
+        	return sPluginDir + IMAGES_PLUGIN_FOLDER;
+        }
+        return null ;
+    }
+
+    //------------------------------------------------------------------------------------------------
+    /**
+     * @return Ecplise plugin icons directory ( ie :
+     *         "c:/xxx/xxx/eclipse/plugins/myplugin/resources" )
+     */
+    public static String getResourcesDirectory()
+    {
+        String sPluginDir = getDirectory();
+        if ( sPluginDir != null )
+        {
+        	return sPluginDir + RESOURCES_PLUGIN_FOLDER ;
         }
         return null ;
     }
@@ -328,7 +349,7 @@ public class MyPlugin
 		if ( baseURL != null )
 		{
 			try {
-				imageURL = new URL(baseURL, IMAGES_SUBDIR + "/" + sImageFile );
+				imageURL = new URL(baseURL, IMAGES_PLUGIN_FOLDER + "/" + sImageFile );
 			} catch (MalformedURLException e) {
 				MsgBox.error("Cannot get image URL for '" + sImageFile + "'.", e );
 			}
