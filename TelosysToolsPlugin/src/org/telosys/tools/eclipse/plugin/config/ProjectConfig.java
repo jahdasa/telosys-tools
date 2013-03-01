@@ -239,15 +239,6 @@ public class ProjectConfig
 	}
     
     /**
-     * Returns the plugin resources directory ( default templates directory ) 
-     * @return
-     */
-    private String getPluginResourcesFolder()
-	{
-    	return MyPlugin.getResourcesDirectory();
-	}
-    
-    /**
      * Returns the "Project Full Path" by adding the given subpath at the end of the project location
      * @param sSubPath the "sub path" to add
      * @return
