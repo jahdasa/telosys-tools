@@ -16,13 +16,21 @@
 package org.telosys.tools.generator.config;
 
 /**
+ * Generator configuration properties names <br>
+ * for properties not available in the Velocity Context <br>
+ * ( properties used as context variables are defined in ContextName ) 
+ * 
  * @author Laurent GUERIN
  *
  */
 public class GeneratorConfigConst {
 
     //--- Directories 
+    public final static String REPOS_FOLDER      = "RepositoriesFolder";
+
     public final static String TEMPLATES_FOLDER  = "TemplatesFolder";
+
+    public final static String DOWNLOADS_FOLDER  = "DownloadsFolder";
     
     //--- Packages 
     public final static String ENTITIES_PACKAGE  = "packageVo";

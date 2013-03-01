@@ -1319,7 +1319,7 @@ public class JavaBeanClassAttribute
     }
 
     /**
-     * Returns true if the JDBC type is an "string type" ( CHAR, VARCHAR or LONGVARCHAR )
+     * Returns true if the JDBC type is a "string type" ( CHAR, VARCHAR or LONGVARCHAR )
      * @return
      */
     private boolean isJdbcString()
@@ -1392,7 +1392,7 @@ public class JavaBeanClassAttribute
 		}
 	}
 
-	private boolean isPrimitiveType()
+	public boolean isPrimitiveType()
 	{
 		return JavaTypeUtil.isPrimitiveType( _sType );
 	}
