@@ -15,9 +15,16 @@
  */
 package org.telosys.tools.commons ;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 
 public class FileUtil {
 	
+    private static final int BUFFER_SIZE = 4*1024 ; // 4 kb   
+    
     public static String buildFilePath(String dir, String file) {
     	String s1 = dir ;
     	if ( dir.endsWith("/") || dir.endsWith("\\") )
@@ -33,5 +40,54 @@ public class FileUtil {
     	
 		return s1 + "/" + s2 ;
 	}
-
+    
+    //----------------------------------------------------------------------------
+    /**
+     * Copy a file into another one
+     * @param sInputFileName
+     * @param sOutputFileName
+     * @throws Exception
+     */
+    public static void copy(String sInputFileName, String sOutputFileName) throws Exception
+    {
+        //--- Open input file
+		FileInputStream fis = null;
+        try
+        {
+            fis = new FileInputStream(sInputFileName);
+        } catch (FileNotFoundException ex)
+        {
+            throw new Exception("copy : cannot open input file.", ex);
+        }
+        
+        //--- Open output file
+		FileOutputStream fos = null;
+        try
+        {
+            fos = new FileOutputStream(sOutputFileName);
+        } catch (FileNotFoundException ex)
+        {
+            throw new Exception("copy : cannot open output file.", ex);
+        }
+        
+        //--- Copy and close
+        if ( fis != null && fos != null )
+        {
+			byte buffer[] = new byte[BUFFER_SIZE];
+			int len = 0;
+			
+			try
+            {
+                while ((len = fis.read(buffer)) > 0)
+                {
+                    fos.write(buffer, 0, len);
+                }
+                fis.close();
+                fos.close();
+            } catch (IOException ioex)
+            {
+                throw new Exception("copy : IO error.", ioex);
+            }
+		}
+    }
 }
