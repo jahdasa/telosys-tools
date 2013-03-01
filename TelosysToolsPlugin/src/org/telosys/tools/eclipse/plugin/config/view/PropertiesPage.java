@@ -418,7 +418,6 @@ public class PropertiesPage extends PropertyPage {
 		//--- File provided with the plugin distribution
 		String pluginResourcesFolder = MyPlugin.getResourcesDirectory();
 		String  fullFileName = FileUtil.buildFilePath(pluginResourcesFolder, DATABASES_DBCFG );
-		//MsgBox.info("fullFileName : \n" + fullFileName);
 		
 		//--- Destination file (in the project)
 		if ( StrUtil.nullOrVoid(sTemplatesFolder) ) {
@@ -435,24 +434,19 @@ public class PropertiesPage extends PropertyPage {
 			sbDestination.append(parts[i]);
 		}
 		sbDestination.append("/");
-		sbDestination.append(DATABASES_DBCFG);
-		
+		sbDestination.append(DATABASES_DBCFG);		
 		String destinationInProject = sbDestination.toString() ;
-		//--- Destination file (in the filesystem)
-//		IFile ifile = project.getFile( new Path(destinationInProject) ) ;
-//		IPath ipath = ifile.getLocation();
-//		File file = EclipseProjUtil.getAbsolutePath(project, destinationInProject);
 		
+		//--- Destination file (in the filesystem)
 		String destinationAbsolutePath = EclipseProjUtil.getAbsolutePathInFileSystem(project, destinationInProject);
-		MsgBox.info("Destination absolute path : \n" + destinationAbsolutePath );
+		//MsgBox.info("Destination absolute path : \n" + destinationAbsolutePath );
 		File file = new File(destinationAbsolutePath) ;
 		if ( file.exists() ) {
-			MsgBox.info("File '" + destinationAbsolutePath + "' exists." );
+			//--- Already exists : no change
 			sb.append(". file '" + destinationInProject + "' exists (not copied)");
 		}
 		else {
-			MsgBox.info("File '" + destinationAbsolutePath + "' doesn't exist." );
-			//--- Copy in the project folder
+			//--- Doesn't exist yet : Initialize by copy ( from plugin folder to project folder )
 			try {
 				FileUtil.copy(fullFileName, destinationAbsolutePath);
 				EclipseProjUtil.refreshResource(project, destinationInProject);

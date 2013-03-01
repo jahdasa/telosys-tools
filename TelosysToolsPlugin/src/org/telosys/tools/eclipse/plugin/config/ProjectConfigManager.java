@@ -1,15 +1,18 @@
 package org.telosys.tools.eclipse.plugin.config;
 
+import java.io.File;
 import java.util.Properties;
 
 import org.eclipse.core.resources.IProject;
 import org.telosys.tools.eclipse.plugin.commons.EclipseProjUtil;
+import org.telosys.tools.eclipse.plugin.commons.EclipseWksUtil;
 import org.telosys.tools.eclipse.plugin.commons.MsgBox;
 import org.telosys.tools.eclipse.plugin.commons.PluginLogger;
 
 /**
- * Projects configuration holder
- * This static class holds and provides the Telosys projects configurations
+ * Projects configuration manager <br>
+ * . save and load the projects configuration<br>
+ * . hold each project configuration in a cache<br>
  */
 public class ProjectConfigManager {
 
@@ -20,8 +23,6 @@ public class ProjectConfigManager {
 	 * The key is the "Project Configuration File Name" 
 	 * The value is the "ProjectConfig" instance
 	 */
-	//private static Hashtable $htConfigs = new Hashtable();
-	
 	private static ProjectConfigs $cache = new ProjectConfigs();
 	
 	
@@ -351,8 +352,12 @@ public class ProjectConfigManager {
 			PropertiesManager propManager = new PropertiesManager( sConfigFileName ) ;
 			propManager.save(prop);
 			PluginLogger.log("ProjectConfigManager.saveProjectConfig(project, prop) : file = " + sConfigFileName );
+			//--- Refresh the file in the Eclipse Workspace
+			File file = new File(sConfigFileName);
+			EclipseWksUtil.refresh(file);
+			
+			//--- Update the configuration cache
 			ProjectConfig projectConfig = new ProjectConfig(project, prop, sConfigFileName);
-			// Store in cache
 			$cache.put(project,projectConfig);
 			return projectConfig ;
 		}
