@@ -19,8 +19,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.telosys.tools.commons.FileUtil;
@@ -81,6 +84,10 @@ public class PropertiesPage extends PropertyPage {
 	
 	//--- Tab "Variables"
 	private VariablesTable _variablesTable = null ;
+	
+	//--- Tab "Download"
+	private Text  _tGitHubUserName = null;
+	private Table _tableGitHubRepositories = null ;
 	
     //--- Tab "Info"
 	private Text _tPluginConfigFile = null ;
@@ -300,6 +307,7 @@ public class PropertiesPage extends PropertyPage {
 			// createTabClassesNames(tabFolder); // TODO : remove method ??
 			createTabFolders(tabFolder); 
 			createTabVariables(tabFolder);
+			createTabDownload(tabFolder);
 			createTabAdvanced(tabFolder);
 			createTabAboutPlugin(tabFolder);
 	
@@ -678,6 +686,161 @@ public class PropertiesPage extends PropertyPage {
 		return panelBouton ;
 	}
 	
+	//------------------------------------------------------------------------------------------
+	/**
+	 * Creates the "Packages" TabItem
+	 * @param tabFolder
+	 */
+	private void createTabDownload(TabFolder tabFolder) {
+		
+		final int Col2With = 300 ;
+		
+		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
+		tabItem.setText(" Download ");
+		
+		//--- GRID with 2 columns
+		Composite tabContent = new Composite(tabFolder, SWT.NONE);
+		tabContent.setLayout(new GridLayout(2, false));
+		tabItem.setControl(tabContent);
+		
+		//------------------------------------------------------------------------------------
+		//--- Label  ( SPAN 2 )
+		Label label = new Label(tabContent, SWT.NONE);
+		label.setText("Download templates and resources from GitHub");
+		label.setLayoutData(getColSpan(2));
+		
+		//------------------------------------------------------------------------------------
+		//--- SEPARATOR  ( SPAN 2 )
+		label = new Label(tabContent, SWT.NONE);
+		label.setText("");
+		label.setLayoutData(getColSpan(2));
+
+		//------------------------------------------------------------------------------------
+		//--- Label + Text field 
+		label = new Label(tabContent, SWT.NONE);
+		label.setText("GitHub user name : ");
+		_tGitHubUserName = new Text(tabContent, SWT.BORDER);
+		GridData gd = getCellGridData2();
+		gd.widthHint   = Col2With ;
+		_tGitHubUserName.setLayoutData(gd);
+		_tGitHubUserName.setText("telosys-tools-community");
+		
+		//------------------------------------------------------------------------------------
+		//--- Void Label + Button  
+		label = new Label(tabContent, SWT.NONE);
+		label.setText("");
+		
+		Button b = new Button(tabContent, SWT.PUSH);
+		b.setText("Get available files");
+		b.setToolTipText(" Get available files \n from GitHub site ");
+		b.addSelectionListener(new SelectionListener() 
+    	{
+            public void widgetSelected(SelectionEvent arg0)
+            {
+            	// TODO
+            }
+            public void widgetDefaultSelected(SelectionEvent arg0)
+            {
+            }
+        }
+		);
+
+		//------------------------------------------------------------------------------------
+		//--- Label + List of Repositories 
+		label = new Label(tabContent, SWT.NONE);
+		label.setText("GitHub files : ");	
+		label.setLayoutData(getCellGridData1());
+		
+//		_tableGitHubRepositories = createGitHubRepositiriesTable(tabContent, 400);
+//		GridData gd = getCellGridData2();
+//		//gd.minimumHeight = 200 ;
+//		gd.heightHint = 200 ;
+//		gd.widthHint  = 400 ;
+//		_tableGitHubRepositories.setLayoutData(gd);
+//		_tableGitHubRepositories.setSize(400, 200);
+//		//createTwoLabels(tabContent, "", "" ); // Separator
+		List list = new List(tabContent, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL );
+		gd = getCellGridData2();
+		gd.heightHint  = 140 ;
+		gd.widthHint   = Col2With ;
+		list.setLayoutData(gd);
+		for (int i = 1; i <= 16; i++) {
+		      list.add("Item Number " + i);
+		}
+		
+		//------------------------------------------------------------------------------------
+		//--- Void Label + Button  
+		label = new Label(tabContent, SWT.NONE);
+		label.setText("");
+		
+		b = new Button(tabContent, SWT.PUSH);
+		b.setText("Download file(s)");
+		b.setToolTipText(" Download selected files \n from GitHub site ");
+		b.addSelectionListener(new SelectionListener() 
+    	{
+            public void widgetSelected(SelectionEvent arg0)
+            {
+            	// TODO
+            }
+            public void widgetDefaultSelected(SelectionEvent arg0)
+            {
+            }
+        }
+		);
+
+	}
+	//------------------------------------------------------------------------------------------
+	private GridData getCellGridData1() {
+		GridData gd = new GridData();
+		gd.horizontalAlignment = SWT.LEFT ;
+		gd.verticalAlignment = SWT.TOP ;
+		return gd;
+	}
+	private GridData getCellGridData2() {
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalAlignment = SWT.LEFT ;
+		gd.verticalAlignment = SWT.TOP ;
+		return gd;
+	}
+	
+	
+	//------------------------------------------------------------------------------------------
+	//----------------------------------------------------------------------------------------------
+	private Table createGitHubRepositiriesTable(Composite composite, int colWidth)
+	{
+		// Table style
+		// SWT.CHECK : check box in the first column of each row
+//		int iTableStyle = SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CHECK ;
+		
+//		int iTableStyle = SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | 
+//		SWT.FULL_SELECTION | SWT.HIDE_SELECTION;
+		
+		int iTableStyle = SWT.BORDER | SWT.V_SCROLL 
+						 | SWT.HIDE_SELECTION | SWT.CHECK | SWT.MULTI ;
+		
+		Table table = new Table(composite, iTableStyle);
+		
+		
+		//table.setSize(380, 200);
+		//table.setSize(300, 100);
+
+		table.setLinesVisible(true);
+		table.setHeaderVisible(true);
+		
+		//--- Columns
+		TableColumn col = null ;
+		int iColumnIndex = 0 ;
+
+		col = new TableColumn(table, SWT.LEFT, iColumnIndex++);
+		//col.setText("GitHub repository name");
+		col.setWidth(colWidth);
+		
+//		col = new TableColumn(table, SWT.LEFT, iColumnIndex++);
+//		col.setText("Java Bean");
+//		col.setWidth(200);
+		
+		return table;
+	}
 	//------------------------------------------------------------------------------------------
 	
 	//------------------------------------------------------------------------------------------
