@@ -282,11 +282,19 @@ public class JavaBeanClassAttribute
         return s + sTrailingBlanks;
     }
 
+	/**
+	 * Returns the "short java type" without package, without blank, eg : "int", "BigDecimal", "Date"
+	 * @return
+	 */
 	public String getType()
 	{
 		return _sType;
 	}
 
+	/**
+	 * Returns the "java wrapper type" ie "Float" for "float" type, "Boolean" for "boolean" type
+	 * @return
+	 */
 	public String getWrapperType()
 	{
 		if ( null == _sType ) return "UnknownType" ;
@@ -330,6 +338,10 @@ public class JavaBeanClassAttribute
         return _sType + sTrailingBlanks;
     }	
     
+	/**
+	 * Returns the full java type with package, ie : "java.math.BigDecimal", "java.util.Date"
+	 * @return
+	 */
 	public String getFullType()
 	{
 		return _sFullType;

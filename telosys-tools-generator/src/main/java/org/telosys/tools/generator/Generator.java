@@ -109,41 +109,58 @@ public class Generator {
 		_generatorConfig = generatorConfig ;
 		
 		//------------------------------------------------------------------
-		// 1) Init Velocity context
+		// Workaround for Velocity error in OSGi environment
+		// "The specified class for ResourceManager (ResourceManagerImpl) does not implement ResourceManager"
+		// ( see https://github.com/whitesource/whitesource-bamboo-agent/issues/9 )
 		//------------------------------------------------------------------
-		//--- Create a context
-		log("Generator constructor : VelocityContext creation ...");
-		_velocityContext = new VelocityContext();
-		log("Generator constructor : VelocityContext created.");
-		
-		log("Generator constructor : VelocityContext events attachment ...");
-		GeneratorEvents.attachEvents(_velocityContext);
-		log("Generator constructor : VelocityContext events attached.");
-
-		log("Generator constructor : VelocityContext initialization ...");
-		initContext(generatorConfig, logger); 
-		log("Generator constructor : VelocityContext initialized.");
-		
-		//------------------------------------------------------------------
-		// 2) Init Velocity engine
-		//------------------------------------------------------------------
-		//--- Get the templates directory and use it to initialize the engine		
-		String sTemplateDirectory = generatorConfig.getTemplatesFolderFullPath();		
-		log("Templates Directory : '" + sTemplateDirectory + "'");
-
-		//--- Check template file existence		
-		checkTemplate(sTemplateDirectory, sTemplateFileName);
-		_sTemplateFileName  = sTemplateFileName;
-
-		log("Generator constructor : VelocityEngine initialization ...");
-		_velocityEngine = new VelocityEngine();
-		_velocityEngine.setProperty(VelocityEngine.FILE_RESOURCE_LOADER_PATH, sTemplateDirectory);
+		Thread currentThread = Thread.currentThread();
+		ClassLoader originalClassLoader = currentThread.getContextClassLoader();
+		currentThread.setContextClassLoader(this.getClass().getClassLoader()); // Set the context ClassLoader for this Thread
 		try {
-			_velocityEngine.init();
-		} catch (Exception e) {
-			throw new GeneratorException("Cannot init VelocityEngine", e );
+			
+			//------------------------------------------------------------------
+			// 1) Init Velocity context
+			//------------------------------------------------------------------
+			//--- Create a context
+			log("Generator constructor : VelocityContext creation ...");
+			_velocityContext = new VelocityContext();
+			log("Generator constructor : VelocityContext created.");
+			
+			log("Generator constructor : VelocityContext events attachment ...");
+			GeneratorEvents.attachEvents(_velocityContext);
+			log("Generator constructor : VelocityContext events attached.");
+	
+			log("Generator constructor : VelocityContext initialization ...");
+			initContext(generatorConfig, logger); 
+			log("Generator constructor : VelocityContext initialized.");
+			
+			//------------------------------------------------------------------
+			// 2) Init Velocity engine
+			//------------------------------------------------------------------
+			//--- Get the templates directory and use it to initialize the engine		
+			String sTemplateDirectory = generatorConfig.getTemplatesFolderFullPath();		
+			log("Templates Directory : '" + sTemplateDirectory + "'");
+	
+			//--- Check template file existence		
+			checkTemplate(sTemplateDirectory, sTemplateFileName);
+			_sTemplateFileName  = sTemplateFileName;
+	
+			log("Generator constructor : VelocityEngine initialization ...");
+			_velocityEngine = new VelocityEngine();
+			_velocityEngine.setProperty(VelocityEngine.FILE_RESOURCE_LOADER_PATH, sTemplateDirectory);
+			try {
+				_velocityEngine.init();
+			} catch (Exception e) {
+				throw new GeneratorException("Cannot init VelocityEngine", e );
+			}
+			log("Generator constructor : VelocityEngine initialized.");
 		}
-		log("Generator constructor : VelocityEngine initialized.");
+		finally {
+			currentThread.setContextClassLoader(originalClassLoader); // Restore the original classLoader
+		}
+		//------------------------------------------------------------------
+		// End of Workaround for Velocity error in OSGi environment
+		//------------------------------------------------------------------
 	}
 
 	private void log(String s) {
@@ -328,7 +345,24 @@ public class Generator {
 	public InputStream generateInMemory() throws GeneratorException {
 		log("generateInMemory()...");
 		StringWriter stringWriter = new StringWriter();
-		generate(stringWriter);
+		
+		//------------------------------------------------------------------
+		// Workaround for Velocity error in OSGi environment 
+		//------------------------------------------------------------------
+		Thread currentThread = Thread.currentThread();
+		ClassLoader originalClassLoader = currentThread.getContextClassLoader();
+		currentThread.setContextClassLoader(this.getClass().getClassLoader()); // Set the context ClassLoader for this Thread
+		try {
+			//--- Call VELOCITY ENGINE
+			generate(stringWriter);
+		}
+		finally {
+			currentThread.setContextClassLoader(originalClassLoader); // Restore the original classLoader
+		}
+		//------------------------------------------------------------------
+		// End of Workaround for Velocity error in OSGi environment
+		//------------------------------------------------------------------
+			
 		byte[] bytes = stringWriter.toString().getBytes();
 		return new ByteArrayInputStream(bytes);
 	}
@@ -371,8 +405,8 @@ public class Generator {
 		EmbeddedGenerator embeddedGenerator = new EmbeddedGenerator(repositoryModel, _generatorConfig, _logger, generatedTargets );
 		_velocityContext.put(ContextName.GENERATOR, embeddedGenerator );
 		
-		//---------- Generate the target in memory
-		InputStream is = generateInMemory();
+		//---------- ((( GENERATION ))) 
+		InputStream is = generateInMemory(); // Generate the target in memory
 		_logger.info("Generation done.");
 
 		//---------- Save the result in the file
