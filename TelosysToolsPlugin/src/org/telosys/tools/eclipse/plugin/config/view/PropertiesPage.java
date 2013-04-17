@@ -1,12 +1,14 @@
 package org.telosys.tools.eclipse.plugin.config.view;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Properties;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -21,6 +23,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
@@ -34,10 +37,12 @@ import org.telosys.tools.commons.VariablesManager;
 import org.telosys.tools.commons.VariablesUtil;
 import org.telosys.tools.eclipse.plugin.MyPlugin;
 import org.telosys.tools.eclipse.plugin.commons.EclipseProjUtil;
-import org.telosys.tools.eclipse.plugin.commons.EclipseWksUtil;
-import org.telosys.tools.eclipse.plugin.commons.HttpDownloader;
 import org.telosys.tools.eclipse.plugin.commons.MsgBox;
 import org.telosys.tools.eclipse.plugin.commons.PluginLogger;
+import org.telosys.tools.eclipse.plugin.commons.TelosysPluginException;
+import org.telosys.tools.eclipse.plugin.commons.Util;
+import org.telosys.tools.eclipse.plugin.commons.github.GitHubAPI;
+import org.telosys.tools.eclipse.plugin.commons.github.GitHubRepository;
 import org.telosys.tools.eclipse.plugin.config.ProjectConfig;
 import org.telosys.tools.eclipse.plugin.config.ProjectConfigManager;
 import org.telosys.tools.generator.ContextName;
@@ -709,7 +714,6 @@ public class PropertiesPage extends PropertyPage {
 		Composite tabContent = new Composite(tabFolder, SWT.NONE);
 		tabContent.setLayout(new GridLayout(2, false));
 		tabItem.setControl(tabContent);
-		
 		//------------------------------------------------------------------------------------
 		//--- Label  ( SPAN 2 )
 		Label label = new Label(tabContent, SWT.NONE);
@@ -854,11 +858,24 @@ public class PropertiesPage extends PropertyPage {
 	}
 	//------------------------------------------------------------------------------------------
 	private void populateGitHubRepoList() {
+		Shell shell = Util.cursorWait();
+		
 		_listGitHubRepositories.removeAll();
-		for (int i = 1; i <= 5; i++) {
-			_listGitHubRepositories.add("Item Number " + i);
+//		for (int i = 1; i <= 5; i++) {
+//			_listGitHubRepositories.add("Item Number " + i);
+//		}
+//		_listGitHubRepositories.add("basic-templates-TT203");
+		
+		String sGitHubUserName = getGitHubUserName();
+		if ( sGitHubUserName != null ) {
+			java.util.List<GitHubRepository> repositories = GitHubAPI.getRepositories(sGitHubUserName);
+			for ( GitHubRepository repo : repositories ) {
+				if ( repo.getSize() > 0 ) {
+					_listGitHubRepositories.add( repo.getName() );
+				}
+			}
 		}
-		_listGitHubRepositories.add("basic-templates-TT203");
+		Util.cursorArrow(shell);
 	}
 	//------------------------------------------------------------------------------------------
 	private long downloadSelectedFiles(String[] repoNames) {
@@ -870,7 +887,7 @@ public class PropertiesPage extends PropertyPage {
 //			MsgBox.error("Invalid URI ( URISyntaxException ) : \n" + sURI );
 //			e.printStackTrace();
 //		}
-		
+
 		String sDownloadFolder = getDownloadFolder();
 		if ( null == sDownloadFolder ) {
 			return 0 ;
@@ -884,40 +901,68 @@ public class PropertiesPage extends PropertyPage {
 			return 0 ;
 		}
 	
-		if ( repoNames.length > 0 ) {
-			_tLogger.setText("");
-			int count = 0 ;
-			for ( String repoName : repoNames ) {
-				String sFileURL = buildFileURL(repoName, sGitHubUrlPattern);
-				if ( sFileURL != null ) {
-					String sDestinationFile = buildDestinationFileName(repoName, sDownloadFolder);
-					count++;
-					_tLogger.append("-> Download #" + count + " '" + repoName + "' ... \n");
-					_tLogger.append("  " + sFileURL + "\n");
-					_tLogger.append("  " + sDestinationFile + "\n");
-					long r = 0;
-					try {
-						r = HttpDownloader.download(sFileURL, sDestinationFile);
-						_tLogger.append("  done (" + r + " bytes).\n");
-						File file = new File(sDestinationFile);
-						EclipseWksUtil.refresh(file);
-					}
-					catch (Exception e) {
-						String msg = "Cannot download file \n" 
-							+ sFileURL + "\n\n"
-							+ ( e.getCause() != null ? e.getCause().getMessage() : "") ;
-						MsgBox.error(msg );
-						_tLogger.append("ERROR \n");
-						_tLogger.append(msg);
-					}
-				}
-			}
-			return count ;
+		//Shell shell = Util.cursorWait();
+		
+//		int count = 0 ;
+//		if ( repoNames.length > 0 ) {
+//			_tLogger.setText("");
+//			for ( String repoName : repoNames ) {
+//				String sFileURL = buildFileURL(repoName, sGitHubUrlPattern);
+//				if ( sFileURL != null ) {
+//					String sDestinationFile = buildDestinationFileName(repoName, sDownloadFolder);
+//					count++;
+//					_tLogger.append("-> Download #" + count + " '" + repoName + "' ... \n");
+//					_tLogger.append("  " + sFileURL + "\n");
+//					_tLogger.append("  " + sDestinationFile + "\n");
+//					long r = 0;
+//					try {
+//						r = HttpDownloader.download(sFileURL, sDestinationFile);
+//						_tLogger.append("  done (" + r + " bytes).\n");
+//						File file = new File(sDestinationFile);
+//						EclipseWksUtil.refresh(file);
+//					}
+//					catch (Exception e) {
+//						String msg = "Cannot download file \n" 
+//							+ sFileURL + "\n\n"
+//							+ ( e.getCause() != null ? e.getCause().getMessage() : "") ;
+//						MsgBox.error(msg );
+//						_tLogger.append("ERROR \n");
+//						_tLogger.append(msg);
+//					}
+//				}
+//			}
+//		}
+//		else {
+//			MsgBox.error("Selection is void !");
+//		}
+
+		//--- Run the generation task via the progress monitor 
+		DownloadTaskWithProgress task = null ;
+		try {
+			task = new DownloadTaskWithProgress(this.getCurrentProject(), 
+					getGitHubUserName(), 
+					repoNames, 
+					sDownloadFolder, sGitHubUrlPattern, _tLogger );
+			//task.run(progressMonitor);
+		} catch (TelosysPluginException e) {
+    		MsgBox.error("Cannot create DownloadTaskWithProgress instance", e);
+    		return 0 ;
 		}
-		else {
-			MsgBox.error("Selection is void !");
-			return 0 ;
+
+		ProgressMonitorDialog progressMonitorDialog = new ProgressMonitorDialog( Util.getActiveWindowShell() ) ;
+		try {
+			progressMonitorDialog.run(false, false, task);
+			
+			//MsgBox.info("Normal end of generation\n\n" + generationTask.getResult() + " file(s) generated.");
+			
+		} catch (InvocationTargetException e) {
+			MsgBox.error("Error during download", e.getCause() );
+		} catch (InterruptedException e) {
+			MsgBox.info("Download interrupted");
 		}
+		
+		//Util.cursorArrow(shell);		
+		return task.getResult();
 	}
 	
 	private String getGitHubUrlPattern() {
@@ -933,6 +978,7 @@ public class PropertiesPage extends PropertyPage {
 		}
 		return sPattern ;
 	}
+	
 	private String getDownloadFolder() {
 		String sFolder = _tDownloadsFolder.getText().trim();
 		if ( sFolder.length() == 0  ) {
@@ -941,12 +987,25 @@ public class PropertiesPage extends PropertyPage {
 		}
 		return sFolder ;
 	}
-	private String buildFileURL(String repoName, String sGitHubURLPattern ) {
+	
+	private String getGitHubUserName() {
 		String user = _tGitHubUserName.getText().trim();
-		if ( user.length() == 0 ) {
+		if ( user.length() == 0  ) {
 			MsgBox.warning("GitHub user name is void");
 			return null ;
 		}
+		return user ;
+	}
+	
+	private String buildFileURL(String repoName, String sGitHubURLPattern ) {
+//		String user = _tGitHubUserName.getText().trim();
+//		if ( user.length() == 0 ) {
+//			MsgBox.warning("GitHub user name is void");
+//			return null ;
+//		}
+		String user = getGitHubUserName() ;
+		if ( null == user ) return null;
+		
 		String repo = repoName.trim();
 		if ( repo.length() == 0 ) {
 			MsgBox.warning("GitHub repository name is void");
