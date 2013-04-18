@@ -15,6 +15,7 @@ import org.telosys.tools.eclipse.plugin.commons.EclipseWksUtil;
 import org.telosys.tools.eclipse.plugin.commons.HttpDownloader;
 import org.telosys.tools.eclipse.plugin.commons.MsgBox;
 import org.telosys.tools.eclipse.plugin.commons.TelosysPluginException;
+import org.telosys.tools.eclipse.plugin.commons.ZipUtil;
 
 /**
  * Eclipse runnable task with a progress bar 
@@ -30,6 +31,7 @@ public class DownloadTaskWithProgress implements IRunnableWithProgress
 	private final String    sDownloadFolder ;
 	private final String    sGitHubUrlPattern ;
 	private final Text      loggerTextArea ;
+	private final boolean   bUnzip ;
 	
 	private int   _result = 0 ;
 	
@@ -39,6 +41,7 @@ public class DownloadTaskWithProgress implements IRunnableWithProgress
 			String[] repoNames, 
 			String   sDownloadFolder, 
 			String   sGitHubUrlPattern,
+			boolean  bUnzip,
 			Text     loggerTextArea 
 			) throws TelosysPluginException
 	{
@@ -49,6 +52,7 @@ public class DownloadTaskWithProgress implements IRunnableWithProgress
 		this.repoNames = repoNames ;
 		this.sDownloadFolder = sDownloadFolder ;
 		this.sGitHubUrlPattern = sGitHubUrlPattern ;
+		this.bUnzip = bUnzip ;
 
 		this.loggerTextArea = loggerTextArea ;
 	}
@@ -64,7 +68,11 @@ public class DownloadTaskWithProgress implements IRunnableWithProgress
 			
 			// count = total number of work units into which the main task is been subdivided
 			int totalWorkTasks = repoNames.length ;
-			progressMonitor.beginTask("Download in progress", totalWorkTasks ); 
+			if ( bUnzip ) {
+				totalWorkTasks = repoNames.length * 2;
+			}			
+			progressMonitor.beginTask("Download in progress", totalWorkTasks + 1); 
+			progressMonitor.worked(1);
 
 			loggerTextArea.setText("");
 			for ( String repoName : repoNames ) {
@@ -80,15 +88,36 @@ public class DownloadTaskWithProgress implements IRunnableWithProgress
 					loggerTextArea.append("  " + sDestinationFile + "\n");
 					long r = 0;
 					try {
+						
+						//--- Download the file
 						r = HttpDownloader.download(sFileURL, sDestinationFile);
 						loggerTextArea.append("  done (" + r + " bytes).\n");
-						File file = new File(sDestinationFile);
-						EclipseWksUtil.refresh(file);
+						//File file = new File(sDestinationFile);
+						EclipseWksUtil.refresh( new File(sDestinationFile) );
 						//--- One TARGET done
 						// Notifies that a given number of work unit of the main task has been completed. 
 						// Note that this amount represents an installment, as opposed to a cumulative amount of work done to date.
 						progressMonitor.worked(1); // One unit done (not cumulative)
 						
+						//--- Unzip the downloaded file
+						if ( bUnzip ) {
+							String filesystemFolder = buildDestinationFolder(this.sDownloadFolder) ;
+							loggerTextArea.append("-> Unzip " + sDestinationFile + "\n");
+							loggerTextArea.append("   in folder " + filesystemFolder + "\n");
+							progressMonitor.subTask("Unzip #" + count + " '" + repoName + "'");
+							try {
+								ZipUtil.unzip(sDestinationFile, filesystemFolder, true ) ;
+							} catch (Exception e) {
+								String msg = "Cannot unzip file \n" 
+									+ sDestinationFile + "\n\n"
+									+ ( e.getCause() != null ? e.getCause().getMessage() : "") ;
+								//MsgBox.error(msg );
+								loggerTextArea.append("ERROR \n");
+								loggerTextArea.append(msg);
+							}
+							EclipseWksUtil.refresh(new File(filesystemFolder));
+							progressMonitor.worked(1); // One unit done (not cumulative)
+						}
 					}
 					catch (Exception e) {
 						String msg = "Cannot download file \n" 
@@ -98,6 +127,7 @@ public class DownloadTaskWithProgress implements IRunnableWithProgress
 						loggerTextArea.append("ERROR \n");
 						loggerTextArea.append(msg);
 					}
+					
 				}
 			}
 			
@@ -134,6 +164,24 @@ public class DownloadTaskWithProgress implements IRunnableWithProgress
 	}
 
 	//--------------------------------------------------------------------------------------------------
+	/**
+	 * Build the filesystem full path for the given Eclipse project folder
+	 * @param sDownloadFolder
+	 * @return
+	 */
+	private String buildDestinationFolder(String sDownloadFolder) {
+		// folder path in Operating System 
+		String projectDir = EclipseProjUtil.getProjectDir(this.project);
+		String fullPath = FileUtil.buildFilePath(projectDir, sDownloadFolder);
+		return fullPath;
+	}
+	//--------------------------------------------------------------------------------------------------
+	/**
+	 * Build the filesystem full path for the given repository name and destination folder
+	 * @param repoName GitHub repository name
+	 * @param sDownloadFolder
+	 * @return
+	 */
 	private String buildDestinationFileName(String repoName, String sDownloadFolder) {
 		// file path in project
 		String sFile = repoName + ".zip" ;

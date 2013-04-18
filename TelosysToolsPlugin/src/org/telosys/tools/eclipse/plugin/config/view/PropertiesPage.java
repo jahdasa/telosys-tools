@@ -858,7 +858,25 @@ public class PropertiesPage extends PropertyPage {
 	}
 	//------------------------------------------------------------------------------------------
 	private void populateGitHubRepoList() {
-		Shell shell = Util.cursorWait();
+		
+		String sGitHubUserName = getGitHubUserName();
+		if ( sGitHubUserName != null ) {
+			//--- Create the task
+			PopulateListTaskWithProgress task = new PopulateListTaskWithProgress( sGitHubUserName, _listGitHubRepositories );
+			
+			//--- Run the task with monitor
+			ProgressMonitorDialog progressMonitorDialog = new ProgressMonitorDialog( Util.getActiveWindowShell() ) ;
+			try {
+				progressMonitorDialog.run(false, false, task);
+			} catch (InvocationTargetException e) {
+				MsgBox.error("Error during task", e.getCause() );
+			} catch (InterruptedException e) {
+				MsgBox.info("Task interrupted");
+			}
+			
+		}
+/**
+//		Shell shell = Util.cursorWait();
 		
 		_listGitHubRepositories.removeAll();
 //		for (int i = 1; i <= 5; i++) {
@@ -868,14 +886,21 @@ public class PropertiesPage extends PropertyPage {
 		
 		String sGitHubUserName = getGitHubUserName();
 		if ( sGitHubUserName != null ) {
-			java.util.List<GitHubRepository> repositories = GitHubAPI.getRepositories(sGitHubUserName);
+			java.util.List<GitHubRepository> repositories;
+			try {
+				repositories = GitHubAPI.getRepositories(sGitHubUserName);
+			} catch (Exception e) {
+				MsgBox.error("Cannot get repositories from GitHub", e);
+				return;
+			}
 			for ( GitHubRepository repo : repositories ) {
 				if ( repo.getSize() > 0 ) {
 					_listGitHubRepositories.add( repo.getName() );
 				}
 			}
 		}
-		Util.cursorArrow(shell);
+//		Util.cursorArrow(shell);
+ ***/
 	}
 	//------------------------------------------------------------------------------------------
 	private long downloadSelectedFiles(String[] repoNames) {
@@ -901,49 +926,16 @@ public class PropertiesPage extends PropertyPage {
 			return 0 ;
 		}
 	
-		//Shell shell = Util.cursorWait();
-		
-//		int count = 0 ;
-//		if ( repoNames.length > 0 ) {
-//			_tLogger.setText("");
-//			for ( String repoName : repoNames ) {
-//				String sFileURL = buildFileURL(repoName, sGitHubUrlPattern);
-//				if ( sFileURL != null ) {
-//					String sDestinationFile = buildDestinationFileName(repoName, sDownloadFolder);
-//					count++;
-//					_tLogger.append("-> Download #" + count + " '" + repoName + "' ... \n");
-//					_tLogger.append("  " + sFileURL + "\n");
-//					_tLogger.append("  " + sDestinationFile + "\n");
-//					long r = 0;
-//					try {
-//						r = HttpDownloader.download(sFileURL, sDestinationFile);
-//						_tLogger.append("  done (" + r + " bytes).\n");
-//						File file = new File(sDestinationFile);
-//						EclipseWksUtil.refresh(file);
-//					}
-//					catch (Exception e) {
-//						String msg = "Cannot download file \n" 
-//							+ sFileURL + "\n\n"
-//							+ ( e.getCause() != null ? e.getCause().getMessage() : "") ;
-//						MsgBox.error(msg );
-//						_tLogger.append("ERROR \n");
-//						_tLogger.append(msg);
-//					}
-//				}
-//			}
-//		}
-//		else {
-//			MsgBox.error("Selection is void !");
-//		}
-
 		//--- Run the generation task via the progress monitor 
 		DownloadTaskWithProgress task = null ;
 		try {
 			task = new DownloadTaskWithProgress(this.getCurrentProject(), 
 					getGitHubUserName(), 
 					repoNames, 
-					sDownloadFolder, sGitHubUrlPattern, _tLogger );
-			//task.run(progressMonitor);
+					sDownloadFolder, 
+					sGitHubUrlPattern, 
+					true, // Unzip or not the downloaded file
+					_tLogger );
 		} catch (TelosysPluginException e) {
     		MsgBox.error("Cannot create DownloadTaskWithProgress instance", e);
     		return 0 ;
@@ -961,7 +953,6 @@ public class PropertiesPage extends PropertyPage {
 			MsgBox.info("Download interrupted");
 		}
 		
-		//Util.cursorArrow(shell);		
 		return task.getResult();
 	}
 	

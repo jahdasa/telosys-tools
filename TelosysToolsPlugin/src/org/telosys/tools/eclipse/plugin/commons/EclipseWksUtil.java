@@ -223,6 +223,59 @@ public class EclipseWksUtil {
 	}
 	
 	//----------------------------------------------------------------------------------
+	public static IFolder toIFolder(File file)
+	{
+		log("toIFolder( File ) : file = " + file.getAbsolutePath() );
+		
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IWorkspaceRoot root = workspace.getRoot();
+		if ( root != null )
+		{
+			String sAbsolutePath = file.getAbsolutePath();
+			IPath path = new Path( sAbsolutePath );
+//			IFile iFile = root.getFileForLocation(path);
+//			IFolder iFolder = root.getFolder(path);
+			/*
+			 * IWorkspaceRoot - getContainerForLocation(path)
+			 * Returns a handle to the workspace root, project or folder which is mapped to the given path 
+			 * in the local file system, or null if none. If the path maps to the platform working location, 
+			 * the returned object will be of type ROOT. If the path maps to a project, 
+			 * the resulting object will be of type PROJECT; otherwise the resulting object will be a folder (type FOLDER). 
+			 * The path should be absolute; a relative path will be treated as absolute. 
+			 * The path segments need not be valid names; a trailing separator is ignored. 
+			 * The resulting resource may not currently exist.
+			 * 
+			 * This method returns null when the given file system location is not equal to or under the location 
+			 * of any existing project in the workspace, or equal to the location of the platform working location.
+			 * The result will also omit resources that are explicitly excluded from the workspace according to existing resource filters.
+			 * 
+			 * Warning: This method ignores linked resources and their children. Since linked resources may overlap other resources, 
+			 * a unique mapping from a file system location to a single resource is not guaranteed. 
+			 * To find all resources for a given location, including linked resources, use the method findContainersForLocation.
+			 */
+			IContainer iContainer = root.getContainerForLocation(path);
+			if ( iContainer != null )
+			{
+				if ( iContainer instanceof IFolder ) {
+					return (IFolder) iContainer;
+				}
+				else {
+					MsgBox.error("toIFolder(file) : the IContainer is not a FOLDER" );
+					return null ;
+				}
+			}
+			else
+			{
+				MsgBox.error("toIFolder(file) : getContainerForLocation('" + sAbsolutePath + "') return NULL" );
+				return null ;
+			}
+		}
+		else
+		{
+			MsgBox.error("toIFolder(file) : Cannot get workspace root !" );
+			return null ;
+		}
+	}
 	//----------------------------------------------------------------------------------
 	/**
 	 * Returns the Eclipse workspace "IFile" object for the given
@@ -239,7 +292,6 @@ public class EclipseWksUtil {
 		IWorkspaceRoot root = workspace.getRoot();
 		if ( root != null )
 		{
-			//String sAbsolutePath = file.getPath();
 			String sAbsolutePath = file.getAbsolutePath();
 			IPath path = new Path( sAbsolutePath );
 			/*
@@ -253,13 +305,13 @@ public class EclipseWksUtil {
 			IFile iFile = root.getFileForLocation(path);
 			if ( iFile != null )
 			{
-				PluginLogger.log("");
+				return iFile ;
 			}
 			else
 			{
-				PluginLogger.log("");
+				MsgBox.error("toIFolder(file) : getContainerForLocation('" + sAbsolutePath + "') return NULL" );
+				return null ;
 			}
-			return iFile ;
 		}
 		else
 		{
@@ -278,6 +330,10 @@ public class EclipseWksUtil {
 	}
 	
 	//----------------------------------------------------------------------------------
+	/**
+	 * Refresh the given O.S. file in the Eclipse workspace
+	 * @param file the file to be refreshed
+	 */
 	public static void refresh(File file)
 	{
 		log("refresh( File ) " );
@@ -285,28 +341,65 @@ public class EclipseWksUtil {
 			MsgBox.error("refresh(File) : parameter is null !" );
 			return ;
 		}
-		IFile iFile = toIFile(file);
-		if ( null == iFile )
-		{
-			MsgBox.error("refresh(File) : cannot convert File to IFile !"
-					+ "\n " + file.getAbsolutePath() );
-			return ;
+		
+		if ( file.isDirectory() ) {
+			//--- FOLDER
+			IFolder iFolder = toIFolder(file);
+			if ( null != iFolder )
+			{
+				log("refreshing IFolder = " + iFolder );				
+				try {
+					iFolder.refreshLocal(IResource.DEPTH_INFINITE , null);
+				} catch (CoreException e) {
+					MsgBox.error("Cannot refresh FOLDER resource '" + iFolder + "'", e );
+				}
+			}
 		}
-		refresh(iFile);
+		else {
+			//--- FILE
+			IFile iFile = toIFile(file);
+			if ( null != iFile )
+			{
+				log("refreshing IFile = " + iFile );				
+				try {
+					iFile.refreshLocal(IResource.DEPTH_ZERO, null);
+				} catch (CoreException e) {
+					MsgBox.error("Cannot refresh FILE resource '" + iFile + "'", e );
+				}
+			}
+		}
+		
 	}
-	//----------------------------------------------------------------------------------
-	public static void refresh(IResource resource)
-	{
-		log("refresh( IResource )..."  );
-		if ( resource == null )
-		{
-			MsgBox.error("refresh(resource) : parameter is null !" );
-		}
-		log("refresh( IResource ) : resource = " + resource.getFullPath() );
-		try {
-			resource.refreshLocal(IResource.DEPTH_ZERO, null);
-		} catch (CoreException e) {
-			MsgBox.error("Cannot refresh resource '" + resource, e );
-		}
-	}
+//	//----------------------------------------------------------------------------------
+//	/**
+//	 * Refresh the given resource 
+//	 * @param resource the resource to be refreshed ( FILE or FOLDER )
+//	 */
+//	private static void refresh(IResource resource)
+//	{
+//		log("refresh( IResource )..."  );
+//		if ( resource == null )
+//		{
+//			MsgBox.error("refresh(resource) : parameter is null !" );
+//		}
+//		log("refresh( IResource ) : resource = " + resource.getFullPath() );
+//		try {
+//			int type = resource.getType();
+//			switch ( type ) {
+//			case IResource.FILE :
+//				log("refresh for type FILE : resource = " + resource.getFullPath() );
+//				resource.refreshLocal(IResource.DEPTH_ZERO, null);
+//				break ;
+//			case IResource.FOLDER :
+//				log("refresh for type FOLDER : resource = " + resource.getFullPath() );
+//				resource.refreshLocal(IResource.DEPTH_INFINITE, null);
+//				break ;
+//			default :
+//				MsgBox.error("Cannot refresh resource. Not a file or folder" );
+//				break;
+//			}
+//		} catch (CoreException e) {
+//			MsgBox.error("Cannot refresh resource '" + resource, e );
+//		}
+//	}
 }
