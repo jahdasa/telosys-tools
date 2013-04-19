@@ -2,7 +2,6 @@ package org.telosys.tools.eclipse.plugin.config.view;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import java.util.Properties;
 
 import org.eclipse.core.resources.IFolder;
@@ -23,17 +22,13 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.telosys.tools.commons.FileUtil;
 import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.commons.Variable;
-import org.telosys.tools.commons.VariablesManager;
 import org.telosys.tools.commons.VariablesUtil;
 import org.telosys.tools.eclipse.plugin.MyPlugin;
 import org.telosys.tools.eclipse.plugin.commons.EclipseProjUtil;
@@ -41,8 +36,6 @@ import org.telosys.tools.eclipse.plugin.commons.MsgBox;
 import org.telosys.tools.eclipse.plugin.commons.PluginLogger;
 import org.telosys.tools.eclipse.plugin.commons.TelosysPluginException;
 import org.telosys.tools.eclipse.plugin.commons.Util;
-import org.telosys.tools.eclipse.plugin.commons.github.GitHubAPI;
-import org.telosys.tools.eclipse.plugin.commons.github.GitHubRepository;
 import org.telosys.tools.eclipse.plugin.config.ProjectConfig;
 import org.telosys.tools.eclipse.plugin.config.ProjectConfigManager;
 import org.telosys.tools.generator.ContextName;
@@ -98,8 +91,9 @@ public class PropertiesPage extends PropertyPage {
 	private Text  _tGitHubUserName = null;
 	private Text  _tGitHubUrlPattern  = null;
 	//private Table _tableGitHubRepositories = null ;
-	private List  _listGitHubRepositories = null ;
-	private Text  _tLogger = null ;
+	private List    _listGitHubRepositories = null ;
+	private Button  _checkBoxUnzipDownload = null ;
+	private Text    _tLogger = null ;
 	
     //--- Tab "Info"
 	private Text _tPluginConfigFile = null ;
@@ -792,32 +786,45 @@ public class PropertiesPage extends PropertyPage {
 		_tGitHubUrlPattern.setText("https://github.com/${USER}/${REPO}/archive/master.zip");
 		
 		//------------------------------------------------------------------------------------
-		//--- Void Label + Button  
+		//--- Void Label + Composite [ Button + CheckBox ]  
 		label = new Label(tabContent, SWT.NONE);
 		label.setText("");
 		label.setLayoutData(getCellGridData1());
 		
-		b = new Button(tabContent, SWT.PUSH);
-		b.setText("Download selected file(s)");
-		b.setToolTipText(" Download selected files \n from GitHub site ");
-		b.addSelectionListener(new SelectionListener() 
-    	{
-            public void widgetSelected(SelectionEvent arg0)
-            {
-            	if ( _listGitHubRepositories.getSelectionCount() > 0 ) {
-                	String[] selectedRepo = _listGitHubRepositories.getSelection();
-                	downloadSelectedFiles(selectedRepo); 
-            	}
-            	else {
-            		MsgBox.warning("Select at least one file");
-            	}
-            }
-            public void widgetDefaultSelected(SelectionEvent arg0)
-            {
-            }
-        }
-		);
+		Composite composite1 = new Composite(tabContent, SWT.NONE);
+		GridLayout gdComposite = new GridLayout(2, false);
+		gdComposite.marginLeft = 0 ;
+		gdComposite.horizontalSpacing = 80 ;
+		gdComposite.marginWidth = 0 ;
+		composite1.setLayout(gdComposite);
 
+			b = new Button(composite1, SWT.PUSH);
+			b.setText("Download selected file(s)");
+			b.setToolTipText(" Download selected files \n from GitHub site ");
+			b.addSelectionListener(new SelectionListener() 
+	    	{
+	            public void widgetSelected(SelectionEvent arg0)
+	            {
+	            	if ( _listGitHubRepositories.getSelectionCount() > 0 ) {
+	            		boolean bUnzip = _checkBoxUnzipDownload.getSelection() ;
+	        			String[] selectedRepo = _listGitHubRepositories.getSelection();
+	        			downloadSelectedFiles(selectedRepo, bUnzip);
+	            	}
+	            	else {
+	            		MsgBox.warning("Select at least one file");
+	            	}
+	            }
+	            public void widgetDefaultSelected(SelectionEvent arg0)
+	            {
+	            }
+	        }
+			);
+	
+			_checkBoxUnzipDownload = new Button(composite1, SWT.CHECK);
+			_checkBoxUnzipDownload.setText("Unzip downloaded file(s)");
+			_checkBoxUnzipDownload.setSelection(true);
+		
+		
 		//------------------------------------------------------------------------------------
 		//--- Label + Text field 
 		label = new Label(tabContent, SWT.NONE);
@@ -875,43 +882,9 @@ public class PropertiesPage extends PropertyPage {
 			}
 			
 		}
-/**
-//		Shell shell = Util.cursorWait();
-		
-		_listGitHubRepositories.removeAll();
-//		for (int i = 1; i <= 5; i++) {
-//			_listGitHubRepositories.add("Item Number " + i);
-//		}
-//		_listGitHubRepositories.add("basic-templates-TT203");
-		
-		String sGitHubUserName = getGitHubUserName();
-		if ( sGitHubUserName != null ) {
-			java.util.List<GitHubRepository> repositories;
-			try {
-				repositories = GitHubAPI.getRepositories(sGitHubUserName);
-			} catch (Exception e) {
-				MsgBox.error("Cannot get repositories from GitHub", e);
-				return;
-			}
-			for ( GitHubRepository repo : repositories ) {
-				if ( repo.getSize() > 0 ) {
-					_listGitHubRepositories.add( repo.getName() );
-				}
-			}
-		}
-//		Util.cursorArrow(shell);
- ***/
 	}
 	//------------------------------------------------------------------------------------------
-	private long downloadSelectedFiles(String[] repoNames) {
-//		try {
-//        	URI uri = new URI(sURI);
-//        	String log = HttpProxyUtil.initHttpProxyProperties(uri);
-//        	MsgBox.info("LOG HttpProxyUtil.initHttpProxyProperties",log);
-//		} catch (URISyntaxException e) {
-//			MsgBox.error("Invalid URI ( URISyntaxException ) : \n" + sURI );
-//			e.printStackTrace();
-//		}
+	private long downloadSelectedFiles(String[] repoNames, boolean bUnzip) {
 
 		String sDownloadFolder = getDownloadFolder();
 		if ( null == sDownloadFolder ) {
@@ -934,7 +907,7 @@ public class PropertiesPage extends PropertyPage {
 					repoNames, 
 					sDownloadFolder, 
 					sGitHubUrlPattern, 
-					true, // Unzip or not the downloaded file
+					bUnzip, // Unzip or not the downloaded file
 					_tLogger );
 		} catch (TelosysPluginException e) {
     		MsgBox.error("Cannot create DownloadTaskWithProgress instance", e);
@@ -944,9 +917,6 @@ public class PropertiesPage extends PropertyPage {
 		ProgressMonitorDialog progressMonitorDialog = new ProgressMonitorDialog( Util.getActiveWindowShell() ) ;
 		try {
 			progressMonitorDialog.run(false, false, task);
-			
-			//MsgBox.info("Normal end of generation\n\n" + generationTask.getResult() + " file(s) generated.");
-			
 		} catch (InvocationTargetException e) {
 			MsgBox.error("Error during download", e.getCause() );
 		} catch (InterruptedException e) {
@@ -976,7 +946,13 @@ public class PropertiesPage extends PropertyPage {
 			MsgBox.warning("Download folder is not defined");
 			return null ;
 		}
-		return sFolder ;
+		if ( EclipseProjUtil.folderExists(getCurrentProject(), sFolder) ) {
+			return sFolder ;
+		}
+		else {
+			MsgBox.warning("Download folder '" + sFolder + "' does not exist !");
+			return null ;
+		}
 	}
 	
 	private String getGitHubUserName() {
@@ -987,77 +963,6 @@ public class PropertiesPage extends PropertyPage {
 		}
 		return user ;
 	}
-	
-	private String buildFileURL(String repoName, String sGitHubURLPattern ) {
-//		String user = _tGitHubUserName.getText().trim();
-//		if ( user.length() == 0 ) {
-//			MsgBox.warning("GitHub user name is void");
-//			return null ;
-//		}
-		String user = getGitHubUserName() ;
-		if ( null == user ) return null;
-		
-		String repo = repoName.trim();
-		if ( repo.length() == 0 ) {
-			MsgBox.warning("GitHub repository name is void");
-			return null ;
-		}
-		HashMap<String,String> hmVariables = new HashMap<String,String>();
-		hmVariables.put("${USER}", user);
-		hmVariables.put("${REPO}", repo);
-		VariablesManager variablesManager = new VariablesManager(hmVariables);
-		String sFileURL = variablesManager.replaceVariables(sGitHubURLPattern);
-		// MsgBox.info("File URL : " + sFileURL);
-		return sFileURL ;
-	}
-	private String buildDestinationFileName(String repoName, String sDownloadFolder) {
-		// file path in project
-		String sFile = repoName + ".zip" ;
-		String pathInProject = FileUtil.buildFilePath(sDownloadFolder, sFile);
-		// file path in Operating System 
-		IProject project = getCurrentProject(); 
-		String projectDir = EclipseProjUtil.getProjectDir(project);
-		String fullPath = FileUtil.buildFilePath(projectDir, pathInProject);
-		return fullPath;
-	}
-	//------------------------------------------------------------------------------------------
-	//----------------------------------------------------------------------------------------------
-	private Table createGitHubRepositiriesTable(Composite composite, int colWidth)
-	{
-		// Table style
-		// SWT.CHECK : check box in the first column of each row
-//		int iTableStyle = SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CHECK ;
-		
-//		int iTableStyle = SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | 
-//		SWT.FULL_SELECTION | SWT.HIDE_SELECTION;
-		
-		int iTableStyle = SWT.BORDER | SWT.V_SCROLL 
-						 | SWT.HIDE_SELECTION | SWT.CHECK | SWT.MULTI ;
-		
-		Table table = new Table(composite, iTableStyle);
-		
-		
-		//table.setSize(380, 200);
-		//table.setSize(300, 100);
-
-		table.setLinesVisible(true);
-		table.setHeaderVisible(true);
-		
-		//--- Columns
-		TableColumn col = null ;
-		int iColumnIndex = 0 ;
-
-		col = new TableColumn(table, SWT.LEFT, iColumnIndex++);
-		//col.setText("GitHub repository name");
-		col.setWidth(colWidth);
-		
-//		col = new TableColumn(table, SWT.LEFT, iColumnIndex++);
-//		col.setText("Java Bean");
-//		col.setWidth(200);
-		
-		return table;
-	}
-	//------------------------------------------------------------------------------------------
 	
 	//------------------------------------------------------------------------------------------
 	/**

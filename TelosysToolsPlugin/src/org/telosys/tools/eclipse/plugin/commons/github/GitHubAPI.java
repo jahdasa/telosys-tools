@@ -1,6 +1,7 @@
 package org.telosys.tools.eclipse.plugin.commons.github;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -57,6 +58,13 @@ public class GitHubAPI {
 	        reader.close();
 	        result = writer.toString() ;
 	        
+		} catch (FileNotFoundException e) {
+			// GitHub returns HTTP 404 "Not found" if the user doesn't exist 
+			// with response content :
+			// 	{
+			//	  "message": "Not Found"
+			//	}
+			throw new RuntimeException ("Not found");
 		} catch (IOException e) {
 			throw new RuntimeException ("IOException", e);
 		}
