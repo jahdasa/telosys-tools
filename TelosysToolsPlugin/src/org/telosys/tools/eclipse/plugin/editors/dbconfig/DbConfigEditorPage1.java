@@ -344,6 +344,22 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
             }
         });
     	
+		//--- Button "Show Libraries"
+		Button buttonLibraries = new Button(tabContent, SWT.NONE);
+		buttonLibraries.setText("Show libraries");
+		buttonLibraries.setBounds(460, 50, 120, 25);
+
+		buttonLibraries.addSelectionListener( new SelectionListener() 
+    	{
+            public void widgetSelected(SelectionEvent arg0)
+            {
+            	showLibraries();
+            }
+            public void widgetDefaultSelected(SelectionEvent arg0)
+            {
+            }
+        });
+    	
 		tabItem.setControl(tabContent);
 	}
 	//----------------------------------------------------------------------------------------------
@@ -1045,17 +1061,28 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
         return null ;
     }
     
+    private void msgBoxErrorWithClassPath(String msg, Exception e, String[] classPath) 
+    {
+		StringBuffer sb = new StringBuffer();
+		sb.append(msg + "\n" ) ;
+		sb.append("Project Class Path : \n" ) ;
+		for ( String s : classPath ) {
+			sb.append(" . " + s + "\n") ;
+		}
+		MsgBox.error(sb.toString(), e );
+    }
+    
     private ConnectionManager getConnectionManager() 
     {
         IProject project = _editor.getProject();
         TelosysToolsLogger logger = _editor.getTextWidgetLogger();
-        String[] jarURLs = EclipseProjUtil.getClassPath(project);
+        String[] libraries = EclipseProjUtil.getClassPathLibraries(project);
         ConnectionManager cm = null ;
 		try {
-			cm = new ConnectionManager( jarURLs, logger );
+			cm = new ConnectionManager( libraries, logger );
 		} catch (TelosysToolsException e) {
 			logException(e);
-    		MsgBox.error("Cannot get ConnectionManager", e );
+			msgBoxErrorWithClassPath("Cannot create ConnectionManager", e, libraries);
     		cm = null ;
 		}
         return cm ;
@@ -1136,10 +1163,12 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 	                      );
 			}
 			else {
-	            MsgBox.error("Cannot connect to the database ! "
-	                      + "\n TelosysToolsException :"
-	                      + "\n . Message : " + e.getMessage() 
-	                      );
+				msgBoxErrorWithClassPath("Cannot connect to the database !", e, cm.getLibraries());
+
+//	            MsgBox.error("Cannot connect to the database ! "
+//	                      + "\n TelosysToolsException :"
+//	                      + "\n . Message : " + e.getMessage() 
+//	                      );
 			}
 			return null ;
 		} catch (Throwable e) {
@@ -1160,6 +1189,25 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 		} catch (SQLException e) {
 			MsgBox.error("Cannot close connection \n\n SQLException : " + e.getMessage() );
 		}
+    }
+    
+    /**
+     * Show the project's libraries defined in the "Java Build Path"
+     */
+    private void showLibraries() {
+    	StringBuffer sb = new StringBuffer();
+    	sb.append("Project JAR files : \n\n") ;
+    	String[] libraries = EclipseProjUtil.getClassPathLibraries( _editor.getProject() );
+    	if ( libraries != null ) {
+    		for ( String s : libraries ) {
+    			sb.append(s + "\n");
+    		}
+    	}
+    	else {
+    		sb.append("\n");
+    		sb.append("No JAR file !\n");
+    	}
+    	MsgBox.info(sb.toString());
     }
     
     /**

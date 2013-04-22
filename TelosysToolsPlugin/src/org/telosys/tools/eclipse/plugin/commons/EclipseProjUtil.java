@@ -1,9 +1,6 @@
 package org.telosys.tools.eclipse.plugin.commons;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -276,105 +273,153 @@ public class EclipseProjUtil {
     }
 	
     //------------------------------------------------------------------------------------------------
-    /**
-     * Returns the list of JARs for the current project 
-     * @return array of JAR URLs 
-     */
-    public static String[] getClassPath( IProject project )
-    {
-    	IJavaProject javaProject = getJavaProject(project);
-        return getClassPath( javaProject );
-    }
+//    /**
+//     * Returns the list of JARs for the current project 
+//     * @return array of JAR URLs 
+//     */
+//    public static String[] getClassPath( IProject project )
+//    {
+//    	IJavaProject javaProject = getJavaProject(project);
+//        return getClassPathLibraries( javaProject );
+//    }
 
     //------------------------------------------------------------------------------------------------
     /**
-     * Returns the list of JAR URLs find in the Java Project PATH
+     * Returns the list of JAR files defined in the Java Project PATH ( "Java Build Path" )
      * 
      * @return
      */
-    public static String[] getClassPath( IJavaProject javaProject )
+    public static String[] getClassPathLibraries( IProject project )
     {
-        String[] urls = null;
+//        String[] urls = null;
+//        
+//        try 
+//        {
+//            List<URL> classPathURLs = getProjectClassPathURLs(javaProject);
+//            int nbUrls = classPathURLs.size();
+//            urls = new String[nbUrls];
+//            int cpt = 0;
+//            for ( int j = 0 ; j < nbUrls ; j++ )
+//            {
+//                URL url = classPathURLs.get(j);
+//                File f = new File(url.getFile());
+//                urls[cpt] = f.getAbsolutePath();
+//                cpt++;
+//            }
+//        }
+//        catch (JavaModelException e) 
+//        {
+//			PluginLogger.error("JavaModelException : \n" + e.getMessage() );
+//			MsgBox.error("JavaModelException : \n" + e.getMessage() );
+//            urls = null;
+//        }
+//
+//        return urls;      
         
-        try 
-        {
-            List<URL> maListe = getProjectClassPathURLs(javaProject);
-            int nbUrls = maListe.size();
-            urls = new String[nbUrls];
-            int cpt = 0;
-            for ( int j = 0 ; j < nbUrls ; j++ )
-            {
-                URL url = (URL)maListe.get(j);
-                File f = new File(url.getFile());
-                urls[cpt] = f.getAbsolutePath();
-                cpt++;
-            }
-        }
-        catch (JavaModelException e) 
-        {
-			PluginLogger.error("JavaModelException : \n" + e.getMessage() );
-			MsgBox.error("JavaModelException : \n" + e.getMessage() );
-            urls = null;
-        }
+    	IJavaProject javaProject = getJavaProject(project);
+    	
+//        try {
+//			List<String> libraries = getProjectClassPathLibraries(javaProject);
+//			return libraries.toArray(new String[0]);
+//		} catch (JavaModelException e) {
+//			PluginLogger.error("JavaModelException : \n" + e.getMessage() );
+//			MsgBox.error("JavaModelException : \n" + e.getMessage() );
+//            return new String[0];
+//		}        
 
-        return urls;            
+		List<String> libraries = getProjectClassPathLibraries(javaProject);
+		return libraries.toArray(new String[0]);
     }
 
 
     //------------------------------------------------------------------------------------------------
-    /**
-     * Permet de créer la liste des URL du classpath pour un projet Eclipse
-     * 
-     * @param project : l'objet project sur lequel on souhaite récupérer le classpath
-     * @return une liste d'objets URL
-     * @throws JavaModelException
-     * @throws MalformedURLException
-     */
-    private static List<URL> getProjectClassPathURLs(IJavaProject project) throws JavaModelException //, MalformedURLException 
-    {
-        List<URL> paths = new ArrayList<URL>();
+//    /**
+//     * Permet de créer la liste des URL du classpath pour un projet Eclipse
+//     * 
+//     * @param project : l'objet project sur lequel on souhaite récupérer le classpath
+//     * @return une liste d'objets URL
+//     * @throws JavaModelException
+//     * @throws MalformedURLException
+//     */
+//    private static List<URL> getProjectClassPathURLs(IJavaProject project) throws JavaModelException
+//    {
+//        List<URL> classPathURLs = new ArrayList<URL>();
+//    
+//        IClasspathEntry classpathEntries[] = project.getResolvedClasspath(false);
+//        for (int i = 0; i < classpathEntries.length; i++) 
+//        {
+//            IClasspathEntry entry = classpathEntries[i];
+//            //----- New 
+//            IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(entry.getPath());
+//            if (res != null) 
+//            {
+//            	PluginLogger.log("Project resource : '"+entry.getPath()+"'");
+//            	java.io.File file = new java.io.File( res.getLocation().toPortableString() ) ;
+//            	classPathURLs.add( getURL(file) ); // NB : %20 for "SPACE CHAR" 
+//            } 
+//            else 
+//            {
+//            	//--- External resource : Java JRE, JAR added with "Add external JAR"
+//            	PluginLogger.log("External resource : '"+entry.getPath()+"'");
+//            	java.io.File file = entry.getPath().toFile() ;
+//            	classPathURLs.add( getURL(file) ); // NB : %20 for "SPACE CHAR"
+//            }
+//            
+//        }
+//        return classPathURLs;
+//    }
     
-        IClasspathEntry classpathEntries[] = project.getResolvedClasspath(false);
+    private static List<String> getProjectClassPathLibraries(IJavaProject project) //throws JavaModelException
+    {
+        List<String> libraries = new ArrayList<String>();
+    
+        IClasspathEntry classpathEntries[];
+		try {
+			classpathEntries = project.getResolvedClasspath(false);
+		} catch (JavaModelException e) {
+			MsgBox.error("Cannot get Java libraries for this project.\n\nCheck the 'build path' ");
+			e.printStackTrace();
+			return libraries ;
+		}
+		
         for (int i = 0; i < classpathEntries.length; i++) 
         {
             IClasspathEntry entry = classpathEntries[i];
             //----- New 
-            IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(entry.getPath());
-            if (res != null) 
+            IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(entry.getPath());
+            if (resource != null) 
             {
+            	//--- Project's resource "
             	PluginLogger.log("Project resource : '"+entry.getPath()+"'");
-            	java.io.File file = new java.io.File( res.getLocation().toPortableString() ) ;
-            	//paths.add( file.toURL() );
-            	paths.add( getURL(file) );
+            	java.io.File file = new java.io.File( resource.getLocation().toPortableString() ) ;
+            	libraries.add( file.getAbsolutePath() );
             } 
             else 
             {
             	//--- External resource : Java JRE, JAR added with "Add external JAR"
             	PluginLogger.log("External resource : '"+entry.getPath()+"'");
             	java.io.File file = entry.getPath().toFile() ;
-            	//paths.add( file.toURL() );
-            	paths.add( getURL(file) );
+            	libraries.add( file.getAbsolutePath() );
             }
-            
         }
-        return paths;
+        return libraries;
     }
     
-    private static URL getURL(File file) //throws MalformedURLException
-    {
-        URI uri = file.toURI();
-    	URL url;
-		try {
-			url = uri.toURL();
-	    	return url ;
-		} catch (MalformedURLException e) {
-			PluginLogger.error("MalformedURLException : \n" 
-					+ e.getMessage() + "\n"
-					+ "File path : " + file.getPath() );
-			MsgBox.error("MalformedURLException : \n" + file.getPath() );
-		}
-    	return null ;
-    }
+//    private static URL getURL(File file) 
+//    {
+//        URI uri = file.toURI();
+//    	URL url;
+//		try {
+//			url = uri.toURL();
+//	    	return url ;
+//		} catch (MalformedURLException e) {
+//			PluginLogger.error("MalformedURLException : \n" 
+//					+ e.getMessage() + "\n"
+//					+ "File path : " + file.getPath() );
+//			MsgBox.error("MalformedURLException : \n" + file.getPath() );
+//		}
+//    	return null ;
+//    }
 
     /**
      * Returns all the source folders for the given project 
