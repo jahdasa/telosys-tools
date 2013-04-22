@@ -32,7 +32,7 @@ import org.telosys.tools.commons.TelosysToolsLogger;
  * 
  * @author Laurent GUERIN *  */
 
-/* package */ class DriverLoader extends GenericTool
+public class DriverLoader extends GenericTool
 {
     //-----------------------------------------------------------------------------
     // Specific Class Loader ( Inner class )
@@ -49,9 +49,9 @@ import org.telosys.tools.commons.TelosysToolsLogger;
     //-----------------------------------------------------------------------------
     // Attributes
     //-----------------------------------------------------------------------------
-    private MyClassLoader             _loader  = null; // Specific Class Loader instance
+    private final MyClassLoader             _loader ; // Specific Class Loader instance
 
-    private Hashtable<String,Driver>  _drivers = new Hashtable<String,Driver>(); // Loaded drivers
+    private final Hashtable<String,Driver>  _drivers = new Hashtable<String,Driver>(); // Loaded drivers
     
     //-----------------------------------------------------------------------------
     // The unique constructor
@@ -59,33 +59,33 @@ import org.telosys.tools.commons.TelosysToolsLogger;
     /**
      * Constructor 
      * 
-     * @param paths
+     * @param libraries
      * @param logger
      */
-    public DriverLoader( String[] paths, TelosysToolsLogger logger ) throws TelosysToolsException
+    public DriverLoader( String[] libraries, TelosysToolsLogger logger ) throws TelosysToolsException
     {
     	super(logger);
     	
     	log ( "DriverLoader constructor ... " );
-        if ( paths == null )
+        if ( libraries == null )
         {
         	throwException( "DriverLoader constructor : paths[] is null !" );
         }
-        else if ( paths.length == 0 )
+        else if ( libraries.length == 0 )
         {
         	throwException( "DriverLoader constructor : paths[] is void !" );
         }
         
         ClassLoader parentLoader = ClassLoader.getSystemClassLoader();
         //--- Convert String[] to URL[] (eliminate void and malformed urls )
-        logPaths(paths);
-        URL[] urls = new URL[paths.length];
+        logPaths(libraries);
+        URL[] urls = new URL[libraries.length];
         int n = 0 ;
-        for ( int i = 0 ; i < paths.length ; i++ )
+        for ( int i = 0 ; i < libraries.length ; i++ )
         {
-            if ( paths[i] != null )
+            if ( libraries[i] != null )
             {
-                String sPath = paths[i].trim();
+                String sPath = libraries[i].trim();
                 if ( sPath.length() > 0 )
                 {                
 		            try

@@ -31,30 +31,34 @@ import org.telosys.tools.commons.TelosysToolsLogger;
 
 public class ConnectionManager extends GenericTool
 {
-    private DriverLoader _driverLoader = null;
+    private final String[]     _libraries ;
+
+    private final DriverLoader _driverLoader ;
+
 
     //-----------------------------------------------------------------------------
     /**
      * Constructor
-     * @param paths array of paths where to search the JDBC driver 
+     * @param libraries array of JAR files where to search the JDBC driver 
      * @param logger the logger to use
      */
-    public ConnectionManager ( String[] paths, TelosysToolsLogger logger ) throws TelosysToolsException
+    public ConnectionManager ( String[] libraries, TelosysToolsLogger logger ) throws TelosysToolsException
     {
     	super(logger);
     	
     	log ( "ConnectionManager constructor ... " );
 
-        if ( paths == null )
+    	_libraries = libraries ;
+        if ( libraries == null )
         {
-            throwException( "ConnectionManager constructor : paths[] is null !" );            
+            throwException( "ConnectionManager constructor : libraries[] is null !" );            
         }
-        else if ( paths.length == 0 )
+        else if ( libraries.length == 0 )
         {
-        	throwException( "ConnectionManager constructor : paths[] is void !" );            
+        	throwException( "ConnectionManager constructor : libraries[] is void !" );            
         }
         
-        _driverLoader = new DriverLoader(paths, logger);     
+        _driverLoader = new DriverLoader(libraries, logger);     
         if ( _driverLoader == null )
         {
         	throwException( "ConnectionManager constructor : Cannot create the driver loader" ) ;
@@ -65,6 +69,15 @@ public class ConnectionManager extends GenericTool
         }
     }
 
+    //-----------------------------------------------------------------------------
+    /**
+     * Returns the libraries defined for this ConnectionManager
+     * @return
+     */
+    public String[] getLibraries() {
+    	return this._libraries ;
+    }
+    
     //-----------------------------------------------------------------------------
     /**
      * Creates a new connection using the given parameters 
@@ -85,7 +98,7 @@ public class ConnectionManager extends GenericTool
         Driver driver = _driverLoader.getDriver(sDriverClassName);
         if ( driver == null )
         {
-        	throwException( "getConnection : Cannot get driver from the driver loader " );
+        	throwException( "getConnection : Cannot get JDBC driver from the driver loader " );
         }
         
         //--- 2) Create the connection
