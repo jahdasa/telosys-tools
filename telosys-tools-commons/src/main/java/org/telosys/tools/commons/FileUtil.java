@@ -19,6 +19,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
 
 
 public class FileUtil {
@@ -71,19 +74,55 @@ public class FileUtil {
         }
         
         //--- Copy and close
-        if ( fis != null && fos != null )
+        copyAndClose( fis, fos);
+    }
+
+    /**
+     * Copy input URL to destination file
+     * @param inputURL
+     * @param sOutputFileName
+     * @throws Exception
+     */
+    public static void copy(URL inputURL, String sOutputFileName) throws Exception
+    {
+        //--- Open input stream
+    	InputStream is = null ;
+		try {
+			is = inputURL.openStream();
+		} catch (IOException e) {
+            throw new Exception("copy : cannot open input URL " + inputURL.toString(), e);
+		}
+        
+        //--- Open output stream
+		FileOutputStream fos = null;
+        try
+        {
+            fos = new FileOutputStream(sOutputFileName);
+        } catch (FileNotFoundException ex)
+        {
+            throw new Exception("copy : cannot open output file " + sOutputFileName, ex);
+        }
+        
+        //--- Copy and close
+        copyAndClose( is, fos);
+    }
+    
+    private static void copyAndClose(InputStream is, OutputStream os) throws Exception
+    {
+        //--- Copy and close
+        if ( is != null && os != null )
         {
 			byte buffer[] = new byte[BUFFER_SIZE];
 			int len = 0;
 			
 			try
             {
-                while ((len = fis.read(buffer)) > 0)
+                while ((len = is.read(buffer)) > 0)
                 {
-                    fos.write(buffer, 0, len);
+                    os.write(buffer, 0, len);
                 }
-                fis.close();
-                fos.close();
+                is.close();
+                os.close();
             } catch (IOException ioex)
             {
                 throw new Exception("copy : IO error.", ioex);
