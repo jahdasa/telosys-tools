@@ -326,9 +326,9 @@ public class ProjectConfigManager {
 			else
 			{
 				// File not found => no properties loaded
-				MsgBox.info( "Configuration file not found.\n\n" 
-						+ "(" + sConfigFileName + ")\n\n"
-						+ "Cannot load properties.\n\n" );
+//				MsgBox.info( "Configuration file not found.\n\n" 
+//						+ "(" + sConfigFileName + ")\n\n"
+//						+ "Cannot load properties.\n\n" );
 				ProjectConfig projectConfig = new ProjectConfig(project, null, sConfigFileName);
 				return projectConfig ;
 			}

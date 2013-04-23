@@ -2,6 +2,7 @@ package org.telosys.tools.eclipse.plugin.config.view;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.util.Properties;
 
 import org.eclipse.core.resources.IFolder;
@@ -34,6 +35,7 @@ import org.telosys.tools.eclipse.plugin.MyPlugin;
 import org.telosys.tools.eclipse.plugin.commons.EclipseProjUtil;
 import org.telosys.tools.eclipse.plugin.commons.MsgBox;
 import org.telosys.tools.eclipse.plugin.commons.PluginLogger;
+import org.telosys.tools.eclipse.plugin.commons.PluginResources;
 import org.telosys.tools.eclipse.plugin.commons.TelosysPluginException;
 import org.telosys.tools.eclipse.plugin.commons.Util;
 import org.telosys.tools.eclipse.plugin.config.ProjectConfig;
@@ -430,8 +432,8 @@ public class PropertiesPage extends PropertyPage {
 	private void initDatabasesConfigFile(IProject project, String sTemplatesFolder, StringBuffer sb){
 		
 		//--- File provided with the plugin distribution
-		String pluginResourcesFolder = MyPlugin.getResourcesDirectory();
-		String  fullFileName = FileUtil.buildFilePath(pluginResourcesFolder, DATABASES_DBCFG );
+		//String pluginResourcesFolder = MyPlugin.getResourcesDirectory();
+		//String  fullFileName = FileUtil.buildFilePath(pluginResourcesFolder, DATABASES_DBCFG );
 		
 		//--- Destination file (in the project)
 		if ( StrUtil.nullOrVoid(sTemplatesFolder) ) {
@@ -461,16 +463,19 @@ public class PropertiesPage extends PropertyPage {
 		}
 		else {
 			//--- Doesn't exist yet : Initialize by copy ( from plugin folder to project folder )
-			try {
-				FileUtil.copy(fullFileName, destinationAbsolutePath);
-				EclipseProjUtil.refreshResource(project, destinationInProject);
-				sb.append(". file '" + destinationInProject + "' copied");
-			} catch (Exception e) {
-				MsgBox.error("Cannot copy '" + DATABASES_DBCFG + "' file. \n\n"
-						+ "Source : \n" + fullFileName + "\n" 
-						+ "Destination : \n" + destinationAbsolutePath + "\n" 
-					 ) ;
-				sb.append(". ERROR : cannot copy file '" + destinationInProject + "' ");
+			URL databaseConfigURL = PluginResources.getResourceURL(DATABASES_DBCFG);
+			if ( databaseConfigURL != null ) {
+				try {
+					FileUtil.copy(databaseConfigURL, destinationAbsolutePath);
+					EclipseProjUtil.refreshResource(project, destinationInProject);
+					sb.append(". file '" + destinationInProject + "' copied");
+				} catch (Exception e) {
+					MsgBox.error("Cannot copy '" + DATABASES_DBCFG + "' file. \n\n"
+							+ "Source (URL) : \n" + databaseConfigURL.toString() + "\n\n" 
+							+ "Destination : \n" + destinationAbsolutePath + "\n" 
+						 ) ;
+					sb.append(". ERROR : cannot copy file '" + destinationInProject + "' ");
+				}
 			}
 		}
 		sb.append("\n");

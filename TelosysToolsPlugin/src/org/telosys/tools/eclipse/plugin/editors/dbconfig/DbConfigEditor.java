@@ -18,8 +18,6 @@ import org.telosys.tools.eclipse.plugin.commons.EclipseWksUtil;
 import org.telosys.tools.eclipse.plugin.commons.MsgBox;
 import org.telosys.tools.eclipse.plugin.commons.PluginLogger;
 import org.telosys.tools.eclipse.plugin.commons.TextWidgetLogger;
-import org.telosys.tools.eclipse.plugin.config.ProjectConfig;
-import org.telosys.tools.eclipse.plugin.config.ProjectConfigManager;
 
 /**
  * Main entry point for the editor <br>
@@ -172,11 +170,11 @@ public class DbConfigEditor extends FormEditor
 		return _file.getProject() ;
 	}
 	
-	public ProjectConfig getProjectConfig ()
-	{
-		PluginLogger.log(this, "getProjectConfig()..." );
-		return ProjectConfigManager.getProjectConfig( getProject() );
-	}
+//	public ProjectConfig getProjectConfig ()
+//	{
+//		PluginLogger.log(this, "getProjectConfig()..." );
+//		return ProjectConfigManager.getProjectConfig( getProject() );
+//	}
 	
 //	public Document getXmlDocument ()
 //	{

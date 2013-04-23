@@ -13,7 +13,6 @@ import org.telosys.tools.commons.ConsoleLogger;
 import org.telosys.tools.commons.TelosysToolsLogger;
 import org.telosys.tools.commons.dbcfg.XmlDbConfig;
 import org.telosys.tools.eclipse.plugin.commons.MsgBox;
-import org.telosys.tools.eclipse.plugin.config.ProjectConfig;
 
 public abstract class DbConfigEditorPage extends FormPage 
 {
@@ -86,15 +85,15 @@ public abstract class DbConfigEditorPage extends FormPage
 		_editor.setDirty();
 	}
 	
-	protected ProjectConfig getProjectConfig()
-	{
-		ProjectConfig config = _editor.getProjectConfig();
-		if ( config == null )
-		{
-			MsgBox.error("ProjectConfig is null");
-		}
-		return config ;
-	}
+//	protected ProjectConfig getProjectConfig()
+//	{
+//		ProjectConfig config = _editor.getProjectConfig();
+//		if ( config == null )
+//		{
+//			MsgBox.error("ProjectConfig is null");
+//		}
+//		return config ;
+//	}
 	
 	protected void setBackgroundColor()
 	{
