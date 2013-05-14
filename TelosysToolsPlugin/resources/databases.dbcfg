@@ -154,17 +154,21 @@
 <!--            ORACLE 8i, 9i, 10g, 11g           -->
 <!-- ============================================ -->
 <!-- The JDBC Driver is in "ojdbc14.jar" or "ojdbc5.jar (JDK 1.5) or "ojdbc6.jar" (JDK 1.6)
-     ( or "classes12.jar" or "classes12.zip" for 8i ) -->
+     ( or "classes12.jar" or "classes12.zip" for 8i ) 
+     For ORACLE meta-data set 
+      . catalog="!" (no catalog, "!" means null) 
+      . schema="HR" to use the demo database provided with Oracle XE
+-->
 <!--
 	<db id = "0" 
 		name   = "Oracle - TelosysBookStore DB" 
 		driver = "oracle.jdbc.driver.OracleDriver" 
-		url    = "jdbc:oracle:thin:@localhost:1521:bookstore"
+		url    = "jdbc:oracle:thin:@localhost:1521/XE"
 		isolationLevel = "TRANSACTION_READ_COMMITTED" 
 		poolSize       = "3" >
 			<property name="user"      value="demo" />
 			<property name="password"  value="demo" />
-			<metadata catalog="" schema="BOOKSTORE" table-name-pattern="%" table-types="TABLE   VIEW  " />
+			<metadata catalog="!" schema="BOOKSTORE" table-name-pattern="%" table-types="TABLE   VIEW  " />
 	</db>		
 -->
 
