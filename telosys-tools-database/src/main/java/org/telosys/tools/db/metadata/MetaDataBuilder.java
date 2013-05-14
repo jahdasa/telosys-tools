@@ -35,9 +35,17 @@ public class MetaDataBuilder
 	//--------------------------------------------------------------------------------------------
 	/*  1 */ private final static String TABLE_CATALOG  = "TABLE_CATALOG" ; // table catalog (may be null) 
 	/*  2 */ private final static String TABLE_SCHEM    = "TABLE_SCHEM" ;   // table schema  
-	protected static SchemaMetaData buildSchemaMetaData( ResultSet rs ) throws SQLException
+	// NB : Specific ResultSet for Oracle : only one column with TABLE_SCHEM
+	protected static SchemaMetaData buildSchemaMetaData( ResultSet rs, int columnCount ) throws SQLException
 	{
-	    String catalogName = rs.getString(TABLE_CATALOG);
+	    String catalogName = null ;
+		if ( columnCount > 1 ) {
+		    catalogName = rs.getString(TABLE_CATALOG);
+		}
+		else {
+			// Specific case for ORACLE (only one column)
+		    catalogName = "" ;
+		}
 	    String schemaName  = rs.getString(TABLE_SCHEM);
 	    SchemaMetaData schemaMetaData = new SchemaMetaData( catalogName, schemaName );
 		

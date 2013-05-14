@@ -85,14 +85,18 @@ public class MetaDataManager extends StandardTool
 	    
 		LinkedList<SchemaMetaData> list = new LinkedList<SchemaMetaData>();
 		
-		//--- For each table ...
+		ResultSetMetaData rsmd = rs.getMetaData();
+		int columnCount = rsmd.getColumnCount();
+		log("getSchemas : column count = " + columnCount );
+		
+		//--- For each SCHEMA ...
 		int iCount = 0;
 		while ( rs.next() ) 
 		{
 			iCount++;
 			log("getSchemas : try to build schema #" + iCount +" ..." );			
-			SchemaMetaData schemaMetaData = MetaDataBuilder.buildSchemaMetaData(rs);
-			log("getTables : schema #" + iCount +  " built ( name = " + schemaMetaData.getSchemaName() + " )");
+			SchemaMetaData schemaMetaData = MetaDataBuilder.buildSchemaMetaData(rs, columnCount);
+			log("getSchemas : schema #" + iCount +  " built ( name = " + schemaMetaData.getSchemaName() + " )");
 
 			list.addLast(schemaMetaData);
 		}
