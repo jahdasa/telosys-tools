@@ -61,7 +61,7 @@
             name="Telosys Screen Triggers"/>
 	-->
       <!-- Services Wizards -->
-	<!--
+	<!-- 
       <wizard
             category="TelosysWizard"
             class="org.telosys.tools.eclipse.plugin.wizards.service.NewServiceWizard"

@@ -13,7 +13,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.net;bundle-version="1.2.100"
 Bundle-Activator: org.telosys.tools.eclipse.plugin.TelosysTools
 Bundle-ClassPath: .,
- lib/telosys-tools-commons-2.0.4.jar,
+ lib/telosys-tools-commons-2.0.5.jar,
  lib/telosys-tools-database-2.0.5.jar,
  lib/telosys-tools-repository-2.0.3.jar,
  lib/telosys-tools-generator-2.0.4.jar,

@@ -1066,19 +1066,20 @@ public class PropertiesPage extends PropertyPage {
 
 		Button projectButton = new Button(buttons, SWT.PUSH);
 		projectButton.setText("Project folders");
-		projectButton.setData(this);
+		//projectButton.setData(this);
 		projectButton.addSelectionListener(new SelectionListener() 
     	{
             public void widgetSelected(SelectionEvent event)
             {
             	//Object source = event.getSource();
             	//MsgBox.info("source : " + source.getClass().getCanonicalName() );
-            	Button b = (Button) event.getSource() ;
-            	PropertiesPage page = (PropertiesPage) b.getData() ;
-            	_tSrcFolder.setText( getProjectSourceFolder(page) );
+            	//Button b = (Button) event.getSource() ;
+            	//PropertiesPage page = (PropertiesPage) b.getData() ;
+            	String projectSourceFolder = getProjectSourceFolder(); 
+            	_tSrcFolder.setText( projectSourceFolder );
             	_tResFolder.setText("");
-            	_tWebFolder.setText( getProjectWebContentFolder(page) );
-            	_tTestSrcFolder.setText("");
+            	_tWebFolder.setText( getProjectWebContentFolder() );
+            	_tTestSrcFolder.setText( projectSourceFolder );
             	_tTestResFolder.setText("");
             }
             public void widgetDefaultSelected(SelectionEvent event)
@@ -1094,8 +1095,11 @@ public class PropertiesPage extends PropertyPage {
 	 * @param page
 	 * @return
 	 */
-	private String getProjectSourceFolder(PropertiesPage page) {
-		IProject project = page.getCurrentProject();
+	private String getProjectSourceFolder() {
+		IProject project = getCurrentProject();
+		if ( EclipseProjUtil.isJavaProject(project) != true ) {
+			return "" ;
+		}
 		String[] srcFolders = EclipseProjUtil.getSrcFolders(project);
 		String projectSourceFolder = null ;
 		if ( srcFolders.length == 1 ) {
@@ -1118,8 +1122,8 @@ public class PropertiesPage extends PropertyPage {
 		return projectSourceFolder ;
 	}
 	
-	private String getProjectWebContentFolder(PropertiesPage page) {
-		IProject project = page.getCurrentProject();
+	private String getProjectWebContentFolder() {
+		IProject project = getCurrentProject();
 		IFolder folder = project.getFolder(WEB_CONTENT);
 		if ( folder.exists() ) {
 			// Exists 

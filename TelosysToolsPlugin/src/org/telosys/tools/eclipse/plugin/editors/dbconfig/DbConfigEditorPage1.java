@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -1147,8 +1149,23 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 
         Connection con = null ;
 		try {
+			//con = cm.getConnection( db.getDriverClass(), db.getJdbcUrl(), db.getProperties() );
+			// Use screen fields  
+			String sDriverClass = _Driver.getText() ;
+			String sJdbcUrl     = _Url.getText();
+			Properties prop = db.getProperties() ;
+			prop.put(XmlDatabase.PROPERTY_USER,     _User.getText() );
+			prop.put(XmlDatabase.PROPERTY_PASSWORD, _Password.getText() );
 			
-			con = cm.getConnection( db.getDriverClass(), db.getJdbcUrl(), db.getProperties() );
+			log("Try to get a database connection...");
+			log(" . Driver class = " + sDriverClass );
+			log(" . JDBC URL     = " + sJdbcUrl );
+			log(" . Properties : " );
+			Set<Object> keys = prop.keySet();
+			for ( Object key : keys ) {
+				log("   . '" + key + "' = '" + prop.get(key) + "'" );
+			}
+			con = cm.getConnection( sDriverClass, sJdbcUrl, prop );
 
 		} catch (TelosysToolsException e) {
 			logException(e);
@@ -1164,11 +1181,6 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 			}
 			else {
 				msgBoxErrorWithClassPath("Cannot connect to the database !", e, cm.getLibraries());
-
-//	            MsgBox.error("Cannot connect to the database ! "
-//	                      + "\n TelosysToolsException :"
-//	                      + "\n . Message : " + e.getMessage() 
-//	                      );
 			}
 			return null ;
 		} catch (Throwable e) {
@@ -1257,48 +1269,39 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     {
     	Shell shell = Util.cursorWait();
     	
-        //MsgBox.debug("Get Informations");
-        
-//        XmlDatabase db = getDatabaseConfig() ;
-//		ConnectionManager cm = getConnectionManager();
-//        if ( db != null && cm != null )
-//        {
-//    		Connection con = cm.getConnection(db.getDriverClass(), db.getJdbcUrl(), db.getProperties() );
-    		Connection con = getConnection();
-    		if ( con != null )
-    		{
-	            try {
-					DatabaseMetaData dbmd = con.getMetaData();
-					
-				    _InfoURL.setText( dbmd.getURL() );
-				    _InfoProdName.setText( dbmd.getDatabaseProductName() );
-				    _InfoProdVer.setText( dbmd.getDatabaseProductVersion() );
-				    _InfoDriverName.setText( dbmd.getDriverName() );
-				    _InfoDriverVer.setText( dbmd.getDriverVersion() );
-				    _InfoMaxConn.setText( ""+dbmd.getMaxConnections() );
-				    _InfoUser.setText(dbmd.getUserName());
-				    _InfoIsolation.setText( ""+dbmd.getDefaultTransactionIsolation() );
-				    
-				    _InfoCatalogTerm.setText( dbmd.getCatalogTerm() );
-				    _InfoCatalogSepar.setText( dbmd.getCatalogSeparator() );
-					
-				    _InfoSchemaTerm.setText( dbmd.getSchemaTerm() );
-				    _InfoSearchEscape.setText( dbmd.getSearchStringEscape() );
-				    
-				    con.close();
-				    
-				} catch (SQLException e) {
-					MsgBox.error("SQLException : " + e.getMessage() );
-				} finally {
-					closeConnection(con);
-				}
-	            
-				//cm.closeConnection(con);
-    		}
-    		// else : nothing to do ( message already showned )
+		Connection con = getConnection();
+		if ( con != null )
+		{
+            try {
+				DatabaseMetaData dbmd = con.getMetaData();
+				
+			    _InfoURL.setText( dbmd.getURL() );
+			    _InfoProdName.setText( dbmd.getDatabaseProductName() );
+			    _InfoProdVer.setText( dbmd.getDatabaseProductVersion() );
+			    _InfoDriverName.setText( dbmd.getDriverName() );
+			    _InfoDriverVer.setText( dbmd.getDriverVersion() );
+			    _InfoMaxConn.setText( ""+dbmd.getMaxConnections() );
+			    _InfoUser.setText(dbmd.getUserName());
+			    _InfoIsolation.setText( ""+dbmd.getDefaultTransactionIsolation() );
+			    
+			    _InfoCatalogTerm.setText( dbmd.getCatalogTerm() );
+			    _InfoCatalogSepar.setText( dbmd.getCatalogSeparator() );
+				
+			    _InfoSchemaTerm.setText( dbmd.getSchemaTerm() );
+			    _InfoSearchEscape.setText( dbmd.getSearchStringEscape() );
+			    
+			    con.close();
+			    
+			} catch (SQLException e) {
+				MsgBox.error("SQLException : " + e.getMessage() );
+			} finally {
+				closeConnection(con);
+			}
+            
+		}
+   		// else : nothing to do ( message already shown )
 
-//        }
-    		Util.cursorArrow(shell);
+   		Util.cursorArrow(shell);
     }
 
     private void actionGetMetaData(int whatElse) 
@@ -1320,7 +1323,7 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 				dbmd = con.getMetaData();		
 
 			} catch (SQLException e) {
-				MsgBox.error("Cannot get meta-data ! " );
+				MsgBox.error("Cannot get meta-data ! ", e );
 			} 
 			
 			TelosysToolsLogger logger = _editor.getTextWidgetLogger();
@@ -1331,7 +1334,7 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 				tables = metaDataManager.getTables(dbmd, sCatalog, sSchema, sTableNamePattern, tableTypes );
 			} catch (SQLException e) {
 				tables = null ;
-				MsgBox.error("Cannot get tables from meta-data ! " );
+				MsgBox.error("Cannot get tables from meta-data ! ", e );
 			} 
 			
 			if ( tables != null ) 
@@ -1340,20 +1343,6 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 				{
 				case GET_COLUMNS :
 					getMetaDataColumns( metaDataManager, dbmd, tables, sCatalog, sSchema);
-	//	    		//--- Get the columns for each table
-	//				Iterator iter = tables.iterator();
-	//				while ( iter.hasNext() )
-	//				{
-	//					TableMetaData t = (TableMetaData) iter.next();
-	//					String sTableName = t.getTableName();
-	//					try {
-	//						List columns = metaDataManager.getColumns(dbmd, sCatalog, sSchema, sTableName );
-	//						printMetaDataColumns(sTableName, columns);
-	//					} catch (SQLException e) {
-	//						MsgBox.error("Cannot get columns for table '" + sTableName + "'" );
-	//						break;
-	//					} 
-	//				}
 					break;
 					
 				case GET_PRIMARY_KEYS :
@@ -1386,17 +1375,13 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     		List<TableMetaData> tables, String sCatalog, String sSchema) 
     {
 		//--- Get the columns for each table
-//		Iterator iter = tables.iterator();
-//		while ( iter.hasNext() )
-//		{
-//			TableMetaData t = (TableMetaData) iter.next();
 		for ( TableMetaData t : tables ) {
 			String sTableName = t.getTableName();
 			try {
 				List<ColumnMetaData> columns = metaDataManager.getColumns(dbmd, sCatalog, sSchema, sTableName );
 				printMetaDataColumns(sTableName, columns);
 			} catch (SQLException e) {
-				MsgBox.error("Cannot get columns for table '" + sTableName + "'" );
+				MsgBox.error("Cannot get columns for table '" + sTableName + "'", e );
 				break;
 			} 
 		}
@@ -1406,17 +1391,13 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     		List<TableMetaData> tables, String sCatalog, String sSchema) 
     {
 		//--- Get the columns for each table
-//		Iterator iter = tables.iterator();
-//		while ( iter.hasNext() )
-//		{
-//			TableMetaData t = (TableMetaData) iter.next();
 		for ( TableMetaData t : tables ) {
 			String sTableName = t.getTableName();
 			try {
 				List<PrimaryKeyColumnMetaData> columns = metaDataManager.getPKColumns(dbmd, sCatalog, sSchema, sTableName );
 				printMetaDataPrimaryKeys(sTableName, columns);
 			} catch (SQLException e) {
-				MsgBox.error("Cannot get Primary Key for table '" + sTableName + "'" );
+				MsgBox.error("Cannot get Primary Key for table '" + sTableName + "'", e );
 				break;
 			} 
 		}
@@ -1426,17 +1407,13 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     		List<TableMetaData> tables, String sCatalog, String sSchema) 
     {
 		//--- Get the columns for each table
-//		Iterator iter = tables.iterator();
-//		while ( iter.hasNext() )
-//		{
-//			TableMetaData t = (TableMetaData) iter.next();
 		for ( TableMetaData t : tables ) {
 			String sTableName = t.getTableName();
 			try {
 				List<ForeignKeyColumnMetaData> columns = metaDataManager.getFKColumns(dbmd, sCatalog, sSchema, sTableName );
 				printMetaDataForeignKeys(sTableName, columns);
 			} catch (SQLException e) {
-				MsgBox.error("Cannot get Foreign Keys for table '" + sTableName + "'" );
+				MsgBox.error("Cannot get Foreign Keys for table '" + sTableName + "'", e );
 				break;
 			} 
 		}
@@ -1448,16 +1425,12 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     	try {
 			List<String> list = metaDataManager.getCatalogs(dbmd);
 			printMetaDataCatalogs(list);
-		} catch (SQLException e1) {
-			MsgBox.error("Cannot get catalogs" );
+		} catch (SQLException e) {
+			MsgBox.error("Cannot get catalogs", e );
 		}
     }
     private void printMetaDataCatalogs(List<String> list)
     {
-//		Iterator iter = list.iterator();
-//		while ( iter.hasNext() )
-//		{
-//			String s = (String) iter.next();
 		for ( String s : list ) {
 			_tMetaData.append(" . " + s + " \n");
 		}
@@ -1469,16 +1442,12 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     	try {
 			List<SchemaMetaData> list = metaDataManager.getSchemas(dbmd);
 			printMetaDataSchemas(list);
-		} catch (SQLException e1) {
-			MsgBox.error("Cannot get schemas" );
+		} catch (SQLException e) {
+			MsgBox.error("Cannot get schemas", e );
 		}
     }
     private void printMetaDataSchemas(List<SchemaMetaData> list)
     {
-//		Iterator iter = list.iterator();
-//		while ( iter.hasNext() )
-//		{
-//			SchemaMetaData schema = (SchemaMetaData) iter.next();
 		for ( SchemaMetaData schema : list ) {
 			_tMetaData.append(" . " + schema.getSchemaName() + " ( catalog : "+ schema.getSchemaName() + " ) \n");
 		}
@@ -1487,10 +1456,6 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     
     private void printMetaDataTables(List<TableMetaData> tables)
     {
-//		Iterator iter = tables.iterator();
-//		while ( iter.hasNext() )
-//		{
-//			TableMetaData t = (TableMetaData) iter.next();
 		for ( TableMetaData t : tables ) {
 			_tMetaData.append(" . " + t.getTableName() + " (" + t.getTableType() + ") "
 				+ " catalog = '" + t.getCatalogName() + "'"
@@ -1502,10 +1467,6 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     private void printMetaDataColumns(String tableName, List<ColumnMetaData> columns)
     {
     	_tMetaData.append("Table '" + tableName + "' : \n");
-//		Iterator iter = columns.iterator();
-//		while ( iter.hasNext() )
-//		{
-//			ColumnMetaData c = (ColumnMetaData) iter.next();
 		for ( ColumnMetaData c : columns ) {
 			String s = 
 					"[" +c.getOrdinalPosition() + "]"
@@ -1528,10 +1489,6 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     private void printMetaDataPrimaryKeys(String tableName, List<PrimaryKeyColumnMetaData> columns)
     {
     	_tMetaData.append("Table '" + tableName + "' : \n");
-//		Iterator iter = columns.iterator();
-//		while ( iter.hasNext() )
-//		{
-//			PrimaryKeyColumnMetaData c = (PrimaryKeyColumnMetaData) iter.next();
 		for ( PrimaryKeyColumnMetaData c : columns ) {
 			String s = 
 					" " + c.getPkName() + " : " 
@@ -1547,20 +1504,16 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     private void printMetaDataForeignKeys(String tableName, List<ForeignKeyColumnMetaData> columns)
     {
     	_tMetaData.append("Table '" + tableName + "' : \n");
-//		Iterator iter = columns.iterator();
-//		while ( iter.hasNext() )
-//		{
-//			ForeignKeyColumnMetaData c = (ForeignKeyColumnMetaData) iter.next();
 		for ( ForeignKeyColumnMetaData c : columns ) {
-			System.out.println(
-					" . " 
-					+ " fkName=" + c.getFkName()
-					+ " pkName=" + c.getPkName()
-					+ " fkTableName=" + c.getFkTableName() 
-					+ " fkColumnName=" + c.getFkColumnName() 
-					+ " pkTableName=" + c.getPkTableName() 
-					+ " pkColumnName=" + c.getPkColumnName() 
-					);
+//			System.out.println(
+//					" . " 
+//					+ " fkName=" + c.getFkName()
+//					+ " pkName=" + c.getPkName()
+//					+ " fkTableName=" + c.getFkTableName() 
+//					+ " fkColumnName=" + c.getFkColumnName() 
+//					+ " pkTableName=" + c.getPkTableName() 
+//					+ " pkColumnName=" + c.getPkColumnName() 
+//					);
 			
 			String s = 
 					" " + c.getFkName() + " : " 
@@ -1617,7 +1570,6 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
         	return ;
         }
 
-        //TelosysToolsLogger logger = new DefaultLogger();	
         TelosysToolsLogger logger = _editor.getTextWidgetLogger();	
 		
         XmlDatabase db = getDatabaseConfig() ;
@@ -1777,13 +1729,11 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 			{
 				Shell shell = Util.cursorWait();
 				
-	    		//Connection con = cm.getConnection(db.getDriverClass(), db.getJdbcUrl(), db.getProperties() );
 	    		Connection con = getConnection();
 	    		if ( con != null )
 	    		{
 	    	        try {
 	    	        	ProjectConfig projectConfig = ProjectConfigManager.getProjectConfig(project);
-//	    	        	TelosysToolsLogger logger = new DefaultLogger();
 	    	        	TelosysToolsLogger logger = _editor.getTextWidgetLogger();
 	    	        	
 	    	        	nbChanges = updateRepository(con, db, projectConfig, logger ) ;
@@ -1825,9 +1775,7 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 	    			Util.cursorArrow(shell);
 	    		}
 			}
-
         }
-        
     }
 
 }

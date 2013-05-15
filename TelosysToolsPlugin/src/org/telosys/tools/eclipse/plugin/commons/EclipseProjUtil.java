@@ -267,9 +267,30 @@ public class EclipseProjUtil {
     }
 
     //------------------------------------------------------------------------------------------------
-    public static IJavaProject getJavaProject(IProject p)
+    /**
+     * Returns true if the given project is a Java project
+     * @param project
+     * @return
+     */
+    public static boolean isJavaProject(IProject project)
     {
-    	return JavaCore.create(p);
+    	try {
+    		return project.hasNature(JavaCore.NATURE_ID) ;
+		} catch (CoreException e) {
+        	MsgBox.error("Cannot get project nature (project is null or not open) \n\n isJavaProject(project) ");
+        	return false ;
+		}
+    }
+    //------------------------------------------------------------------------------------------------
+    public static IJavaProject getJavaProject(IProject project)
+    {
+    	if ( isJavaProject(project) ) {
+    		return JavaCore.create(project);
+    	}
+    	else {
+        	MsgBox.error("This project is not a Java project \n\n getJavaProject(project) ");
+        	return null ;
+    	}
     }
 	
     //------------------------------------------------------------------------------------------------
