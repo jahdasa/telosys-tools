@@ -31,6 +31,10 @@ import org.w3c.dom.NodeList;
  */
 public class XmlDatabase
 {
+	public final static String PROPERTY_USER     = "user";
+	public final static String PROPERTY_PASSWORD = "password";
+	 
+	
     private String     _sDatabaseId               = null;
 
     private String     _sDatabaseName             = null;
@@ -185,12 +189,12 @@ public class XmlDatabase
 
     public String getUser()
     {
-    	return getProperty( ConstXML.PROPERTY_USER );
+    	return getProperty( PROPERTY_USER );
     }
     
     public String getPassword()
     {
-    	return getProperty( ConstXML.PROPERTY_PASSWORD );
+    	return getProperty( PROPERTY_PASSWORD );
     }
 
     //----------------------------------------------------------------------------------

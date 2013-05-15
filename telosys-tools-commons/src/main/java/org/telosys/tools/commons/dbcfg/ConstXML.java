@@ -44,8 +44,5 @@ class ConstXML {
 	 public final static String DB_METADATA_ATTR_TABLE_NAME_PATTERN = "table-name-pattern";
 	 public final static String DB_METADATA_ATTR_TABLE_TYPES = "table-types";
 	 
-	 public final static String PROPERTY_USER = "user";
-	 public final static String PROPERTY_PASSWORD = "password";
-	 
 	 //---------------------------------------------------------------------------
 }
