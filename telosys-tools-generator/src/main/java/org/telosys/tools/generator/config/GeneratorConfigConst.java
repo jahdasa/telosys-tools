@@ -32,6 +32,8 @@ public class GeneratorConfigConst {
 
     public final static String DOWNLOADS_FOLDER  = "DownloadsFolder";
     
+    public final static String LIBRARIES_FOLDER  = "LibrariesFolder";
+    
     //--- Packages 
     public final static String ENTITIES_PACKAGE  = "packageVo";
 
