@@ -41,12 +41,10 @@ public class ProjectConfig
 
 	private String _sWorkspaceLocation  = null ;
 	
-// [22-Jan-2012] Removed	
-//	private String _sTelosysPropFile    = "WebContent/WEB-INF/conf/telosys.properties" ;
-	
 	private String _sRepositoriesFolder = "TelosysTools/repos" ; 
 	private String _sTemplatesFolder    = "TelosysTools/templates" ; 
 	private String _sDownloadsFolder    = "TelosysTools/downloads" ; 
+	private String _sLibrariesFolder    = "TelosysTools/lib" ; 
 	
 	//----------------------------------------------------------------------------------------
 	// [22-Jan-2012] Removed	
@@ -157,6 +155,7 @@ public class ProjectConfig
     	_sRepositoriesFolder = prop.getProperty(GeneratorConfigConst.REPOS_FOLDER, _sRepositoriesFolder);
     	_sTemplatesFolder = prop.getProperty(GeneratorConfigConst.TEMPLATES_FOLDER, _sTemplatesFolder);
     	_sDownloadsFolder = prop.getProperty(GeneratorConfigConst.DOWNLOADS_FOLDER, _sDownloadsFolder);
+    	_sLibrariesFolder = prop.getProperty(GeneratorConfigConst.LIBRARIES_FOLDER, _sLibrariesFolder);
     	
     	//--- Packages 
     	_sEntitiesPackage = prop.getProperty(GeneratorConfigConst.ENTITIES_PACKAGE, _sEntitiesPackage);
@@ -185,48 +184,39 @@ public class ProjectConfig
 	{
     	return _sPluginConfigFile;
 	}
-//    public String getTelosysPropFile()
-//	{
-//    	return _sTelosysPropFile;
-//	}
 
     //==============================================================================
     // Folders 
     //==============================================================================
-    public String getSRC()
-	{
+    public String getSRC() {
     	return _SRC;
 	}
-    public String getRES()
-	{
+    public String getRES() {
     	return _RES;
 	}
-    public String getWEB()
-	{
+    public String getWEB() {
     	return _WEB;
 	}
-    public String getTEST_RES()
-	{
+    public String getTEST_RES() {
     	return _TEST_RES;
 	}
-    public String getTEST_SRC()
-	{
+    public String getTEST_SRC() {
     	return _TEST_SRC;
 	}
-    public String getDOC()
-	{
+    public String getDOC(){
     	return _DOC;
 	}
-    public String getTMP()
-	{
+    public String getTMP() {
     	return _TMP;
 	}
-    public String getTemplatesFolder()
-	{
+    public String getTemplatesFolder() {
     	return _sTemplatesFolder;
 	}
     public String getDownloadsFolder() {
     	return _sDownloadsFolder;
+    }
+    public String getLibrariesFolder() {
+    	return _sLibrariesFolder ;
     }
     
     /**

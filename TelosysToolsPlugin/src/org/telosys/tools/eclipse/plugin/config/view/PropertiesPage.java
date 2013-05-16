@@ -46,7 +46,7 @@ import org.telosys.tools.generator.config.GeneratorConfigConst;
 import org.telosys.tools.generator.context.VariableNames;
 
 /**
- * Plugin properties configuration page ( for each project )
+ * Project properties configuration page ( one configuration file for each project )
  * This page contains 5 tabs
  * 
  */
@@ -55,36 +55,18 @@ public class PropertiesPage extends PropertyPage {
 	private final static String WEB_CONTENT     = "WebContent" ;
 	private final static String DATABASES_DBCFG = "databases.dbcfg" ;
 
-    //private final static String PLUGIN_PROPERTIES_FILE = "telosys-tools.cfg";
-    
     //--- Tab "General"
 	private Text _tProjectName = null ;
 	private Text _tProjectLocation = null;
 	private Text _tWorkspaceLocation = null ;
 	
-//	private Text _tSourceFolder = null ;
-//	private Text _tWebContentFolder = null ;
 	private Text _tTemplatesFolder = null ;
 	private Text _tRepositoriesFolder = null ;
 	private Text _tDownloadsFolder = null ;
-	
-//	private Text _tTelosysProp = null ;
+	private Text _tLibrariesFolder = null ;
 	
     //--- Tab "Packages"
 	private Text _tBeanPackage = null ;
-//	private Text _tVOListPackage = null ;
-//	private Text _tDaoPackage = null ;
-//	private Text _tXmlMapperPackage = null ;
-//	
-//	private Text _tScreenDataPackage = null ;
-//	private Text _tScreenManagerPackage = null ;
-//	private Text _tScreenTriggersPackage = null ;
-//	private Text _tScreenProceduresPackage = null ;
-	
-//    //--- Tab "Classes names"
-//	private Text _tVOListClassName = null ;
-//	private Text _tXmlMapperClassName = null ;
-//	private Text _tDAOClassName = null ;
 	
 	//--- Tab "Variables"
 	private VariablesTable _variablesTable = null ;
@@ -92,7 +74,6 @@ public class PropertiesPage extends PropertyPage {
 	//--- Tab "Download"
 	private Text  _tGitHubUserName = null;
 	private Text  _tGitHubUrlPattern  = null;
-	//private Table _tableGitHubRepositories = null ;
 	private List    _listGitHubRepositories = null ;
 	private Button  _checkBoxUnzipDownload = null ;
 	private Text    _tLogger = null ;
@@ -113,12 +94,6 @@ public class PropertiesPage extends PropertyPage {
 	private Group checkGroup;
 
 	private Button classDirPickerButton;
-
-	//private String currentProject;
-
-	//private Text daoPackageText;
-
-	//private Label dbConfigLabel;
 
 	private Button defaultCheck;
 
@@ -228,23 +203,9 @@ public class PropertiesPage extends PropertyPage {
 		}
 	};
 **/
-	//private Shell shell;
-
-	//private Text sourceDirText;
-
 	private Button specificCheck;
 
-	//private Text _tTemplatesDirText;
-
 	private Button testClassButton;
-
-//	private Text testPackageText;
-//
-//	private Text voListPackageText;
-//
-//	private Text voPackageText;
-	
-	//private PropertiesManager _propManager = null ;
 
 	/**
 	 *  
@@ -262,7 +223,6 @@ public class PropertiesPage extends PropertyPage {
 	private void createCheckDirPicker(Composite group, final Composite cevent) {
 		classDirPickerButton = new Button(group, SWT.PUSH);
 		classDirPickerButton.setText("...");
-		//classDirPickerButton.addSelectionListener(selistener);
 	}
 
 	private void createCheckGroup(Composite composite) {
@@ -292,10 +252,6 @@ public class PropertiesPage extends PropertyPage {
 		resultTest = new Label(checkGroup, SWT.BORDER);
 		resultTest.setLayoutData(getColSpan(2));
 
-//		defaultCheck.addSelectionListener(selistener);
-//		checkTemplate.addSelectionListener(selistener);
-//		specificCheck.addSelectionListener(selistener);
-//		testClassButton.addSelectionListener(selistener);
 	}
 
 	//------------------------------------------------------------------------------------------
@@ -365,11 +321,11 @@ public class PropertiesPage extends PropertyPage {
 		
 		_tDownloadsFolder = createTextField(tabContent, "Downloads folder :") ;
 		
+		_tLibrariesFolder = createTextField(tabContent, "Libraries folder :") ;
+		
 		//-------------------------------------------------------------------------------
 		
 		createTabGeneralButton(tabContent);
-		
-//		_tTelosysProp = createTextField(tabContent, "Telosys properties file :") ;
 		
 		//-------------------------------------------------------------------------------
 	}	
@@ -405,6 +361,7 @@ public class PropertiesPage extends PropertyPage {
 		createFolder(project, _tRepositoriesFolder, sb ) ;
 		createFolder(project, _tTemplatesFolder, sb ) ;
 		createFolder(project, _tDownloadsFolder, sb ) ;
+		createFolder(project, _tLibrariesFolder, sb ) ;
 		initDatabasesConfigFile(project, _tTemplatesFolder.getText(), sb);
 		MsgBox.info(sb.toString());
 	}
@@ -495,16 +452,9 @@ public class PropertiesPage extends PropertyPage {
 		tabItem.setControl(tabContent);
 
 		_tBeanPackage = createTextField(tabContent, "Entity classes package ") ;
-//		_tVOListPackage = createTextField(tabContent, "VO List package") ; 
-//		_tDaoPackage = createTextField(tabContent, "DAO package") ;
-//		_tXmlMapperPackage = createTextField(tabContent, "XML mapper package") ;
 		
 		createTwoLabels(tabContent, "", "" ); // Separator
 
-//		_tScreenDataPackage = createTextField(tabContent, "Screen Data package") ;
-//		_tScreenManagerPackage = createTextField(tabContent, "Screen Manager package") ;
-//		_tScreenTriggersPackage = createTextField(tabContent, "Screen Triggers package") ;
-//		_tScreenProceduresPackage = createTextField(tabContent, "Screen Procedures package") ;
 	}
 	
 	//------------------------------------------------------------------------------------------
@@ -836,7 +786,6 @@ public class PropertiesPage extends PropertyPage {
 		label.setText("Log : ");
 		label.setLayoutData(getCellGridData1());
 		
-		// TODO : TextAREA for logging
 		//Text _tLogger = new Text (tabContent, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL );
 		_tLogger = new Text (tabContent, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL );
 		gd = getCellGridData2();
@@ -982,7 +931,6 @@ public class PropertiesPage extends PropertyPage {
 		tabContent.setLayout(new GridLayout(5, false));
 		tabItem.setControl(tabContent);
 
-		//createTemplateDirectory(tabContent);
 		createCheckGroup(tabContent);
 	}
 	
@@ -1000,10 +948,6 @@ public class PropertiesPage extends PropertyPage {
 		tabContent.setLayout(new GridLayout(3, false));
 		tabItem.setControl(tabContent);
 		
-		//IResource resource = getElementAsResource();
-		
-		//createSingleLabel(tabContent, "Telosys Tools Plugin :");
-
 		Text t = null ; 
 		t = createTextField(tabContent, "Name :") ;
 		t.setEnabled(false);
@@ -1066,15 +1010,12 @@ public class PropertiesPage extends PropertyPage {
 
 		Button projectButton = new Button(buttons, SWT.PUSH);
 		projectButton.setText("Project folders");
-		//projectButton.setData(this);
 		projectButton.addSelectionListener(new SelectionListener() 
     	{
             public void widgetSelected(SelectionEvent event)
             {
             	//Object source = event.getSource();
             	//MsgBox.info("source : " + source.getClass().getCanonicalName() );
-            	//Button b = (Button) event.getSource() ;
-            	//PropertiesPage page = (PropertiesPage) b.getData() ;
             	String projectSourceFolder = getProjectSourceFolder(); 
             	_tSrcFolder.setText( projectSourceFolder );
             	_tResFolder.setText("");
@@ -1208,29 +1149,6 @@ public class PropertiesPage extends PropertyPage {
 	}
 	
 	//------------------------------------------------------------------------------------------
-//	private IResource getElementAsResource()
-//	{
-//		IAdaptable adaptable = getElement() ;
-//		if ( adaptable == null )
-//		{
-//			MsgBox.error("Cannot get IAdaptable element !" );
-//			return null ;
-//		}
-//		else
-//		{
-//			if ( adaptable instanceof IResource )
-//			{
-//				return (IResource)adaptable;
-//			}
-//			else
-//			{
-//				MsgBox.error("Adaptable element is not an instance of IResource !" );
-//				return null ;
-//			}
-//		}
-//	}
-
-	//------------------------------------------------------------------------------------------
 	private IProject getCurrentProject()
 	{
 		IAdaptable adapt = getElement() ;
@@ -1256,29 +1174,8 @@ public class PropertiesPage extends PropertyPage {
 //	}
 	
 	//------------------------------------------------------------------------------------------
-	/**
-	 *  
-	 */
-//	private Properties loadProperties() {
-////		if ( checkInitialization() )
-////		{
-////			return _propManager.load();
-////		}
-////		return null ;
-//		if ( checkCurrentProject() )
-//		{
-//			return ProjectConfigManager.loadCurrentProjectProperties();
-//		}
-//		return null;
-//	}
-	
-	//------------------------------------------------------------------------------------------
 	private void saveProperties(Properties props) 
 	{
-//		if ( checkCurrentProject() )
-//		{
-//			ProjectConfigManager.saveCurrentProjectProperties(getCurrentProject(), props);
-//		}
 		log("saveProperties(Properties props)...");
 		ProjectConfigManager.saveProjectConfig(getCurrentProject(), props);
 	}
@@ -1296,107 +1193,16 @@ public class PropertiesPage extends PropertyPage {
 			//-- Save the Telosys-Tools configuration for the current project
 			saveProperties(props);		
 			
-			//-- Check the "telosys.properties" is up to date
-			// REMOVED TEMPORARLY 
-			// TODO : keep it or remove it ?
-			//checkTelosysProperties(props);
 		} catch ( Exception e ) {
 			MsgBox.error("Cannot save properties.", e );
 		}
 	}
 
-/***
-	private void checkTelosysProperties( Properties props ) 
-	{
-    	log("checkTelosysProperties(props)... " );
-    	
-//		String sTelosysPropFile    = props.getProperty(PropName.TELOSYS_PROP_FILE );
-//		String sXmlMapperPackage   = props.getProperty(PropName.PACKAGE_XML_MAPPER );
-//		String sXmlMapperClassName = props.getProperty(PropName.CLASS_NAME_XML_MAPPER );
-//		if ( StrUtil.nullOrVoid( sXmlMapperClassName ) )
-//		{
-//			sXmlMapperClassName = ConfigDefaults.DEFAULT_XML_MAPPER_CLASS_NAME ;
-//		}
-		
-		String sXmlMapperPackage   = null ; // [22-Jan-2012] Removing classes names
-		String sXmlMapperClassName = null ; // [22-Jan-2012] Removing classes names
-		
-    	log("mapper package & class : '" +  sXmlMapperPackage + "' + '" + sXmlMapperClassName + "'");
-    	
-		if ( sXmlMapperPackage != null && sXmlMapperClassName != null )
-		{
-			//--- Mapper class defined in the plugin config
-			String sPluginConfigMapperClass = sXmlMapperPackage + "." + sXmlMapperClassName ;
-
-//			//--- Telosys properties value
-//			IProject project = getCurrentProject();
-//	    	File file = EclipseProjUtil.getResourceAsFile(project, sTelosysPropFile);
-//	    	if ( file == null )
-//	    	{
-//				MsgBox.warning("The file '" + sTelosysPropFile + "' \n"
-//						+ "doesn't exist in the project" );
-//				return ;
-//	    	}
-//	    	else
-//	    	{
-//		    	log("EclipseProjUtil.getResourceAsFile(..,..) : file = " 
-//		    			+ file.getAbsolutePath() );
-//	    	}
-//	    	log("Telosys properties : file = " + file );
-	    	 
-//			PropertiesManager pm = new PropertiesManager(file) ;
-//	    	log("Load Telosys properties ... " );
-//			Properties telosysProperties = pm.load();
-//			if ( telosysProperties != null )
-//			{
-//		    	log("Telosys properties loaded : size " + telosysProperties.size() );
-//			}
-//			else
-//			{
-//		    	log("Telosys properties not loaded ( p = null )" );
-//			}
-
-//			//--- Mapper class defined in the "telosys.properties" project file
-//			String sTelosysConfigMapperClass = telosysProperties.getProperty( TelosysPropName.MAPPER_CLASS );
-//	    	log("Telosys properties : " + TelosysPropName.MAPPER_CLASS + " = '" + sTelosysConfigMapperClass +"'" );
-//			
-//			//--- If the telosys config is different from the plugin config propose to update the telosys properties
-//			if ( ! sTelosysConfigMapperClass.equals(sPluginConfigMapperClass) ) // Different => update Telosys properties
-//			{
-//		    	log("checkTelosysProperties(props) : NEW value " );
-//				boolean b = MsgBox.confirm(
-//						  "The project configuration is different \n"
-//						+ "from the 'telosys.properties' file.\n"
-//						+ "\n"
-//						+ "Do you want to update the 'telosys.properties' file ?");
-//				
-//				if ( b )
-//				{
-//					String sFullFileName = file.getAbsolutePath();
-//			    	log("checkTelosysProperties(props) : update file " + sFullFileName ); 
-//					PropUtil.update(sFullFileName, TelosysPropName.MAPPER_CLASS, sPluginConfigMapperClass); 
-//					
-//					//--- Refresh the Workspace resource
-//					EclipseProjUtil.refreshResource(project, sTelosysPropFile);
-//				}
-//			}
-//			else
-//			{
-//		    	log("checkTelosysProperties(props) : SAME value" );
-//			}
-		}
-	}
-**/
-	
 	//------------------------------------------------------------------------------------------
 	/*
-	 * overwritten method for "Restore" button
+	 * overwritten method for "Restore Defaults" button
 	 */
 	protected void performDefaults() {
-//		Properties props = new Properties();
-//		new DefaultProperties()
-//				.setHashtableDefaults(props, this.currentProject);
-//		initPageFields(props);
 	}
 
 //	private void setSpecificInitCheckClass(boolean bFlag) {
@@ -1426,12 +1232,10 @@ public class PropertiesPage extends PropertyPage {
 		//_tPluginConfigFile.setText( ProjectConfigManager.getCurrentProjectConfigFileName() );
 		_tPluginConfigFile.setText( projectConfig.getPluginConfigFile() );
 		
-//		_tSourceFolder.setText( projectConfig.getSourceFolder() );
-//		_tWebContentFolder.setText ( projectConfig.getWebContentFolder() );
-//		_tTelosysProp.setText( projectConfig.getTelosysPropFile() );
 		_tRepositoriesFolder.setText( projectConfig.getRepositoriesFolder() );
 		_tTemplatesFolder.setText( projectConfig.getTemplatesFolder() );
 		_tDownloadsFolder.setText( projectConfig.getDownloadsFolder() );
+		_tLibrariesFolder.setText( projectConfig.getLibrariesFolder() );
 		
 		//--- Tab "Packages"
 		_tBeanPackage.setText( projectConfig.getPackageForJavaBeans() );
@@ -1447,7 +1251,6 @@ public class PropertiesPage extends PropertyPage {
 
 		
 		//--- Tab "Variables"
-		//VariableItem[] items = projectConfig.getProjectVariables();
 		Variable[] items = projectConfig.getProjectVariables();
 		if ( items != null )
 		{
@@ -1501,6 +1304,7 @@ public class PropertiesPage extends PropertyPage {
 		props.put(GeneratorConfigConst.REPOS_FOLDER,      _tRepositoriesFolder.getText() );
 		props.put(GeneratorConfigConst.TEMPLATES_FOLDER,  _tTemplatesFolder.getText() );
 		props.put(GeneratorConfigConst.DOWNLOADS_FOLDER,  _tDownloadsFolder.getText() );
+		props.put(GeneratorConfigConst.LIBRARIES_FOLDER,  _tLibrariesFolder.getText() );
 				
 		//--- Tab "Packages"
 		props.put(GeneratorConfigConst.ENTITIES_PACKAGE,  _tBeanPackage.getText());

@@ -6,6 +6,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -84,8 +85,6 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 	
 	private final static int TEXT_X = 10 ;
 
-	//private final static int TEXT_WIDTH = 180 ;
-
 	private final static int TEXT_HEIGHT = 22 ;
 
 	private final static int GET_NOTHING      = 0 ;
@@ -98,8 +97,6 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     //-----------------------------------------------------------
 	private DbConfigEditor _editor = null ;
     //-----------------------------------------------------------
-	
-//	private Color _backgroundColor = null ;
 	
 	private Combo _ComboDatabases = null ;
 	
@@ -131,7 +128,6 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 	private Text _tMetaDataTableTypes = null;
 
     private Text _tMetaData = null ;
-//    private TelosysToolsLogger _logger = new DefaultLogger();
     
     //-----------------------------------------------------------
 	
@@ -149,16 +145,6 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 		_editor = (DbConfigEditor) editor;
 	}
 
-//	protected void log(String s)
-//	{
-//		PluginLogger.log(s);
-//	}
-//	protected void log(Object o, String s)
-//	{
-//		PluginLogger.log(o,s);
-//	}
-	
-	
 //	private void setDirty()
 //	{
 //		//RepositoryEditor repEditor = (RepositoryEditor) getEditor();
@@ -539,7 +525,6 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 	            public void widgetSelected(SelectionEvent arg0)
 	            {
 	            	actionGetMetaData(GET_NOTHING);
-	            	//actionGetInformations();
 	            }
 	            public void widgetDefaultSelected(SelectionEvent arg0)
 	            {
@@ -712,37 +697,6 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
         		log(this, "loadComboBases() : add " + sItem );
         	}
         }
-        
-//        Element root = _doc.getDocumentElement();
-//        if (root == null)
-//        {
-//            MsgBox.error("loadComboBase() : No XML document ( DOM root is null ) ");
-//        }
-//        else
-//        {
-//            NodeList basesList = root.getElementsByTagName(ConstXML.DB_ELEMENT);
-//            if (basesList != null)
-//            {
-//                for ( int i = 0 ; i < basesList.getLength() ; i++ )
-//                {
-//                    Element base = (Element) basesList.item(i);
-//
-////                    String sDbId = Xml.getNodeAttribute(base, ConstXML.DB_ID_ATTRIBUTE);
-////                    String sDbName = Xml.getNodeAttribute(base, ConstXML.DB_NAME_ATTRIBUTE);
-//                    
-//                    String sDbId   = _xmlDoc.getNodeAttribute(base, ConstXML.DB_ID_ATTRIBUTE);
-//                    String sDbName = _xmlDoc.getNodeAttribute(base, ConstXML.DB_NAME_ATTRIBUTE);
-//                    
-//                    if (sDbId == null)
-//                        sDbId = "?";
-//                    if (sDbName == null)
-//                        sDbName = "?????";
-//                    String sItem = sDbId + " - " + sDbName;
-//                    comboBases.add(sItem);
-//                }
-//            }
-//        }
-//        return;
     }
 	
     private void populateDatabases() 
@@ -752,7 +706,6 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     	{
     		if ( _ComboDatabases != null )
     		{
-        		//xmlDbConfig.loadComboBases(_ComboDatabases);
         		loadComboBases(_ComboDatabases, xmlDbConfig);
     		}
     		else
@@ -765,120 +718,8 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     		MsgBox.error("populateDatabases : XmlDbConfig is null ( File not loaded ) ");
     	}
     	
-//    	Document doc = _editor.getXmlDocument();
-//    	if ( doc != null )
-//    	{
-//        	if ( _ComboDatabases != null )
-//        	{
-//            	populateDatabases(_ComboDatabases, doc); 
-//        	}
-//        	else
-//        	{
-//        		MsgBox.error("populateDatabases : ComboBox is null !");
-//        	}
-//    	}
-//    	else
-//    	{
-//    		MsgBox.error("populateDatabases : XML document is null !");
-//    	}
     }
     
-//    private Element getDatabaseElement(String sDbId) 
-//    {
-//    	if ( sDbId == null )
-//    	{
-//    		MsgBox.error("getDatabaseNode : DB id is null !");
-//    		return null ;
-//    	}
-//    	
-//    	NodeList list = getDatabasesList() ;
-//    	if ( list != null )
-//    	{
-//            for (int i=0; i< list.getLength(); i++)
-//            {
-//                Element e = (Element) list.item(i);                
-//                String a = e.getAttribute(ConstXML.DB_ID_ATTRIBUTE);
-//                if ( a != null)
-//                {
-//                	if ( a.equals(sDbId) )
-//                	{
-//                		return e ;
-//                	}
-//                }
-//            }
-//    	}
-//    	return null ;
-//    }
-    
-//    private String getDatabaseProperty(Element eDB, String sName) 
-//    {
-//		PluginLogger.log(this, "getDatabaseProperty(..," + sName + ")" );
-//    	NodeList list = eDB.getElementsByTagName(ConstXML.DB_PROPERTY_ELEMENT);
-//    	if ( list != null )
-//    	{
-//    		PluginLogger.log(this, "getDatabaseProperty(..," + sName + ") : ChildNodes size " + list.getLength() );
-//            for (int i=0; i< list.getLength(); i++)
-//            {
-//                Element e = (Element) list.item(i); 
-//        		PluginLogger.log(this, "getDatabaseProperty(..," + sName + ") : TAG " + e.getTagName() );
-//
-//            	String name = e.getAttribute( ConstXML.DB_PROPERTY_NAME_ATTRIBUTE ) ;
-//            	if ( name != null )
-//            	{
-//            		if ( name.equals(sName) )
-//            		{
-//            			return e.getAttribute(ConstXML.DB_PROPERTY_VALUE_ATTRIBUTE );
-//            		}
-//            	}
-//            }
-//    	}
-//    	
-//    	return null ;
-//    }
-    
-//    private void populateDatabases(Combo combo, Document doc) 
-//    {
-//    	combo.removeAll();
-//        //NodeList databasesList = doc.getElementsByTagName(ConstXML.DB_ELEMENT);
-//        NodeList databasesList = getDatabasesList() ;
-//    	if ( databasesList != null )
-//    	{
-//	        for (int i=0; i< databasesList.getLength(); i++)
-//	        {
-//	            Element base = (Element) databasesList.item(i);
-//	            
-//	            String sId   = base.getAttribute(ConstXML.DB_ID_ATTRIBUTE);
-//	            String sName = base.getAttribute(ConstXML.DB_NAME_ATTRIBUTE);
-//	            
-//	            combo.add(sId + " - " + sName);
-//	        }
-//    	}
-//    }
-	
-//	private Group createTableGroup(Composite composite)
-//	{
-//		PluginLogger.log(this, "createTableGroup(..)..." );
-//		
-//		Group group = new Group(composite, SWT.NONE);
-//		group.setSize(650, 400);
-//		//group2.setLocation(GROUP_X, 20);
-//        group.setBackground( _backgroundColor );
-//        
-//        createTable(group);
-//        return group;
-//	}
-//
-//	private Composite createTableComposite(Composite composite)
-//	{
-//		PluginLogger.log(this, "createTableComposite(..)..." );
-//		
-//		Composite c = new Composite(composite, SWT.NONE);
-//		c.setSize(650, 400);
-//        c.setBackground( _backgroundColor );
-//        createTable(c);
-//        return c;
-//	}
-	
 	private void clearFields()
 	{
 		//--- Tab 1
@@ -1076,9 +917,11 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     
     private ConnectionManager getConnectionManager() 
     {
-        IProject project = _editor.getProject();
         TelosysToolsLogger logger = _editor.getTextWidgetLogger();
-        String[] libraries = EclipseProjUtil.getClassPathLibraries(project);
+
+        //--- Get libraries where to search the JDBC Driver
+        String[] libraries = getLibraries();
+        
         ConnectionManager cm = null ;
 		try {
 			cm = new ConnectionManager( libraries, logger );
@@ -1088,6 +931,83 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     		cm = null ;
 		}
         return cm ;
+    }
+    
+    /**
+     * Returns the libraries where to search the JDBC driver
+     * @return
+     */
+    private String[] getLibraries() 
+    {
+        IProject project = getProject();
+        //--- Get libraries where to search the JDBC Driver
+        //String[] libraries = null ;
+        String[] librariesFromFolder = getLibrariesFromFolder() ;
+        if ( EclipseProjUtil.isJavaProject(project) ) {
+        	// if Java project : use project build path
+        	String[] librariesFromJavaBuildPath = EclipseProjUtil.getClassPathLibraries(project);
+        	return combine(librariesFromFolder, librariesFromJavaBuildPath);
+        }
+        else {
+            return librariesFromFolder ;
+        }
+    }
+
+    private String[] combine(String[] a, String[] b){
+        String[] result = new String[ a.length + b.length ];
+        System.arraycopy(a, 0, result, 0, a.length);
+        System.arraycopy(b, 0, result, a.length, b.length);
+        return result;
+    }
+    
+    /**
+     * Returns the libraries located in the Telosys Tools "lib" folder
+     * @return
+     */
+    private String[] getLibrariesFromFolder() 
+    {
+    	String[] voidLib = new String[0];
+    	IProject project = getProject() ;
+		ProjectConfig projectConfig = ProjectConfigManager.getProjectConfig( project );	
+        String dir  = projectConfig.getLibrariesFolder();
+        
+        IResource resource = EclipseProjUtil.getResource(project, dir);
+        if ( null == resource ) {
+        	MsgBox.error("Folder '"+dir+"' not found !");
+        	return voidLib ;
+        }
+    	if ( ! ( resource instanceof IFolder ) ) {
+        	MsgBox.error("'"+dir+"' is not a folder !");
+        	return voidLib ;
+    	}
+        if ( resource.isAccessible() != true) {
+        	MsgBox.error("Folder '"+dir+"' is not accessible !");
+        	return voidLib ;
+        }
+        
+		IFolder folder = (IFolder) resource ;
+		IResource[] members = null ;
+		try {
+			members = folder.members();
+		} catch (CoreException e) {
+        	MsgBox.error("Cannot get files from folder '"+dir+"' ", e);
+        	return voidLib ;
+		}
+		
+		//--- Build list of ".jar" and ".zip" files
+		List<String> libraries = new LinkedList<String>();
+		for ( IResource r : members ) {
+			//--- If .jar file
+			if ( r instanceof IFile ) {
+				String ext = r.getFileExtension(); // can be null
+				if ( "jar".equals(ext) || "zip".equals(ext)) {
+					String fileInProject = r.getProjectRelativePath().toString();
+					String libFile = EclipseProjUtil.getAbsolutePathInFileSystem(project, fileInProject);
+					libraries.add(libFile);
+				}
+			}
+		}
+		return libraries.toArray(new String[0]);
     }
     
     private String getRepositoryFileName(String sDatabaseName) 
@@ -1208,16 +1128,15 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
      */
     private void showLibraries() {
     	StringBuffer sb = new StringBuffer();
-    	sb.append("Project JAR files : \n\n") ;
-    	String[] libraries = EclipseProjUtil.getClassPathLibraries( _editor.getProject() );
-    	if ( libraries != null ) {
+    	sb.append("Libraries : \n\n") ;
+    	String[] libraries = getLibraries();
+    	if ( libraries != null && libraries.length > 0 ) {
     		for ( String s : libraries ) {
     			sb.append(s + "\n");
     		}
     	}
     	else {
-    		sb.append("\n");
-    		sb.append("No JAR file !\n");
+    		sb.append("No library !\n");
     	}
     	MsgBox.info(sb.toString());
     }

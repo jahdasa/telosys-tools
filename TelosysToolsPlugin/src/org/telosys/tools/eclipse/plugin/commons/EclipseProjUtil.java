@@ -73,7 +73,7 @@ public class EclipseProjUtil {
 	
 	//----------------------------------------------------------------------------------
 	/**
-	 * Returns the project resource for the given relative path <br>
+	 * Returns the project resource (File or Folder) for the given relative path <br>
 	 * or null if the resource doesn't exist
 	 * @param project
 	 * @param sPath ( '/aaa/bbb' or 'aaa/bbb' in the project ) 
@@ -88,7 +88,7 @@ public class EclipseProjUtil {
 	}
 	
 	/**
-	 * Returns the project resource for the given relative path <br>
+	 * Returns the project resource (File or Folder) for the given relative path <br>
 	 * or null if the resource doesn't exist
 	 * @param project
 	 * @param path ( '/aaa/bbb' or 'aaa/bbb' in the project ) 
@@ -97,10 +97,15 @@ public class EclipseProjUtil {
 	public static IResource getResource(IProject project, Path path) 
 	{
 		log("getResource(Path : '" + path + "')");	
-		IResource resource = project.getFile(path) ; // Path implements IPath
+		// Path implements IPath
+		IResource resource = project.getFile(path) ; // try to get a file
 		if ( ! resource.exists() )
 		{
-			resource = null ;
+			resource = project.getFolder(path); // try to get a folder
+			if ( ! resource.exists() )
+			{
+				resource = null ;
+			}
 		}
 		log("getResource(Path : '" + path + "') : return " + resource );
 		return resource ;
@@ -294,17 +299,6 @@ public class EclipseProjUtil {
     }
 	
     //------------------------------------------------------------------------------------------------
-//    /**
-//     * Returns the list of JARs for the current project 
-//     * @return array of JAR URLs 
-//     */
-//    public static String[] getClassPath( IProject project )
-//    {
-//    	IJavaProject javaProject = getJavaProject(project);
-//        return getClassPathLibraries( javaProject );
-//    }
-
-    //------------------------------------------------------------------------------------------------
     /**
      * Returns the list of JAR files defined in the Java Project PATH ( "Java Build Path" )
      * 
@@ -312,84 +306,17 @@ public class EclipseProjUtil {
      */
     public static String[] getClassPathLibraries( IProject project )
     {
-//        String[] urls = null;
-//        
-//        try 
-//        {
-//            List<URL> classPathURLs = getProjectClassPathURLs(javaProject);
-//            int nbUrls = classPathURLs.size();
-//            urls = new String[nbUrls];
-//            int cpt = 0;
-//            for ( int j = 0 ; j < nbUrls ; j++ )
-//            {
-//                URL url = classPathURLs.get(j);
-//                File f = new File(url.getFile());
-//                urls[cpt] = f.getAbsolutePath();
-//                cpt++;
-//            }
-//        }
-//        catch (JavaModelException e) 
-//        {
-//			PluginLogger.error("JavaModelException : \n" + e.getMessage() );
-//			MsgBox.error("JavaModelException : \n" + e.getMessage() );
-//            urls = null;
-//        }
-//
-//        return urls;      
-        
     	IJavaProject javaProject = getJavaProject(project);
-    	
-//        try {
-//			List<String> libraries = getProjectClassPathLibraries(javaProject);
-//			return libraries.toArray(new String[0]);
-//		} catch (JavaModelException e) {
-//			PluginLogger.error("JavaModelException : \n" + e.getMessage() );
-//			MsgBox.error("JavaModelException : \n" + e.getMessage() );
-//            return new String[0];
-//		}        
-
-		List<String> libraries = getProjectClassPathLibraries(javaProject);
-		return libraries.toArray(new String[0]);
+    	if ( javaProject != null ) {
+    		List<String> libraries = getProjectClassPathLibraries(javaProject);
+    		return libraries.toArray(new String[0]);
+    	}
+    	else {
+    		return new String[0] ;
+    	}
     }
 
-
     //------------------------------------------------------------------------------------------------
-//    /**
-//     * Permet de créer la liste des URL du classpath pour un projet Eclipse
-//     * 
-//     * @param project : l'objet project sur lequel on souhaite récupérer le classpath
-//     * @return une liste d'objets URL
-//     * @throws JavaModelException
-//     * @throws MalformedURLException
-//     */
-//    private static List<URL> getProjectClassPathURLs(IJavaProject project) throws JavaModelException
-//    {
-//        List<URL> classPathURLs = new ArrayList<URL>();
-//    
-//        IClasspathEntry classpathEntries[] = project.getResolvedClasspath(false);
-//        for (int i = 0; i < classpathEntries.length; i++) 
-//        {
-//            IClasspathEntry entry = classpathEntries[i];
-//            //----- New 
-//            IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(entry.getPath());
-//            if (res != null) 
-//            {
-//            	PluginLogger.log("Project resource : '"+entry.getPath()+"'");
-//            	java.io.File file = new java.io.File( res.getLocation().toPortableString() ) ;
-//            	classPathURLs.add( getURL(file) ); // NB : %20 for "SPACE CHAR" 
-//            } 
-//            else 
-//            {
-//            	//--- External resource : Java JRE, JAR added with "Add external JAR"
-//            	PluginLogger.log("External resource : '"+entry.getPath()+"'");
-//            	java.io.File file = entry.getPath().toFile() ;
-//            	classPathURLs.add( getURL(file) ); // NB : %20 for "SPACE CHAR"
-//            }
-//            
-//        }
-//        return classPathURLs;
-//    }
-    
     private static List<String> getProjectClassPathLibraries(IJavaProject project) //throws JavaModelException
     {
         List<String> libraries = new ArrayList<String>();
@@ -410,7 +337,7 @@ public class EclipseProjUtil {
             IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(entry.getPath());
             if (resource != null) 
             {
-            	//--- Project's resource "
+            	//--- Project's resource 
             	PluginLogger.log("Project resource : '"+entry.getPath()+"'");
             	java.io.File file = new java.io.File( resource.getLocation().toPortableString() ) ;
             	libraries.add( file.getAbsolutePath() );
@@ -426,22 +353,6 @@ public class EclipseProjUtil {
         return libraries;
     }
     
-//    private static URL getURL(File file) 
-//    {
-//        URI uri = file.toURI();
-//    	URL url;
-//		try {
-//			url = uri.toURL();
-//	    	return url ;
-//		} catch (MalformedURLException e) {
-//			PluginLogger.error("MalformedURLException : \n" 
-//					+ e.getMessage() + "\n"
-//					+ "File path : " + file.getPath() );
-//			MsgBox.error("MalformedURLException : \n" + file.getPath() );
-//		}
-//    	return null ;
-//    }
-
     /**
      * Returns all the source folders for the given project 
      * @param project
@@ -478,28 +389,6 @@ public class EclipseProjUtil {
         IFolder folder = project.getFolder(folderName);
         return folder.exists() ;
     }
-    
-//    /**
-//     * Tries to create the given folder 
-//     * @param project
-//     * @param folderName
-//     * @return true if created, false if already exists (or if an error occurs )
-//     */
-//    public static boolean createFolder(IProject project, String folderName ) {
-//    	boolean created = false ;
-//        IFolder folder = project.getFolder(folderName);
-//        if (!folder.exists())  {
-//    		try {
-//                folder.create(IResource.NONE, true, null);
-//                created = true ;
-//    		} catch (CoreException e) {
-//    			MsgBox.error("Cannot create folder '" + folderName + "' !\n" 
-//    					+ "CoreException \n"
-//    					+ e.getMessage() );
-//    		}
-//        }
-//        return created ;
-//    }
     
     /**
      * Tries to create the given folder ( with all sub-folders if any )
