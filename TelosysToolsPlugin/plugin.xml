@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.2"?>
+<?eclipse version="3.4"?>
 <plugin>
 
    <!-- WIZARDS -->
@@ -95,23 +95,25 @@
    </extension>
 
   <!-- EDITORS -->
-  <extension
+  <!-- Removed to fix file icon bug 
          id="org.telosys.tools.eclipse.plugin.editors.dbrep.RepositoryEditor"
          name="Repository"
+  -->
+  <extension
          point="org.eclipse.ui.editors">
       <editor
             id="org.telosys.tools.eclipse.plugin.editors.dbrep.RepositoryEditor"
             class="org.telosys.tools.eclipse.plugin.editors.dbrep.RepositoryEditor"
-            icon="icons/dbrep.gif"
+            icon="icons/dbrep4_16.png"
             default="true"
-            name="Repository editor"
+            name="Telosys Tools Repository editor"
             extensions="rep,dbrep"/>
       <editor
             id="org.telosys.tools.eclipse.plugin.editors.dbconfig.DbConfigEditor"
             class="org.telosys.tools.eclipse.plugin.editors.dbconfig.DbConfigEditor"
-            icon="icons/dbconfig.gif"
+            icon="icons/dbcfg16.png"
             default="true"
-            name="Dbconfig editor"
+            name="Telosys Tools Dbconfig editor"
             extensions="dbcfg"/>
    </extension>
    
