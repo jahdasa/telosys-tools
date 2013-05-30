@@ -15,12 +15,23 @@
  */
 package org.telosys.tools.generator.context;
 
+import org.telosys.tools.generator.ContextName;
+import org.telosys.tools.generator.context.doc.VelocityConstant;
+import org.telosys.tools.generator.context.doc.VelocityObject;
+
 /**
  * Constants usable in a Velocity template
  * 
  * @author Laurent GUERIN
  *
  */
+//-------------------------------------------------------------------------------------
+@VelocityObject(
+		contextName= ContextName.CONST ,
+		text = "Object providing a set of constants ",
+		since = "2.0.3"
+ )
+//-------------------------------------------------------------------------------------
 public class Const {
 
 	//--- Attributes filter criteria
@@ -36,31 +47,38 @@ public class Const {
 	public final static int IN_SELECTED_LINKS      =  64 ;
 	public final static int NOT_IN_SELECTED_LINKS  = 128 ;
 	
-	
+	@VelocityConstant
 	public int getKEY() {
 		return KEY ;
 	}
+	@VelocityConstant
 	public int getNOT_KEY() {
 		return NOT_KEY ;
 	}
 
+	@VelocityConstant
 	public int getTEXT() {
 		return    TEXT ;
 	}
+	@VelocityConstant
 	public int getNOT_TEXT() {
 		return    NOT_TEXT ;
 	}
 	
+	@VelocityConstant
 	public int getIN_LINKS() {
 		return    IN_LINKS ;
 	}
+	@VelocityConstant
 	public int getNOT_IN_LINKS() {
 		return    NOT_IN_LINKS ;
 	}
 	
+	@VelocityConstant
 	public int getIN_SELECTED_LINKS() {
 		return    IN_SELECTED_LINKS ;
 	}
+	@VelocityConstant
 	public int getNOT_IN_SELECTED_LINKS() {
 		return    NOT_IN_SELECTED_LINKS ;
 	}

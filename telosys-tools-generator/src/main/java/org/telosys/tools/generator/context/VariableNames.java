@@ -16,7 +16,9 @@
 package org.telosys.tools.generator.context;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.telosys.tools.commons.Variable;
 import org.telosys.tools.generator.ContextName;
@@ -28,48 +30,120 @@ import org.telosys.tools.generator.ContextName;
  *
  */
 public class VariableNames {
-
-	private final static String[] RESERVED_NAMES =
-	{
+	
+	private final static String[] VOID_STRING_ARRAY = {} ;
+	
+	private static List<String> VARIABLES_LIST = new LinkedList<String>();
+	static {
 		//--- Special characters 
-		ContextName.DOLLAR,
-		ContextName.SHARP,
-		ContextName.AMP,
-		ContextName.QUOT,
-		ContextName.LT,
-		ContextName.GT,
-		ContextName.LBRACE,
-		ContextName.RBRACE,
-
+		VARIABLES_LIST.add( ContextName.DOLLAR );
+		VARIABLES_LIST.add( ContextName.SHARP  );
+		VARIABLES_LIST.add( ContextName.AMP    );
+		VARIABLES_LIST.add( ContextName.QUOT   );
+		VARIABLES_LIST.add( ContextName.LT     );
+		VARIABLES_LIST.add( ContextName.GT     );
+		VARIABLES_LIST.add( ContextName.LBRACE );
+		VARIABLES_LIST.add( ContextName.RBRACE );
+		
 		//--- FOLDERS predefined variables names ( v 2.0.3 )
-		ContextName.SRC,
-		ContextName.RES,
-		ContextName.WEB,
-		ContextName.TEST_SRC,
-		ContextName.TEST_RES,
-		ContextName.DOC,
-		ContextName.TMP,
+		VARIABLES_LIST.add( ContextName.SRC );
+		VARIABLES_LIST.add( ContextName.RES );
+		VARIABLES_LIST.add( ContextName.WEB );
+		VARIABLES_LIST.add( ContextName.TEST_SRC );
+		VARIABLES_LIST.add( ContextName.TEST_RES );
+		VARIABLES_LIST.add( ContextName.DOC );
+		VARIABLES_LIST.add( ContextName.TMP );
 		
-		//--- Objects
-		ContextName.GENERATOR , 
-		ContextName.TODAY ,
-		ContextName.CONST , 
-		ContextName.FN ,
-		ContextName.LOADER ,
-		ContextName.PROJECT ,
-		
-		//--- Current Entity/Target objects
-		ContextName.TARGET ,
-		ContextName.BEAN_CLASS ,
-		ContextName.SELECTED_ENTITIES ,
+		Collections.sort(VARIABLES_LIST);
+	}
 
-		//--- Wizards variables
-		ContextName.CLASS ,
-		"context" 
+	private static List<String> GENERATOR_OBJECTS_LIST = new LinkedList<String>();
+	static {
+		//--- Invariable objects 
+		GENERATOR_OBJECTS_LIST.add( ContextName.CONST ); 
+		GENERATOR_OBJECTS_LIST.add( ContextName.FN );
+		GENERATOR_OBJECTS_LIST.add( ContextName.GENERATOR ); 
+		GENERATOR_OBJECTS_LIST.add( ContextName.LOADER );
+		GENERATOR_OBJECTS_LIST.add( ContextName.PROJECT );
+		GENERATOR_OBJECTS_LIST.add( ContextName.TODAY );
+
+		//--- Current Entity/Target objects
+		GENERATOR_OBJECTS_LIST.add( ContextName.TARGET      );
+		GENERATOR_OBJECTS_LIST.add( ContextName.BEAN_CLASS  ); // old name
+		GENERATOR_OBJECTS_LIST.add( ContextName.ENTITY      ); // new name
+		GENERATOR_OBJECTS_LIST.add( ContextName.SELECTED_ENTITIES  );
+
+		Collections.sort(GENERATOR_OBJECTS_LIST);
+	}
+
+	private static List<String> PREDEFINED_NAMES_LIST = new LinkedList<String>();
+	static {
+		PREDEFINED_NAMES_LIST.add( "attribute" ); 
+		PREDEFINED_NAMES_LIST.add( "attrib" ); 
+		PREDEFINED_NAMES_LIST.add( "field" ); 
+		
+		PREDEFINED_NAMES_LIST.add( "link" ); 
+	}
+
+	private static List<String> WIZARDS_OBJECTS_LIST = new LinkedList<String>();
+	static {
+		//--- Invariable objects 
+		WIZARDS_OBJECTS_LIST.add( ContextName.CLASS  );
 //		"context", 
 //		"screendata",
 //		"triggers"
-	} ;
+
+	}
+	
+	private static List<String> RESERVED_NAMES_LIST = new LinkedList<String>();
+	static {
+		for ( String s : VARIABLES_LIST ) {
+			RESERVED_NAMES_LIST.add(s);
+		}
+		for ( String s : GENERATOR_OBJECTS_LIST ) {
+			RESERVED_NAMES_LIST.add(s);
+		}
+		for ( String s : PREDEFINED_NAMES_LIST ) {
+			RESERVED_NAMES_LIST.add(s);
+		}
+		for ( String s : WIZARDS_OBJECTS_LIST ) {
+			RESERVED_NAMES_LIST.add(s);
+		}
+		Collections.sort(RESERVED_NAMES_LIST);
+	}
+	
+	private static List<String> VARIABLE_AND_OBJECT_NAMES_LIST = new LinkedList<String>();
+	static {
+		for ( String s : VARIABLES_LIST ) {
+			VARIABLE_AND_OBJECT_NAMES_LIST.add(s);
+		}
+		for ( String s : GENERATOR_OBJECTS_LIST ) {
+			VARIABLE_AND_OBJECT_NAMES_LIST.add(s);
+		}
+		Collections.sort(VARIABLE_AND_OBJECT_NAMES_LIST);
+	}
+	
+	//private final static String[] RESERVED_NAMES_ARRAY = RESERVED_NAMES_LIST.toArray( VOID_STRING_ARRAY );
+
+	public final static String[] getVariableNames()
+	{
+		return VARIABLES_LIST.toArray( VOID_STRING_ARRAY );
+	}
+	
+	public final static String[] getObjectNames()
+	{
+		return GENERATOR_OBJECTS_LIST.toArray( VOID_STRING_ARRAY );
+	}
+	
+	public final static String[] getObjectAndVariableNames()
+	{
+		return VARIABLE_AND_OBJECT_NAMES_LIST.toArray( VOID_STRING_ARRAY );
+	}
+	
+	public final static String[] getPredefinedNames()
+	{
+		return PREDEFINED_NAMES_LIST.toArray( VOID_STRING_ARRAY );
+	}
 	
 	/**
 	 * Returns a copy of all the variable names used in the Velocity Context
@@ -77,10 +151,11 @@ public class VariableNames {
 	 */
 	public final static String[] getReservedNames()
 	{
-		int n = RESERVED_NAMES.length;
-		String[] newArray = new String[ n ] ;
-		System.arraycopy(RESERVED_NAMES, 0, newArray, 0, n);
-		return newArray ;
+//		int n = RESERVED_NAMES_ARRAY.length;
+//		String[] newArray = new String[ n ] ;
+//		System.arraycopy(RESERVED_NAMES_ARRAY, 0, newArray, 0, n);
+//		return newArray ;
+		return RESERVED_NAMES_LIST.toArray( VOID_STRING_ARRAY );
 	}
 	
 	/**
@@ -101,12 +176,16 @@ public class VariableNames {
 	 */
 	public final static boolean isReservedName(String s)
 	{
-		if ( s != null )
-		{
-			for ( int i = 0 ; i < RESERVED_NAMES.length ; i++ )
-			{
-				if ( s.equals( RESERVED_NAMES[i] ) ) return true ;
+		if ( s != null ) {
+			for ( String reserved : RESERVED_NAMES_LIST ) {
+				if ( s.equals( reserved ) ) {
+					return true ;
+				}
 			}
+//			for ( int i = 0 ; i < RESERVED_NAMES_ARRAY.length ; i++ )
+//			{
+//				if ( s.equals( RESERVED_NAMES_ARRAY[i] ) ) return true ;
+//			}
 		}
 		return false ;
 	}

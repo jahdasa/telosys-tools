@@ -21,7 +21,10 @@ import java.net.URL;
 import java.net.URLClassLoader;
 
 import org.apache.velocity.VelocityContext;
+import org.telosys.tools.generator.ContextName;
 import org.telosys.tools.generator.GeneratorException;
+import org.telosys.tools.generator.context.doc.VelocityMethod;
+import org.telosys.tools.generator.context.doc.VelocityObject;
 
 /**
  * Special class used as a specific class loader <br>
@@ -30,6 +33,17 @@ import org.telosys.tools.generator.GeneratorException;
  * @author Laurent GUERIN
  *
  */
+//-------------------------------------------------------------------------------------
+@VelocityObject(
+		contextName= ContextName.LOADER ,
+		text = {
+				"Special object used as a specific class loader",
+				"Can be used to load a specific Java Class tool in the Velocity Context",
+				"NB : experimental "
+		},
+		since = ""
+ )
+//-------------------------------------------------------------------------------------
 public class Loader {
 
 	private final ProjectConfiguration  projectConfig ;
@@ -41,12 +55,16 @@ public class Loader {
 		this.velocityContext = velocityContext;
 	}
 
-	/**
-	 * Loads the given java class from the templates folder, creates an instance and put it in the Velocity context
-	 * @param nameInContext
-	 * @param javaClassName
-	 * @throws GeneratorException
-	 */
+	//--------------------------------------------------------------------------------------------------------------
+	@VelocityMethod (
+		text = {
+				"Loads the given java class from the templates folder, creates an instance and put it in the Velocity context" 
+		},
+		parameters = {
+				"variableNameInContext", 
+				"javaClassName"
+		}
+	)
 	public void loadJavaClass(String nameInContext, String javaClassName ) throws GeneratorException
 	{
 		String templatesFolder = projectConfig.getTemplatesFolderFullPath();

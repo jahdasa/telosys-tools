@@ -16,6 +16,7 @@
 package org.telosys.tools.generator.context;
 
 import org.telosys.tools.generator.GeneratorUtil;
+import org.telosys.tools.generator.context.doc.VelocityMethod;
 
 
 /**
@@ -91,6 +92,11 @@ public class JavaClass
 	 * Returns the Java class name without the package ( ie : "MyClass" )
 	 * @return
 	 */
+	@VelocityMethod ( text= { 
+			"Returns the class name for the entity without the package ( ie : \"MyClass\" )"
+		},
+		example="$entity.name"
+	)
 	public String getName()
 	{
 		return _sName ;
@@ -100,6 +106,11 @@ public class JavaClass
 	 * Returns the Java class package or void ( ie : "my.package" or "" )
 	 * @return
 	 */
+	@VelocityMethod ( text= { 
+			"Returns the package name (or void) for the entity ( ie : \"my.package\" or \"\" )"
+		},
+		example="$entity.package"
+	)
 	public String getPackage()
     {
         return _sPackage ;
@@ -109,6 +120,11 @@ public class JavaClass
 	 * Returns the super class of this Java class 
 	 * @return
 	 */
+	@VelocityMethod ( text= { 
+			"Returns the super class for the entity's class (or void if none)"
+		},
+		example="$entity.superClass"
+	)
 	public String getSuperClass()
     {
         return _sSuperClass ;
@@ -118,6 +134,11 @@ public class JavaClass
 	 * Returns the Java class full name ( ie : "my.package.MyClass" )
 	 * @return
 	 */
+	@VelocityMethod ( text= { 
+			"Returns the full class name for the entity (ie : \"my.package.MyClass\" )"
+		},
+		example="$entity.fullName"
+	)
 	public String getFullName()
     {
 		return _sFullName ;

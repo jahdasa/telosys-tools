@@ -19,6 +19,8 @@ import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.commons.Variable;
 import org.telosys.tools.commons.VariablesManager;
 import org.telosys.tools.commons.config.ConfigDefaults;
+import org.telosys.tools.generator.ContextName;
+import org.telosys.tools.generator.context.doc.VelocityObject;
 import org.telosys.tools.generator.target.TargetDefinition;
 
 /**
@@ -27,6 +29,15 @@ import org.telosys.tools.generator.target.TargetDefinition;
  * @author L. Guerin
  *
  */
+//-------------------------------------------------------------------------------------
+@VelocityObject(
+		contextName= ContextName.TARGET ,
+		text = "Target for the generation in progress <br>"
+			+ " "
+			,
+		since = ""
+ )
+//-------------------------------------------------------------------------------------
 public class Target 
 {
 	private final String    targetName ;

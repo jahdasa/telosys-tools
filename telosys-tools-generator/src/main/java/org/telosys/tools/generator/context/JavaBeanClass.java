@@ -22,8 +22,13 @@ import java.util.List;
 import java.util.Set;
 
 import org.telosys.tools.commons.StrUtil;
+import org.telosys.tools.generator.ContextName;
 import org.telosys.tools.generator.GeneratorContextException;
 import org.telosys.tools.generator.GeneratorUtil;
+import org.telosys.tools.generator.context.doc.VelocityMethod;
+import org.telosys.tools.generator.context.doc.VelocityNoDoc;
+import org.telosys.tools.generator.context.doc.VelocityObject;
+import org.telosys.tools.generator.context.doc.VelocityReturnType;
 import org.telosys.tools.generator.context.tools.AnnotationsBuilder;
 import org.telosys.tools.repository.model.Column;
 import org.telosys.tools.repository.model.Entity;
@@ -41,6 +46,20 @@ import org.telosys.tools.repository.model.RepositoryModel;
  * @author Laurent GUERIN
  *
  */
+//-------------------------------------------------------------------------------------
+@VelocityObject(
+		contextName= ContextName.BEAN_CLASS ,
+		text = { 
+				"Entity class for the current generation ",
+				"",
+				"Provides all information available for an entity as defined in the model : ",
+				" . attributes information (class fields) ",
+				" . database mapping ",
+				""
+		},
+		since = "2.0.0"
+ )
+//-------------------------------------------------------------------------------------
 public class JavaBeanClass extends JavaClass
 {
 	
@@ -174,32 +193,42 @@ public class JavaBeanClass extends JavaClass
 		_links.add(jcl);
 	}
 
-	/**
-	 * Returns the JPA annotations without left margin
-	 * Usage : $x.jpaAnnotations 
-	 * @return
-	 */
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( text= { 
+			"Returns a multiline String containing all the Java JPA annotations required for the current entity",
+			"without left marging before each line"
+		},
+		example={	
+			"$entity.jpaAnnotations"
+		}
+	)
 	public String getJpaAnnotations()
     {
 		return jpaAnnotations(0);
     }
 	
+	//-------------------------------------------------------------------------------------
 	/**
 	 * Returns the JPA annotations without left margin 
 	 * Usage : $x.jpaAnnotations() 
 	 * @return
 	 */
+	@VelocityNoDoc
 	public String jpaAnnotations()
     {
 		return jpaAnnotations(0);
     }
 	
-	/**
-	 * Returns the JPA annotations with the given left margin 
-	 * Usage : $x.jpaAnnotations(4) 
-	 * @param iLeftMargin
-	 * @return
-	 */
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( text= { 
+			"Returns a multiline String containing all the Java JPA annotations required for the current entity",
+			"with the given left marging before each line"
+		},
+		parameters = "leftMargin : number of blanks for the left margin",
+		example={	
+			"$entity.jpaAnnotations(4)"
+		}
+	)
 	public String jpaAnnotations(int iLeftMargin)
     {
 		AnnotationsBuilder b = new AnnotationsBuilder(iLeftMargin);
@@ -220,10 +249,18 @@ public class JavaBeanClass extends JavaClass
 		return b.getAnnotations();
     }
 	
-	/**
-	 * Returns an array of imports
-	 * @return
-	 */
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( text= { 
+			"Returns a list of all the Java imports required for all the fields of the current entity",
+			"For example, 'java.util.Date' if the entity uses Date objects, etc..."
+		},
+		example={	
+			"#foreach( $import in $entity.imports )",
+			"import $import;",
+			"#end" 
+		}
+	)
+	@VelocityReturnType("List of 'String'")
 	public List<String> getImports() 
 	{
 //		if ( _importsForAllFields != null )
@@ -234,15 +271,33 @@ public class JavaBeanClass extends JavaClass
 		return _importsForAllFields ;
 	}
 	
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( text= { 
+			"Returns a list of all the Java imports required for the KEY fields of the current entity"
+		},
+		example={	
+			"#foreach( $import in $entity.importsForKeyFields )",
+			"import $import;",
+			"#end" 
+		}
+	)
+	@VelocityReturnType("List of 'String'")
 	public List<String> getImportsForKeyFields() 
 	{
 		return _importsForKeyFields ;
 	}
 	
-	/**
-	 * Returns an array of imports JPA
-	 * @return
-	 */
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( text= { 
+			"Returns a list of all the Java JPA imports required by the current entity"
+		},
+		example={	
+			"#foreach( $import in $entity.importsJpa )",
+			"import $import;",
+			"#end" 
+		}
+	)
+	@VelocityReturnType("List of 'String'")
 	public Set<String> getImportsJpa() 
 	{
 		if ( _importsJpa != null )
@@ -252,10 +307,17 @@ public class JavaBeanClass extends JavaClass
 		return VOID_STRINGS_SET ;
 	}
 
+	//-------------------------------------------------------------------------------------
 	/**
 	 * Returns all the attributes defined for this class
 	 * @return
 	 */
+	@VelocityMethod ( text= { 
+			"Returns all the attributes defined for this entity"
+		},
+		example="$entity.attributes"
+	)
+	@VelocityReturnType("List of 'attribute' objects")
 	public List<JavaBeanClassAttribute> getAttributes() 
 	{
 		if ( _attributes != null )
@@ -265,10 +327,17 @@ public class JavaBeanClass extends JavaClass
 		return VOID_ATTRIBUTES_LIST ;
 	}
 
-	/**
-	 * Returns all the link defined for this class
-	 * @return
-	 */
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( text= { 
+			"Returns a list of all the links defined for the current entity"
+		},
+		example={	
+			"#foreach( $link in $entity.links )",
+			"...",
+			"#end" 
+		}
+	)
+	@VelocityReturnType("List of 'link' objects")
 	public List<JavaBeanClassLink> getLinks() 
 	{
 		if ( _links != null )
@@ -280,6 +349,17 @@ public class JavaBeanClass extends JavaClass
 		return VOID_LINKS_LIST ;
 	}
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( text= { 
+			"Returns a list of all the links selected in the model for the current entity"
+		},
+		example={	
+			"#foreach( $link in $entity.selectedLinks )",
+			"...",
+			"#end" 
+		}
+	)
+	@VelocityReturnType("List of 'link' objects")
 	public List<JavaBeanClassLink> getSelectedLinks() 
 	{
 		if ( _links != null )
@@ -306,12 +386,16 @@ public class JavaBeanClass extends JavaClass
 		throw new GeneratorContextException("Invalid criterion in getAttributesByCriteria argument(s)");
 	}
 	
+	//-------------------------------------------------------------------------------------
+	@VelocityNoDoc
 	public List<JavaBeanClassAttribute> getAttributesByCriteria( int c1  ) 
 	{
 		ContextLogger.log("getAttributesByCriteria(" + c1 + ")" );
 		checkCriterion(c1);
 		return getAttributesByAddedCriteria(c1);
 	}
+	//-------------------------------------------------------------------------------------
+	@VelocityNoDoc
 	public List<JavaBeanClassAttribute> getAttributesByCriteria( int c1, int c2 ) 
 	{
 		ContextLogger.log("getAttributesByCriteria(" + c1 + "," + c2 + ")" );
@@ -319,6 +403,8 @@ public class JavaBeanClass extends JavaClass
 		checkCriterion(c2);
 		return getAttributesByAddedCriteria(c1 + c2);
 	}
+	//-------------------------------------------------------------------------------------
+	@VelocityNoDoc
 	public List<JavaBeanClassAttribute> getAttributesByCriteria( int c1, int c2, int c3 ) 
 	{
 		ContextLogger.log("getAttributesByCriteria(" + c1 + "," + c2 + "," + c3 + ")" );
@@ -327,6 +413,25 @@ public class JavaBeanClass extends JavaClass
 		checkCriterion(c3);
 		return getAttributesByAddedCriteria(c1 + c2 + c3);
 	}
+	@VelocityMethod ( text= { 
+			"Returns all the attributes of this entity matching the given criteria",
+			"This method accepts 1 to 4 criteria",
+			"The critera are combined using the 'AND' operator",
+			"Usable criteria ( to be prefixed with '$const.' ) : ",
+			"KEY,  NOT_KEY,  IN_LINKS,  NOT_IN_LINKS,  IN_SELECTED_LINKS,  NOT_IN_SELECTED_LINKS,  TEXT,  NOT_TEXT  "
+	},
+	parameters = {
+			"crit1 : 1st criterion ",
+			"crit2 : 2nd criterion (optional)",
+			"crit3 : 3rd criterion (optional)",
+			"crit4 : 4th criterion (optional)"
+	},
+	example = {
+			"$entity.getAttributesByCriteria($const.NOT_KEY)",
+			"$entity.getAttributesByCriteria($const.NOT_KEY, $const.NOT_IN_SELECTED_LINKS)"
+	}
+	)
+	@VelocityReturnType("List of 'attribute' objects")
 	public List<JavaBeanClassAttribute> getAttributesByCriteria( int c1, int c2, int c3, int c4 ) 
 	{
 		ContextLogger.log("getAttributesByCriteria(" + c1 + "," + c2 + "," + c3 + "," + c4 + ")" );
@@ -337,6 +442,7 @@ public class JavaBeanClass extends JavaClass
 		return getAttributesByAddedCriteria(c1 + c2 + c3 + c4);
 	}
 	
+	//-------------------------------------------------------------------------------------
 	private List<JavaBeanClassAttribute> getAttributesByAddedCriteria( int criteria ) 
 	{
 		ContextLogger.log("getAttributesByAddedCriteria(" + criteria + ")" );
@@ -417,10 +523,17 @@ public class JavaBeanClass extends JavaClass
 		return VOID_ATTRIBUTES_LIST ;
 	}
 	
-	/**
-	 * Returns the list of "key" attributes ( PRIMARY KEY ELEMENTS )
-	 * @return
-	 */
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( text= { 
+			"Returns the attributes used in the Primary Key for this entity"
+		},
+		example= {
+			"#foreach( $attribute in $entity.keyAttributes )",
+			"...",
+			"#end"
+		}
+	)
+	@VelocityReturnType("List of 'attribute' objects")
 	public List<JavaBeanClassAttribute> getKeyAttributes() 
 	{
 		if ( _keyAttributes != null ) {
@@ -429,10 +542,17 @@ public class JavaBeanClass extends JavaClass
 		return VOID_ATTRIBUTES_LIST ;
 	}
 
-	/**
-	 * Returns the list of "non key" attributes ( NON PRIMARY KEY ELEMENTS )
-	 * @return
-	 */
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( text= { 
+			"Returns the attributes NOT used in the Primary Key for this entity"
+		},
+		example= {
+			"#foreach( $attribute in $entity.nonKeyAttributes )",
+			"...",
+			"#end"
+		}
+	)
+	@VelocityReturnType("List of 'attribute' objects")
 	public List<JavaBeanClassAttribute> getNonKeyAttributes() 
 	{
 		if ( _nonKeyAttributes != null ) {
@@ -441,26 +561,63 @@ public class JavaBeanClass extends JavaClass
 		return VOID_ATTRIBUTES_LIST ;
 	}
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( text= { 
+			"Returns the database table mapped with this entity",
+			"DEPRECATED : use 'databaseTable' instead "
+		},
+		example="$entity.sqlTable",
+		deprecated=true
+	)
+	@Deprecated
 	public String getSqlTable() 
 	{
 		return _sDatabaseTable ;
 	}
 	
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( text= { 
+			"Returns the database table mapped with this entity"
+		},
+		example="$entity.databaseTable"
+	)
+	public String getDatabaseTable() 
+	{
+		return _sDatabaseTable ;
+	}
+	
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( text= { 
+			"Returns the database catalog of the table mapped with this entity"
+		},
+		example="$entity.databaseCatalog"
+	)
 	public String getDatabaseCatalog() 
 	{
 		return _sDatabaseCatalog ;
 	}
 	
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( text= { 
+			"Returns the database schema of the table mapped with this entity"
+		},
+		example="$entity.databaseSchema"
+	)
 	public String getDatabaseSchema() 
 	{
 		return _sDatabaseSchema ;
 	}
 	
-	/**
-	 * Returns a string containing all the colums of the Primary Key separated by a comma <br>
-	 * Example : '"code", "type"' 
-	 * @return
-	 */
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( text= { 
+			"Returns a String containing all the columns of the Primary Key",
+			"The returned column names are separated by a comma and have quotes characters",
+			"i.e. : '\"code\", \"type\"' "
+		},
+		example={	
+			"String KEY_COLUMNS[] = { $entity.sqlKeyColumns };"
+		}
+	)
 	public String getSqlKeyColumns() 
 	{
 		if ( _sSqlKeyColumns == null ) // list not yet built
@@ -470,11 +627,16 @@ public class JavaBeanClass extends JavaClass
 		return _sSqlKeyColumns ;
 	}
 	
-	/**
-	 * Returns a string containing all the colums that are not in the Primary Key separated by a comma <br>
-	 * Example : '"first_name", "age", "email"' 
-	 * @return
-	 */
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( text= { 
+			"Returns a String containing all the columns not used in the Primary Key ",
+			"The returned column names are separated by a comma and have quotes characters",
+			"i.e. : '\"code\", \"type\"' "
+		},
+		example={	
+			"String DATA_COLUMNS[] = { $entity.sqlNonKeyColumns };"
+		}
+	)
 	public String getSqlNonKeyColumns() 
 	{
 		if ( _sSqlNonKeyColumns == null ) // list not yet built
@@ -488,6 +650,15 @@ public class JavaBeanClass extends JavaClass
      * Returns the Java line instruction for the toString() method
      * @return
      */
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( text= { 
+			"Returns the Java line instruction for the toString() method",
+			"DEPRECATED : use 'toStringMethodCodeLines()' instead "
+		},
+		example="$entity.toStringInstruction",
+		deprecated=true
+	)
+	@Deprecated
     public String getToStringInstruction()
     {
     	if ( _attributes != null )
@@ -541,16 +712,55 @@ public class JavaBeanClass extends JavaClass
     	if ( s.endsWith("Clob") ) return false ; 
     	return true ;
     }
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( text= { 
+			"Returns a multiline String containing all the Java instructions for the 'toString' method",
+			"Argument : number of spaces for the left margin ",
+			""
+		},
+		example={	
+			"$entity.toStringMethodCodeLines(4)"
+		},
+		parameters = "leftMargin : number of blanks for the left margin"
+	)
     public String toStringMethodCodeLines( int iLeftMargin )
     {
     	return toStringMethodCodeLinesWithKey( iLeftMargin, null );
     }
     
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod (
+		text= { 
+			"Returns a multiline String containing all the Java instructions for the 'toString' method",
+			"The primary key (composite or not) and all the 'non key' attributes are used"
+		},
+		example={	
+			"$entity.toStringMethodCodeLinesWithKey(8, \"compositePrimaryKey\" )"
+		},
+		parameters = {
+				"leftMargin : number of blanks for the left margin",
+				"keyVarName : variable name for the composite primary key embedded id (if any) "
+		}
+	)
     public String toStringMethodCodeLinesWithKey( int iLeftMargin, String embeddedIdName )
     {
     	return toStringMethodCodeLinesWithKey( iLeftMargin, _nonKeyAttributes, embeddedIdName );
     }
     
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( text= { 
+			"Returns a multiline String containing all the Java instructions for the 'toString' method",
+			"The primary key (composite or not) and given list of attributes are used"
+		},
+		example={	
+			"$entity.toStringMethodCodeLinesWithKey(8, $attributes, \"compositePrimaryKey\" )"
+		},
+		parameters = {
+			"leftMargin : number of blanks for the left margin",
+			"attributes : specific list of attributes to be used in the 'toString' method (except key attributes)",
+			"keyVarName : variable name for the composite primary key embedded id (if any) "
+	}
+	)
     public String toStringMethodCodeLinesWithKey( int iLeftMargin, List<JavaBeanClassAttribute> specificNonKeyAttributes, String embeddedIdName )
     {
     	String leftMargin = GeneratorUtil.blanks(iLeftMargin);
@@ -632,11 +842,18 @@ public class JavaBeanClass extends JavaClass
 		return 1 ;
     }
 
-	/**
-	 * Returns an array containing all the "NON long text" attributes of this class (standard attributes)<br>
-	 * ( returns a void array if no attributes )
-	 * @return
-	 */
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( text= { 
+			"Returns the attributes NOT tagged as 'long text' for this entity",
+			"( 'standard attributes' )"
+		},
+		example= {
+			"#foreach( $attribute in $entity.nonTextAttributes )",
+			"...",
+			"#end"
+		}
+	)
+	@VelocityReturnType("List of 'attribute' objects")
 	public List<JavaBeanClassAttribute> getNonTextAttributes() 
 	{
 		if ( _nonTextAttributes == null ) // list not yet built
@@ -649,11 +866,18 @@ public class JavaBeanClass extends JavaClass
 		return VOID_ATTRIBUTES_LIST ;
 	}
 
-	/**
-	 * Returns an array containing all the "long text" attributes of this class<br>
-	 * ( returns a void array if no "long text" attributes )
-	 * @return
-	 */
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( text= { 
+			"Returns the attributes tagged as 'long text' for this entity",
+			"( specific attributes used to store long text )"
+		},
+		example= {
+			"#foreach( $attribute in $entity.textAttributes )",
+			"...",
+			"#end"
+		}
+	)
+	@VelocityReturnType("List of 'attribute' objects")
 	public List<JavaBeanClassAttribute> getTextAttributes() 
 	{
 		if ( _textAttributes == null ) // list not yet built
@@ -666,11 +890,16 @@ public class JavaBeanClass extends JavaClass
 		return VOID_ATTRIBUTES_LIST ;
 	}
 
-	/**
-	 * Returns true if this class has at least one "long text" attribute
-	 * @return
-	 */
-	//public boolean getHasTextAttribute() 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( text= { 
+			"Returns TRUE if this entity has at least one attribute tagged as 'long text'"
+		},
+		example= {
+			"#if ( $entity.hasTextAttribute() )",
+			"...",
+			"#end"
+		}
+	)
 	public boolean hasTextAttribute() 
 	{
     	if ( _attributes != null )
@@ -688,10 +917,17 @@ public class JavaBeanClass extends JavaClass
     	return false ;
 	}
 	
-	/**
-	 * Returns true if the key is composed of more than one attribute 
-	 * @return
-	 */
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( text= { 
+			"Returns TRUE if this entity has a composite primary key ",
+			"( a primary key composed of 2 or more attributes )"
+		},
+		example= {
+			"#if ( $entity.hasCompositePrimaryKey() )",
+			"...",
+			"#end"
+		}
+	)
 	public boolean hasCompositePrimaryKey() 
 	{
 		if ( _keyAttributes != null ) {
@@ -700,10 +936,17 @@ public class JavaBeanClass extends JavaClass
 		return false ; // No key attributes
 	}
 	
-	/**
-	 * Returns true if one of the key attributes is "auto-incremented" 
-	 * @return
-	 */
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( text= { 
+			"Returns TRUE if this entity has an 'auto-incremented' key attribute ",
+			"( a key based on a numeric value incremented by the database )"
+		},
+		example= {
+			"#if ( $entity.hasAutoIncrementedKey() )",
+			"...",
+			"#end"
+		}
+	)
 	public boolean hasAutoIncrementedKey() 
 	{
 		if ( _keyAttributes != null ) {
@@ -716,6 +959,17 @@ public class JavaBeanClass extends JavaClass
 		return false ; 
 	}
 	
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( text= { 
+			"Returns the attribute used as the autoincremented key ",
+			"or null if none",
+			""
+	},
+	example = {
+			"$entity.autoincrementedKeyAttribute"
+	}
+	)
+	@VelocityReturnType("'attribute' object")
 	public JavaBeanClassAttribute getAutoincrementedKeyAttribute() 
 	{
 		List<JavaBeanClassAttribute> keyAttributes = getKeyAttributes();

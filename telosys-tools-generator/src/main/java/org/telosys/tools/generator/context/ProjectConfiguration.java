@@ -16,6 +16,8 @@
 package org.telosys.tools.generator.context;
 
 import org.telosys.tools.commons.Variable;
+import org.telosys.tools.generator.ContextName;
+import org.telosys.tools.generator.context.doc.VelocityObject;
 
 
 /**
@@ -24,6 +26,15 @@ import org.telosys.tools.commons.Variable;
  * @author Laurent GUERIN
  *
  */
+//-------------------------------------------------------------------------------------
+@VelocityObject(
+		contextName= ContextName.PROJECT ,
+		text = "Current project configuration parameters ( folders, packages, ... )<br>"
+			+ " "
+			,
+		since = ""
+ )
+//-------------------------------------------------------------------------------------
 public class ProjectConfiguration
 {
 	private final static Variable[] VOID_VARIABLES = new Variable[0];

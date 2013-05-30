@@ -24,6 +24,7 @@ import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.commons.jdbctypes.JdbcTypes;
 import org.telosys.tools.commons.jdbctypes.JdbcTypesManager;
 import org.telosys.tools.generator.GeneratorUtil;
+import org.telosys.tools.generator.context.doc.VelocityObject;
 import org.telosys.tools.generator.context.tools.AnnotationsForBeanValidation;
 import org.telosys.tools.generator.context.tools.AnnotationsForJPA;
 import org.telosys.tools.repository.model.Column;
@@ -35,6 +36,13 @@ import org.telosys.tools.repository.persistence.util.RepositoryConst;
  *  
  * @author Laurent GUERIN
  */
+//-------------------------------------------------------------------------------------
+@VelocityObject(
+		contextName = "attribute" ,
+		text = "Attribute retrieved from the entity class",
+		since = ""
+ )
+//-------------------------------------------------------------------------------------
 public class JavaBeanClassAttribute 
 {
 	public final static int NO_MAXLENGTH   = -1 ;

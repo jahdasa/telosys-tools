@@ -16,6 +16,9 @@
 package org.telosys.tools.generator.context;
 
 import org.telosys.tools.commons.XmlUtil;
+import org.telosys.tools.generator.ContextName;
+import org.telosys.tools.generator.context.doc.VelocityMethod;
+import org.telosys.tools.generator.context.doc.VelocityObject;
 
 /**
  * Set of functions usable in Velocity template with $fn.functionName(...) 
@@ -23,6 +26,17 @@ import org.telosys.tools.commons.XmlUtil;
  * @author Laurent Guerin
  *
  */
+//-------------------------------------------------------------------------------------
+@VelocityObject(
+		contextName=ContextName.FN,
+		text = { 
+				"Object providing a set of utility functions ",
+				"",
+				""
+		},
+		since = "2.0.3"
+ )
+//-------------------------------------------------------------------------------------
 public class Fn {
 
 // USELESS 
@@ -39,6 +53,17 @@ public class Fn {
 	 * @param s
 	 * @return
 	 */
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns true if the given string is 'blank' ",
+			"(true if the string is null or void or only composed of blanks)"
+			},
+		parameters = { 
+			"s : the string to be tested" 
+			},
+		since = "2.0.3"
+	)
 	public boolean isBlank (String s) {
 		if ( s != null ) {
 			if ( s.trim().length() > 0 ) {
@@ -47,6 +72,13 @@ public class Fn {
 		}
 		return true ;
 	}
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns true if the given string is not 'blank' ",
+			"(true if the string is not null, not void and not only composed of blanks)"},
+		parameters = { "s : the string to be tested" }
+			)
 	public boolean isNotBlank (String s) {
 		return ! isBlank (s)  ;
 	}
@@ -56,22 +88,44 @@ public class Fn {
 	 * @param s
 	 * @return
 	 */
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Adds a double quote character at the beginning and at the end of the given string "
+			},
+		parameters = { "s : the string to be quoted" }
+			)
 	public String quote(String s) {
 		return "\"" + s + "\"" ;
 	}
 
-	/**
-	 * Converts the given string in a XML string (escape special characters &, <, >, etc ) 
-	 * @param s
-	 * @return
-	 */
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(text={	
+			"Returns the XML string for the given string",
+			"Replaces special characters (&, <, >, etc) by their corresponding XML notation (&amp; , &lt; , etc)"
+			},
+			parameters = { "s : the string to be escaped" },
+			deprecated=false
+			)
 	public String escapeXml(String s) {
 		return XmlUtil.escapeXml(s) ;
 	}
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(text={	
+			"Returns a single tabulation character " 
+			}
+	)
 	public String getTab() {
 		return "\t" ;
 	}
+
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(text={	
+			"Returns N tabulation characters "
+			},
+			parameters = { "n : the number of tabulations to be returned" }
+			)
 	public String tab(int n) {
 		StringBuffer sb = new StringBuffer();
 		for ( int i = 0 ; i < n ; i++ ) {
@@ -79,6 +133,5 @@ public class Fn {
 		}
 		return sb.toString();
 	}
-	
-	
+
 }

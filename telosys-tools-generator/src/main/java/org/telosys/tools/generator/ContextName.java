@@ -51,7 +51,8 @@ public class ContextName {
 	public final static String  PROJECT    = "project" ;
 	
 	//--- Entity/target objects names 
-	public final static String  BEAN_CLASS        = "beanClass" ;
+	public final static String  BEAN_CLASS        = "beanClass" ; // Old name for "entity"
+	public final static String  ENTITY            = "entity" ;  // New name
 	public final static String  SELECTED_ENTITIES = "selectedEntities" ;
 	public final static String  TARGET            = "target" ;
 

@@ -18,12 +18,22 @@ package org.telosys.tools.generator.context;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.telosys.tools.generator.ContextName;
+import org.telosys.tools.generator.context.doc.VelocityObject;
+
 /**
  * The current system date and time
  *  
  * @author Laurent GUERIN
  *
  */
+//-------------------------------------------------------------------------------------
+@VelocityObject(
+		contextName= ContextName.TODAY ,
+		text = "Object providing the current system date and time ",
+		since = ""
+ )
+//-------------------------------------------------------------------------------------
 public class Today
 {
     private static final SimpleDateFormat defaultDateFormat = new SimpleDateFormat("d MMM yyyy");
