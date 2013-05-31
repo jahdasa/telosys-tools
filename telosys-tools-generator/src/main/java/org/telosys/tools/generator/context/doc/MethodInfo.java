@@ -174,8 +174,10 @@ public class MethodInfo implements Comparable<MethodInfo> {
 	}
 	
 	public int compareTo(MethodInfo methodInfo) {
-		//--- Compare the Velocity name
-		return this.getVelocityName().compareTo( methodInfo.getVelocityName() );
+//		//--- Compare the Velocity name
+//		return this.getVelocityName().compareTo( methodInfo.getVelocityName() );
+		//--- Compare the signature name
+		return this.getSignature().compareTo( methodInfo.getSignature() );
 	}
 	
 }

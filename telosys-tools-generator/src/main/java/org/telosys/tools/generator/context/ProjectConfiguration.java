@@ -17,6 +17,7 @@ package org.telosys.tools.generator.context;
 
 import org.telosys.tools.commons.Variable;
 import org.telosys.tools.generator.ContextName;
+import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityObject;
 
 
@@ -29,9 +30,7 @@ import org.telosys.tools.generator.context.doc.VelocityObject;
 //-------------------------------------------------------------------------------------
 @VelocityObject(
 		contextName= ContextName.PROJECT ,
-		text = "Current project configuration parameters ( folders, packages, ... )<br>"
-			+ " "
-			,
+		text = "Current project configuration parameters ( variables, folders, ... )",
 		since = ""
  )
 //-------------------------------------------------------------------------------------
@@ -39,8 +38,6 @@ public class ProjectConfiguration
 {
 	private final static Variable[] VOID_VARIABLES = new Variable[0];
 	
-//	private final String srcFolder ;
-//	private final String webFolder ;
 	private final String templatesFolderFullPath ;
 	
 	private final String packageForBean ;
@@ -49,14 +46,12 @@ public class ProjectConfiguration
 	
     //---------------------------------------------------------------------------
 
-	public ProjectConfiguration( // String srcFolder, String webFolder, 
+	public ProjectConfiguration( 
 			String templatesFolderFullPath,
 			String packageForBean, 
 			Variable[] projectVariables ) 
 	{
 		super();
-//		this.srcFolder = srcFolder;
-//		this.webFolder = webFolder;
 		this.templatesFolderFullPath = templatesFolderFullPath ;
 		
 		this.packageForBean = packageForBean;
@@ -64,35 +59,45 @@ public class ProjectConfiguration
 		this.projectVariables = projectVariables;
 	}
 
-	//---------------------------------------------------------------------------
-
-//	public String getSrcFolder()
-//    {
-//        return srcFolder ;
-//    }
-//
-//    public String getWebFolder()
-//    {
-//        return webFolder ;
-//    }
-
-    /**
-     * Returns the templates folder with full path
-     * @return
-     */
+	//--------------------------------------------------------------------------------------------------------------
+	@VelocityMethod (
+		text = { 
+				"Returns the templates folder (the full path)",
+				"(just for information, not supposed to be used in generation)" },
+		example = {
+				"$project.templatesFolderFullPath"
+			}
+	)
     public String getTemplatesFolderFullPath()
     {
         return templatesFolderFullPath ;
     }
 
-    //---------------------------------------------------------------------------
-    
+	//--------------------------------------------------------------------------------------------------------------
+	@VelocityMethod (
+		text = { 
+				"Returns the package for the Java Bean classes",
+				"(just for information, not supposed to be used in generation)" },
+		example = {
+				"$project.packageForBean"
+			}
+		)
     public String getPackageForBean()
     {
         return packageForBean ;
     }
 
-    //---------------------------------------------------------------------------
+	//--------------------------------------------------------------------------------------------------------------
+	@VelocityMethod (
+		text = { 
+				"Returns all the variables available for the current project",
+				"( the specific variables defined for the project and the standard variables )"},
+		example = {
+				"#foreach( $var in $project.variables )",
+				"  $var.name = $var.value",
+				"#end"
+			}
+	)
     public Variable[] getVariables()
     {
     	if ( projectVariables != null ) {

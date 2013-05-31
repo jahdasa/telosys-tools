@@ -20,6 +20,8 @@ import org.telosys.tools.commons.Variable;
 import org.telosys.tools.commons.VariablesManager;
 import org.telosys.tools.commons.config.ConfigDefaults;
 import org.telosys.tools.generator.ContextName;
+import org.telosys.tools.generator.context.doc.VelocityMethod;
+import org.telosys.tools.generator.context.doc.VelocityNoDoc;
 import org.telosys.tools.generator.context.doc.VelocityObject;
 import org.telosys.tools.generator.target.TargetDefinition;
 
@@ -32,10 +34,12 @@ import org.telosys.tools.generator.target.TargetDefinition;
 //-------------------------------------------------------------------------------------
 @VelocityObject(
 		contextName= ContextName.TARGET ,
-		text = "Target for the generation in progress <br>"
-			+ " "
-			,
-		since = ""
+		text = { 
+				"The current target for the generation in progress",
+				"",
+				"Example when using $generator : ",
+				"$generator.generate($target.entityName, \"${beanClass.name}Key.java\", $target.folder, \"jpa_bean_pk.vm\"  )"
+		}
  )
 //-------------------------------------------------------------------------------------
 public class Target 
@@ -52,23 +56,6 @@ public class Target
 
 	private final boolean   templateOnly ;
 	
-//	/**
-//	 * @param targetName the target name 
-//	 * @param file the file to be generated 
-//	 * @param folder the folder where the file will be generated 
-//	 * @param template the template used by the generator (current template) 
-//	 * @param entityName the name of entity for this target
-//	 */
-//	public Target(String targetName, String file, String folder, String template, String entityName) {
-//		super();
-//		this.targetName = targetName;
-//		this.file = file.trim() ;
-//		this.folder = folder.trim();
-//		this.template = template.trim();
-//		this.entityName = entityName.trim();
-//		this.templateOnly = false ;
-//	}
-
 	/**
 	 * Constructor for special target containing only the template <br>
 	 * Used by Wizards generators
@@ -119,35 +106,74 @@ public class Target
 	 * 
 	 * @return
 	 */
+	@VelocityNoDoc
 	public boolean isTemplateOnly() {
 		return this.templateOnly ;
 	}
 	
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the target's name (as defined in the targets file) for the generation in progress "
+			}
+	)
 	public String getTargetName() {
 		return targetName;
 	}
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the output file name for the generation in progress "
+			}
+	)
 	public String getFile() {
 		return file;
 	}
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the output file folder for the generation in progress "
+			}
+	)
 	public String getFolder() {
 		return folder;
 	}
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the template file name (.vm) for the generation in progress "
+			}
+	)
 	public String getTemplate() {
 		return template;
 	}
 
-	/**
-	 * Returns the entity name for this target
-	 * @return
-	 */
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the entity name for the generation in progress "
+			}
+	)
 	public String getEntityName()
 	{
 		return entityName ;
 	}
 	
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the Java package corresponding to the file path after removing the given source folder "
+			},
+		parameters = {
+				"srcFolder : the source folder (the beginning of path to be removed to get the package folder)"
+		},
+		example = {
+			"package ${target.javaPackageFromFolder($SRC)};"
+		}
+	)
 	public String javaPackageFromFolder(String srcFolder) {
 		
 		System.out.println("javaPackageFromFolder('"+srcFolder+ "') : folder = '" + this.folder + "'");
@@ -249,6 +275,7 @@ public class Target
 	 * ie : "src/org/demo/screen/employee/EmployeeData.java"
 	 * @return
 	 */
+	@VelocityNoDoc
 	public String getOutputFileNameInProject()
 	{
 		String s = null ;
@@ -274,6 +301,7 @@ public class Target
 	 * @param projectLocation the project location ( ie "C:/tmp/project" )
 	 * @return
 	 */
+	@VelocityNoDoc
 	public String getOutputFileNameInFileSystem(String projectLocation)
 	{
 		String s = getOutputFileNameInProject();
@@ -290,6 +318,5 @@ public class Target
 		}
 		return "/" + s ;
 	}
-	
 	
 }

@@ -37,15 +37,18 @@ import org.telosys.tools.generator.context.doc.VelocityObject;
 @VelocityObject(
 		contextName= ContextName.LOADER ,
 		text = {
-				"Special object used as a specific class loader",
+				"Special object used as a specific class loader by the generator",
+				"",
 				"Can be used to load a specific Java Class tool in the Velocity Context",
-				"NB : experimental "
+				"Allows users to create their own classes and to use them in the templates"
 		},
 		since = ""
  )
 //-------------------------------------------------------------------------------------
 public class Loader {
 
+	private final static String CLASSES = "classes" ;
+	
 	private final ProjectConfiguration  projectConfig ;
 	private final VelocityContext       velocityContext ;
 	
@@ -56,28 +59,62 @@ public class Loader {
 	}
 
 	//--------------------------------------------------------------------------------------------------------------
-	@VelocityMethod (
-		text = {
-				"Loads the given java class from the templates folder, creates an instance and put it in the Velocity context" 
-		},
-		parameters = {
-				"variableNameInContext", 
-				"javaClassName"
-		}
-	)
-	public void loadJavaClass(String nameInContext, String javaClassName ) throws GeneratorException
+	/**
+	 * Returns the folder where to search the classes to be loaded <br>
+	 * The folder is "classes" in the project templates folder
+	 * @return
+	 */
+	private File getClassesFolderAsFile()
 	{
 		String templatesFolder = projectConfig.getTemplatesFolderFullPath();
 		String javaClassFolder ;		
 		if ( templatesFolder.endsWith("/") || templatesFolder.endsWith("\\") ) {
-			javaClassFolder = templatesFolder ;
+			javaClassFolder = templatesFolder + CLASSES ;
 		}
 		else {
-			javaClassFolder = templatesFolder + "/";
+			javaClassFolder = templatesFolder + "/" + CLASSES ;
 		}
 		
 		// Create a File object on the root of the directory containing the class file
 		File file = new File(javaClassFolder);
+		return file ;
+	}
+	
+	//--------------------------------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the folder where the classes are searched by the loader"
+			},
+		since="2.0.5"
+	)
+	public String getClassesFolder()
+	{
+		File folder = getClassesFolderAsFile();
+		return folder.toString() ;
+	}
+	
+	//--------------------------------------------------------------------------------------------------------------
+	@VelocityMethod (
+		text = {
+				"Loads the given java class, creates an instance and put it in the Velocity context",
+				"The Java 'class' file must be located in the 'templates/classes' folder of the project",
+				"NB : The Java class must have a default constructor (in order to be created by 'javaClass.newInstance()'"
+		},
+		parameters = {
+				"variableNameInContext : the name of the instance in the Velocity context", 
+				"javaClassName : the Java class to be loaded "
+		},
+		example = {
+				"## load the class and put an instance in the context",
+				"$loader.loadJavaClass(\"tools\", \"MyClass\")",
+				"## use the instance ",
+				"$tools.myMethod()"
+			}
+		
+	)
+	public void loadJavaClass(String nameInContext, String javaClassName ) throws GeneratorException
+	{
+		File file = getClassesFolderAsFile();
 		
 		Class<?> javaClass = null ;
 		

@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.telosys.tools.generator.ContextName;
+import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityObject;
 
 /**
@@ -39,21 +40,52 @@ public class Today
     private static final SimpleDateFormat defaultDateFormat = new SimpleDateFormat("d MMM yyyy");
     private static final SimpleDateFormat defaultTimeFormat = new SimpleDateFormat("HH:mm:ss");
     
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the current date with the default format"
+			}
+	)
     public String getDate()
     {
         return defaultDateFormat.format( new Date() );
     }
+
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the current date formated with the given format"
+			},
+		parameters={
+			"format : the Java date format (cf 'SimpleDateFormat' JavaDoc) "
+		}
+	)
     public String date( String sFormat )
     {
         SimpleDateFormat frm = new SimpleDateFormat(sFormat);
         return frm.format( new Date() );
     }
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the current time with the default format"
+			}
+	)
     public String getTime()
     {
         return defaultTimeFormat.format( new Date() );
     }
     
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the current time formated with the given format"
+			},
+		parameters={
+			"format : the Java date format (cf 'SimpleDateFormat' JavaDoc) "
+		}
+	)
     public String time( String sFormat )
     {
         SimpleDateFormat frm = new SimpleDateFormat(sFormat);
