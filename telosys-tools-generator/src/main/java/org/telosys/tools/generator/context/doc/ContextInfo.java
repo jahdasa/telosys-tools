@@ -92,7 +92,7 @@ public class ContextInfo {
 	/**
 	 * Returns an object documentation in a string containing the documentation formated in HTML
 	 * @param objectName the object name ( e.g. "fn", "today", ... )
-	 * @return
+	 * @return the documentation, or null if the given object name is unknown
 	 */
 	public String getClassDocumentation(String objectName) {
 		ClassInfo classInfo = classesInfo.get(objectName);
@@ -100,7 +100,8 @@ public class ContextInfo {
 			return editorDoc.getClassDoc(classInfo);
 		}
 		else {
-			return "Unknown object '" + objectName + "' !";
+			//return "Unknown object '" + objectName + "' !";
+			return null ;
 		}
 	}
 	
@@ -108,7 +109,7 @@ public class ContextInfo {
 	 * Returns a method/attribute documentation in a string containing the documentation formated in HTML
 	 * @param objectName the object name ( e.g. "fn", "today", ... )
 	 * @param methodSignature the signature as provided by "MethodInfo.getSignature()"
-	 * @return
+	 * @return the documentation, or null if the method is unknown
 	 */
 	public String getMethodDocumentation(String objectName, String methodSignature) {
 		ClassInfo classInfo = classesInfo.get(objectName);
@@ -118,11 +119,13 @@ public class ContextInfo {
 				return editorDoc.getMethodDoc(classInfo, methodInfo);
 			}
 			else {
-				return "Unknown method signature '" + methodSignature + "' for object '" + objectName + "' !";
+				//return "Unknown method signature '" + methodSignature + "' for object '" + objectName + "' !";
+				return null ;
 			}
 		}
 		else {
-			return "Unknown object '" + objectName + "' !";
+			//return "Unknown object '" + objectName + "' !";
+			return null ;
 		}
 	}
 	

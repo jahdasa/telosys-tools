@@ -115,5 +115,46 @@ public class ContextInfoTest  extends TestCase {
 		methodsInfo = getAllMethodsInfo("foo");
 		assertNull( methodsInfo );
 	}
+	
+	public void testGetClassDocumentation() {
+		System.out.println("---- contextInfo.getClassDocumentation('..');");
+		ContextInfo contextInfo = new ContextInfo();
+		
+		System.out.println("$fn : ");
+		String doc = contextInfo.getClassDocumentation("fn");
+		System.out.println(doc);
+		assertNotNull(doc);
 
+		System.out.println("$foo : ");
+		doc = contextInfo.getClassDocumentation("foo");
+		System.out.println(doc);
+		assertNull(doc);
+		//assertTrue(doc.startsWith("Unknown"));
+	}
+	
+	public void testGetMethodDocumentation() {
+		System.out.println("---- contextInfo.getMethodDocumentation('..', '..');");
+		ContextInfo contextInfo = new ContextInfo();
+		
+		System.out.println("$fn : ");
+		MethodInfo[] methodsInfo = contextInfo.getAllMethodsInfo("fn");
+		assertNotNull(methodsInfo);
+		assertTrue(methodsInfo.length > 0 );
+		String doc = contextInfo.getMethodDocumentation("fn", methodsInfo[0].getSignature() );
+		System.out.println(doc);
+		assertNotNull(doc);
+
+		doc = contextInfo.getMethodDocumentation("fn", "xxxxx" );
+		System.out.println(doc);
+		assertNull(doc);
+
+		doc = contextInfo.getMethodDocumentation("xxxx", "xxxxx" );
+		System.out.println(doc);
+		assertNull(doc);
+
+		doc = contextInfo.getMethodDocumentation("xxxx", methodsInfo[0].getSignature() );
+		System.out.println(doc);
+		assertNull(doc);
+	}
+	
 }
