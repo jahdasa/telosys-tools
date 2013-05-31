@@ -31,7 +31,6 @@ import org.telosys.tools.generator.context.doc.VelocityObject;
 		contextName=ContextName.FN,
 		text = { 
 				"Object providing a set of utility functions ",
-				"",
 				""
 		},
 		since = "2.0.3"
@@ -102,7 +101,7 @@ public class Fn {
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(text={	
 			"Returns the XML string for the given string",
-			"Replaces special characters (&, <, >, etc) by their corresponding XML notation (&amp; , &lt; , etc)"
+			"Replaces special characters (&, <, >, etc) by their corresponding XML notation "
 			},
 			parameters = { "s : the string to be escaped" },
 			deprecated=false
