@@ -23,6 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.telosys.tools.generator.ContextName;
 import org.telosys.tools.generator.context.Const;
 import org.telosys.tools.generator.context.EmbeddedGenerator;
 import org.telosys.tools.generator.context.Fn;
@@ -231,6 +232,9 @@ public class DocBuilder {
 			ClassInfo classInfo = getClassInfo(clazz);
 			map.put(classInfo.getContextName(), classInfo);
 		}
+		
+		//--- Add synonyms 		
+		map.put( ContextName.BEAN_CLASS, map.get( ContextName.ENTITY) );
 		
 		return map ;
 	}

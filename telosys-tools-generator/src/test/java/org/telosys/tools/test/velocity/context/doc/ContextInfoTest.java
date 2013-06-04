@@ -130,6 +130,16 @@ public class ContextInfoTest  extends TestCase {
 		System.out.println(doc);
 		assertNull(doc);
 		//assertTrue(doc.startsWith("Unknown"));
+		
+		System.out.println("$entity : ");
+		doc = contextInfo.getClassDocumentation("entity");
+		System.out.println(doc);
+		assertNotNull(doc);
+
+		System.out.println("$beanClass : ");
+		doc = contextInfo.getClassDocumentation("beanClass");
+		System.out.println(doc);
+		assertNotNull(doc);
 	}
 	
 	public void testGetMethodDocumentation() {
