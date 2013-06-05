@@ -180,6 +180,7 @@ public class DocBuilder {
 			classInfo.setDocText( docAnnotation.text() );
 			classInfo.setSince( docAnnotation.since() );
 			classInfo.setDeprecated( docAnnotation.deprecated() );			
+			classInfo.setExampleText( docAnnotation.example() );
 
 			//--- Methods
 			Method[] methods = clazz.getMethods() ;

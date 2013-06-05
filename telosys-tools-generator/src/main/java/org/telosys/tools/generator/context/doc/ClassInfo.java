@@ -35,6 +35,7 @@ public class ClassInfo {
 	private String[] docText ;
 	private String   since ;
 	private boolean  deprecated ;
+	private String[] exampleText ;
 	
 	//private LinkedList<MethodInfo> methodsInfoList ;
 	private Map<String,MethodInfo> methodsInfoMap  ;
@@ -46,6 +47,7 @@ public class ClassInfo {
 		otherContextNames = VOID_TEXT ;
 		since = "" ;
 		deprecated = false ;
+		exampleText = VOID_TEXT ;
 		//methodsInfoList = new LinkedList<MethodInfo>();
 		methodsInfoMap  = new HashMap<String,MethodInfo>();
 	}
@@ -76,6 +78,13 @@ public class ClassInfo {
 	}
 	protected void setDocText(String[] docText) {
 		this.docText = docText;
+	}
+	
+	public String[] getExampleText() {
+		return exampleText;
+	}
+	protected void setExampleText(String[] exampleText) {
+		this.exampleText = exampleText;
 	}
 	
 	public String getSince() {

@@ -25,4 +25,6 @@ public @interface VelocityObject {
 	String[] text() ;              // Mandatory
 	String   since()               default "" ; 
 	boolean  deprecated()          default false ;
+	String[] example()             default {} ;
+	
 }

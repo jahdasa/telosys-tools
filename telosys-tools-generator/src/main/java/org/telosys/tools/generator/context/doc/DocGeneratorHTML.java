@@ -95,6 +95,8 @@ public class DocGeneratorHTML {
 
 		writer.println( "<body>											");
 		writer.println( "<h1> $" + classInfo.getContextName() + "</h1>	");
+		
+		//-------- PARAGRAPH "Other names"
 		String[] otherNames = classInfo.getOtherContextName();
 		if ( otherNames != null && otherNames.length > 0 ) {
 			int i = 0 ;
@@ -109,6 +111,8 @@ public class DocGeneratorHTML {
 			}
 			writer.println( "</p>");
 		}
+		
+		//-------- PARAGRAPH "doc" + "deprecated" + "example"
 		writer.println( "<p class=\"desc\">								");
 		
 		for ( String s : classInfo.getDocText()  ) {
@@ -123,7 +127,20 @@ public class DocGeneratorHTML {
 		if ( classInfo.isDeprecated()  ) {
 			writer.println( "DEPRECATED (!) <br>" );
 		}
+		String[] exampleText = classInfo.getExampleText();
+		if ( exampleText != null && exampleText.length > 0 ) {
+			writer.println( "<br>" );
+			writer.println( "<b>Example : </b><br>" );
+			writer.println( "<code>" );
+			for ( String s : exampleText ) {
+				writer.println( "&nbsp;&nbsp;&nbsp;" + s + "<br>" );
+			}
+			writer.println( "</code>" );
+		}
+
 		writer.println( "</p>		");
+		
+		//-------- TABLE "Attributes and Methods"
 
 		writer.println( "<table width=\"100%\" border=\"1\" cellspacing=\"0\">		");		
 		writer.println( "<TR class=\"title\">										");
