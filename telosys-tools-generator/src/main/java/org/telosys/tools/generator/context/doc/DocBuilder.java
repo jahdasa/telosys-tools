@@ -23,7 +23,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.telosys.tools.generator.ContextName;
 import org.telosys.tools.generator.context.Const;
 import org.telosys.tools.generator.context.EmbeddedGenerator;
 import org.telosys.tools.generator.context.Fn;
@@ -133,7 +132,6 @@ public class DocBuilder {
 		//--- Return type  
 		methodInfo.setReturnType( getVelocityReturnType(method) );
 		
-		//methodInfo.setParamTypes( paramTypesList.toArray(new String[0]) );
 
 		LinkedList<MethodParameter> parameters = new LinkedList<MethodParameter>();
 		//--- Documentation  
@@ -143,23 +141,15 @@ public class DocBuilder {
 			methodInfo.setExampleText( docAnnotation.example() );
 			methodInfo.setSince( docAnnotation.since() );
 			methodInfo.setDeprecated( docAnnotation.deprecated() );	
-			//methodInfo.setParamNames( docAnnotation.parameters() );
-//			//--- Parameters
-//			String[] parametersDoc = docAnnotation.parameters();
-//			int i = 0 ;
-//			for ( Class<?> c : paramTypes ) {
-//				String paramDoc = "" ;
-//				if ( i < parametersDoc.length ) {
-//					paramDoc = parametersDoc[i] ;
-//				}
-//				//--- Parameter type + parameter documentation 
-//				parameters.add( new MethodParameter(c.getSimpleName(), paramDoc ) );
-//				i++;
-//			}
 		}
-		
+
+		//--- Deprecated defined with standard Java annotation ?  
+		Deprecated deprecatedAnnotation = method.getAnnotation(Deprecated.class);
+		if ( deprecatedAnnotation != null ) {
+			methodInfo.setDeprecated( true );	
+		}
+
 		//--- Parameters types
-		//LinkedList<String> paramTypesList = new LinkedList<String>();
 		Class<?>[] paramTypes = method.getParameterTypes();
 		if ( paramTypes != null ) {
 			int i = 0 ;
@@ -186,6 +176,7 @@ public class DocBuilder {
 			
 			//--- Class 
 			classInfo.setContextName( docAnnotation.contextName() );
+			classInfo.setOtherContextName( docAnnotation.otherContextNames() );
 			classInfo.setDocText( docAnnotation.text() );
 			classInfo.setSince( docAnnotation.since() );
 			classInfo.setDeprecated( docAnnotation.deprecated() );			
@@ -230,11 +221,13 @@ public class DocBuilder {
 		//--- Build class information for each Java class used in the Velocity context
 		for ( Class<?> clazz : velocityClasses ) {
 			ClassInfo classInfo = getClassInfo(clazz);
+			//--- Main context name
 			map.put(classInfo.getContextName(), classInfo);
+			//--- Other context names (if any)
+			for ( String name : classInfo.getOtherContextName() ) {
+				map.put(name, classInfo);
+			}
 		}
-		
-		//--- Add synonyms 		
-		map.put( ContextName.BEAN_CLASS, map.get( ContextName.ENTITY) );
 		
 		return map ;
 	}

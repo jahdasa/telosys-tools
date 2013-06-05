@@ -82,5 +82,23 @@ public class Const {
 	public int getNOT_IN_SELECTED_LINKS() {
 		return    NOT_IN_SELECTED_LINKS ;
 	}
+	
+	
+	@VelocityConstant
+	public int getNO_DATE_TYPE() {
+		return JavaBeanClassAttribute.NO_DATE_TYPE ;
+	}
+	@VelocityConstant
+	public int getDATE_ONLY() {
+		return JavaBeanClassAttribute.DATE_ONLY ;
+	}
+	@VelocityConstant
+	public int getTIME_ONLY() {
+		return JavaBeanClassAttribute.TIME_ONLY ;
+	}
+	@VelocityConstant
+	public int getDATE_AND_TIME() {
+		return JavaBeanClassAttribute.DATE_AND_TIME ;
+	}
 
 }

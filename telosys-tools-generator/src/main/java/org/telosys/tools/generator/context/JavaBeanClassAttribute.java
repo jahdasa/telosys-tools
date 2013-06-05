@@ -23,7 +23,9 @@ import org.telosys.tools.commons.JavaTypeUtil;
 import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.commons.jdbctypes.JdbcTypes;
 import org.telosys.tools.commons.jdbctypes.JdbcTypesManager;
+import org.telosys.tools.generator.ContextName;
 import org.telosys.tools.generator.GeneratorUtil;
+import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityObject;
 import org.telosys.tools.generator.context.tools.AnnotationsForBeanValidation;
 import org.telosys.tools.generator.context.tools.AnnotationsForJPA;
@@ -38,7 +40,8 @@ import org.telosys.tools.repository.persistence.util.RepositoryConst;
  */
 //-------------------------------------------------------------------------------------
 @VelocityObject(
-		contextName = "attribute" ,
+		contextName = ContextName.ATTRIBUTE ,
+		otherContextNames= { ContextName.ATTRIB, ContextName.FIELD },		
 		text = "Attribute retrieved from the entity class",
 		since = ""
  )
@@ -273,11 +276,25 @@ public class JavaBeanClassAttribute
 		}
 	}
 	
+	@VelocityMethod(
+			text={	
+				"Returns the name of the attribute "
+				}
+		)
 	public String getName()
 	{
 		return _sName;
 	}
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the attribute's name with n trailing blanks "
+			},
+		parameters = { 
+			"n : the number of blanks to be added at the end of the name" 
+			}
+	)
 	public String formatedName(int iSize)
     {
         String s = _sName ;
@@ -290,10 +307,17 @@ public class JavaBeanClassAttribute
         return s + sTrailingBlanks;
     }
 
+	//-------------------------------------------------------------------------------------
 	/**
 	 * Returns the "short java type" without package, without blank, eg : "int", "BigDecimal", "Date"
 	 * @return
 	 */
+	@VelocityMethod(
+		text={	
+			"Returns the 'short type' for the attribute without package and without blank",
+			"Examples for Java : 'int', 'BigDecimal', 'Date' "
+			}
+	)
 	public String getType()
 	{
 		return _sType;
@@ -330,11 +354,26 @@ public class JavaBeanClassAttribute
 	}
 
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the type of the date : $const.DATE_ONLY, $const.TIME_ONLY, $const.DATE_AND_TIME"
+			}
+	)
 	public int getDateType()
 	{
 		return _iDateType ;
 	}
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the attribute's type with n trailing blanks "
+			},
+		parameters = { 
+			"n : the number of blanks to be added at the end of the name" 
+			}
+	)
 	public String formatedType(int iSize)
     {
         String sTrailingBlanks = "";
@@ -350,25 +389,57 @@ public class JavaBeanClassAttribute
 	 * Returns the full java type with package, ie : "java.math.BigDecimal", "java.util.Date"
 	 * @return
 	 */
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the full type of the attribute ( java.math.BigDecimal, java.util.Date, .. )"
+			}
+	)
 	public String getFullType()
 	{
 		return _sFullType;
 	}
 	
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns TRUE if there's an initial value for the attribute"
+			}
+	)
 	public boolean hasInitialValue()
 	{
 		return _sInitialValue != null ;
 	}
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the initial value for the attribute"
+			}
+	)
 	public String getInitialValue()
 	{
 		return _sInitialValue;
 	}
 	
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the setter for the attribute",
+			"e.g : 'setFoo' for 'foo' "
+			}
+	)
 	public String getGetter()
 	{
 		return _sGetter;
 	}
 	
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the getter for the attribute",
+			"e.g : 'getFoo' for 'foo' "
+			}
+	)
 	public String getSetter()
 	{
 		return _sSetter;
@@ -377,21 +448,47 @@ public class JavaBeanClassAttribute
 	//----------------------------------------------------------------------
 	// Database 
 	//----------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the database name for the attribute",
+			"Typically the column name for a relational database"
+			}
+	)
     public String getDatabaseName()
     {
         return _sDataBaseName;
     }
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the database native type for the attribute",
+			"For example : INTEGER, VARCHAR, etc..."
+			}
+	)
     public String getDatabaseType()
     {
         return _sDataBaseType;
     }
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the database size for the attribute"
+			}
+	)
     public int getDatabaseSize()
     {
         return _iDatabaseSize ;
     }
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns true if the attribute has a database default value"
+			}
+	)
     public boolean hasDatabaseDefaultValue()
     {
     	if ( _bAutoIncremented ) return false ; // No default value for auto-incremented fields
@@ -402,6 +499,12 @@ public class JavaBeanClassAttribute
         return false ;
     }
     
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the database default value for the attribute (or a void string if none)"
+			}
+	)
     public String getDatabaseDefaultValue()
     {
     	if ( hasDatabaseDefaultValue() ) return _sDatabaseDefaultValue ;
@@ -423,6 +526,11 @@ public class JavaBeanClassAttribute
 //    }
     
 	//----------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the JDBC type of the attribute (the type code)"
+			}
+		)
     public int getJdbcTypeCode()
     {
         return _iJdbcTypeCode ;
@@ -433,6 +541,11 @@ public class JavaBeanClassAttribute
      * Returns the recommended Java type for the JDBC type 
      * @return
      */
+	@VelocityMethod(
+			text={	
+				"Returns the recommended Java type for the JDBC type of the attribute"
+				}
+		)
     public String getJdbcRecommendedJavaType()
     {
     	JdbcTypes types = JdbcTypesManager.getJdbcTypes();
@@ -476,7 +589,7 @@ public class JavaBeanClassAttribute
 //    }
 
     /**
-     * Returns true if this attribute is involved in a link Foreign Key <br>
+     * Returns true if the attribute is involved in a link Foreign Key <br>
      * Useful for JPA, to avoid double mapping ( FK field and owning side link )
      * @param linksArray - list of the links to be checked 
      * @return
@@ -543,10 +656,15 @@ public class JavaBeanClassAttribute
 
 	//----------------------------------------------------------------------
     /**
-     * Returns the label defined for this attribute 
+     * Returns the label defined for the attribute 
      * @since v 2.0.3
      * @return
      */
+	@VelocityMethod(
+		text={	
+			"Returns the label for the attribute "
+			}
+	)
     public String getLabel()
     {
         return _sLabel ;
@@ -558,6 +676,13 @@ public class JavaBeanClassAttribute
      * @since v 2.0.3
      * @return
      */
+	@VelocityMethod(
+		text={	
+			"Returns the 'input type' defined for the attribute",
+			"Typically for HTML 5 : 'number', 'date', ..."
+			},
+		since="2.0.3"
+	)
     public String getInputType()
     {
         return _sInputType ;
@@ -579,6 +704,13 @@ public class JavaBeanClassAttribute
      * Examples : setParamString, setParamByte, setParamBooleanAsInt, etc..
      * @return
      */
+	@VelocityMethod(
+			text={	
+				"Returns the 'QueryContext setter' method name to use to set a query result",
+				" eg 'setParamBooleanAsInt', 'setParamBlob', 'setParamBigDecimal', etc ) "
+				}
+		)
+		@Deprecated
     public String getQuerySetter()
     {
     	if ( "boolean".equals(_sType) || "Boolean".equals(_sType) ) 
@@ -621,11 +753,23 @@ public class JavaBeanClassAttribute
 		return "setParam" + firstCharUC(_sType) ;
     }
     
+	@VelocityMethod(
+			text={	
+				"Returns true if the 'QueryContext setter' needs parameters "
+				}
+		)
+	@Deprecated
     public boolean getNeedsQuerySetterParams() // Velocity : $attrib.needsQuerySetterParams
     {
     	return needsParamsForBoolean();
     }
     
+	@VelocityMethod(
+			text={	
+				"Returns 'QueryContext setter' optional parameters ( the true/false values for booleans ) "
+				}
+		)
+	@Deprecated
 	public String getQuerySetterParams()
     {
     	if ( needsParamsForBoolean() )
@@ -646,9 +790,15 @@ public class JavaBeanClassAttribute
     
     /**
      * Returns the "QueryContext getter" method name to use to get a query result <br>
-     * Examples : setParamString, setParamByte, setParamBooleanAsInt, etc..
      * @return
      */
+	@VelocityMethod(
+		text={	
+			"Returns the 'QueryContext getter' method name to use to get a query result",
+			" eg 'getResultLongObject', 'getResultBooleanFromInt', 'getResultTimeAsDate', etc ) "
+			}
+	)
+	@Deprecated
     public String getQueryGetter()
     {
 		//--- There's a specific storage type for this field 
@@ -708,6 +858,12 @@ public class JavaBeanClassAttribute
 		return "getResult" + firstCharUC(_sType) ;
     }
     
+	@VelocityMethod(
+		text={	
+			"Returns true if the 'QueryContext getter' needs parameters "
+			}
+	)
+	@Deprecated
     public boolean getNeedsQueryGetterParams() // Velocity : $attrib.needsQueryGetterParams
     {
     	return needsParamsForBoolean();
@@ -719,6 +875,12 @@ public class JavaBeanClassAttribute
      * 
      * @return
      */
+	@VelocityMethod(
+			text={	
+				"Returns 'QueryContext getter' optional parameters ( the true value for booleans ) "
+				}
+		)
+	@Deprecated
     public String getQueryGetterParams()
     {
     	if ( needsParamsForBoolean() )
@@ -739,6 +901,15 @@ public class JavaBeanClassAttribute
      * Returns the GUI maximum input length if any ( else returns "" )
      * @return
      */
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns maximum input length to be used in the GUI ",
+			"For string types the specific maximum lenght is returned ( or void if not defined )",
+			"For numeric types the maximum lenght depends on the type ( 4 for 'byte', 11 for 'int', etc... ) ",
+			"For 'date' 10, for 'time' 8"
+			}
+	)
     public String getGuiMaxLength() 
     {
     	//--- Max length depending on the Java type
@@ -768,6 +939,13 @@ public class JavaBeanClassAttribute
      * Shortcut for Velocity attribute syntax : $var.guiMaxLengthAttribute 
      * @return
      */
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the GUI 'maxlength' attribute (or void if none) ",
+			"e.g 'maxlength=12' "
+			}
+	)
     public String getGuiMaxLengthAttribute() 
     {
     	return guiMaxLengthAttribute() ;
@@ -778,6 +956,13 @@ public class JavaBeanClassAttribute
      * For Velocity function call syntax : $var.guiMaxLengthAttribute() 
      * @return
      */
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the GUI 'maxlength' attribute (or void if none) ",
+			"e.g 'maxlength=12' "
+			}
+	)
     public String guiMaxLengthAttribute() 
     {
     	return guiMaxLengthAttribute("maxlength") ;
@@ -788,6 +973,14 @@ public class JavaBeanClassAttribute
      * @param attributeName
      * @return
      */
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the GUI specific attribute for maximum length (or void if none) ",
+			"e.g 'myattribute=12' for guiMaxLengthAttribute('myattribute') "
+			},
+		parameters = "guiAttributeName : the name of the attribute to be set in the GUI"
+	)
     public String guiMaxLengthAttribute(String attributeName) 
     {
     	if ( attributeName != null )
@@ -806,6 +999,11 @@ public class JavaBeanClassAttribute
      * Returns the "maximum" length if any, else returns "" 
      * @return
      */
+	@VelocityMethod(
+			text={	
+				"Returns the maximum length for the attribute (if any, else returns void) "
+				}
+		)
     public String getMaxLength() 
     {
     	return voidIfNull(_sMaxLength) ;
@@ -814,6 +1012,11 @@ public class JavaBeanClassAttribute
      * Returns the "minimum" length if any, else returns "" 
      * @return
      */
+	@VelocityMethod(
+			text={	
+				"Returns the minimum length for the attribute (if any, else returns void) "
+				}
+		)
     public String getMinLength() 
     {
     	return voidIfNull(_sMinLength) ;
@@ -824,6 +1027,11 @@ public class JavaBeanClassAttribute
      * Returns the "pattern" (Reg Exp) if any, else returns "" 
      * @return
      */
+	@VelocityMethod(
+			text={	
+				"Returns the Reg Exp pattern defined for the attribute (if any, else returns void) "
+				}
+		)
     public String getPattern() 
     {
     	return voidIfNull(_sPattern) ;
@@ -834,6 +1042,11 @@ public class JavaBeanClassAttribute
      * Returns the "minimum" value if any, else returns "" 
      * @return
      */
+	@VelocityMethod(
+			text={	
+				"Returns the minimum value for the attribute (if any, else returns void) "
+				}
+		)
     public String getMinValue() 
     {
     	return voidIfNull(_sMinValue) ;
@@ -844,6 +1057,11 @@ public class JavaBeanClassAttribute
      * Returns the "maximum" value if any, else returns "" 
      * @return
      */
+	@VelocityMethod(
+			text={	
+				"Returns the maximum value for the attribute (if any, else returns void) "
+				}
+		)
     public String getMaxValue() 
     {
     	return voidIfNull(_sMaxValue) ;
@@ -853,15 +1071,28 @@ public class JavaBeanClassAttribute
      * Synonym for Velocity attribute syntax : $var.guiMinMaxAttributes 
      * @return
      */
+	@VelocityMethod(
+		text={	
+			"Returns the GUI attributes for minimum and maximum values (or void if none)",
+			"e.g 'min=10 max=20' "
+			}
+	)
     public String getGuiMinMaxAttributes() 
     {
     	return guiMinMaxAttributes() ;
     }
     
+	//-------------------------------------------------------------------------------------
     /**
      * For Velocity function call syntax : $var.guiMinMaxAttributes() 
      * @return
      */
+	@VelocityMethod(
+		text={	
+			"Returns the GUI attributes for minimum and maximum values (or void if none)",
+			"e.g 'min=10 max=20' "
+			}
+	)
     public String guiMinMaxAttributes() 
     {
     	return guiMinMaxAttributes("min", "max") ;
@@ -873,6 +1104,16 @@ public class JavaBeanClassAttribute
      * @param attributeName
      * @return
      */
+	@VelocityMethod(
+		text={	
+			"Returns the GUI specific attribute for minimum and maximum values (or void if none) ",
+			"e.g 'mini=10 maxi=20' for guiMaxLengthAttribute('mini', 'maxi') "
+			},
+		parameters = {
+			"guiMinAttributeName : the name of the MIN attribute to be set in the GUI",
+			"guiMaxAttributeName : the name of the MAX attribute to be set in the GUI"
+		}
+	)
     public String guiMinMaxAttributes(String minAttributeName, String maxAttributeName  ) 
     {
     	if ( minAttributeName != null && maxAttributeName != null )
@@ -896,9 +1137,15 @@ public class JavaBeanClassAttribute
     }
 
     /**
-     * Returns the GUI "type" value if any, else returns "" 
+     * Returns the GUI "type" if any, else returns "" 
      * @return
      */
+	@VelocityMethod(
+			text={	
+				"Returns the GUI type if any (else returns a void string)",
+				"e.g 'int', 'num', 'date', 'time', '' "
+				}
+		)
     public String getGuiType() 
     {
     	//--- type="int"
@@ -926,6 +1173,12 @@ public class JavaBeanClassAttribute
      * For Velocity attribute syntax : $var.guiTypeAttribute
      * @return
      */
+	@VelocityMethod(
+			text={	
+				"Returns the GUI type attribute ",
+				"e.g : type='int' "
+				}
+				)
     public String getGuiTypeAttribute() 
     {
     	return guiTypeAttribute() ;
@@ -934,6 +1187,12 @@ public class JavaBeanClassAttribute
      * For Velocity function call syntax : $var.guiTypeAttribute() 
      * @return
      */
+	@VelocityMethod(
+			text={	
+				"Returns the GUI type attribute ",
+				"e.g : type='int' "
+				}
+				)
     public String guiTypeAttribute() 
     {
     	return guiTypeAttribute("type") ;
@@ -943,6 +1202,15 @@ public class JavaBeanClassAttribute
      * @param attributeName
      * @return
      */
+	@VelocityMethod(
+	text={	
+		"Returns the GUI type attribute ",
+		"e.g : type='int' "
+		},
+	parameters={
+			"guiTypeAttributeName : name of the TYPE attribute to be set in the GUI "
+		}
+		)
     public String guiTypeAttribute(String attributeName) 
     {
     	if ( attributeName != null )
@@ -956,39 +1224,62 @@ public class JavaBeanClassAttribute
     	return "";
     }
     
-	//-----------------------------------------------------------------------------
-	public boolean isDatePast() {
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns true if the attribute must be validated as a date in the past"
+			}
+	)
+	public boolean hasDatePastValidation() {
 		return _bDatePast;
 	}
-//	public boolean getIsDatePast() {
-//		return isDatePast();
-//	}
 
-	public boolean isDateFuture() {
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns true if the attribute must be validated as a date in the future"
+			}
+	)
+	public boolean hasDateFutureValidation() {
 		return _bDateFuture;
 	}
-//	public boolean getIsDateFuture() {
-//		return isDateFuture();
-//	}
 	
-	public boolean isDateBefore() {
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns true if the attribute must be validated as a date before a given date value"
+			}
+	)
+	public boolean hasDateBeforeValidation() {
 		return _bDateBefore;
 	}
-//	public boolean getIsDateBefore() {
-//		return isDateBefore();
-//	}
 	
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the 'date before' value (for date validation)"
+			}
+	)
 	public String getDateBeforeValue() {
 		return _sDateBeforeValue;
 	}
 	
-	public boolean isDateAfter() {
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns true if the attribute must be validated as a date after a given date value"
+			}
+	)
+	public boolean hasDateAfterValidation() {
 		return _bDateAfter;
 	}
-//	public boolean getIsDateAfter() {
-//		return isDateAfter();
-//	}
 	
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the 'date after' value (for date validation)"
+			}
+	)
 	public String getDateAfterValue() {
 		return _sDateAfterValue;
 	}
@@ -1025,23 +1316,25 @@ public class JavaBeanClassAttribute
     {
         return _bNotBlank;
     }
-//    public boolean getIsNotBlank()
-//    {
-//        return isNotBlank();
-//    }
 	//-----------------------------------------------------------------------------
     /**
      * Returns true if the attribute need a conversion to be stored as an XML attribute value<br>
      * ( true if the attribute needs a "attributeString(...)" processing )
      * @return
      */
+	@VelocityMethod(
+		text={	
+			"Returns true if the attribute needs a conversion to be stored as an XML attribute value "
+			}
+		)
+	@Deprecated
     public boolean getNeedsXmlConversion() // Velocity : $attrib.needsXmlConversion
     {
     	// always true except if primitive type and not "boolean"
-		if ( "boolean".equals(_sType)) return true ; // boolean needs convertion
+		if ( "boolean".equals(_sType)) return true ; // boolean needs conversion
     	if ( isPrimitiveType() ) 
 		{
-    		//--- Primitive types (except boolean ) : doesn't need convertion
+    		//--- Primitive types (except boolean ) : doesn't need conversion
     		return false ; 
 		}
     	else
@@ -1051,6 +1344,12 @@ public class JavaBeanClassAttribute
     	}
     }
     
+	@VelocityMethod(
+		text={	
+			"Returns true if the attribute needs a conversion to be stored as an XML attribute value "
+			}
+		)
+	@Deprecated
     public boolean getNeedsXmlConversionParams() // Velocity : $attrib.needsXmlConversionParams
     {
 		if ( "java.util.Date".equals(_sFullType) ) return true ;
@@ -1077,10 +1376,22 @@ public class JavaBeanClassAttribute
 		return "" ;
     }
     
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns TRUE if there's a default value for the attribute"
+			}
+	)
     public boolean hasDefaultValue() // Velocity : $attrib.hasDefaultValue()
     {
     	return ( _sDefaultValue != null ) ;
     }
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the default value for the attribute"
+			}
+	)
     public String getDefaultValue() // Velocity : ${attrib.defaultValue}
     {
     	return _sDefaultValue ;
@@ -1137,6 +1448,12 @@ public class JavaBeanClassAttribute
      * Returns the getter to retrieve a parameter held by a ScreenRequest or a ServiceRequest
      * @return
      */
+	@VelocityMethod(
+			text={	
+				"Returns the getter to retrieve a parameter held by a ScreenRequest or a ServiceRequest "
+				}
+		)
+	@Deprecated
     public String getReqParamGetter() // Velocity : $attrib.reqParamGetter
     {
     	if ( "String".equals(_sType) )
@@ -1180,6 +1497,12 @@ public class JavaBeanClassAttribute
 //		return isJavaLangWrapperType();
 //	}
 
+	@VelocityMethod(
+		text={	
+			"Returns true if usable in XML "
+			}
+	)
+	@Deprecated
 	public boolean getTypeIsUsableInXml() // Velocity : $attrib.typeIsUsableInXml
 	{
 		if ( isPrimitiveType() ) return true ;
@@ -1212,6 +1535,11 @@ public class JavaBeanClassAttribute
 	 * Usage : $x.jpaAnnotations 
 	 * @return
 	 */
+	@VelocityMethod(
+			text={	
+				"Returns the JPA annotations for the attribute (without left margin)"
+				}
+			)
 	public String getJpaAnnotations()
     {
 		return jpaAnnotations(0);
@@ -1222,6 +1550,11 @@ public class JavaBeanClassAttribute
 	 * Usage : $x.jpaAnnotations() 
 	 * @return
 	 */
+	@VelocityMethod(
+			text={	
+				"Returns the JPA annotations for the attribute (without left margin)"
+				}
+			)
 	public String jpaAnnotations()
     {
 		return jpaAnnotations(0);
@@ -1232,6 +1565,11 @@ public class JavaBeanClassAttribute
 	 * Usage : $x.jpaAnnotationsEmbeddedID() 
 	 * @return
 	 */
+	@VelocityMethod(
+		text={	
+			"Returns the JPA annotations for EmbeddedID (without left margin)"
+			}
+		)
 	public String jpaAnnotationsEmbeddedID()
     {
 		return jpaAnnotationsEmbeddedID(0);
@@ -1243,6 +1581,12 @@ public class JavaBeanClassAttribute
 	 * @param iLeftMargin
 	 * @return
 	 */
+	@VelocityMethod(
+	text={	
+		"Returns the JPA annotations for the attribute (with a left margin)"
+		},
+	parameters = "leftMargin : the left margin (number of blanks) "
+	)
 	public String jpaAnnotations(int iLeftMargin )
     {
 		if ( _annotationsJPA != null ) {
@@ -1259,6 +1603,12 @@ public class JavaBeanClassAttribute
 	 * @param iLeftMargin
 	 * @return
 	 */
+	@VelocityMethod(
+			text={	
+				"Returns the JPA annotations for an 'embedded id' (with a left margin)"
+				},
+			parameters = "leftMargin : the left margin (number of blanks) "
+			)
 	public String jpaAnnotationsEmbeddedID(int iLeftMargin )
     {
 		if ( _annotationsJPA != null ) {
@@ -1276,6 +1626,13 @@ public class JavaBeanClassAttribute
 	 * @param iLeftMargin
 	 * @return
 	 */
+	@VelocityMethod(
+		text={	
+			"Returns the Java 'Bean Validation' annotations",
+			"( JSR303 and Hibernate additional annotations ) "
+			},
+		parameters = "leftMargin : the left margin (number of blanks) "
+	)
 	public String beanValidationAnnotations(int iLeftMargin )
     {
 		if ( _annotationsBeanValidation != null ) {
@@ -1283,11 +1640,19 @@ public class JavaBeanClassAttribute
 		}
 		return ERR_BEAN_VALIDATION_EXTENSION ;
     }
+	
 	/**
 	 * Returns the JSR303 Bean Validation annotations ( only JSR303 annotations, without Hibernate annotations ) 
 	 * @param iLeftMargin
 	 * @return
 	 */
+	@VelocityMethod(
+		text={	
+			"Returns the Java 'JSR-303 Bean Validation' annotations ",
+			"( only JSR-303 annotations, without Hibernate additional annotations ) "
+			},
+		parameters = "leftMargin : the left margin (number of blanks) "
+	)
 	public String beanValidationAnnotationsJSR303(int iLeftMargin)
     {
 		if ( _annotationsBeanValidation != null ) {
@@ -1433,6 +1798,12 @@ public class JavaBeanClassAttribute
 	//-----------------------------------------------------------------------------------------
 	// JPA "@GeneratedValue"
 	//-----------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns true if the attribute's value is generated (for the persistence) "
+			}
+	)
 	public boolean isGeneratedValue() {
 		return _bGeneratedValue;
 	}
@@ -1442,15 +1813,29 @@ public class JavaBeanClassAttribute
 	 * or null if not defined
 	 * @return
 	 */
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the strategy for a 'generated value' (or null if none)",
+			"e.g : 'auto', 'identity', 'sequence', 'table' "
+			}
+	)
 	public String getGeneratedValueStrategy() {
 		return _sGeneratedValueStrategy;
 	}
 
+	//-------------------------------------------------------------------------------------
 	/**
 	 * Returns the GeneratedValue generator : the name of the primary key generator to use <br>
 	 * The generator name referenced a "SequenceGenerator" or a "TableGenerator"
 	 * @return
 	 */
+	@VelocityMethod(
+		text={	
+			"Returns the generator for a 'generated value' ",
+			"Typically for JPA : 'SequenceGenerator' or 'TableGenerator' "
+			}
+	)
 	public String getGeneratedValueGenerator() {
 		return _sGeneratedValueGenerator;
 	}
@@ -1462,30 +1847,57 @@ public class JavaBeanClassAttribute
 	 * Returns true if this attribute is a "GeneratedValue" using a "SequenceGenerator"
 	 * @return
 	 */
+	@VelocityMethod(
+		text={	
+			"Returns TRUE if the attribute is a 'generated value' using a 'sequence generator' ",
+			"Typically for JPA '@SequenceGenerator'  "
+			}
+	)
 	public boolean hasSequenceGenerator() {
 		return _bSequenceGenerator;
 	}
 
+	//-----------------------------------------------------------------------------------------
 	/**
 	 * Returns the "@SequenceGenerator" name
 	 * @return
 	 */
+	@VelocityMethod(
+		text={	
+			"Returns the name of the 'sequence generator' ",
+			"Typically for JPA '@SequenceGenerator/name'  "
+			}
+	)
 	public String getSequenceGeneratorName() {
 		return _sSequenceGeneratorName;
 	}
 
+	//-----------------------------------------------------------------------------------------
 	/**
 	 * Returns the "@SequenceGenerator" sequence name
 	 * @return
 	 */
+	@VelocityMethod(
+		text={	
+			"Returns the 'sequence name' to be used in the 'sequence generator' definition",
+			"Typically for JPA '@SequenceGenerator/sequenceName'  "
+			}
+	)
 	public String getSequenceGeneratorSequenceName() {
 		return _sSequenceGeneratorSequenceName;
 	}
 
+	//-----------------------------------------------------------------------------------------
 	/**
 	 * Returns the "@SequenceGenerator" sequence allocation size
 	 * @return
 	 */
+	@VelocityMethod(
+		text={	
+			"Returns the 'sequence allocation size' to be used in the 'sequence generator' definition",
+			"Typically for JPA '@SequenceGenerator/allocationSize'  "
+			}
+	)
 	public int getSequenceGeneratorAllocationSize() {
 		return _iSequenceGeneratorAllocationSize;
 	}

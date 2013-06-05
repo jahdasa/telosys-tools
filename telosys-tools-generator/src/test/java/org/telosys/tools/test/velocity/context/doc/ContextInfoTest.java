@@ -78,6 +78,11 @@ public class ContextInfoTest  extends TestCase {
 		ClassInfo classInfo = getClassInfo("fn");
 		assertNotNull( classInfo );
 		
+		classInfo = getClassInfo("entity");
+		assertNotNull( classInfo );
+		classInfo = getClassInfo("beanClass"); // other name for 'entity'
+		assertNotNull( classInfo );
+		
 		classInfo = getClassInfo("foo");
 		assertNull( classInfo );
 	}

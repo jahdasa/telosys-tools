@@ -31,6 +31,7 @@ public class ClassInfo {
 	private String   name ;
 	
 	private String   contextName ;
+	private String[] otherContextNames ;
 	private String[] docText ;
 	private String   since ;
 	private boolean  deprecated ;
@@ -42,6 +43,7 @@ public class ClassInfo {
 		super();
 		name = "???" ;
 		docText = VOID_TEXT;
+		otherContextNames = VOID_TEXT ;
 		since = "" ;
 		deprecated = false ;
 		//methodsInfoList = new LinkedList<MethodInfo>();
@@ -60,6 +62,13 @@ public class ClassInfo {
 	}
 	protected void setContextName(String contextName) {
 		this.contextName = contextName;
+	}
+	
+	public String[] getOtherContextName() {
+		return otherContextNames;
+	}
+	protected void setOtherContextName(String[] otherContextNames) {
+		this.otherContextNames = otherContextNames;
 	}
 	
 	public String[] getDocText() {

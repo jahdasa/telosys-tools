@@ -96,11 +96,13 @@ public class AnnotationsForBeanValidation
 		}
 		else if ( JavaTypeUtil.isCategoryDateOrTime( sJavaFullType ) )
 		{
-			if ( _attribute.isDatePast() ) 
+			//if ( _attribute.isDatePast() ) 
+			if ( _attribute.hasDatePastValidation() ) // v 2.0.5
 			{
 				annotations.addLine("@Past" );
 			}
-			if ( _attribute.isDateFuture() ) 
+			//if ( _attribute.isDateFuture() ) 
+			if ( _attribute.hasDateFutureValidation() )  // v 2.0.5
 			{
 				annotations.addLine("@Future" );
 			}

@@ -20,8 +20,9 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface VelocityObject {
-	String   contextName() ;  // Mandatory
-	String[] text() ; // Mandatory
-	String   since()       default "" ; 
-	boolean  deprecated()  default false ;
+	String   contextName() ;       // Mandatory
+	String[] otherContextNames()   default {} ; 
+	String[] text() ;              // Mandatory
+	String   since()               default "" ; 
+	boolean  deprecated()          default false ;
 }

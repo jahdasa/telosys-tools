@@ -42,20 +42,27 @@ public class ContextName {
 	public final static String  DOC      = "DOC" ;
 	public final static String  TMP      = "TMP" ;
 	
-	//--- Standard objects names 
+	//--- Standard objects names always in context
 	public final static String  GENERATOR  = "generator" ;
 	public final static String  TODAY      = "today" ;
 	public final static String  CONST      = "const" ;
 	public final static String  FN         = "fn" ;	
 	public final static String  LOADER     = "loader" ;
 	public final static String  PROJECT    = "project" ;
-	
-	//--- Entity/target objects names 
-	public final static String  BEAN_CLASS        = "beanClass" ; // Old name for "entity"
-	public final static String  ENTITY            = "entity" ;  // New name
+	//---  
+	public final static String  ENTITY            = "entity" ;    // New name 
+	public final static String  BEAN_CLASS        = "beanClass" ; // Other name for "entity"
 	public final static String  SELECTED_ENTITIES = "selectedEntities" ;
 	public final static String  TARGET            = "target" ;
 
+	//--- Template objects names retrieved from standard objects 
+	public final static String  ATTRIBUTE         = "attribute" ;
+	public final static String  ATTRIB            = "attrib" ; // Other name for "attribute"
+	public final static String  FIELD             = "field" ;  // Other name for "attribute"
+	
+	public final static String  LINK              = "link" ;
+
+	//---  
 	public final static String  CLASS             = "class" ;
 	
 }
