@@ -42,8 +42,18 @@ import org.telosys.tools.repository.persistence.util.RepositoryConst;
 @VelocityObject(
 		contextName = ContextName.ATTRIBUTE ,
 		otherContextNames= { ContextName.ATTRIB, ContextName.FIELD },		
-		text = "Attribute retrieved from the entity class",
-		since = ""
+		text = {
+				"This object provides all information about an entity attribute",
+				"Each attribute is retrieved from the entity class ",
+				""
+		},
+		since = "",
+		example= {
+				"",
+				"#foreach( $attribute in $entity.attributes )",
+				"    $attribute.name : $attribute.type",
+				"#end"
+		}
 		
  )
 //-------------------------------------------------------------------------------------
