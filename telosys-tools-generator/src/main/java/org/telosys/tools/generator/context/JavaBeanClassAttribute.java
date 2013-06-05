@@ -44,6 +44,7 @@ import org.telosys.tools.repository.persistence.util.RepositoryConst;
 		otherContextNames= { ContextName.ATTRIB, ContextName.FIELD },		
 		text = "Attribute retrieved from the entity class",
 		since = ""
+		
  )
 //-------------------------------------------------------------------------------------
 public class JavaBeanClassAttribute 
@@ -327,6 +328,13 @@ public class JavaBeanClassAttribute
 	 * Returns the "java wrapper type" ie "Float" for "float" type, "Boolean" for "boolean" type
 	 * @return
 	 */
+	@VelocityMethod(
+		text={	
+			"Returns the Java wrapper type corresponding to the attribute's primitive type",
+			"Examples : 'Float' for 'float', 'Integer' for 'int', 'Boolean' for 'boolean', ... ",
+			"If the attribute's type is retuned as is if it's not a primitive type"
+			}
+	)
 	public String getWrapperType()
 	{
 		if ( null == _sType ) return "UnknownType" ;
@@ -486,7 +494,7 @@ public class JavaBeanClassAttribute
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
 		text={	
-			"Returns true if the attribute has a database default value"
+			"Returns TRUE if the attribute has a database default value"
 			}
 	)
     public boolean hasDatabaseDefaultValue()
@@ -501,9 +509,9 @@ public class JavaBeanClassAttribute
     
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
-		text={	
-			"Returns the database default value for the attribute (or a void string if none)"
-			}
+	text={	
+		"Returns the database default value for the attribute (or a void string if none)"
+		}
 	)
     public String getDatabaseDefaultValue()
     {
@@ -512,6 +520,11 @@ public class JavaBeanClassAttribute
     }
     
 	//----------------------------------------------------------------------
+	@VelocityMethod(
+	text={	
+		"Returns TRUE if the attribute must be NOT NULL when stored in the database"
+		}
+	)
     public boolean isDatabaseNotNull()
     {
         return _bDatabaseNotNull;
@@ -554,9 +567,14 @@ public class JavaBeanClassAttribute
 
 	//----------------------------------------------------------------------
     /**
-     * Returns true if the attribute is a Database Primary Key element
+     * Returns TRUE if the attribute is a Database Primary Key element
      * @return 
      */
+	@VelocityMethod(
+	text={	
+		"Returns TRUE if the attribute is the Primary Key or a part of the Primary Key in the database"
+		}
+	)
     public boolean isKeyElement()
     {
         return _bKeyElement;
@@ -572,9 +590,14 @@ public class JavaBeanClassAttribute
 
 	//----------------------------------------------------------------------
     /**
-     * Returns true if the attribute is used in (at least) one Foreign Key 
+     * Returns TRUE if the attribute is used in (at least) one Foreign Key 
      * @return 
      */
+	@VelocityMethod(
+	text={	
+		"Returns TRUE if the attribute is used in (at least) one Foreign Key"
+		}
+	)
     public boolean isUsedInForeignKey()
     {
         return _bUsedInForeignKey ;
@@ -589,11 +612,18 @@ public class JavaBeanClassAttribute
 //    }
 
     /**
-     * Returns true if the attribute is involved in a link Foreign Key <br>
+     * Returns TRUE if the attribute is involved in a link Foreign Key <br>
      * Useful for JPA, to avoid double mapping ( FK field and owning side link )
      * @param linksArray - list of the links to be checked 
      * @return
      */
+	@VelocityMethod(
+	text={	
+		"Returns TRUE if the attribute is involved in a link Foreign Key",
+		"Useful for JPA, to avoid double mapping ( FK field and owning side link )"
+		},
+	parameters="links : list of links where to search the attribute"
+	)
     public boolean isUsedInLinkJoinColumn( List<JavaBeanClassLink> links )
     {
     	if ( null == _sDataBaseName ) {
@@ -617,11 +647,17 @@ public class JavaBeanClassAttribute
 		return false ;
     }
 
-	//----------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------
     /**
-     * Returns true if the attribute is auto-incremented by the Database engine
+     * Returns TRUE if the attribute is auto-incremented by the Database engine
      * @return 
      */
+	@VelocityMethod(
+	text={	
+		"Returns TRUE if the attribute is 'auto-incremented' by the database",
+		"when a new entity is inserted in the database"
+		}
+	)
     public boolean isAutoIncremented()
     {
         return _bAutoIncremented;
@@ -638,9 +674,14 @@ public class JavaBeanClassAttribute
 
 	//----------------------------------------------------------------------
     /**
-     * Returns true if the attribute has a "Not Null" constraint at the Java level
+     * Returns TRUE if the attribute has a "Not Null" constraint at the Java level
      * @return 
      */
+	@VelocityMethod(
+	text={	
+		"Returns TRUE if the attribute has a 'Not Null' validation rule "
+		}
+	)
     public boolean isNotNull()
     {
         return _bNotNull;
@@ -694,6 +735,12 @@ public class JavaBeanClassAttribute
      * eg : returns "Double" for "double"/"Double", "Int" for "int", ...
      * @return 
      */
+	@VelocityMethod(
+	text={	
+		"Returns the java type starting by an Upper Case",
+		"Examples : 'Double' for 'double'/'Double', 'Int' for 'int', ..."
+		}
+	)
     public String javaTypeStartingByUC()
     {
     	return firstCharUC(_sType);
@@ -755,7 +802,7 @@ public class JavaBeanClassAttribute
     
 	@VelocityMethod(
 			text={	
-				"Returns true if the 'QueryContext setter' needs parameters "
+				"Returns TRUE if the 'QueryContext setter' needs parameters "
 				}
 		)
 	@Deprecated
@@ -860,7 +907,7 @@ public class JavaBeanClassAttribute
     
 	@VelocityMethod(
 		text={	
-			"Returns true if the 'QueryContext getter' needs parameters "
+			"Returns TRUE if the 'QueryContext getter' needs parameters "
 			}
 	)
 	@Deprecated
@@ -1227,7 +1274,7 @@ public class JavaBeanClassAttribute
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
 		text={	
-			"Returns true if the attribute must be validated as a date in the past"
+			"Returns TRUE if the attribute must be validated as a date in the past"
 			}
 	)
 	public boolean hasDatePastValidation() {
@@ -1237,7 +1284,7 @@ public class JavaBeanClassAttribute
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
 		text={	
-			"Returns true if the attribute must be validated as a date in the future"
+			"Returns TRUE if the attribute must be validated as a date in the future"
 			}
 	)
 	public boolean hasDateFutureValidation() {
@@ -1247,7 +1294,7 @@ public class JavaBeanClassAttribute
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
 		text={	
-			"Returns true if the attribute must be validated as a date before a given date value"
+			"Returns TRUE if the attribute must be validated as a date before a given date value"
 			}
 	)
 	public boolean hasDateBeforeValidation() {
@@ -1267,7 +1314,7 @@ public class JavaBeanClassAttribute
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
 		text={	
-			"Returns true if the attribute must be validated as a date after a given date value"
+			"Returns TRUE if the attribute must be validated as a date after a given date value"
 			}
 	)
 	public boolean hasDateAfterValidation() {
@@ -1290,6 +1337,13 @@ public class JavaBeanClassAttribute
      * Returns true if the attribute is a long text that must be stored in a separate XML tag
      * @return 
      */
+	@VelocityMethod(
+	text={	
+		"Returns TRUE if the attribute is a 'Long Text' ",
+		"i.e. that cannot be transported in a classical string",
+		"Typically a text stored as a CLOB or a BLOB"
+		}
+	)
     public boolean isLongText()
     {
         return _bLongText;
@@ -1303,6 +1357,11 @@ public class JavaBeanClassAttribute
 //		return isLongText();
 //	}
 
+	@VelocityMethod(
+	text={	
+		"Returns TRUE if the attribute has a 'Not Empty' validation rule "
+		}
+	)
     public boolean isNotEmpty()
     {
         return _bNotEmpty;
@@ -1312,6 +1371,11 @@ public class JavaBeanClassAttribute
 //        return isNotEmpty();
 //    }
     
+	@VelocityMethod(
+	text={	
+		"Returns TRUE if the attribute has a 'Not Blank' validation rule "
+		}
+	)
     public boolean isNotBlank()
     {
         return _bNotBlank;
@@ -1324,7 +1388,7 @@ public class JavaBeanClassAttribute
      */
 	@VelocityMethod(
 		text={	
-			"Returns true if the attribute needs a conversion to be stored as an XML attribute value "
+			"Returns TRUE if the attribute needs a conversion to be stored as an XML attribute value "
 			}
 		)
 	@Deprecated
@@ -1346,7 +1410,7 @@ public class JavaBeanClassAttribute
     
 	@VelocityMethod(
 		text={	
-			"Returns true if the attribute needs a conversion to be stored as an XML attribute value "
+			"Returns TRUE if the attribute needs a conversion to be stored as an XML attribute value "
 			}
 		)
 	@Deprecated
@@ -1362,6 +1426,12 @@ public class JavaBeanClassAttribute
      * Useful for Date conversion attributeString(arg1, params )
      * @return
      */
+	@VelocityMethod(
+		text={	
+			"Returns the additional parameters required for the XML String conversion if any "
+			}
+	)
+	@Deprecated
     public String getXmlConversionParams() // Velocity : $attrib.xmlConversionParams
     {
 		if ( "java.util.Date".equals(_sFullType) || "java.util.Calendar".equals(_sFullType) ) 
@@ -1397,6 +1467,13 @@ public class JavaBeanClassAttribute
     	return _sDefaultValue ;
     }
 
+	@VelocityMethod(
+	text={	
+		"Returns the specific XML getter  ",
+		"Exampe : getBooleanObject, getLongObject, getBigInteger, etc..."
+		}
+	)
+	@Deprecated
     public String getXmlGetter() // Velocity : $attrib.xmlGetter
     {
     	//--- Standard Java primitive types
@@ -1499,7 +1576,7 @@ public class JavaBeanClassAttribute
 
 	@VelocityMethod(
 		text={	
-			"Returns true if usable in XML "
+			"Returns TRUE if usable in XML "
 			}
 	)
 	@Deprecated
@@ -1690,7 +1767,7 @@ public class JavaBeanClassAttribute
     }
     
     /**
-     * Returns true if the JDBC type is an "integer type" 
+     * Returns TRUE if the JDBC type is an "integer type" 
      * @return
      */
     private boolean isJdbcInteger()
@@ -1777,6 +1854,12 @@ public class JavaBeanClassAttribute
 		}
 	}
 
+	@VelocityMethod(
+	text={	
+		"Returns TRUE if the attribute's type is a Java primitive type",
+		"i.e. int, float, boolean, ..."
+		}
+	)
 	public boolean isPrimitiveType()
 	{
 		return JavaTypeUtil.isPrimitiveType( _sType );
@@ -1800,9 +1883,11 @@ public class JavaBeanClassAttribute
 	//-----------------------------------------------------------------------------------------
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
-		text={	
-			"Returns true if the attribute's value is generated (for the persistence) "
-			}
+	text={	
+		"Returns TRUE if the attribute's value is generated when a new entity is inserted in the database",
+		"It can be generated by the database ('auto-incremented') ",
+		"or generated by the persistence layer (typically by JPA)"
+		}
 	)
 	public boolean isGeneratedValue() {
 		return _bGeneratedValue;
@@ -1905,26 +1990,68 @@ public class JavaBeanClassAttribute
 	//-----------------------------------------------------------------------------------------
 	// JPA "@TableGenerator"
 	//-----------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns TRUE if the attribute is a 'generated value' using a 'table generator' ",
+			"Typically for JPA '@TableGenerator'  "
+			}
+	)
 	public boolean hasTableGenerator() {
 		return _bTableGenerator;
 	}
 
+	//-----------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the name of the 'table generator' ",
+			"Typically for JPA '@TableGenerator/name'  "
+			}
+	)
 	public String getTableGeneratorName() {
 		return _sTableGeneratorName;
 	}
 
+	//-----------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the name of the table used in the 'table generator' ",
+			"Typically for JPA '@TableGenerator/table'  "
+			}
+	)
 	public String getTableGeneratorTable() {
 		return _sTableGeneratorTable;
 	}
 
+	//-----------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the name of the Primary Key column used in the 'table generator' ",
+			"Typically for JPA '@TableGenerator/pkColumnName'  "
+			}
+	)
 	public String getTableGeneratorPkColumnName() {
 		return _sTableGeneratorPkColumnName;
 	}
 
+	//-----------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the name of the column that stores the last value generated by the 'table generator' ",
+			"Typically for JPA '@TableGenerator/valueColumnName'  "
+			}
+	)
 	public String getTableGeneratorValueColumnName() {
 		return _sTableGeneratorValueColumnName;
 	}
 
+	//-----------------------------------------------------------------------------------------
+	@VelocityMethod(
+	text={
+		"Returns the primary key value in the generator table that distinguishes this set of generated values",
+		"from others that may be stored in the table",
+		"Typically for JPA '@TableGenerator/pkColumnValue'  "
+		}
+	)
 	public String getTableGeneratorPkColumnValue() {
 		return _sTableGeneratorPkColumnValue;
 	}

@@ -61,6 +61,10 @@ public class DocGeneratorHTML {
 		writer.println( "		font-size:28px;				");
 		writer.println( "		font-family: verdana		");
 		writer.println( "	}								");
+		writer.println( "	p.otherNames{					");
+		writer.println( "		font-size:20px;				");
+		writer.println( "		font-family: verdana;		");
+		writer.println( "	}								");
 		writer.println( "	p.desc {						");
 		writer.println( "		font-size:12px;				");
 		writer.println( "		font-family: verdana;		");
@@ -91,6 +95,20 @@ public class DocGeneratorHTML {
 
 		writer.println( "<body>											");
 		writer.println( "<h1> $" + classInfo.getContextName() + "</h1>	");
+		String[] otherNames = classInfo.getOtherContextName();
+		if ( otherNames != null && otherNames.length > 0 ) {
+			int i = 0 ;
+			writer.print( "<p class=\"otherNames\">								");
+			writer.print( "Other name(s) : ");
+			for ( String otherName : classInfo.getOtherContextName() ) {
+				if ( i > 0 ) {
+					writer.print( ",&nbsp;" );
+				}
+				writer.print( "<b>$" + otherName + "</b>" );
+				i++;
+			}
+			writer.println( "</p>");
+		}
 		writer.println( "<p class=\"desc\">								");
 		
 		for ( String s : classInfo.getDocText()  ) {
