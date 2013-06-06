@@ -57,7 +57,7 @@ public class DocBuilderTest  extends TestCase {
 
 		assertTrue ( "Const".equals( classInfo.getJavaClassName() ) );
 		assertTrue ( "const".equals( classInfo.getContextName() ) );
-		assertTrue ( classInfo.getMethodsCount() == 8 );
+		assertTrue ( classInfo.getMethodsCount() == 12 );
 	}
 
 	public void testClassFn() {
@@ -86,7 +86,7 @@ public class DocBuilderTest  extends TestCase {
 		print(classInfo);
 
 		assertTrue ( "JavaBeanClass".equals( classInfo.getJavaClassName() ) );
-		assertTrue ( ContextName.BEAN_CLASS.equals( classInfo.getContextName() ) );
+		assertTrue ( ContextName.ENTITY.equals( classInfo.getContextName() ) );
 		System.out.println("Methods count = " + classInfo.getMethodsCount() );
 		assertTrue ( classInfo.getMethodsCount() == 31 );
 	}
