@@ -12,7 +12,6 @@ import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.telosys.tools.eclipse.plugin.commons.PluginImages;
 import org.telosys.tools.eclipse.plugin.editors.velocity.model.VelocityKeyWord;
 
-
 public class VelocityContentAssistProcessor implements IContentAssistProcessor {
 
 	private VelocityKeyWordProvider wordProvider;
@@ -158,6 +157,28 @@ public class VelocityContentAssistProcessor implements IContentAssistProcessor {
 						.getChar(currOffset)) || currChar == ';')) {
 			currWord = currChar + currWord;
 			currOffset--;
+		}
+		
+		// identify the situation if the cursor is just after a bracket
+		if (currWord.endsWith("(")) {
+			currWord = "";
+		} else {
+			// isolating the bean or directive input
+			// for example "normalform${myBean}input or #set($myBean --> The content assistant is for $myBean
+			int startDirectiveIndex = currWord.lastIndexOf("#");
+			int startBeanIndex = currWord.lastIndexOf("$");
+			int startCurrentWord;
+			if (startBeanIndex != -1 || startDirectiveIndex != -1) {
+				if (startBeanIndex > startDirectiveIndex) {
+					// context of a bean input
+					startCurrentWord = startBeanIndex;
+				} else {
+					// context of a directive input
+					startCurrentWord = startDirectiveIndex;
+				}
+				currWord = currWord.substring(startCurrentWord,
+						currWord.length());
+			}
 		}
 		return currWord;
 	}
