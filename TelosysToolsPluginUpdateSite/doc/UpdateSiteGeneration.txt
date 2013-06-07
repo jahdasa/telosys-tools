@@ -1,6 +1,6 @@
 Before :
  Check plugin version  in "plugin.xml"
- Check feature version and plugin version  in "feature.xml" 
+ Check feature version and plugin version  in "feature.xml" (and reference to plugin version)
 
 How to generate the "Update Site" :
 
@@ -8,7 +8,7 @@ How to generate the "Update Site" :
  
 2) Standard Eclipse Build 
  - Open the file "site.xml"
- - Verify version
+ - Verify version ( "feature" tag : url and version )
  - Click "Build All"
  
  Files generated :
