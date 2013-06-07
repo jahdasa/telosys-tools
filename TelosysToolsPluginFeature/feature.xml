@@ -2,7 +2,7 @@
 <feature
       id="org.telosys.tools.eclipse.feature"
       label="Telosys Tools"
-      version="2.0.4"
+      version="2.0.5"
       provider-name="Telosys Project - OW2"
       plugin="org.telosys.tools.eclipse.plugin">
 
@@ -10,6 +10,7 @@
       Telosys tools for code generation 
 Lightweight model manager
 Code generator
+Velocity templates editor
    </description>
 
    <copyright>
@@ -34,7 +35,7 @@ http://www.eclipse.org/legal/epl-v10.html
          id="org.telosys.tools.eclipse.plugin"
          download-size="0"
          install-size="0"
-         version="2.0.4"
+         version="2.0.5"
          unpack="false"/>
 
 </feature>
