@@ -30,6 +30,13 @@ public class Const {
 	public static final String CHECKED_ON  = "checkbox_on_16pix.png" ; 
 	public static final String CHECKED_OFF = "checkbox_off_16pix.png" ; 
 	
+    // Icones for Velocity Templates Editor ( v 2.0.5 )
+	public static final String VELOCITY_DIRECTIVE_IMAGE        = "velocity_directive.png";
+    public static final String VELOCITY_PREDEF_VARIABLE_IMAGE  = "velocity_predef_variable.png";
+    public static final String VELOCITY_BEAN_METHOD_IMAGE      = "velocity_bean_method.png";
+    public static final String VELOCITY_BEAN_PROPERTY_IMAGE    = "velocity_bean_property.png";
+    public static final String VELOCITY_BEAN_GENERATOR_IMAGE   = "velocity_bean_generator.png";
+    public static final String VELOCITY_PREDEFNAMES_IMAGE      = "velocity_predefnames.png";
 	
 	//-------------------------------------------------------------------------------
 	//--- Templates files

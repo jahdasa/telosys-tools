@@ -115,6 +115,15 @@
             default="true"
             name="Telosys Tools Dbconfig editor"
             extensions="dbcfg"/>
+      <editor
+      		id="org.telosys.tools.eclipse.plugin.editors.velocity.VelocityEditor"
+      		class="org.telosys.tools.eclipse.plugin.editors.velocity.VelocityEditor"
+      		icon="icons/velocity_file.png"
+      		default="true"
+            name="Telosys Velocity Template Editor"
+            extensions="vm"
+            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor">
+      </editor>            
    </extension>
    
 </plugin>

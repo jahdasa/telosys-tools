@@ -36,6 +36,14 @@ public class PluginImages {
 
 	public static final String CHECKED_ON     = "CHECKED_ON" ; // v 2.0
 	public static final String CHECKED_OFF    = "CHECKED_OFF" ; // v 2.0
+
+	// Images for Velocity Templates Editor  ( v 2.0.5 )
+	public static final String VELOCITY_BEAN_GENERATOR = "VELOCITY_BEAN_GENERATOR";
+	public static final String VELOCITY_BEAN_METHOD = "VELOCITY_BEAN_METHOD";
+	public static final String VELOCITY_BEAN_PROPERTY = "VELOCITY_BEAN_PROPERTY";
+	public static final String VELOCITY_DIRECTIVE = "VELOCITY_DIRECTIVE";
+	public static final String VELOCITY_PREDEF_VARIABLE = "VELOCITY_PREDEF_VARIABLE";
+	public static final String VELOCITY_PREDEFNAMES = "VELOCITY_PREDEFNAMES";
 	
 	// images registry
 	private static ImageRegistry $imageRegistry = new ImageRegistry() ;
@@ -78,12 +86,21 @@ public class PluginImages {
 		
 		registerImage(LINK_MANY_TO_ONE, Const.LINK_MANY_TO_ONE_IMAGE );
 
-		registerImage(EDIT_ICON, Const.EDIT_ICON );
-		registerImage(GENERATE,  Const.GENERATE );
-		registerImage(REFRESH,   Const.REFRESH );
-		registerImage(TARGETS,   Const.TARGETS );
+		registerImage(EDIT_ICON,    Const.EDIT_ICON );
+		registerImage(GENERATE,     Const.GENERATE );
+		registerImage(REFRESH,      Const.REFRESH );
+		registerImage(TARGETS,      Const.TARGETS );
 		registerImage(CHECKED_OFF,  Const.CHECKED_OFF );
 		registerImage(CHECKED_ON,   Const.CHECKED_ON );
+		
+		// Velocity Templates Editor ( v 2.0.5 )
+		registerImage(VELOCITY_BEAN_GENERATOR,   Const.VELOCITY_BEAN_GENERATOR_IMAGE );
+		registerImage(VELOCITY_BEAN_METHOD,      Const.VELOCITY_BEAN_METHOD_IMAGE );
+		registerImage(VELOCITY_BEAN_PROPERTY,    Const.VELOCITY_BEAN_PROPERTY_IMAGE );
+		registerImage(VELOCITY_DIRECTIVE,        Const.VELOCITY_DIRECTIVE_IMAGE );
+		registerImage(VELOCITY_PREDEF_VARIABLE,  Const.VELOCITY_PREDEF_VARIABLE_IMAGE);
+		registerImage(VELOCITY_PREDEFNAMES,      Const.VELOCITY_PREDEFNAMES_IMAGE);
+		
 	}
 
     //------------------------------------------------------------------------------------------------
