@@ -15,6 +15,7 @@
  */
 package org.telosys.tools.generator.context.doc;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -29,6 +30,23 @@ public class DocGenerator {
 	 */
 	public static void main(String[] args) {
 
+		String userDir =  System.getProperty("user.dir") ;
+		System.out.println( "USER DIR : " + userDir );
+		// USER DIR is "X:\xxx\xxx\workspace\project"
+		String destDir = userDir + "/target/doc/" ;
+		System.out.println( "DEST DIR : " + destDir );
+		File fileDir = new File(destDir);
+		if ( ! fileDir.exists() )
+		{
+		    System.out.println("Creating directory : " + destDir);
+		    if( fileDir.mkdir() ){    
+		    	System.out.println("Created");  
+		    }
+		    else {
+		    	System.out.println("ERROR : Cannot create directory !");
+		    }
+		}		
+		
 		DocBuilder docBuilder = new DocBuilder();
 		
 		Map<String,ClassInfo> classesInfo = docBuilder.getVelocityClassesInfo() ;
@@ -43,7 +61,7 @@ public class DocGenerator {
 		for ( String name : sortedNames ) {
 			ClassInfo classInfo = classesInfo.get(name);
 					//+ classInfo.getJavaClassName() + " " + classInfo.getMethodsCount() + " methods");
-			String fileName = "D:/TMP/HTML/" + classInfo.getContextName() + ".html" ;
+			String fileName = destDir + classInfo.getContextName() + ".html" ;
 			System.out.println(" . " + classInfo.getContextName() + " --> " + fileName );
 			htmlGenerator.generateDocFile(classInfo, fileName);
 		}

@@ -17,8 +17,11 @@ package org.telosys.tools.generator.context;
 
 import org.telosys.tools.commons.JavaClassUtil;
 import org.telosys.tools.commons.StrUtil;
+import org.telosys.tools.generator.ContextName;
 import org.telosys.tools.generator.GeneratorContextException;
 import org.telosys.tools.generator.GeneratorUtil;
+import org.telosys.tools.generator.context.doc.VelocityMethod;
+import org.telosys.tools.generator.context.doc.VelocityObject;
 import org.telosys.tools.generator.context.tools.AnnotationsBuilder;
 import org.telosys.tools.repository.model.Entity;
 import org.telosys.tools.repository.model.InverseJoinColumns;
@@ -31,6 +34,24 @@ import org.telosys.tools.repository.model.Link;
  * @author S.Labbe, L.Guerin
  *
  */
+//-------------------------------------------------------------------------------------
+@VelocityObject(
+		contextName = ContextName.LINK ,
+		text = {
+				"This object provides all information about an entity link",
+				"Each link is retrieved from the entity class ",
+				""
+		},
+		since = "",
+		example= {
+				"",
+				"#foreach( $link in $entity.selectedLinks )",
+				"    private $link.formatedType(10) $link.formatedName(12);",
+				"#end"				
+		}
+		
+ )
+//-------------------------------------------------------------------------------------
 public class JavaBeanClassLink {
 	
 	private final static int ONE_TO_ONE   = 1 ;
@@ -54,6 +75,15 @@ public class JavaBeanClassLink {
 		_sSetter = Util.buildSetter(this.getJavaName());
 	}
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the link's type with n trailing blanks "
+			},
+		parameters = { 
+			"n : the number of blanks to be added at the end of the name" 
+			}
+	)
 	public String formatedType(int iSize)
     {
 		String currentType = getLinkType();
@@ -66,15 +96,22 @@ public class JavaBeanClassLink {
         return currentType + sTrailingBlanks;
     }
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the type of the link ",
+			"eg : List, List<Person>, Person, ..."
+			}
+	)
 	public String getLinkType() {
 		String currentType = "";
 		if (StrUtil.nullOrVoid(this.getJavaTypeShort())) {
 			currentType = this._targetEntity.getBeanJavaClass();
 		} else {
 			// S'il s'agit de collection, on ajout la description du generic
-			if (this.isTypeOneToMany()) {
+			if (this.isCardinalityOneToMany()) {
 				currentType = this.getJavaTypeShort() + "<" + this._targetEntity.getBeanJavaClass() + ">";
-			} else if (this.isTypeManyToMany()) {
+			} else if (this.isCardinalityManyToMany()) {
 				currentType = this.getJavaTypeShort() + "<" + this._targetEntity.getBeanJavaClass() + ">";
 			} else {
 				currentType = this.getJavaTypeShort();
@@ -83,6 +120,15 @@ public class JavaBeanClassLink {
 		return currentType;
 	}	
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the link's name with n trailing blanks "
+			},
+		parameters = { 
+			"n : the number of blanks to be added at the end of the name" 
+			}
+	)
 	public String formatedName(int iSize)
     {
         String s = this.getJavaName() ;
@@ -227,6 +273,12 @@ public class JavaBeanClassLink {
 	 * @param marginSize
 	 * @return
 	 */
+	@VelocityMethod(
+	text={	
+		"Returns all the JPA annotations for the link (with a left margin)"
+		},
+	parameters = "leftMargin : the left margin (number of blanks) "
+	)
 	public String jpaAnnotations(int marginSize)
     {
 		AnnotationsBuilder annotations = new AnnotationsBuilder(marginSize);
@@ -266,19 +318,19 @@ public class JavaBeanClassLink {
 		else 
 		{
 			//--- INVERSE SIDE
-			if (this.isTypeOneToOne()) 
+			if (this.isCardinalityOneToOne()) 
 			{
 				annotations.addLine(getInverseSideCardinalityAnnotation( "OneToOne" ) ); 
 			} 
-			else if (this.isTypeOneToMany()) 
+			else if (this.isCardinalityOneToMany()) 
 			{
 				annotations.addLine(getInverseSideCardinalityAnnotation( "OneToMany" ) ); 
 			} 
-			else if (this.isTypeManyToMany()) 
+			else if (this.isCardinalityManyToMany()) 
 			{
 				annotations.addLine(getInverseSideCardinalityAnnotation( "ManyToMany" ) ); 
 			} 
-			else if (this.isTypeManyToOne()) 
+			else if (this.isCardinalityManyToOne()) 
 			{
 				// Not supposed to occur for an INVERSE SIDE !
 				annotations.addLine(getInverseSideCardinalityAnnotation( "ManyToOne" ) ); 
@@ -292,18 +344,43 @@ public class JavaBeanClassLink {
 		return annotations.getAnnotations();
     }
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the Java getter for the link e.g. 'getPerson' for link 'person' "
+			}
+	)
 	public String getGetter() {
 		return _sGetter;
 	}
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the Java setter for the link e.g. 'setPerson' for link 'person' "
+			}
+	)
 	public String getSetter() {
 		return _sSetter;
 	}
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns TRUE if the link has a 'join table'"
+			}
+	)
 	public boolean hasJoinTable() {
 		return _link.getJoinTable() != null ;
 	}
 	
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the 'join table' for the link ",
+			"Typically for JPA '@JoinTable'"
+			}
+	)
 	public String getJoinTable() {
 		JoinTable joinTable = _link.getJoinTable();
 		if ( joinTable != null ) {
@@ -314,10 +391,27 @@ public class JavaBeanClassLink {
 		}
 	}
 	
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns TRUE if the link has 'join columns' (at least one)"
+			}
+	)
 	public boolean hasJoinColumns() {
-		return _link.getJoinColumns() != null ;
+		//return _link.getJoinColumns() != null ;
+		JoinColumns joinColumns = _link.getJoinColumns() ;
+		if ( joinColumns != null ) {
+			return ( joinColumns.size() > 0 ) ; 
+		}
+		return false ;
 	}
 	
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the 'join columns' for the link "
+			}
+	)
 	public String[] getJoinColumns() {
 		JoinColumns joinColumns = _link.getJoinColumns() ;
 		if ( joinColumns != null ) {
@@ -339,116 +433,289 @@ public class JavaBeanClassLink {
 		}
 	}
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the unique id of the link in the repository (id used by the tool)"
+			}
+	)
 	public String getId() {
 		return _link.getId();
 	}
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns TRUE if the link is selected (ckeckbox ckecked in the GUI)"
+			}
+	)
 	public boolean isSelected() {
 		return _link.isUsed();
 	}
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the name of the target table (table referenced by the link)"
+			}
+	)
 	public String getTargetTableName() {
 		return _link.getTargetTableName();
 	}
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the Java field name for the link"
+			}
+	)
 	public String getJavaName() {
 		return _link.getJavaFieldName();
 	}
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the full Java type for the link ( eg 'java.util.List' ) "
+			}
+	)
 	public String getJavaTypeFull() {
 		return _link.getJavaFieldType();
 	}
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the short Java type for the link ( eg 'List' ) "
+			}
+	)
 	public String getJavaTypeShort() {
 		return JavaClassUtil.shortName(_link.getJavaFieldType());
 	}
 	
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns TRUE if the link is the 'Owning Side' of the relationship between 2 entities"
+			}
+	)
 	public boolean isOwningSide() {
 		return _link.isOwningSide();
 	}
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the name of the link in the 'owning side' ",
+			"Typically for JPA 'mappedBy'"
+			}
+	)
 	public String getMappedBy() {
 		return _link.getMappedBy();
 	}
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the type of the entity referenced by the link ",
+			""
+			}
+	)
 	public String getTargetEntity() {
 		return _link.getTargetEntityJavaType();
 	}
 
-	public String getType() {
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the cardinality of the link ",
+			"eg : 'OneToMany', 'ManyToOne', 'OneToOne', 'ManyToMany'"
+			}
+	)
+	//public String getType() { 
+	public String getCardinality() { // v 2.0.5
 		return _link.getCardinality();
 	}
 
-	public boolean isTypeOneToOne() {
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns TRUE if the link has a 'OneToOne' cardinality"
+			}
+	)
+	public boolean isCardinalityOneToOne() {
 		return _link.isTypeOneToOne();
 	}
 
-	public boolean isTypeOneToMany() {
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns TRUE if the link has a 'OneToMany' cardinality"
+			}
+	)
+	public boolean isCardinalityOneToMany() {
 		return _link.isTypeOneToMany();
 	}
 
-	public boolean isTypeManyToOne() {
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns TRUE if the link has a 'ManyToOne' cardinality"
+			}
+	)
+	public boolean isCardinalityManyToOne() {
 		return _link.isTypeManyToOne();
 	}
 
-	public boolean isTypeManyToMany() {
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns TRUE if the link has a 'ManyToMany' cardinality"
+			}
+	)
+	public boolean isCardinalityManyToMany() {
 		return _link.isTypeManyToMany();
 	}
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the 'cascade type' ( 'ALL', 'MERGE', 'PERSIST', 'REFRESH', 'REMOVE' )"
+			}
+	)
 	public String getCascade() {
 		return _link.getCascade();
 	}
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns true if the 'cascade type' is 'ALL' "
+			}
+	)
 	public boolean isCascadeALL() {
 		return _link.isCascadeALL();
 	}
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns true if the 'cascade type' is 'MERGE' "
+			}
+	)
 	public boolean isCascadeMERGE() {
 		return _link.isCascadeMERGE();
 	}
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns true if the 'cascade type' is 'PERSIST' "
+			}
+	)
 	public boolean isCascadePERSIST() {
 		return _link.isCascadePERSIST();
 	}
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns true if the 'cascade type' is 'REFRESH' "
+			}
+	)
 	public boolean isCascadeREFRESH() {
 		return _link.isCascadeREFRESH();
 	}
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns true if the 'cascade type' is 'REMOVE' "
+			}
+	)
 	public boolean isCascadeREMOVE() {
 		return _link.isCascadeREMOVE();
 	}
 
-	//----------------------------------------------------------------
+	//-------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the 'fetch type' ( 'DEFAULT' or 'EAGER' or 'LAZY' )"
+			}
+	)
 	public String getFetch() {
 		return _link.getFetch();
 	}
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns true if the 'fetch type' is 'DEFAULT' "
+			}
+	)
 	public boolean isFetchDEFAULT() {
 		return _link.isFetchDEFAULT();
 	}
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns true if the 'fetch type' is 'EAGER' "
+			}
+	)
 	public boolean isFetchEAGER() {
 		return _link.isFetchEAGER();
 	}
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns true if the 'fetch type' is 'LAZY' "
+			}
+	)
 	public boolean isFetchLAZY() {
 		return _link.isFetchLAZY();
 	}
 
-	//----------------------------------------------------------------
+	//-------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the 'optional status' for the link  ( 'TRUE', 'FALSE' or 'UNDEFINED' ) ",
+			"Typically for JPA 'optional=true/false'"
+			}
+	)
 	public String getOptional() {
 		return _link.getOptional();
 	}
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns true if the 'optional status' is 'UNDEFINED' "
+			}
+	)
 	public boolean isOptionalUndefined() {
 		return _link.isOptionalUndefined();
 	}
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns true if the 'optional status' is 'FALSE' "
+			}
+	)
 	public boolean isOptionalFalse() {
 		return _link.isOptionalFalse();
 	}
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns true if the 'optional status' is 'TRUE' "
+			}
+	)
 	public boolean isOptionalTrue() {
 		return _link.isOptionalTrue();
 	}

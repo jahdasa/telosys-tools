@@ -15,6 +15,8 @@
  */
 package org.telosys.tools.generator.context;
 
+import java.util.List;
+
 import org.telosys.tools.commons.XmlUtil;
 import org.telosys.tools.generator.ContextName;
 import org.telosys.tools.generator.context.doc.VelocityMethod;
@@ -133,4 +135,92 @@ public class Fn {
 		return sb.toString();
 	}
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns a string containing a list of field names separated by a comma"
+			},
+		example={ 
+				"$fn.argumentsList( $entity.attributes )",
+				"Returns : 'id, firstName, lastName, age' "},
+		parameters = { "fields : list of fields to be added in the arguments list" },
+		since = "2.0.5"
+			)
+	public String argumentsList( List<JavaBeanClassAttribute> fieldsList ) {
+		if ( fieldsList != null ) {
+			StringBuilder sb = new StringBuilder();
+			int n = 0 ;
+			for ( JavaBeanClassAttribute field : fieldsList ) {
+				if ( n > 0 ) sb.append(", ");
+				sb.append( field.getName() ) ;
+				n++;
+			}
+			return sb.toString();
+		} 
+		else {
+			return "null" ;
+		}
+	}
+	
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns a string containing a list of fields (type and name) separated by a comma"
+			},
+		example={ 
+			"$fn.argumentsListWithType( $entity.attributes )",
+			"Returns : 'int id, String firstName, String lastName, int age' "},
+		parameters = { "fields : list of fields to be added in the arguments list" },
+		since = "2.0.5"
+			)
+	public String argumentsListWithType( List<JavaBeanClassAttribute> fieldsList ) {
+		if ( fieldsList != null ) {
+			StringBuilder sb = new StringBuilder();
+			int n = 0 ;
+			for ( JavaBeanClassAttribute field : fieldsList ) {
+				if ( n > 0 ) sb.append(", ");
+				sb.append( field.getType() ) ;
+				sb.append( " " ) ;
+				sb.append( field.getName() ) ;
+				n++;
+			}
+			return sb.toString();
+		} 
+		else {
+			return "null" ;
+		}
+	}
+	
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns a string containing a list of fields getters separated by a comma"
+			},
+		example={ 
+			"$fn.argumentsListWithGetter( 'person', $entity.attributes )",
+			"Returns : 'person.getId(), person.getFirstName(), person.getLastName(), person.getAge()' "},
+		parameters = { 
+			"object : name of the object providing the getters",
+			"fields : list of fields to be added in the arguments list" },
+		since = "2.0.5"
+			)
+	public String argumentsListWithGetter( String objectName, List<JavaBeanClassAttribute> fieldsList ) {
+		if ( fieldsList != null ) {
+			StringBuilder sb = new StringBuilder();
+			int n = 0 ;
+			for ( JavaBeanClassAttribute field : fieldsList ) {
+				if ( n > 0 ) sb.append(", ");
+				sb.append( objectName ) ;
+				sb.append( "." ) ;
+				sb.append( field.getGetter() ) ;
+				sb.append( "()" ) ;
+				n++;
+			}
+			return sb.toString();
+		} 
+		else {
+			return "null" ;
+		}
+	}
+	
 }

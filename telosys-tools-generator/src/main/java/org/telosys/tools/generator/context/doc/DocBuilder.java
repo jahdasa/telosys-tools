@@ -28,6 +28,7 @@ import org.telosys.tools.generator.context.EmbeddedGenerator;
 import org.telosys.tools.generator.context.Fn;
 import org.telosys.tools.generator.context.JavaBeanClass;
 import org.telosys.tools.generator.context.JavaBeanClassAttribute;
+import org.telosys.tools.generator.context.JavaBeanClassLink;
 import org.telosys.tools.generator.context.Loader;
 import org.telosys.tools.generator.context.ProjectConfiguration;
 import org.telosys.tools.generator.context.Target;
@@ -205,10 +206,11 @@ public class DocBuilder {
 
 	private final static Class<?>[] velocityClasses = new Class<?>[] {
 		Const.class,
+		EmbeddedGenerator.class,
 		Fn.class,
 		JavaBeanClass.class,
 		JavaBeanClassAttribute.class,
-		EmbeddedGenerator.class,
+		JavaBeanClassLink.class,
 		Loader.class,
 		ProjectConfiguration.class,
 		Target.class,

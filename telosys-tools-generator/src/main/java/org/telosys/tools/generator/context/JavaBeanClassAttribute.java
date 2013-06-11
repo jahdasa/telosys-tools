@@ -442,9 +442,9 @@ public class JavaBeanClassAttribute
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
 		text={	
-			"Returns the setter for the attribute",
-			"e.g : 'setFoo' for 'foo' "
-			}
+				"Returns the getter for the attribute",
+				"e.g : 'getFoo' for 'foo' "
+					}
 	)
 	public String getGetter()
 	{
@@ -454,9 +454,9 @@ public class JavaBeanClassAttribute
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
 		text={	
-			"Returns the getter for the attribute",
-			"e.g : 'getFoo' for 'foo' "
-			}
+				"Returns the setter for the attribute",
+				"e.g : 'setFoo' for 'foo' "
+				}
 	)
 	public String getSetter()
 	{
