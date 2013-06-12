@@ -73,14 +73,16 @@ public class VelocityCodeScanner extends RuleBasedScanner {
 				rules.add(new PatternRule(formatName, "}", token, (char)0, true));
 			}
 			for (String formatName : this.getAllShortHandFormattedNameFor(reference.getValue())) {
-				rules.add(new PatternRule(formatName, " ", token, (char)0, true, true));
+				//rules.add(new PatternRule(formatName, " ", token, (char)0, true, true));
+				// 2013-06-12 / Bug Fix : ")" coloring
+				rules.add(new WordPatternRule(new IdentifierDetector(), formatName, null, token)); 
 			}			
 		}
 
 		token = new Token(new TextAttribute(referenceColor,null,SWT.ITALIC ) );
 		// Add pattern rule for formal references
 		rules.add(new PatternRule("$!{", "}", token, (char)0, true));
-		rules.add(new PatternRule("${",  "}", token, (char)0, true));
+		rules.add(new PatternRule("${",  "}", token, (char)0, true));	
 		// Add pattern rule for shorthand references
 		rules.add(new WordPatternRule(new IdentifierDetector(), "$!", null, token));
 		rules.add(new WordPatternRule(new IdentifierDetector(), "$",  null, token));
