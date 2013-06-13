@@ -1,4 +1,4 @@
-package org.telosys.tools.eclipse.plugin.editors.velocity;
+package org.telosys.tools.eclipse.plugin;
 
 /**
  * Contextual Help IDs provider 
@@ -19,8 +19,8 @@ public class ContextualHelp {
 	private final static String VELOCITY_EDITOR_HELP_CONTEXT_ID = "VelocityEditorHelp" ;
 
 	/**
-	 * Return the Help Context ID ( made of "PluginHelpID" + "." + "HelpContextID" )
-	 * @param contextId
+	 * Returns the Help Context ID for the Velocity Template Editor <br>
+	 * The ID is made of "PluginHelpID" + "." + "HelpContextID"
 	 * @return
 	 */
 	public final static String getVelocityEditorHelpContextId () {
