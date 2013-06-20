@@ -46,6 +46,7 @@ Comments are not rendered at runtime. <br>
 <br>
 <b>Examples : </b><br>
 <br>
+
 Single Line :<br>
 <br>
 <code>
@@ -58,6 +59,7 @@ Single Line :<br>
 </code>
 <br>
 <br>
+
 Multi-line comment :<br>
 <br>
 <code>
@@ -65,9 +67,28 @@ Multi-line comment :<br>
 &nbsp;&nbsp;&nbsp; This is a multiline comment.<br>
 &nbsp;&nbsp;&nbsp; This is the second line<br>
 &nbsp;&nbsp;&nbsp; *# <br>
+<br>
+&nbsp;&nbsp;&nbsp; This text is visible. #* This text, as part of a multi-line<br>
+&nbsp;&nbsp;&nbsp; comment, is not visible. This text is not visible; it is also<br>
+&nbsp;&nbsp;&nbsp; part of the multi-line comment. This text still not<br>
+&nbsp;&nbsp;&nbsp; visible. *# This text is outside the comment, so it is visible.<br>
 </code>
 <br>
 <br>
+
+VTL comment block ( other multi-line comment ) <br>
+It may be used to store any sort of extra information (e.g. javadoc-style author and versioning information) <br>
+<br>
+<code>
+&nbsp;&nbsp;&nbsp; #**<br>
+&nbsp;&nbsp;&nbsp;  My VTL comment block <br>
+&nbsp;&nbsp;&nbsp;   @author  foo<br>
+&nbsp;&nbsp;&nbsp;   @version 5<br>
+&nbsp;&nbsp;&nbsp; *#<br>
+</code>
+<br>
+<br>
+
 
 </p>
 
