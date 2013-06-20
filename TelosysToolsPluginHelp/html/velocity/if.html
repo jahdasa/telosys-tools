@@ -24,7 +24,9 @@
 		font-family: verdana;		
 		vertical-align:text-top;	
 		padding-top: 6px;			
-		padding-bottom: 12px;		
+		padding-bottom: 6px;		
+		padding-left: 4px;			
+		padding-right: 4px;			
 	}								
 	tr.title {						
 		font-family: verdana;		
@@ -87,7 +89,7 @@ if / elseif / else / end :<br>
 
 <tr class="title"><td>Operator Name</td>
 <td>Symbol</td>
-<td>Alternative Symbol</td>
+<td>Text Symbol</td>
 <td>Example</td>
 </tr>
 
@@ -139,14 +141,16 @@ if / elseif / else / end :<br>
 <td> #if( $foo &lt;= 42 )</td>
 </tr>
 
-<tr ><td>Boolean NOT</td>
-<td>!</td>
-<td>not</td>
-<td> #if( !$foo )</td>
-</tr>
+<tr ><td>Boolean NOT</td> <td>!</td> <td>not</td> <td> #if( !$foo )</td> </tr>
+
+<tr ><td>Logical AND</td> <td>&amp;&amp;</td> <td> and </td> <td> #if( $foo &amp;&amp; $bar ) </td> </tr>
+
+<tr ><td>Logical OR</td> <td>||</td> <td> or </td> <td> #if( $foo || $bar ) </td> </tr>
+
 </tbody>
 </table>
 <br>
+
 <b>NB : </b><br>
 <ul>
 <li>The "==" operator can be used to compare <b>numbers</b>, <b>strings</b>, <b>objects of the same class</b>, 
