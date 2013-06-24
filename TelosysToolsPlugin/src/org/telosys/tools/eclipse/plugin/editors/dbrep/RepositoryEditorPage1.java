@@ -143,9 +143,9 @@ import org.telosys.tools.repository.model.RepositoryModel;
 	}
 	
 	private final static int BEAN_JAVA_CLASS      = 1 ;
-	private final static int LIST_JAVA_CLASS      = 2 ;
-	private final static int DAO_JAVA_CLASS       = 3 ;
-	private final static int CONVERTER_JAVA_CLASS = 4 ;
+//	private final static int LIST_JAVA_CLASS      = 2 ;
+//	private final static int DAO_JAVA_CLASS       = 3 ;
+//	private final static int CONVERTER_JAVA_CLASS = 4 ;
 	
 	protected String getModelValue( int id )
 	{
@@ -154,9 +154,9 @@ import org.telosys.tools.repository.model.RepositoryModel;
 			switch (id) 
 			{
 			case BEAN_JAVA_CLASS :      return _currentEntity.getBeanJavaClass() ;
-			case LIST_JAVA_CLASS :      return _currentEntity.getListJavaClass() ;		
-			case DAO_JAVA_CLASS  :      return _currentEntity.getDaoJavaClass() ;		
-			case CONVERTER_JAVA_CLASS : return _currentEntity.getConverterJavaClass() ;		
+//			case LIST_JAVA_CLASS :      return _currentEntity.getListJavaClass() ;		
+//			case DAO_JAVA_CLASS  :      return _currentEntity.getDaoJavaClass() ;		
+//			case CONVERTER_JAVA_CLASS : return _currentEntity.getConverterJavaClass() ;		
 			}
 			MsgBox.error("getModelValue("+id+") : unknown id !");
 		}
@@ -176,15 +176,15 @@ import org.telosys.tools.repository.model.RepositoryModel;
 			case BEAN_JAVA_CLASS :      
 				_currentEntity.setBeanJavaClass(v) ; 
 				break ;
-			case LIST_JAVA_CLASS :      
-				_currentEntity.setListJavaClass(v) ; 
-				break ;
-			case DAO_JAVA_CLASS :       
-				_currentEntity.setDaoJavaClass(v) ; 
-				break ;	
-			case CONVERTER_JAVA_CLASS : 
-				_currentEntity.setConverterJavaClass(v) ; 
-				break ;
+//			case LIST_JAVA_CLASS :      
+//				_currentEntity.setListJavaClass(v) ; 
+//				break ;
+//			case DAO_JAVA_CLASS :       
+//				_currentEntity.setDaoJavaClass(v) ; 
+//				break ;	
+//			case CONVERTER_JAVA_CLASS : 
+//				_currentEntity.setConverterJavaClass(v) ; 
+//				break ;
 			default : 
 				MsgBox.error("getModelValue("+id+") : unknown id !"); 
 				return ;
@@ -372,7 +372,7 @@ import org.telosys.tools.repository.model.RepositoryModel;
     	//--- The Combo Box for "table/entity" selection
     	label = new Label(group1, SWT.NULL);
     	//label = new Label(group1, SWT.BORDER );
-    	label.setText("Table / Entity : ");
+    	label.setText("Table / Entity name : ");
     	label.setSize(width, 20);
     	label.setLocation(x, y1);
 
@@ -414,98 +414,21 @@ import org.telosys.tools.repository.model.RepositoryModel;
     	
     	//--------------------------------------------------------------------------
     	
-//		y1 = 52 ; //20 ;
-//		y2 = 72 ; //40 ;
-//		x = 0 ;
     	x = x + width + fillerWidth ;
 		
-		//-----  BEAN ( VO )
+		//-----  Entity Class name ( Java Bean class )
     	label = new Label(group1, SWT.NULL);
-    	label.setText("Entity Bean (class) : ");
+    	label.setText("Entity Class : ");
     	label.setSize(width, 20);
     	label.setLocation(x, y1);
 
-//    	_CheckVOBeanClass = new Button(group1, SWT.CHECK);
-//        _CheckVOBeanClass.setText("Value Object Bean ( VO )");
-//        _CheckVOBeanClass.setBounds(TEXT_X, y, TEXT_WIDTH, TEXT_HEIGHT);
-//        _CheckVOBeanClass.setBackground(_backgroundColor);
-//        _CheckVOBeanClass.setSelection(true);        
-//        y = y + yGap2 ;
 		_textJavaBeanClass = new Text(group1, SWT.BORDER);
 		_textJavaBeanClass.setText("");
 		_textJavaBeanClass.setSize(width, TEXT_HEIGHT);
 		_textJavaBeanClass.setLocation(x, y2);
 		//setModifyListener(_TextVOBeanClass, DatabaseRepository.TABLE_VO_FILE_GENERATE_ATTRIBUTE );
 		_textJavaBeanClass.addModifyListener( new GenericModifyListener(this, BEAN_JAVA_CLASS) );
-		
-		//-----
-//        y = y + yGap ;
-        x = x + width + fillerWidth ;
-        //----- LIST ( VO LIST )
-//        _CheckVOListClass = new Button(group2, SWT.CHECK);
-//        _CheckVOListClass.setText("Bean list ( VO List )");
-//        _CheckVOListClass.setBounds(TEXT_X, y, TEXT_WIDTH, TEXT_HEIGHT);
-//        _CheckVOListClass.setBackground(_backgroundColor);
-//        _CheckVOListClass.setSelection(true);        
-//    	label = new Label(group1, SWT.NULL);
-//    	label.setText("Bean list : ");
-//    	label.setSize(width, 20);
-//    	label.setLocation(x, y1);
-//        y = y + yGap2 ;
-//		_TextVOListClass = new Text(group1, SWT.BORDER);
-//		_TextVOListClass.setText("");
-//		_TextVOListClass.setSize(width, TEXT_HEIGHT);
-//		_TextVOListClass.setLocation(x, y2);
-//		//setModifyListener(_TextVOListClass, DatabaseRepository.TABLE_VOLIST_FILE_GENERATE_ATTRIBUTE );
-//		_TextVOListClass.addModifyListener( new GenericModifyListener(this, LIST_JAVA_CLASS) );
-
-		//-----
-//        y = y + yGap ;
-        x = x + width + fillerWidth ;
-		//-----
-//        _CheckDAOClass = new Button(group2, SWT.CHECK);
-//        _CheckDAOClass.setText("Bean D.A.O.");
-//        _CheckDAOClass.setBounds(TEXT_X, y, TEXT_WIDTH, TEXT_HEIGHT);
-//        _CheckDAOClass.setBackground(_backgroundColor);
-//        _CheckDAOClass.setSelection(true);        
-//        y = y + yGap2 ;
-//    	label = new Label(group1, SWT.NULL);
-//    	label.setText("Bean D.A.O. : ");
-//    	label.setSize(width, 20);
-//    	label.setLocation(x, y1);
-    	
-//		_TextDAOClass = new Text(group1, SWT.BORDER);
-//		_TextDAOClass.setText("");
-////		_TextDAOClass.setBounds(TEXT_X, y, TEXT_WIDTH, TEXT_HEIGHT);
-//		_TextDAOClass.setSize(width, TEXT_HEIGHT);
-//		_TextDAOClass.setLocation(x, y2);
-//		//setModifyListener(_TextDAOClass, DatabaseRepository.TABLE_DAO_FILE_GENERATE_ATTRIBUTE );
-//		_TextDAOClass.addModifyListener( new GenericModifyListener(this, DAO_JAVA_CLASS) );
-
-		//-----
-//        y = y + yGap ;
-        x = x + width + fillerWidth ;
-		//-----
-//        _CheckXMLClass = new Button(group2, SWT.CHECK);
-//        _CheckXMLClass.setText("Bean converter (XML)");
-//        _CheckXMLClass.setBounds(TEXT_X, y, TEXT_WIDTH, TEXT_HEIGHT);
-//        _CheckXMLClass.setBackground(_backgroundColor);
-//        _CheckXMLClass.setSelection(true);        
-//        y = y + yGap2 ;
-//    	label = new Label(group1, SWT.NULL);
-//    	label.setText("Bean converter : ");
-//    	label.setSize(width, 20);
-//    	label.setLocation(x, y1);
-    	
-//		_TextXMLClass = new Text(group1, SWT.BORDER);
-//		_TextXMLClass.setText("");
-////		_TextXMLClass.setBounds(TEXT_X, y, TEXT_WIDTH, TEXT_HEIGHT);
-//		_TextXMLClass.setSize(width, TEXT_HEIGHT);
-//		_TextXMLClass.setLocation(x, y2);
-//		//setModifyListener(_TextXMLClass, DatabaseRepository.TABLE_VOCONV_FILE_GENERATE_ATTRIBUTE );
-//		_TextXMLClass.addModifyListener( new GenericModifyListener(this, CONVERTER_JAVA_CLASS) );
-    	
-    	
+		   	
     	return group1;
 	}
 	//----------------------------------------------------------------------------------------------
@@ -896,11 +819,11 @@ import org.telosys.tools.repository.model.RepositoryModel;
 		col.setWidth(120);
 		
 		col = new TableColumn(table, SWT.LEFT, iColumnIndex++);
-		col.setText("Java Name");
+		col.setText("Attribute Name");
 		col.setWidth(150);
 		
 		col = new TableColumn(table, SWT.LEFT, iColumnIndex++);
-		col.setText("Java Type");
+		col.setText("Attribute Type");
 		col.setWidth(120);
 		
 		col = new TableColumn(table, SWT.LEFT, iColumnIndex++);
@@ -942,12 +865,12 @@ import org.telosys.tools.repository.model.RepositoryModel;
 		// Column 4 : "JDBC Type"
 		editors[4] = new TextCellEditor(table);
 		
-		// Column 5 : "Java Name" => Free text editor
+		// Column 5 : "Attribute Name" => Free text editor
 		TextCellEditor textEditor = new TextCellEditor(table);
 		((Text) textEditor.getControl()).setTextLimit(60);
 		editors[5] = textEditor;
 
-		// Column 6 : "Java Type" => Combo Box editor
+		// Column 6 : "Attribute Type" => Combo Box editor
 		//editors[6] = new ComboBoxCellEditor(table, ComboBoxJavaTypeItems.JAVA_TYPE, SWT.READ_ONLY);
 		JavaTypes types = JavaTypesManager.getJavaTypes();		
 		ComboBoxCellEditor cbEditor = new ComboBoxCellEditor(table, types.getTexts(), SWT.READ_ONLY);

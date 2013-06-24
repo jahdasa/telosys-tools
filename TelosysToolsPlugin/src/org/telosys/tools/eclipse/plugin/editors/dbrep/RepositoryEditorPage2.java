@@ -270,11 +270,11 @@ import org.telosys.tools.repository.model.RepositoryModel;
 		int iColumnIndex = 0 ;
 
 		col = new TableColumn(table, SWT.LEFT, iColumnIndex++);
-		col.setText("Table Name");
+		col.setText("Table / Entity name");
 		col.setWidth(220);
 		
 		col = new TableColumn(table, SWT.LEFT, iColumnIndex++);
-		col.setText("Java Bean");
+		col.setText("Entity class");
 		col.setWidth(200);
 		
 		return table;

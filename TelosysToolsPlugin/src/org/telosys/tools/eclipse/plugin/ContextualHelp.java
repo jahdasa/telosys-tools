@@ -11,7 +11,8 @@ public class ContextualHelp {
 	/**
 	 * The OSGI bundle name of the plugin providing help
 	 */
-	private final static String TELOSYS_TOOLS_HELP_PLUGIN_ID = "TelosysToolsPluginHelp" ;
+	//private final static String TELOSYS_TOOLS_HELP_PLUGIN_ID = "TelosysToolsPluginHelp" ;
+	private final static String TELOSYS_TOOLS_HELP_PLUGIN_ID = "org.telosys.tools.eclipse.plugin.help" ;
 
 	/**
 	 * The "Help Context ID" defined in the "contexts.xml" file for Velocity Editor
