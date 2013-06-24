@@ -1,9 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: TelosysToolsPluginHelp
-Bundle-SymbolicName: TelosysToolsPluginHelp; singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Name: Telosys Tools Help
+Bundle-SymbolicName: org.telosys.tools.eclipse.plugin.help;singleton:=true
+Bundle-Version: 2.0.5
 Bundle-Activator: org.telosys.tools.eclipse.plugin.help.TelosysToolsHelpActivator
 Require-Bundle: org.eclipse.core.runtime
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-Vendor: Telosys Project
