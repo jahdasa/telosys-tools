@@ -1,0 +1,36 @@
+<project default="copy-jars">
+
+	<property name="lib_dir"    value="./lib" />
+
+	<!-- ============================================================================== -->
+
+	<target name="copy-jars" >
+		<echo message="Delete existing jars " />
+		<delete>
+			<fileset dir="${lib_dir}" includes="telosys-tools-*.jar"/>
+		</delete>
+
+		<echo message="Copy new jars " />
+		<copy todir="${lib_dir}" overwrite="true" >
+
+			<fileset dir="../telosys-tools-commons/target">
+		    	<include name="*.jar"/>
+		    </fileset>
+		    
+		 	<fileset dir="../telosys-tools-database/target">
+		    	<include name="*.jar"/>
+		    </fileset>
+		    
+		 	<fileset dir="../telosys-tools-repository/target">
+		    	<include name="*.jar"/>
+		    </fileset>
+		    
+		 	<fileset dir="../telosys-tools-generator/target">
+		    	<include name="*.jar"/>
+		    </fileset>
+		 	
+		</copy>
+
+	</target>
+
+</project>
