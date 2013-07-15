@@ -1,0 +1,18 @@
+<project name="TelosysToolsUpdateSite" default="clean">
+
+	<property name="version"   value="2.0.3" />
+	<property name="dist_dir"  value="./dist" />
+	<property name="zip_file"  value="${dist_dir}/TelosysTools-${version}-UpdateSite.zip" />
+
+	<!-- ============================================================================== -->
+	<!--                                                      -->
+	<!-- ============================================================================== -->
+	<target name="clean" >
+		<echo message="Cleaning ... " />
+		<delete file="artifacts.jar" />
+		<delete file="content.jar" />
+		<delete dir="features" />
+		<delete dir="plugins" />
+	</target>
+	
+</project>
