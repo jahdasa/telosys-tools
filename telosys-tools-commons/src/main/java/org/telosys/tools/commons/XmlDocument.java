@@ -37,10 +37,16 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+@Deprecated
 public class XmlDocument
 {	
 	private TelosysToolsLogger _logger = null ;
 	
+    public XmlDocument() {
+		super();
+		_logger = null ;
+	}
+    
     public XmlDocument(TelosysToolsLogger logger ) {
 		super();
 		_logger = logger ;
@@ -53,7 +59,7 @@ public class XmlDocument
     	}
     }
     
-	public DocumentBuilder getDocumentBuilder() throws TelosysToolsException
+	private DocumentBuilder getDocumentBuilder() throws TelosysToolsException
     {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = null ;
@@ -154,14 +160,19 @@ public class XmlDocument
     }
     
     //---------------------------------------------------------------------------------------------------
-    public String getNodeAttribute( Node node, String sAttributeName )
+    /**
+     * @param node
+     * @param attributeName
+     * @return
+     */
+    public String getNodeAttribute( Node node, String attributeName )
     {
         String sRetValue = null ;
         NamedNodeMap attributes = node.getAttributes();
         if ( attributes != null )
         {
             //--- Find the attribute 
-            Node attrib = attributes.getNamedItem(sAttributeName);
+            Node attrib = attributes.getNamedItem(attributeName);
             if ( attrib != null )
             {
                 //--- Get the attribute value
@@ -170,8 +181,53 @@ public class XmlDocument
         }
         return sRetValue ;
     }
-
     //---------------------------------------------------------------------------------------------------
+    /**
+     * @param node
+     * @param attributeName
+     * @return
+     * @throws TelosysToolsException
+     */
+    public int getNodeAttributeAsInt( Node node, String attributeName ) throws TelosysToolsException
+    {
+    	String s = getNodeAttribute( node, attributeName );
+    	if ( null == s ) {
+    		throw new TelosysToolsException("XML error : int attribute '" + attributeName + "' not found" );
+    	}
+    	else {
+    		return convertToInt(attributeName, s);
+    	}
+    }
+    //---------------------------------------------------------------------------------------------------
+    /**
+     * @param node
+     * @param attributeName
+     * @param defaultValue
+     * @return
+     * @throws TelosysToolsException
+     */
+    public int getNodeAttributeAsInt( Node node, String attributeName, int defaultValue ) throws TelosysToolsException
+    {
+    	String s = getNodeAttribute( node, attributeName );
+    	if ( null == s ) {
+    		return defaultValue;
+    	}
+    	else {
+    		return convertToInt(attributeName, s);
+    	}
+    }
+    //---------------------------------------------------------------------------------------------------
+    private int convertToInt(String sAttributeName, String s) throws TelosysToolsException {
+    	int i = 0 ;
+    	try {
+			i = Integer.parseInt(s);
+		} catch (NumberFormatException e) {
+    		throw new TelosysToolsException("XML error : attribute '" + sAttributeName + "' is not an integer", e);
+		}
+		return i ;
+    }
+    //---------------------------------------------------------------------------------------------------
+    
     /**
      * Creates an empty DOM document
      * @return
@@ -204,7 +260,7 @@ public class XmlDocument
         String error = "Cannot parse file " + file.getName() + " !";
         
         DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
-        org.w3c.dom.Document doc = createDomDocument();
+        Document doc = createDomDocument();
         try {
             doc = f.newDocumentBuilder().parse(file);
         } catch (SAXException e) {

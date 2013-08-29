@@ -15,6 +15,14 @@
  */
 package org.telosys.tools.commons;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+
 public class XmlUtil {
 
     private static final int HIGHEST_SPECIAL = '>';
@@ -83,5 +91,91 @@ public class XmlUtil {
         }
         return escapedStringBuffer.toString();
     }
+    
+    /**
+     * Creates an empty DOM document
+     * @return
+     */
+    public static Document createDomDocument() 
+    {
+        Document document = null;
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        try {
+        	DocumentBuilder documentBuilder = factory.newDocumentBuilder();
+            document = documentBuilder.newDocument();
+        } catch (ParserConfigurationException e) {
+            throw new RuntimeException("Cannot create DOM document", e);
+        }
+        return document;
+    }
+
+    //---------------------------------------------------------------------------------------------------
+    private static int convertToInt(String sAttributeName, String s) {
+    	int i = 0 ;
+    	try {
+			i = Integer.parseInt(s);
+		} catch (NumberFormatException e) {
+    		throw new RuntimeException("XML error : attribute '" + sAttributeName + "' is not an integer", e);
+		}
+		return i ;
+    }
+    //---------------------------------------------------------------------------------------------------
+    /**
+     * @param node
+     * @param attributeName
+     * @return
+     */
+    public static String getNodeAttribute( Node node, String attributeName )
+    {
+        String sRetValue = null ;
+        NamedNodeMap attributes = node.getAttributes();
+        if ( attributes != null )
+        {
+            //--- Find the attribute 
+            Node attrib = attributes.getNamedItem(attributeName);
+            if ( attrib != null )
+            {
+                //--- Get the attribute value
+                sRetValue = attrib.getNodeValue() ;
+            }
+        }
+        return sRetValue ;
+    }
+    //---------------------------------------------------------------------------------------------------
+    /**
+     * @param node
+     * @param attributeName
+     * @return
+     * @throws TelosysToolsException
+     */
+    public static int getNodeAttributeAsInt( Node node, String attributeName ) 
+    {
+    	String s = getNodeAttribute( node, attributeName );
+    	if ( null == s ) {
+    		throw new RuntimeException("XML error : int attribute '" + attributeName + "' not found" );
+    	}
+    	else {
+    		return convertToInt(attributeName, s);
+    	}
+    }
+    //---------------------------------------------------------------------------------------------------
+    /**
+     * @param node
+     * @param attributeName
+     * @param defaultValue
+     * @return
+     * @throws TelosysToolsException
+     */
+    public static int getNodeAttributeAsInt( Node node, String attributeName, int defaultValue )
+    {
+    	String s = getNodeAttribute( node, attributeName );
+    	if ( null == s ) {
+    		return defaultValue;
+    	}
+    	else {
+    		return convertToInt(attributeName, s);
+    	}
+    }
+    //---------------------------------------------------------------------------------------------------
 	
 }

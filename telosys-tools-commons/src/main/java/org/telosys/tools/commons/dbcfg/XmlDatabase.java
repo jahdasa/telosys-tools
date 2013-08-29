@@ -29,6 +29,7 @@ import org.w3c.dom.NodeList;
  * @author Laurent GUERIN
  * 
  */
+@Deprecated
 public class XmlDatabase
 {
 	public final static String PROPERTY_USER     = "user";

@@ -30,7 +30,7 @@ import org.w3c.dom.NodeList;
  * @author Laurent GUERIN
  *  
  */
-
+@Deprecated
 public class XmlDbConfig
 {
 	private XmlDocument _xmlDoc = new XmlDocument(null);

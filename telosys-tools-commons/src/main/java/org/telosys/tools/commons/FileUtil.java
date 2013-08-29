@@ -15,12 +15,15 @@
  */
 package org.telosys.tools.commons ;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 
@@ -129,4 +132,21 @@ public class FileUtil {
             }
 		}
     }
+    
+	public static File getFileByClassPath(String fileName) {
+		URL url = FileUtil.class.getResource(fileName);
+		if ( url != null ) {
+			URI uri = null ;
+			try {
+				uri = url.toURI();
+			} catch (URISyntaxException e) {
+				throw new RuntimeException("Cannot convert URL to URI (file '" + fileName + "')");
+			}
+			return new File(uri);
+		}
+		else {
+			throw new RuntimeException("File '" + fileName + "' not found");
+		}
+	}
+    
 }

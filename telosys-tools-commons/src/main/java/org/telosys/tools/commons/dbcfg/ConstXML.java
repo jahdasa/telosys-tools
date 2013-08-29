@@ -23,6 +23,10 @@ package org.telosys.tools.commons.dbcfg;
  */
 class ConstXML {
 
+	 public final static String DATABASES_ROOT_ELEMENT = "databases";
+	 public final static String DATABASES_MAX_ID_ATTRIBUTE = "maxId";
+	 public final static String DATABASES_DEFAULT_ID_ATTRIBUTE = "defaultId";
+
 	 //--------------------------------------------------------------------------
 	 
 	 public final static String DB_ELEMENT = "db";
