@@ -18,12 +18,13 @@ public class ProjectConfigManager {
 
     private final static String PLUGIN_PROPERTIES_FILE = "telosys-tools.cfg";
 
-	/**
-	 * Table (cache) of projects configurations 
-	 * The key is the "Project Configuration File Name" 
-	 * The value is the "ProjectConfig" instance
-	 */
-	private static ProjectConfigs $cache = new ProjectConfigs();
+//	/**
+//	 * Table (cache) of projects configurations 
+//	 * The key is the "Project Configuration File Name" 
+//	 * The value is the "ProjectConfig" instance
+//	 */
+//    private static ProjectConfigs $cache = new ProjectConfigs();
+// cache REMOVED IN V 2.0.6
 	
 	
 	//-------------------------------------------------------------------------------------------------
@@ -38,51 +39,11 @@ public class ProjectConfigManager {
 		return PLUGIN_PROPERTIES_FILE ;
 	}
 	
-//	private static IProject $currentProject = null ;
-	
-	
-	//-------------------------------------------------------------------------------------------------
-//	/**
-//	 * Set or reset the configuration associated with the given file name 
-//	 * @param sConfigFileName
-//	 * @param prop
-//	 * @return
-//	 */
-//	private static ProjectConfig init( IProject project, Properties prop ) 
-//	{
-//		ProjectConfig projectConfig = null;
-//		if ( prop != null )
-//		{
-//			projectConfig = new ProjectConfig(project, prop);
-//		}
-//		else
-//		{
-//			projectConfig = new ProjectConfig();
-//		}
-//		String sConfigFileName = getProjectConfigFileName(project) ;
-//		$htConfigs.put(sConfigFileName, projectConfig);
-//		return projectConfig ;
-//	}
-	
-	//-------------------------------------------------------------------------------------------------
-//	private static void setProjectConfig(IProject project, ProjectConfig projectConfig)
-//	{
-//		if ( project == null )
-//		{
-//			MsgBox.error("setProjectConfig : project parameter is null ");
-//			return;
-//		}
-//		String sProjectName = project.getName();
-//		$htConfigs.put(sProjectName, projectConfig );
-//	}
-	
 	//-------------------------------------------------------------------------------------------------
 	/**
 	 * Returns the project configuration for the given Eclipse project<br>
-	 * The project config is search in the cache and loaded from file if not 
-	 * found in the cache
 	 * @param project
-	 * @return the project configuration or null if the config file doesn't exist
+	 * @return the project configuration or null if the configuration file doesn't exist
 	 */
 	public static ProjectConfig getProjectConfig( IProject project ) 
 	{
@@ -93,81 +54,26 @@ public class ProjectConfigManager {
 			return null ;
 		}
 		
-		ProjectConfig projectConfig = $cache.get(project);
-		if ( projectConfig != null )
-		{
-			PluginLogger.log("ProjectConfigManager.getProjectConfig(project) : Found in cache." );
-			return projectConfig ;
-		}
-		else
-		{
-			PluginLogger.log("ProjectConfigManager.getProjectConfig(project) : Not found in cache => load." );
-			// Not yet loaded => load it now 
-			loadProjectConfig(project) ;
-			projectConfig = $cache.get(project);
-			return projectConfig ;
-		}
-		
-//		String sProjectName = project.getName();
-//		Object obj = $htConfigs.get(sProjectName);
-//		if ( obj != null )
+//		ProjectConfig projectConfig = $cache.get(project);
+//		if ( projectConfig != null )
 //		{
-//			return (ProjectConfig) obj ;
-//		}
-//		else
-//		{
-//			// Not yet loaded => load it now 
-//			ProjectConfig projectConfig = null ;
-//			String sConfigFileName = getProjectConfigFileName(project);
-//			PropertiesManager propManager = new PropertiesManager(sConfigFileName) ;
-//			Properties prop = propManager.load();
-//			if ( prop == null )
-//			{
-//				MsgBox.error("Cannot load properties from file '" + sConfigFileName + "' \n"
-//						+ "The default values will be used." );
-//				projectConfig = new ProjectConfig();
-//			}
-//			else
-//			{
-//				projectConfig = new ProjectConfig(project, prop);
-//			}
-//			
-//			//--- Keep in the table
-//			$htConfigs.put(sProjectName, projectConfig);
-//			
+//			PluginLogger.log("ProjectConfigManager.getProjectConfig(project) : Found in cache." );
 //			return projectConfig ;
 //		}
-	}
-
-	//-------------------------------------------------------------------------------------------------
-//	/**
-//	 * Returns the "full path" file name ( i.e. "C:/aaa/bbb/workspace/project" )
-//	 * 
-//	 * @param project
-//	 * @return
-//	 */
-//	private static String getCurrentProjectDir( IResource project ) 
-//	{
-//		if ( project != null )
-//		{
-//			IPath path = project.getLocation();
-//			if ( path != null )
-//			{
-//				return path.toString();			
-//			}
-//			else
-//			{
-//				MsgBox.error("getCurrentProjectDir() : Project location is null " );
-//				return null ;
-//			}
-//		}
 //		else
 //		{
-//			MsgBox.error("getCurrentProjectDir() : Project is null " );
-//			return null ;
+//			PluginLogger.log("ProjectConfigManager.getProjectConfig(project) : Not found in cache => load." );
+//			// Not yet loaded => load it now 
+//			loadProjectConfig(project) ;
+//			projectConfig = $cache.get(project);
+//			return projectConfig ;
 //		}
-//	}
-	
+
+		PluginLogger.log("ProjectConfigManager.getProjectConfig(project) : Load config..." );
+		ProjectConfig projectConfig = loadProjectConfig(project) ;
+		return projectConfig ;
+	}
+
 	//-------------------------------------------------------------------------------------------------
 	/**
 	 * Returns the configuration file name for the given Eclipse project<br>
@@ -175,19 +81,8 @@ public class ProjectConfigManager {
 	 * @param project
 	 * @return the configuration file name
 	 */
-	//private static String getProjectConfigFileName( IResource resource ) 
 	public static String getProjectConfigFileName( IProject project ) 
 	{
-		//String sCurrentProjectDir = getCurrentProjectDir( project ) ;
-//		if ( ! ( resource instanceof IProject ) )
-//		{
-//			MsgBox.error("getProjectConfigFileName(IResource) : "+
-//					"resource is not an instance of IProject ");
-//			return null ;
-//		}
-//		String sCurrentProjectDir = EclipseProjUtil.getProjectDir( (IProject) resource ) ;
-		
-		//String sCurrentProjectDir = EclipseProjUtil.getProjectDir( project ) ;
 		String sCurrentProjectDir = getProjectConfigDir( project ) ;
 		if ( sCurrentProjectDir != null )
 		{
@@ -201,107 +96,8 @@ public class ProjectConfigManager {
 	}
 	
 	//-------------------------------------------------------------------------------------------------
-//	/**
-//	 * Set the current project ( or unset if the project is null ) 
-//	 * @param javaProject 
-//	 */
-//	public static void setCurrentProject( IJavaProject javaProject ) 
-//	{
-//		IResource resourceProject = null ;
-//		if ( javaProject != null )
-//		{
-//			resourceProject = javaProject.getResource() ;
-//		}
-//		setCurrentProject( resourceProject ) ;
-//	}
-	
-	//-------------------------------------------------------------------------------------------------
-//	/**
-//	 * Set the current project ( or unset if the project is null ) 
-//	 * @param project
-//	 */
-//	public static void setCurrentProject( IResource project ) 
-//	{
-//		if ( project != null )
-//		{
-//			if ( project instanceof IProject )
-//			{
-//				$currentProject = (IProject) project ;
-//			}
-//			else
-//			{
-//				MsgBox.error("setCurrentProject() : argument is not an instance of IProject" );
-//			}
-//		}
-//		
-//	}
-	
-	//-------------------------------------------------------------------------------------------------
-//	public static void setCurrentProjectConfigFileName( String sConfigFileName ) 
-//	{
-//		$sCurrentConfigFileName = sConfigFileName ;
-//	}
-	
-	//-------------------------------------------------------------------------------------------------
-//	protected static String getCurrentProjectConfigFileName() 
-//	{
-//		//return $sCurrentConfigFileName;
-//		return getProjectConfigFileName($currentProject);
-//	}
-	
-	//-------------------------------------------------------------------------------------------------
-//	/**
-//	 * Returns the current project name 
-//	 * @return
-//	 */
-//	private static String getCurrentProjectName() 
-//	{
-//		if ( $currentProject != null )
-//		{
-//			return $currentProject.getName();
-//		}
-//		else
-//		{
-//			return null ;
-//		}
-//	}
-	
-	//-------------------------------------------------------------------------------------------------
-//	/**
-//	 * Returns the instance of the current project configuration.
-//	 * @return
-//	 */
-//	public static ProjectConfig getCurrentProjectConfig() 
-//	{
-//		if ( $currentProject != null )
-//		{
-//			return getProjectConfig( $currentProject ); 
-//		}
-//		else
-//		{
-//			String sMsg = "Cannot get current project configuration ( no current project )" ;
-//			MsgBox.error( sMsg );
-//			throw new RuntimeException(sMsg);
-//		}
-//	}
-	
-	//-------------------------------------------------------------------------------------------------
-//	protected static Properties loadCurrentProjectProperties() 
-//	{
-//		if ( $currentProject != null )
-//		{
-//			return loadCurrentProjectProperties( $currentProject ); 
-//		}
-//		else
-//		{
-//			String sMsg = "Cannot get current project configuration ( no current project )" ;
-//			MsgBox.error( sMsg );
-//			throw new RuntimeException(sMsg);
-//		}
-//	}
-	//-------------------------------------------------------------------------------------------------
 	/**
-	 * Loads the project's configuration from the file  
+	 * Loads the project's configuration from the properties file  
 	 * @param project
 	 * @return
 	 */
@@ -319,16 +115,13 @@ public class ProjectConfigManager {
 			{
 				// Properties loaded
 				ProjectConfig projectConfig = new ProjectConfig(project, prop, sConfigFileName);
-				// Store in cache
-				$cache.put(project,projectConfig);
+//				// Store in cache
+//				$cache.put(project,projectConfig);
 				return projectConfig ;
 			}
 			else
 			{
-				// File not found => no properties loaded
-//				MsgBox.info( "Configuration file not found.\n\n" 
-//						+ "(" + sConfigFileName + ")\n\n"
-//						+ "Cannot load properties.\n\n" );
+				// Properties file not found, no properties loaded : use default values
 				ProjectConfig projectConfig = new ProjectConfig(project, null, sConfigFileName);
 				return projectConfig ;
 			}
@@ -343,7 +136,8 @@ public class ProjectConfigManager {
 	}
 	
 	//-------------------------------------------------------------------------------------------------
-	public static ProjectConfig saveProjectConfig( IProject project, Properties prop ) 
+	//public static ProjectConfig saveProjectConfig( IProject project, Properties prop ) 
+	public static void saveProjectConfig( IProject project, Properties prop ) 
 	{
 		PluginLogger.log("ProjectConfigManager.saveProjectConfig(project, prop)..." );
 		String sConfigFileName = getProjectConfigFileName(project);
@@ -356,18 +150,17 @@ public class ProjectConfigManager {
 			File file = new File(sConfigFileName);
 			EclipseWksUtil.refresh(file);
 			
-			//--- Update the configuration cache
-			ProjectConfig projectConfig = new ProjectConfig(project, prop, sConfigFileName);
-			$cache.put(project,projectConfig);
-			return projectConfig ;
+//			//--- Update the configuration cache
+//			ProjectConfig projectConfig = new ProjectConfig(project, prop, sConfigFileName);
+//			$cache.put(project,projectConfig);
+//			return projectConfig ;
 		}
 		else
 		{
 			PluginLogger.log("ProjectConfigManager.saveProjectConfig(project, prop) : no config file name " );
 			String sMsg = "Cannot save current project configuration" ;
 			MsgBox.error( sMsg );
-			//throw new RuntimeException(sMsg);
-			return null ;
+//			return null ;
 		}
 	}
 	

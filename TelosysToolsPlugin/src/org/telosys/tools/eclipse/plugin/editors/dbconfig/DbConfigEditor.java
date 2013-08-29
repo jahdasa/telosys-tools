@@ -170,17 +170,6 @@ public class DbConfigEditor extends FormEditor
 		return _file.getProject() ;
 	}
 	
-//	public ProjectConfig getProjectConfig ()
-//	{
-//		PluginLogger.log(this, "getProjectConfig()..." );
-//		return ProjectConfigManager.getProjectConfig( getProject() );
-//	}
-	
-//	public Document getXmlDocument ()
-//	{
-//		return _xmlDocument ;
-//	}
-	
 	public XmlDbConfig getXmlDbConfig()
 	{
 		return _xmlDbConfig ;

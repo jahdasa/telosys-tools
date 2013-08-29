@@ -281,9 +281,12 @@ public class EclipseProjUtil {
     {
     	try {
     		return project.hasNature(JavaCore.NATURE_ID) ;
-		} catch (CoreException e) {
-        	MsgBox.error("Cannot get project nature (project is null or not open) \n\n isJavaProject(project) ");
+		} catch (CoreException ce) {
+        	MsgBox.error("Cannot get project nature (project is null or not open) \n\n isJavaProject(project) ", ce);
         	return false ;
+		} catch (Exception e) {
+	    	MsgBox.error("Cannot get project nature\n\n isJavaProject(project) ", e);
+	    	return false ;
 		}
     }
     //------------------------------------------------------------------------------------------------

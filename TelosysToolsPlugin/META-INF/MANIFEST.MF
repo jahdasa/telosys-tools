@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Telosys Tools
 Bundle-SymbolicName: org.telosys.tools.eclipse.plugin;singleton:=true
-Bundle-Version: 2.0.5
+Bundle-Version: 2.0.6
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
  org.eclipse.jdt.core,
@@ -15,10 +15,10 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.jface.text;bundle-version="3.6.1"
 Bundle-Activator: org.telosys.tools.eclipse.plugin.TelosysTools
 Bundle-ClassPath: .,
- lib/telosys-tools-commons-2.0.5.jar,
- lib/telosys-tools-database-2.0.5.jar,
- lib/telosys-tools-repository-2.0.3.jar,
- lib/telosys-tools-generator-2.0.5.jar,
+ lib/telosys-tools-commons-2.0.6.jar,
+ lib/telosys-tools-database-2.0.6.jar,
+ lib/telosys-tools-repository-2.0.6.jar,
+ lib/telosys-tools-generator-2.0.6.jar,
  lib/velocity-1.7-dep.jar,
  lib/json-simple-1.1.1.jar
 Bundle-Vendor: Telosys Project

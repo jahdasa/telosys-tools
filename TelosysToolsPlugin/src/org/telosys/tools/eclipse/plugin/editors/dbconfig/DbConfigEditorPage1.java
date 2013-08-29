@@ -359,23 +359,28 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 		int labelWidth = 100 ;
 		int textWidth  = 320 ;
 		
-	    _Id       = createTextWithLabel(container, x, y, "Id", false, labelWidth, textWidth ) ;  
+	    _Id       = createTextWithLabelAndListener(container, x, y, "Id", false, labelWidth, textWidth ) ;  
 	    y = y + yGap ;
-	    _Name     = createTextWithLabel(container, x, y, "Name", false, labelWidth, textWidth ) ;  
+	    _Name     = createTextWithLabelAndListener(container, x, y, "Name", true, labelWidth, textWidth ) ;  
 	    y = y + yGap ;
-	    _Driver   = createTextWithLabel(container, x, y, "Driver", true, labelWidth, textWidth ) ;  
+	    _Driver   = createTextWithLabelAndListener(container, x, y, "Driver", true, labelWidth, textWidth ) ;  
 	    y = y + yGap ;
-	    _Url      = createTextWithLabel(container, x, y, "URL", true, labelWidth, textWidth ) ;  
+	    _Url      = createTextWithLabelAndListener(container, x, y, "URL", true, labelWidth, textWidth ) ;  
 	    y = y + yGap ;
-	    _Isolation = createTextWithLabel(container, x, y, "Isolation level", true, labelWidth, textWidth ) ;  
+	    
+	    _User     = createTextWithLabelAndListener(container, x, y, "User", true, labelWidth, textWidth ) ;  
 	    y = y + yGap ;
-	    _PoolSize  = createTextWithLabel(container, x, y, "Pool size", true, labelWidth, textWidth ) ;  
+	    _Password = createTextWithLabelAndListener(container, x, y, "Password", true, labelWidth, textWidth ) ;  
 	    y = y + yGap ;
 
-	    _User     = createTextWithLabel(container, x, y, "User", true, labelWidth, textWidth ) ;  
+	    createSingleLabel(container, x, y, "Configuration below is useful only for the framework : ", labelWidth+textWidth );
 	    y = y + yGap ;
-	    _Password = createTextWithLabel(container, x, y, "Password", true, labelWidth, textWidth ) ;  
+	    
+	    _Isolation = createTextWithLabelAndListener(container, x, y, "Isolation level", true, labelWidth, textWidth ) ;  
 	    y = y + yGap ;
+	    _PoolSize  = createTextWithLabelAndListener(container, x, y, "Pool size", true, labelWidth, textWidth ) ;  
+	    y = y + yGap ;
+
 	}
 	
 	//----------------------------------------------------------------------------------------------
@@ -443,6 +448,10 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 	}
 
 	//----------------------------------------------------------------------------------------------
+	/**
+	 * Tab "Meta-data"
+	 * @param tabFolder
+	 */
 	private void createTabFolder3(TabFolder tabFolder) 
 	{
 		log(this, "createTabFolder3() ..." );
@@ -463,6 +472,10 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 
 	}
 	//----------------------------------------------------------------------------------------------
+	/**
+	 * Creates the set of label + input field
+	 * @param container
+	 */
 	private void createTabFolder3Panel1(Composite container) 
 	{
 		GridData gdPanel = new GridData();
@@ -481,24 +494,20 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 			gd.widthHint = 260;
 			gd.verticalAlignment = SWT.BEGINNING ;
 
-			new Label(panel, SWT.NONE).setText( "Catalog : ");
-			_tMetaDataCatalog = new Text(panel, SWT.BORDER);
-			_tMetaDataCatalog.setLayoutData (gd);		
+			_tMetaDataCatalog = createTextWithLabelAndListener(panel, "Catalog", gd, true );
 	
-			new Label(panel, SWT.NONE).setText( "Schema : ");
-			_tMetaDataSchema = new Text(panel, SWT.BORDER);
-			_tMetaDataSchema.setLayoutData (gd);		
+			_tMetaDataSchema = createTextWithLabelAndListener(panel, "Schema", gd, true );
 	
-			new Label(panel, SWT.NONE).setText( "Table name pattern : ");
-			_tMetaDataTablePattern = new Text(panel, SWT.BORDER);
-			_tMetaDataTablePattern.setLayoutData (gd);		
+			_tMetaDataTablePattern = createTextWithLabelAndListener(panel, "Table name pattern", gd, true );
 	
-			new Label(panel, SWT.NONE).setText( "Table types : ");
-			_tMetaDataTableTypes = new Text(panel, SWT.BORDER);
-			_tMetaDataTableTypes.setLayoutData (gd);
+			_tMetaDataTableTypes = createTextWithLabelAndListener(panel, "Table types", gd, true );
 		}
 	}
 	//----------------------------------------------------------------------------------------------
+	/**
+	 * Creates the 1rst set of buttons 
+	 * @param container
+	 */
 	private void createTabFolder3Panel2(Composite container) 
 	{
 		GridData gdPanel = new GridData();
@@ -580,6 +589,10 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 		}
 	}
 	//----------------------------------------------------------------------------------------------
+	/**
+	 * Creates the 2nd set of buttons
+	 * @param container
+	 */
 	private void createTabFolder3Panel3(Composite container) 
 	{
 		GridData gdPanel = new GridData();
@@ -640,34 +653,64 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 		
 		createTabFolder3Panel3(container);
 		
-		//--- ROW 2 ( Span 3 )
-		{
-			GridData gd = new GridData();
-			gd.widthHint  = 700;
-			gd.heightHint = 340 ;
-			gd.horizontalSpan = 3 ;
-			_tMetaData = new Text (container, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL );
-			
-			_tMetaData.setLayoutData(gd);
-		}
+		//--- ROW 2 ( Span 3 ) : the text area used to print the result
+		GridData gd = new GridData();
+		gd.widthHint  = 700;
+		gd.heightHint = 340 ;
+		gd.horizontalSpan = 3 ;
+		_tMetaData = new Text (container, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL );
+		
+		_tMetaData.setLayoutData(gd);
 	}
 	
 	//----------------------------------------------------------------------------------------------
-	private Text createTextWithLabel(Composite container, int x, int y, String sLabel, boolean b, int labelWidth, int textWidth ) 
+	//----------------------------------------------------------------------------------------------
+	private Text createTextWithLabelAndListener(Composite container, int x, int y, String sLabel, boolean b, int labelWidth, int textWidth ) 
 	{
-	     Label label = new Label(container, SWT.NONE);
-	     label.setText( sLabel + " : ");
-	     label.setBounds(x, y, labelWidth, TEXT_HEIGHT);
-	     //label.setLocation(x, y);
-	     
-	     Text text = new Text(container, SWT.BORDER);
-	     text.setBounds(x + labelWidth + 10 , y, 320, TEXT_HEIGHT);
-	     //text.setLocation(x + 80, y);
-	     text.setEnabled(b);
-	     
-	     return text ;
+		Text text = createTextWithLabel( container,  x,  y,  sLabel,  b,  labelWidth,  textWidth ); 
+		setModifyListener(text);
+		return text ;
 	}
 	
+	private Text createTextWithLabel(Composite container, int x, int y, String sLabel, boolean b, int labelWidth, int textWidth ) 
+	{
+		Label label = new Label(container, SWT.NONE);
+		label.setText( sLabel + " : ");
+		label.setBounds(x, y, labelWidth, TEXT_HEIGHT);
+		//label.setLocation(x, y);
+		 
+		Text text = new Text(container, SWT.BORDER);
+		text.setBounds(x + labelWidth + 10 , y, 320, TEXT_HEIGHT);
+		//text.setLocation(x + 80, y);
+		text.setEnabled(b);
+		 
+		return text ;
+	}
+	private void createSingleLabel(Composite container, int x, int y, String labelText, int labelWidth ) 
+	{
+		Label label ;
+		
+		label = new Label(container, SWT.NONE);
+		label.setText( labelText );
+		label.setBounds(x, y, labelWidth, TEXT_HEIGHT);
+		 
+//		label = new Label(container, SWT.NONE);
+//		label.setText( label2 );
+//		label.setBounds(x + labelWidth1 + 10 , y, 320, TEXT_HEIGHT);
+	}
+	//----------------------------------------------------------------------------------------------
+	private Text createTextWithLabelAndListener(Composite container, String sLabel, GridData gridData, boolean b ) 
+	{
+		Label label = new Label(container, SWT.NONE);
+		label.setText( sLabel + " : ");
+		
+		Text text = new Text(container, SWT.BORDER);
+		text.setLayoutData(gridData);
+		text.setEnabled(b);
+		//setModifyListener(text, "");
+		setModifyListener(text);
+		return text ;
+	}	
 	//----------------------------------------------------------------------------------------------
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorPart#init(org.eclipse.ui.IEditorSite, org.eclipse.ui.IEditorInput)
@@ -681,7 +724,7 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 	
 	
     //------------------------------------------------------------------------------------------------------
-	private void loadComboBases(Combo comboBases, XmlDbConfig xmlDbConfig )
+	private void loadComboDatabases(Combo comboBases, XmlDbConfig xmlDbConfig )
     {
 		log(this, "loadComboBases()");
         comboBases.removeAll(); 
@@ -697,6 +740,10 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
         		log(this, "loadComboBases() : add " + sItem );
         	}
         }
+        if ( comboBases.getItemCount() > 0 ) {
+        	comboBases.select(0);
+        	selectDatabase(comboBases);
+        }
     }
 	
     private void populateDatabases() 
@@ -706,7 +753,7 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     	{
     		if ( _ComboDatabases != null )
     		{
-        		loadComboBases(_ComboDatabases, xmlDbConfig);
+        		loadComboDatabases(_ComboDatabases, xmlDbConfig);
     		}
     		else
     		{
@@ -722,6 +769,8 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     
 	private void clearFields()
 	{
+		_bPopulateInProgress = true ;
+		
 		//--- Tab 1
 		_Id.setText("");
 		_Name.setText("");
@@ -745,6 +794,16 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 		_InfoCatalogSepar.setText( "" );
 		_InfoSchemaTerm.setText( "" );
 		_InfoSearchEscape.setText( "" );
+
+		//--- Tab 3
+		_tMetaDataCatalog.setText("");
+		_tMetaDataSchema.setText("");
+		_tMetaDataTablePattern.setText("");
+		_tMetaDataTableTypes.setText("");
+		_tMetaData.setText("");
+
+		//--- Tab
+		_bPopulateInProgress = false ;
 	}
 	
 	private String nn ( String s )
@@ -775,9 +834,9 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 	}
 	
 	
-	private void populateFields( String sDbId )
+	private void populateDatabaseConfigFields( String sDbId )
 	{
-		log(this, "populateFields('" + sDbId + "')");
+		log(this, "populateDatabaseConfigFields('" + sDbId + "')");
 		
 		_bPopulateInProgress = true ;
 		
@@ -824,33 +883,56 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
         {
             public void widgetSelected(SelectionEvent event)
             {
-            	clearFields();
-            	
         		//log(this, "Tables combo listener : widgetSelected()" );
                 Combo combo = (Combo) event.widget ;
-                String sDbId = "";
-                String s = combo.getText();
-                if ( s != null )
-                {
-                    String[] parts = StrUtil.split(s, '-');
-                    if ( parts.length > 0 )
-                    {
-                    	sDbId = parts[0].trim();
-                    }
-                }
-        		log(this, "Databases combo listener : widgetSelected() : DB id = " + sDbId );
-                
-        		//--- Populate the database fields
-        		populateFields( sDbId );
+//                String sDbId = "";
+//                String s = combo.getText();
+//                if ( s != null )
+//                {
+//                    String[] parts = StrUtil.split(s, '-');
+//                    if ( parts.length > 0 )
+//                    {
+//                    	sDbId = parts[0].trim();
+//                    }
+//                }
+//        		log(this, "Databases combo listener : widgetSelected() : DB id = " + sDbId );
+//                
+//            	clearFields();
+//            	
+//        		//--- Populate the database fields
+//        		populateDatabaseConfigFields( sDbId );
         		
+        		selectDatabase(combo);
             }
         });
     }
     
-    private void setModifyListener(Text text, String sAttributeName )
+    private void selectDatabase(Combo databasesCombo)
+    {
+    	//--- Get database id from the current selected text
+        String sDbId = "";
+        String s = databasesCombo.getText();
+        if ( s != null )
+        {
+            String[] parts = StrUtil.split(s, '-');
+            if ( parts.length > 0 )
+            {
+            	sDbId = parts[0].trim();
+            }
+        }
+		log(this, "Databases combo listener : widgetSelected() : DB id = " + sDbId );
+        
+    	clearFields();
+    	
+		//--- Populate the database fields
+		populateDatabaseConfigFields( sDbId );
+    }    
+    
+//    private void setModifyListener(Text text, String sAttributeName )
+    private void setModifyListener(Text text)
     {
     	//--- Set the XML attribute name associated with this Text Widget
-    	text.setData(sAttributeName);
+    	//text.setData(sAttributeName);
     	
     	//--- Add the listener
     	text.addModifyListener(new ModifyListener()
@@ -865,6 +947,10 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 	        		log(this, "Text modified : '" + sTextValue + "'" );
 	        		//--- Update the model 
 	        		// ...
+	        		String beanAttributeName = (String) text.getData();
+	        		// TODO
+	        		// DatabaseConfigBean bean = _currentDatabaseConfigBean ;
+	        		
 					setDirty();
 				}
 				else
@@ -935,25 +1021,38 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     
     /**
      * Returns the libraries where to search the JDBC driver
-     * @return
+     * @return list of libraries (never null)
      */
     private String[] getLibraries() 
     {
+    	log("getLibraries()");    	
         IProject project = getProject();
+    	log("getLibraries() : project name = '" + project.getName() + "' " );    	
         //--- Get libraries where to search the JDBC Driver
-        //String[] libraries = null ;
-        String[] librariesFromFolder = getLibrariesFromFolder() ;
+        String[] librariesFromFolder = getLibrariesFromLibFolder(project) ;
+    	log("getLibraries() : librariesFromFolder.length = " + librariesFromFolder.length );    	
         if ( EclipseProjUtil.isJavaProject(project) ) {
+        	log("getLibraries() : Java project");    	
         	// if Java project : use project build path
         	String[] librariesFromJavaBuildPath = EclipseProjUtil.getClassPathLibraries(project);
-        	return combine(librariesFromFolder, librariesFromJavaBuildPath);
+        	if ( librariesFromJavaBuildPath != null ) {
+            	log("getLibraries() : librariesFromJavaBuildPath.length = " + librariesFromJavaBuildPath.length );    	
+            	return combine(librariesFromFolder, librariesFromJavaBuildPath);
+        	}
+        	else {
+            	log("getLibraries() : No libraried from Java Build Path");    	
+                return librariesFromFolder ;
+        	}
         }
         else {
+        	log("getLibraries() : Not a Java project");    	
             return librariesFromFolder ;
         }
     }
 
     private String[] combine(String[] a, String[] b){
+    	log("combine(a[" + a.length + "), b["+ b.length+ "])" );    	
+    	
         String[] result = new String[ a.length + b.length ];
         System.arraycopy(a, 0, result, 0, a.length);
         System.arraycopy(b, 0, result, a.length, b.length);
@@ -964,12 +1063,18 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
      * Returns the libraries located in the Telosys Tools "lib" folder
      * @return
      */
-    private String[] getLibrariesFromFolder() 
+    private String[] getLibrariesFromLibFolder(IProject project) 
     {
+    	log("getLibrariesFromFolder()");    	
     	String[] voidLib = new String[0];
-    	IProject project = getProject() ;
 		ProjectConfig projectConfig = ProjectConfigManager.getProjectConfig( project );	
+		if ( null == projectConfig ) {
+	    	log("getLibrariesFromFolder() : project configuration is NULL !");    	
+        	MsgBox.error("Cannot get project configuration !\n Check project properties / Telosys Tools");
+        	return voidLib ;
+		}
         String dir  = projectConfig.getLibrariesFolder();
+    	log("getLibrariesFromFolder() : folder = '" + dir + "'");    	
         
         IResource resource = EclipseProjUtil.getResource(project, dir);
         if ( null == resource ) {
@@ -989,8 +1094,8 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 		IResource[] members = null ;
 		try {
 			members = folder.members();
-		} catch (CoreException e) {
-        	MsgBox.error("Cannot get files from folder '"+dir+"' ", e);
+		} catch (CoreException ce) {
+        	MsgBox.error("Cannot get files from folder '"+dir+"' (CoreException)", ce);
         	return voidLib ;
 		}
 		
@@ -1007,6 +1112,7 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 				}
 			}
 		}
+    	log("getLibrariesFromFolder() : libraries size = " + libraries.size() );    	
 		return libraries.toArray(new String[0]);
     }
     
@@ -1127,6 +1233,7 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
      * Show the project's libraries defined in the "Java Build Path"
      */
     private void showLibraries() {
+    	log("--- Show libraries");
     	StringBuffer sb = new StringBuffer();
     	sb.append("Libraries : \n\n") ;
     	String[] libraries = getLibraries();
@@ -1138,6 +1245,7 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     	else {
     		sb.append("No library !\n");
     	}
+    	log("--- Show libraries : " + libraries.length );
     	MsgBox.info(sb.toString());
     }
     
@@ -1212,6 +1320,7 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 			    con.close();
 			    
 			} catch (SQLException e) {
+		    	logException(e);				
 				MsgBox.error("SQLException : " + e.getMessage() );
 			} finally {
 				closeConnection(con);
@@ -1242,6 +1351,7 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 				dbmd = con.getMetaData();		
 
 			} catch (SQLException e) {
+		    	logException(e);
 				MsgBox.error("Cannot get meta-data ! ", e );
 			} 
 			
@@ -1253,6 +1363,7 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 				tables = metaDataManager.getTables(dbmd, sCatalog, sSchema, sTableNamePattern, tableTypes );
 			} catch (SQLException e) {
 				tables = null ;
+		    	logException(e);
 				MsgBox.error("Cannot get tables from meta-data ! ", e );
 			} 
 			
@@ -1300,9 +1411,14 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 				List<ColumnMetaData> columns = metaDataManager.getColumns(dbmd, sCatalog, sSchema, sTableName );
 				printMetaDataColumns(sTableName, columns);
 			} catch (SQLException e) {
+		    	logException(e);
 				MsgBox.error("Cannot get columns for table '" + sTableName + "'", e );
 				break;
-			} 
+			} catch (Exception e) {
+		    	logException(e);
+				MsgBox.error("Cannot get columns for table '" + sTableName + "'", e );
+				break;
+			}
 		}
     }
     
@@ -1316,6 +1432,11 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 				List<PrimaryKeyColumnMetaData> columns = metaDataManager.getPKColumns(dbmd, sCatalog, sSchema, sTableName );
 				printMetaDataPrimaryKeys(sTableName, columns);
 			} catch (SQLException e) {
+		    	logException(e);
+				MsgBox.error("Cannot get Primary Key for table '" + sTableName + "'", e );
+				break;
+			} catch (Exception e) {
+		    	logException(e);
 				MsgBox.error("Cannot get Primary Key for table '" + sTableName + "'", e );
 				break;
 			} 
@@ -1332,6 +1453,11 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 				List<ForeignKeyColumnMetaData> columns = metaDataManager.getFKColumns(dbmd, sCatalog, sSchema, sTableName );
 				printMetaDataForeignKeys(sTableName, columns);
 			} catch (SQLException e) {
+		    	logException(e);
+				MsgBox.error("Cannot get Foreign Keys for table '" + sTableName + "'", e );
+				break;
+			} catch (Exception e) {
+		    	logException(e);
 				MsgBox.error("Cannot get Foreign Keys for table '" + sTableName + "'", e );
 				break;
 			} 
@@ -1345,6 +1471,10 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 			List<String> list = metaDataManager.getCatalogs(dbmd);
 			printMetaDataCatalogs(list);
 		} catch (SQLException e) {
+	    	logException(e);
+			MsgBox.error("Cannot get catalogs", e );
+		} catch (Exception e) {
+	    	logException(e);
 			MsgBox.error("Cannot get catalogs", e );
 		}
     }
@@ -1362,6 +1492,10 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 			List<SchemaMetaData> list = metaDataManager.getSchemas(dbmd);
 			printMetaDataSchemas(list);
 		} catch (SQLException e) {
+	    	logException(e);
+			MsgBox.error("Cannot get schemas", e );
+		} catch (Exception e) {
+	    	logException(e);
 			MsgBox.error("Cannot get schemas", e );
 		}
     }
@@ -1515,6 +1649,7 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 				} 
 				catch (Exception e)  // Catch ALL exceptions 
 				{
+			    	logException(e);					
 					MsgBox.error("Exception : " + e.getClass() + " \n\n" + e.getMessage() ) ;
 				} 
 				finally {
