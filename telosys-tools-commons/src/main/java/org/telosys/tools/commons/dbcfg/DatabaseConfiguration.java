@@ -15,6 +15,8 @@
  */
 package org.telosys.tools.commons.dbcfg;
 
+import java.util.StringTokenizer;
+
 
 /**
  * Class for a database configuration ( loaded from the "databases.dbcfg" XML file ) 
@@ -161,6 +163,16 @@ public class DatabaseConfiguration
     }
 	public void setMetadataTableTypes(String metadataTableTypes) {
 		this.metadataTableTypes = metadataTableTypes;
+	}
+	public String[] getMetadataTableTypesArray() {
+	    StringTokenizer st = new StringTokenizer(metadataTableTypes);
+	    int iCount = st.countTokens();
+	    String[] array = new String[iCount];
+	    for ( int i = 0 ; i < iCount ; i++ )
+	    {
+	    	array[i] = st.nextToken();
+	    }
+	    return array ;
 	}
 
     public String toString()

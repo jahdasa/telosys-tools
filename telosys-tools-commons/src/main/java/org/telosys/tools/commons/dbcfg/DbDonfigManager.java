@@ -29,6 +29,9 @@ import org.w3c.dom.NodeList;
 
 public class DbDonfigManager {
 
+	public final static String USER     = "user";
+	public final static String PASSWORD = "password";
+
 	private final File file ;
 
 	public DbDonfigManager(File file) {
@@ -136,19 +139,34 @@ public class DbDonfigManager {
                 {
                     Element elemProperty = (Element) node;
 
-                    String sName  = elemProperty.getAttribute(ConstXML.DB_PROPERTY_NAME_ATTRIBUTE);
-                    String sValue = elemProperty.getAttribute(ConstXML.DB_PROPERTY_VALUE_ATTRIBUTE);
-                    properties.setProperty(sName, sValue);
+                    String name  = elemProperty.getAttribute(ConstXML.DB_PROPERTY_NAME_ATTRIBUTE);
+                    String value = elemProperty.getAttribute(ConstXML.DB_PROPERTY_VALUE_ATTRIBUTE);
+                    properties.setProperty(name, value);
                     
-                    if ( "user".equals(sName) ) {
-                    	databaseConfiguration.setUser(sValue);
+                    if ( USER.equals(name) ) {
+                    	databaseConfiguration.setUser(value);
                     }
-                    if ( "password".equals(sName) ) {
-                    	databaseConfiguration.setPassword(sValue);
+                    if ( PASSWORD.equals(name) ) {
+                    	databaseConfiguration.setPassword(value);
                     }
                 }
             }
         }
+        
+        //--- Database metadata
+        NodeList metadataList = dbElem.getElementsByTagName(ConstXML.DB_METADATA_ELEMENT);
+        if (metadataList.getLength() > 0)
+        {
+            if (metadataList.item(0) instanceof Element)
+            {
+                Element elemMetadata = (Element) metadataList.item(0);
+                databaseConfiguration.setMetadataCatalog(elemMetadata.getAttribute(ConstXML.DB_METADATA_ATTR_CATALOG));
+                databaseConfiguration.setMetadataSchema(elemMetadata.getAttribute(ConstXML.DB_METADATA_ATTR_SCHEMA));
+                databaseConfiguration.setMetadataTableNamePattern(elemMetadata.getAttribute(ConstXML.DB_METADATA_ATTR_TABLE_NAME_PATTERN));
+                databaseConfiguration.setMetadataTableTypes(elemMetadata.getAttribute(ConstXML.DB_METADATA_ATTR_TABLE_TYPES));                
+            }
+        }
+        
         return databaseConfiguration ;
 	}
 
@@ -163,9 +181,12 @@ public class DbDonfigManager {
 		dbElement.setAttribute(ConstXML.DB_POOLSIZE_ATTRIBUTE,        ""+databaseConfiguration.getPoolSize() );
         
 		//--- <property name="user"      value="xxx" />
-		dbElement.appendChild( createPropertyElement(document, "user",     databaseConfiguration.getUser() ) );
+		dbElement.appendChild( createPropertyElement(document, USER,     databaseConfiguration.getUser() ) );
 		//--- <property name="password"  value="xxx" />
-		dbElement.appendChild( createPropertyElement(document, "password", databaseConfiguration.getPassword() ) );
+		dbElement.appendChild( createPropertyElement(document, PASSWORD, databaseConfiguration.getPassword() ) );
+		
+		//--- <metadata catalog="" schema="ROOT" table-name-pattern="%" table-types="TABLE   VIEW  " />
+		dbElement.appendChild( createMetaDataElement(document, databaseConfiguration ) );
 	}
 	
 	private Element createPropertyElement(Document document, String name, String value) throws TelosysToolsException {
@@ -173,5 +194,14 @@ public class DbDonfigManager {
 		propertyElement.setAttribute(ConstXML.DB_PROPERTY_NAME_ATTRIBUTE,  name );
 		propertyElement.setAttribute(ConstXML.DB_PROPERTY_VALUE_ATTRIBUTE, value );
 		return propertyElement ;
+	}
+
+	private Element createMetaDataElement(Document document, DatabaseConfiguration databaseConfiguration) throws TelosysToolsException {
+		Element e = document.createElement(ConstXML.DB_METADATA_ELEMENT );
+		e.setAttribute(ConstXML.DB_METADATA_ATTR_CATALOG, databaseConfiguration.getMetadataCatalog() );
+		e.setAttribute(ConstXML.DB_METADATA_ATTR_SCHEMA, databaseConfiguration.getMetadataSchema() );
+		e.setAttribute(ConstXML.DB_METADATA_ATTR_TABLE_NAME_PATTERN, databaseConfiguration.getMetadataTableNamePattern() );
+		e.setAttribute(ConstXML.DB_METADATA_ATTR_TABLE_TYPES, databaseConfiguration.getMetadataTableTypes() );
+		return e ;
 	}
 }

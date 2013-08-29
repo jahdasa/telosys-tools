@@ -65,7 +65,7 @@
 		poolSize       = "3" >
 			<property name="user"      value="root" />
 			<property name="password"  value="secret" />
-			<metadata catalog=""  schema=""  table-name-pattern="%"  table-types="TABLE   VIEW  " />
+			<metadata catalog=""  schema=""  table-name-pattern="%"  table-types=" TABLE    " />
 	</db>
 
 	

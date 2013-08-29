@@ -32,6 +32,16 @@ public class DbConfigManagerTest extends TestCase {
 		}
 	}
 
+	public String toString(String[] array) {
+		StringBuffer sb = new StringBuffer();
+		for ( String s : array ) {
+			sb.append("'");
+			sb.append(s);
+			sb.append("' ");
+		}
+		return sb.toString();
+	}
+	
 	public void print(DatabaseConfiguration databaseConfiguration) {
 		System.out.println(". id        = " + databaseConfiguration.getDatabaseId() );
 		System.out.println(". name      = " + databaseConfiguration.getDatabaseName() );
@@ -42,6 +52,13 @@ public class DbConfigManagerTest extends TestCase {
 
 		System.out.println(". isolation = " + databaseConfiguration.getIsolationLevel() );
 		System.out.println(". pool size = " + databaseConfiguration.getPoolSize() );
+
+		System.out.println(". metadata : "  );
+		System.out.println("  . catalog = " + databaseConfiguration.getMetadataCatalog() );
+		System.out.println("  . schema  = " + databaseConfiguration.getMetadataSchema() );
+		System.out.println("  . pattern = " + databaseConfiguration.getMetadataTableNamePattern() );
+		System.out.println("  . types   = " + databaseConfiguration.getMetadataTableTypes() );
+		System.out.println("  . types[] = " + toString(databaseConfiguration.getMetadataTableTypesArray()) );
 	}
 
 	/**
@@ -97,6 +114,8 @@ public class DbConfigManagerTest extends TestCase {
 		System.out.println("UPDATED CONFIG : ");
 		databaseConfiguration.setDatabaseName("New name");
 		databaseConfiguration.setDriverClass("my.new.driver");
+		databaseConfiguration.setUser(databaseConfiguration.getUser()+"-new") ;
+		databaseConfiguration.setPassword(databaseConfiguration.getPassword()+"-new") ;
 		print(databaseConfiguration) ;
 		
 		//--- Save 
@@ -137,6 +156,14 @@ public class DbConfigManagerTest extends TestCase {
 		assertNotNull(databaseConfiguration);
 		assertEquals(2, databaseConfiguration.getDatabaseId());
 		
+		//--- Save 
+		System.out.println("SAVING...");
+		File out = FileUtil.getFileByClassPath("/dbcfg/databases-test2-out.dbcfg");
+		print(out);
+		
+		dbDonfigManager = new DbDonfigManager(out);
+		dbDonfigManager.save(databasesConfigurations);
+		System.out.println("SAVED.");
 	}
 	
 }
