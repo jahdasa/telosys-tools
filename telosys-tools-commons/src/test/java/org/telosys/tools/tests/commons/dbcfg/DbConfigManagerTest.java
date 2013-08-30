@@ -9,7 +9,7 @@ import org.telosys.tools.commons.FileUtil;
 import org.telosys.tools.commons.TelosysToolsException;
 import org.telosys.tools.commons.dbcfg.DatabaseConfiguration;
 import org.telosys.tools.commons.dbcfg.DatabasesConfigurations;
-import org.telosys.tools.commons.dbcfg.DbDonfigManager;
+import org.telosys.tools.commons.dbcfg.DbConfigManager;
 
 public class DbConfigManagerTest extends TestCase {
 
@@ -70,7 +70,7 @@ public class DbConfigManagerTest extends TestCase {
 		File file = FileUtil.getFileByClassPath("/dbcfg/databases-test0.dbcfg");
 		print(file);
 		
-		DbDonfigManager dbDonfigManager = new DbDonfigManager(file);
+		DbConfigManager dbDonfigManager = new DbConfigManager(file);
 		DatabasesConfigurations databasesConfigurations = dbDonfigManager.load();
 		
 		print(databasesConfigurations);
@@ -96,7 +96,7 @@ public class DbConfigManagerTest extends TestCase {
 		File file = FileUtil.getFileByClassPath("/dbcfg/databases-test1.dbcfg");
 		print(file);
 		
-		DbDonfigManager dbDonfigManager = new DbDonfigManager(file);
+		DbConfigManager dbDonfigManager = new DbConfigManager(file);
 		DatabasesConfigurations databasesConfigurations = dbDonfigManager.load();
 		
 		print(databasesConfigurations);
@@ -123,7 +123,7 @@ public class DbConfigManagerTest extends TestCase {
 		File out = FileUtil.getFileByClassPath("/dbcfg/databases-test1-out.dbcfg");
 		print(out);
 		
-		dbDonfigManager = new DbDonfigManager(out);
+		dbDonfigManager = new DbConfigManager(out);
 		dbDonfigManager.save(databasesConfigurations);
 		System.out.println("SAVED.");
 	}
@@ -138,7 +138,7 @@ public class DbConfigManagerTest extends TestCase {
 		File file = FileUtil.getFileByClassPath("/dbcfg/databases-test2.dbcfg");
 		print(file);
 		
-		DbDonfigManager dbDonfigManager = new DbDonfigManager(file);
+		DbConfigManager dbDonfigManager = new DbConfigManager(file);
 		DatabasesConfigurations databasesConfigurations = dbDonfigManager.load();
 		
 		print(databasesConfigurations);
@@ -161,7 +161,7 @@ public class DbConfigManagerTest extends TestCase {
 		File out = FileUtil.getFileByClassPath("/dbcfg/databases-test2-out.dbcfg");
 		print(out);
 		
-		dbDonfigManager = new DbDonfigManager(out);
+		dbDonfigManager = new DbConfigManager(out);
 		dbDonfigManager.save(databasesConfigurations);
 		System.out.println("SAVED.");
 	}

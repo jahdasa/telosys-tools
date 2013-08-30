@@ -27,14 +27,14 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class DbDonfigManager {
+public class DbConfigManager {
 
 	public final static String USER     = "user";
 	public final static String PASSWORD = "password";
 
 	private final File file ;
 
-	public DbDonfigManager(File file) {
+	public DbConfigManager(File file) {
 		super();
 		if ( file != null ) {
 			this.file = file;
