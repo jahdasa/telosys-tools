@@ -11,7 +11,6 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.telosys.tools.commons.ConsoleLogger;
 import org.telosys.tools.commons.TelosysToolsLogger;
-import org.telosys.tools.commons.dbcfg.XmlDbConfig;
 import org.telosys.tools.eclipse.plugin.commons.MsgBox;
 
 public abstract class DbConfigEditorPage extends FormPage 
@@ -47,10 +46,6 @@ public abstract class DbConfigEditorPage extends FormPage
 	protected IProject getProject()
 	{
 		return _editor.getProject();
-	}
-	protected XmlDbConfig getXmlDbConfig()
-	{
-		return _editor.getXmlDbConfig();
 	}
 	
 	protected DbConfigEditor getDbConfigEditor()

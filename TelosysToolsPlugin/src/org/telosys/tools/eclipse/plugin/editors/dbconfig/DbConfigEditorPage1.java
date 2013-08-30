@@ -47,8 +47,8 @@ import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.commons.TelosysToolsException;
 import org.telosys.tools.commons.TelosysToolsLogger;
 import org.telosys.tools.commons.config.ClassNameProvider;
-import org.telosys.tools.commons.dbcfg.XmlDatabase;
-import org.telosys.tools.commons.dbcfg.XmlDbConfig;
+import org.telosys.tools.commons.dbcfg.DatabaseConfiguration;
+import org.telosys.tools.commons.dbcfg.DatabasesConfigurations;
 import org.telosys.tools.commons.jdbc.ConnectionManager;
 import org.telosys.tools.db.metadata.ColumnMetaData;
 import org.telosys.tools.db.metadata.ForeignKeyColumnMetaData;
@@ -60,6 +60,7 @@ import org.telosys.tools.eclipse.plugin.commons.EclipseProjUtil;
 import org.telosys.tools.eclipse.plugin.commons.EclipseWksUtil;
 import org.telosys.tools.eclipse.plugin.commons.MsgBox;
 import org.telosys.tools.eclipse.plugin.commons.Util;
+import org.telosys.tools.eclipse.plugin.commons.mapping.MapperTextBean;
 import org.telosys.tools.eclipse.plugin.config.ProjectClassNameProvider;
 import org.telosys.tools.eclipse.plugin.config.ProjectConfig;
 import org.telosys.tools.eclipse.plugin.config.ProjectConfigManager;
@@ -73,6 +74,8 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 
 
 /**
+ * Database configuration editor - Page 1 (main page)
+ * 
  * 
  */
 /* package */ class DbConfigEditorPage1 extends DbConfigEditorPage 
@@ -100,14 +103,14 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 	
 	private Combo _ComboDatabases = null ;
 	
-    private Text _Id        = null ;
-    private Text _Name      = null ;
-    private Text _Driver    = null ;
-    private Text _Url       = null ;
-    private Text _Isolation = null ;
-    private Text _PoolSize  = null ;
-    private Text _User      = null ;
-    private Text _Password  = null ;
+    private Text _tId             = null ;
+    private Text _tName           = null ;
+    private Text _tDriver         = null ;
+    private Text _tUrl            = null ;
+    private Text _tUser           = null ;
+    private Text _tPassword       = null ;
+    private Text _tIsolationLevel = null ;
+    private Text _tPoolSize       = null ;
 
     private Text _InfoURL       = null ;
     private Text _InfoProdName  = null ;
@@ -296,8 +299,6 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 		
 		log(this, "Populate DATABASES combo ..." );
 
-		//DatabaseRepository dbRep = _repEditor.getDatabaseRepository();
-		//dbRep.populateTablesCombo(_ComboTables);
 		populateDatabases();
 		
 		log(this, "Populate DATABASES combo : done." );
@@ -359,28 +360,36 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 		int labelWidth = 100 ;
 		int textWidth  = 320 ;
 		
-	    _Id       = createTextWithLabelAndListener(container, x, y, "Id", false, labelWidth, textWidth ) ;  
+	    _tId       = createTextWithLabel(container, x, y, "Id", false, labelWidth, textWidth ) ;  
 	    y = y + yGap ;
-	    _Name     = createTextWithLabelAndListener(container, x, y, "Name", true, labelWidth, textWidth ) ;  
+	    _tName     = createTextWithLabel(container, x, y, "Name", true, labelWidth, textWidth ) ;  
 	    y = y + yGap ;
-	    _Driver   = createTextWithLabelAndListener(container, x, y, "Driver", true, labelWidth, textWidth ) ;  
+	    _tDriver   = createTextWithLabel(container, x, y, "Driver", true, labelWidth, textWidth ) ;  
 	    y = y + yGap ;
-	    _Url      = createTextWithLabelAndListener(container, x, y, "URL", true, labelWidth, textWidth ) ;  
+	    _tUrl      = createTextWithLabel(container, x, y, "URL", true, labelWidth, textWidth ) ;  
 	    y = y + yGap ;
 	    
-	    _User     = createTextWithLabelAndListener(container, x, y, "User", true, labelWidth, textWidth ) ;  
+	    _tUser     = createTextWithLabel(container, x, y, "User", true, labelWidth, textWidth ) ;  
 	    y = y + yGap ;
-	    _Password = createTextWithLabelAndListener(container, x, y, "Password", true, labelWidth, textWidth ) ;  
+	    _tPassword = createTextWithLabel(container, x, y, "Password", true, labelWidth, textWidth ) ;  
 	    y = y + yGap ;
 
 	    createSingleLabel(container, x, y, "Configuration below is useful only for the framework : ", labelWidth+textWidth );
 	    y = y + yGap ;
 	    
-	    _Isolation = createTextWithLabelAndListener(container, x, y, "Isolation level", true, labelWidth, textWidth ) ;  
+	    _tIsolationLevel = createTextWithLabel(container, x, y, "Isolation level", true, labelWidth, textWidth ) ;  
 	    y = y + yGap ;
-	    _PoolSize  = createTextWithLabelAndListener(container, x, y, "Pool size", true, labelWidth, textWidth ) ;  
+	    _tPoolSize  = createTextWithLabel(container, x, y, "Pool size", true, labelWidth, textWidth ) ;  
 	    y = y + yGap ;
 
+	    bindViewToModel(_tId,             "setDatabaseId",     int.class );
+	    bindViewToModel(_tName,           "setDatabaseName",   String.class);
+	    bindViewToModel(_tDriver,         "setDriverClass",    String.class);
+	    bindViewToModel(_tUrl,            "setJdbcUrl",        String.class);
+	    bindViewToModel(_tUser,           "setUser",           String.class);
+	    bindViewToModel(_tPassword,       "setPassword",       String.class);
+	    bindViewToModel(_tIsolationLevel, "setIsolationLevel", String.class);
+	    bindViewToModel(_tPoolSize,       "setPoolSize",       int.class );
 	}
 	
 	//----------------------------------------------------------------------------------------------
@@ -494,13 +503,19 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 			gd.widthHint = 260;
 			gd.verticalAlignment = SWT.BEGINNING ;
 
-			_tMetaDataCatalog = createTextWithLabelAndListener(panel, "Catalog", gd, true );
+			_tMetaDataCatalog = createTextWithLabel(panel, "Catalog", gd, true );
+
+			_tMetaDataSchema = createTextWithLabel(panel, "Schema", gd, true );
 	
-			_tMetaDataSchema = createTextWithLabelAndListener(panel, "Schema", gd, true );
+			_tMetaDataTablePattern = createTextWithLabel(panel, "Table name pattern", gd, true );
 	
-			_tMetaDataTablePattern = createTextWithLabelAndListener(panel, "Table name pattern", gd, true );
-	
-			_tMetaDataTableTypes = createTextWithLabelAndListener(panel, "Table types", gd, true );
+			_tMetaDataTableTypes = createTextWithLabel(panel, "Table types", gd, true );
+			
+			
+			bindViewToModel(_tMetaDataCatalog,      "setMetadataCatalog",          String.class);
+			bindViewToModel(_tMetaDataSchema,       "setMetadataSchema",           String.class);
+			bindViewToModel(_tMetaDataTablePattern, "setMetadataTableNamePattern", String.class);
+			bindViewToModel(_tMetaDataTableTypes,   "setMetadataTableTypes",       String.class);
 		}
 	}
 	//----------------------------------------------------------------------------------------------
@@ -664,14 +679,6 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 	}
 	
 	//----------------------------------------------------------------------------------------------
-	//----------------------------------------------------------------------------------------------
-	private Text createTextWithLabelAndListener(Composite container, int x, int y, String sLabel, boolean b, int labelWidth, int textWidth ) 
-	{
-		Text text = createTextWithLabel( container,  x,  y,  sLabel,  b,  labelWidth,  textWidth ); 
-		setModifyListener(text);
-		return text ;
-	}
-	
 	private Text createTextWithLabel(Composite container, int x, int y, String sLabel, boolean b, int labelWidth, int textWidth ) 
 	{
 		Label label = new Label(container, SWT.NONE);
@@ -699,7 +706,7 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 //		label.setBounds(x + labelWidth1 + 10 , y, 320, TEXT_HEIGHT);
 	}
 	//----------------------------------------------------------------------------------------------
-	private Text createTextWithLabelAndListener(Composite container, String sLabel, GridData gridData, boolean b ) 
+	private Text createTextWithLabel(Composite container, String sLabel, GridData gridData, boolean b ) 
 	{
 		Label label = new Label(container, SWT.NONE);
 		label.setText( sLabel + " : ");
@@ -707,8 +714,6 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 		Text text = new Text(container, SWT.BORDER);
 		text.setLayoutData(gridData);
 		text.setEnabled(b);
-		//setModifyListener(text, "");
-		setModifyListener(text);
 		return text ;
 	}	
 	//----------------------------------------------------------------------------------------------
@@ -724,22 +729,19 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 	
 	
     //------------------------------------------------------------------------------------------------------
-	private void loadComboDatabases(Combo comboBases, XmlDbConfig xmlDbConfig )
+	private void populateComboDatabases(Combo comboBases, DatabasesConfigurations databasesConfigurations )
     {
 		log(this, "loadComboBases()");
         comboBases.removeAll(); 
         
-        XmlDatabase[] databases = xmlDbConfig.getDatabases();
-		log(this, "loadComboBases() : nb bases = " + databases.length );
-        for ( int i = 0 ; i < databases.length ; i++ )
-        {
-        	XmlDatabase db = databases[i];
-        	if ( db != null ) {
-                String sItem = db.getDatabaseId() + " - " + db.getDatabaseName() ;
-                comboBases.add(sItem);
-        		log(this, "loadComboBases() : add " + sItem );
-        	}
-        }
+        List<DatabaseConfiguration> list = databasesConfigurations.getDatabaseConfigurationsList() ;
+		log(this, "loadComboBases() : nb bases = " + list.size() );
+		for ( DatabaseConfiguration db : list ) {
+            String sItem = db.getDatabaseId() + " - " + db.getDatabaseName() ;
+            comboBases.add(sItem);
+    		log(this, "loadComboBases() : add " + sItem );			
+		}
+        
         if ( comboBases.getItemCount() > 0 ) {
         	comboBases.select(0);
         	selectDatabase(comboBases);
@@ -748,12 +750,12 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 	
     private void populateDatabases() 
     {
-    	XmlDbConfig xmlDbConfig = _editor.getXmlDbConfig();
-    	if ( xmlDbConfig != null )
+    	DatabasesConfigurations databasesConfigurations = _editor.getDatabasesConfigurations() ;
+        if ( databasesConfigurations != null )
     	{
     		if ( _ComboDatabases != null )
     		{
-        		loadComboDatabases(_ComboDatabases, xmlDbConfig);
+        		populateComboDatabases(_ComboDatabases, databasesConfigurations);
     		}
     		else
     		{
@@ -762,7 +764,7 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     	}
     	else
     	{
-    		MsgBox.error("populateDatabases : XmlDbConfig is null ( File not loaded ) ");
+    		MsgBox.error("populateDatabases : no db configurations ( null, file not loaded ) ");
     	}
     	
     }
@@ -772,14 +774,14 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 		_bPopulateInProgress = true ;
 		
 		//--- Tab 1
-		_Id.setText("");
-		_Name.setText("");
-		_Driver.setText("");
-		_Url.setText("");
-		_Isolation.setText("");
-		_PoolSize.setText("");
-		_User.setText("");
-		_Password.setText("");
+		_tId.setText("");
+		_tName.setText("");
+		_tDriver.setText("");
+		_tUrl.setText("");
+		_tIsolationLevel.setText("");
+		_tPoolSize.setText("");
+		_tUser.setText("");
+		_tPassword.setText("");
 	      
 		//--- Tab 2
 		_InfoURL.setText( "" );
@@ -834,38 +836,41 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 	}
 	
 	
-	private void populateDatabaseConfigFields( String sDbId )
+	//private void populateDatabaseConfigFields( String sDbId )
+	private void populateDatabaseConfigFields(int databaseId)
 	{
-		log(this, "populateDatabaseConfigFields('" + sDbId + "')");
+		//log(this, "populateDatabaseConfigFields('" + sDbId + "')");
+		log(this, "populateDatabaseConfigFields()");
 		
 		_bPopulateInProgress = true ;
 		
-		XmlDbConfig xmlDbConfig = _editor.getXmlDbConfig();
-		if ( xmlDbConfig != null )
+    	DatabasesConfigurations databasesConfigurations = _editor.getDatabasesConfigurations() ;		
+		if ( databasesConfigurations != null )
 		{
-			XmlDatabase db = xmlDbConfig.getDatabaseConfig(sDbId);
+			DatabaseConfiguration db = databasesConfigurations.getDatabaseConfiguration(databaseId);
 			if ( db != null )
 			{
 				//--- Attributes  
-				_Id.setText       ( nn( db.getDatabaseId() ) );
-				_Name.setText     ( nn( db.getDatabaseName() ) );
-				_Driver.setText   ( nn( db.getDriverClass() ) );
-				_Url.setText      ( nn( db.getJdbcUrl() ) );
-				_Isolation.setText( nn( db.getIsolationLevel() ) );
-				_PoolSize.setText ( nn( db.getPoolSize() ) );
+				_tId.setText       ( "" + db.getDatabaseId() );
+				_tName.setText     ( nn( db.getDatabaseName() ) );
+				_tDriver.setText   ( nn( db.getDriverClass() ) );
+				_tUrl.setText      ( nn( db.getJdbcUrl() ) );
+				_tIsolationLevel.setText( nn( db.getIsolationLevel() ) );
+				_tPoolSize.setText ( "" + db.getPoolSize() );
 				//--- Properties 
-				_User.setText    ( nn( db.getUser() ) );
-			    _Password.setText( nn( db.getPassword() ));
+				_tUser.setText    ( nn( db.getUser() ) );
+			    _tPassword.setText( nn( db.getPassword() ));
 			    
 			    //--- Meta-Data
 			    _tMetaDataCatalog.setText( nn( db.getMetadataCatalog() ) ) ;
 			    _tMetaDataSchema.setText( nn( db.getMetadataSchema() ) ) ;
 			    _tMetaDataTablePattern.setText( nn( db.getMetadataTableNamePattern() ) );
-			    _tMetaDataTableTypes.setText( arrayToString ( db.getMetadataTableTypes() ) );
+			    //_tMetaDataTableTypes.setText( arrayToString ( db.getMetadataTableTypes() ) );
+			    _tMetaDataTableTypes.setText( db.getMetadataTableTypes() );
 			}
 			else 
 			{
-				MsgBox.error("Database '" + sDbId + "' not found in the XML DOM");
+				MsgBox.error("Database '" + databaseId + "' not found in the configuration.");
 			}
 		}
 
@@ -885,54 +890,44 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
             {
         		//log(this, "Tables combo listener : widgetSelected()" );
                 Combo combo = (Combo) event.widget ;
-//                String sDbId = "";
-//                String s = combo.getText();
-//                if ( s != null )
-//                {
-//                    String[] parts = StrUtil.split(s, '-');
-//                    if ( parts.length > 0 )
-//                    {
-//                    	sDbId = parts[0].trim();
-//                    }
-//                }
-//        		log(this, "Databases combo listener : widgetSelected() : DB id = " + sDbId );
-//                
-//            	clearFields();
-//            	
-//        		//--- Populate the database fields
-//        		populateDatabaseConfigFields( sDbId );
-        		
         		selectDatabase(combo);
             }
         });
     }
     
+    /**
+     * Load and show the database configuration associated with the database ID selected in the combo
+     * @param databasesCombo
+     */
     private void selectDatabase(Combo databasesCombo)
     {
     	//--- Get database id from the current selected text
-        String sDbId = "";
         String s = databasesCombo.getText();
         if ( s != null )
         {
+    		log(this, "Databases combo listener : selected = '" + s + "'");
             String[] parts = StrUtil.split(s, '-');
             if ( parts.length > 0 )
             {
-            	sDbId = parts[0].trim();
+            	String sDbId = parts[0].trim();
+        		int databaseId = databaseIdAsInt(sDbId);
+        		//--- Clear the fields
+            	clearFields();
+        		//--- Populate the fields
+        		populateDatabaseConfigFields(databaseId);
             }
         }
-		log(this, "Databases combo listener : widgetSelected() : DB id = " + sDbId );
-        
-    	clearFields();
-    	
-		//--- Populate the database fields
-		populateDatabaseConfigFields( sDbId );
+        else {
+    		log(this, "Databases combo listener : nothing selected");
+        }
+        	
     }    
     
-//    private void setModifyListener(Text text, String sAttributeName )
-    private void setModifyListener(Text text)
+    private void bindViewToModel(Text text, String setterMethodName, Class<?> setterMethodArgType )
     {
-    	//--- Set the XML attribute name associated with this Text Widget
-    	//text.setData(sAttributeName);
+    	MapperTextBean<DatabaseConfiguration> mapperInstance = 
+    		new MapperTextBean<DatabaseConfiguration>(text, DatabaseConfiguration.class, setterMethodName, setterMethodArgType);
+    	text.setData(mapperInstance);
     	
     	//--- Add the listener
     	text.addModifyListener(new ModifyListener()
@@ -946,11 +941,11 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 					String sTextValue = text.getText();
 	        		log(this, "Text modified : '" + sTextValue + "'" );
 	        		//--- Update the model 
-	        		// ...
-	        		String beanAttributeName = (String) text.getData();
-	        		// TODO
-	        		// DatabaseConfigBean bean = _currentDatabaseConfigBean ;
-	        		
+	        		MapperTextBean<DatabaseConfiguration> mapper = (MapperTextBean<DatabaseConfiguration>) text.getData();
+	        		DatabaseConfiguration currentDatabaseConfig = getCurrentDatabaseConfig() ;
+	        		mapper.updateBean( currentDatabaseConfig );
+	        		log(this, "Model bean : '" + currentDatabaseConfig + "'" );
+	        		//--- Set "dirty" flag ON for this editor
 					setDirty();
 				}
 				else
@@ -962,18 +957,27 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     	});
     }
     
+    private int databaseIdAsInt(String id) {
+    	try {
+			return Integer.parseInt(id);
+		} catch (NumberFormatException e) {
+			MsgBox.error("Invalid database id '" + id + "'" );
+			return -9999 ;
+		}
+    }
+    
     /**
      * Returns the Database configuration for the selected Database ID
      * ( loaded from the XML DOM tree )
      * @return
      */
-    private XmlDatabase getDatabaseConfig() 
+    private DatabaseConfiguration getCurrentDatabaseConfig() 
     {
-        XmlDbConfig xmlDbConfig = _editor.getXmlDbConfig();
-        if ( xmlDbConfig != null )
+    	DatabasesConfigurations databasesConfigurations = _editor.getDatabasesConfigurations() ;
+        if ( databasesConfigurations != null )
         {
-        	String id = _Id.getText() ;
-        	XmlDatabase db = xmlDbConfig.getDatabaseConfig( id ) ;
+        	int id = databaseIdAsInt(_tId.getText() ) ;
+        	DatabaseConfiguration db = databasesConfigurations.getDatabaseConfiguration(id);
         	if ( db != null )
         	{
         		return db ;
@@ -1167,7 +1171,8 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     
     private Connection getConnection() 
     {
-        XmlDatabase db = getDatabaseConfig() ;
+        //XmlDatabase db = getDatabaseConfig() ;
+    	DatabaseConfiguration db = getCurrentDatabaseConfig() ;
         if ( null == db ) return null ;
         
 		ConnectionManager cm = getConnectionManager();
@@ -1177,11 +1182,17 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 		try {
 			//con = cm.getConnection( db.getDriverClass(), db.getJdbcUrl(), db.getProperties() );
 			// Use screen fields  
-			String sDriverClass = _Driver.getText() ;
-			String sJdbcUrl     = _Url.getText();
-			Properties prop = db.getProperties() ;
-			prop.put(XmlDatabase.PROPERTY_USER,     _User.getText() );
-			prop.put(XmlDatabase.PROPERTY_PASSWORD, _Password.getText() );
+			String sDriverClass = _tDriver.getText() ;
+			String sJdbcUrl     = _tUrl.getText();
+
+			//--- Connection properties 
+			// TODO : manage other set of properties for each database ???
+//			Properties prop = db.getProperties() ;
+//			prop.put(XmlDatabase.PROPERTY_USER,     _User.getText() );
+//			prop.put(XmlDatabase.PROPERTY_PASSWORD, _Password.getText() );
+			Properties prop = new Properties() ;
+			prop.put("user",     _tUser.getText()     );
+			prop.put("password", _tPassword.getText() );
 			
 			log("Try to get a database connection...");
 			log(" . Driver class = " + sDriverClass );
@@ -1558,15 +1569,6 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     {
     	_tMetaData.append("Table '" + tableName + "' : \n");
 		for ( ForeignKeyColumnMetaData c : columns ) {
-//			System.out.println(
-//					" . " 
-//					+ " fkName=" + c.getFkName()
-//					+ " pkName=" + c.getPkName()
-//					+ " fkTableName=" + c.getFkTableName() 
-//					+ " fkColumnName=" + c.getFkColumnName() 
-//					+ " pkTableName=" + c.getPkTableName() 
-//					+ " pkColumnName=" + c.getPkColumnName() 
-//					);
 			
 			String s = 
 					" " + c.getFkName() + " : " 
@@ -1625,7 +1627,7 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 
         TelosysToolsLogger logger = _editor.getTextWidgetLogger();	
 		
-        XmlDatabase db = getDatabaseConfig() ;
+        DatabaseConfiguration db = getCurrentDatabaseConfig() ;
 		String sDatabaseName = db.getDatabaseName();		
 		sRepositoryFile = getRepositoryFileName( db.getDatabaseName() ) ;
 		
@@ -1672,7 +1674,7 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 		}
     }
     
-    private boolean generateRepository(Connection con, XmlDatabase db, ProjectConfig projectConfig, 
+    private boolean generateRepository(Connection con, DatabaseConfiguration db, ProjectConfig projectConfig, 
     		IFile repositoryFile,
     		TelosysToolsLogger logger ) 
     {
@@ -1684,9 +1686,12 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 		//--- 1) Generate the repository in memory
 		try {
 			RepositoryGenerator generator = new RepositoryGenerator(initchk, classNameProvider, logger) ;			
+//			repo = generator.generate(con, 
+//					db.getDatabaseName(), db.getMetadataCatalog(), db.getMetadataSchema(), 
+//					db.getMetadataTableNamePattern(), db.getMetadataTableTypes());
 			repo = generator.generate(con, 
 					db.getDatabaseName(), db.getMetadataCatalog(), db.getMetadataSchema(), 
-					db.getMetadataTableNamePattern(), db.getMetadataTableTypes());
+					db.getMetadataTableNamePattern(), db.getMetadataTableTypesArray() );
 		} catch (TelosysToolsException e) {
 			MsgBox.error("Cannot generate.", e);
 			return false ;
@@ -1708,7 +1713,8 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 		return true ;
     }
 
-    private int updateRepository(Connection con, XmlDatabase db, ProjectConfig projectConfig, TelosysToolsLogger logger ) 
+    //private int updateRepository(Connection con, XmlDatabase db, ProjectConfig projectConfig, TelosysToolsLogger logger ) 
+    private int updateRepository(Connection con, DatabaseConfiguration db, ProjectConfig projectConfig, TelosysToolsLogger logger ) 
     	throws TelosysToolsException
     {
 		InitializerChecker initchk = new DefaultInitializerChecker();
@@ -1728,9 +1734,12 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 		
 
 		RepositoryUpdator updator = new RepositoryUpdator(initchk, classNameProvider, logger,  updateLogger);
+//		int nbChanges = updator.updateRepository(con, repositoryModel, 
+//					db.getMetadataCatalog(), db.getMetadataSchema(), 
+//					db.getMetadataTableNamePattern(), db.getMetadataTableTypes() );
 		int nbChanges = updator.updateRepository(con, repositoryModel, 
-					db.getMetadataCatalog(), db.getMetadataSchema(), 
-					db.getMetadataTableNamePattern(), db.getMetadataTableTypes() );
+				db.getMetadataCatalog(), db.getMetadataSchema(), 
+				db.getMetadataTableNamePattern(), db.getMetadataTableTypesArray() );
 		
 		//--- 3) SAVE the repository in the file
 		logger.info("Save repository in file " + repositoryFile.getAbsolutePath());
@@ -1758,7 +1767,8 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
         	return ;
         }
 
-        XmlDatabase db = getDatabaseConfig() ;
+        //XmlDatabase db = getDatabaseConfig() ;
+        DatabaseConfiguration db = getCurrentDatabaseConfig() ;
 		String sDatabaseName = db.getDatabaseName();
 		String sRepositoryFile = getRepositoryFileName( db.getDatabaseName() ) ;
 		

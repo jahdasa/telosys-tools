@@ -13,7 +13,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.telosys.tools.commons.TelosysToolsException;
 import org.telosys.tools.commons.TelosysToolsLogger;
-import org.telosys.tools.commons.dbcfg.XmlDbConfig;
+import org.telosys.tools.commons.dbcfg.DatabasesConfigurations;
+import org.telosys.tools.commons.dbcfg.DbConfigManager;
 import org.telosys.tools.eclipse.plugin.commons.EclipseWksUtil;
 import org.telosys.tools.eclipse.plugin.commons.MsgBox;
 import org.telosys.tools.eclipse.plugin.commons.PluginLogger;
@@ -32,8 +33,8 @@ public class DbConfigEditor extends FormEditor
     private boolean           _dirty = false;
 	private String            _fileName = "???" ;
 	private IFile             _file = null ;
-	private XmlDbConfig       _xmlDbConfig = null ;
-	
+	DatabasesConfigurations   databasesConfigurations = new DatabasesConfigurations(); // Void configuration
+		
 	private TextWidgetLogger  _logger = new TextWidgetLogger() ;
 	
 	/* (non-Javadoc)
@@ -75,11 +76,12 @@ public class DbConfigEditor extends FormEditor
 
 		monitor.beginTask( "Saving the repository...", IProgressMonitor.UNKNOWN );
 
-		try {
-			_xmlDbConfig.save();
-		} catch (TelosysToolsException e) {
-			MsgBox.error("Cannot save XML file." + e);
-		}
+		// TODO ************************************
+//		try {
+//			_xmlDbConfig.save();
+//		} catch (TelosysToolsException e) {
+//			MsgBox.error("Cannot save XML file." + e);
+//		}
 		
 		setDirty(false);
 		
@@ -138,8 +140,9 @@ public class DbConfigEditor extends FormEditor
 
 			PluginLogger.log(this, "init(..,..) : parse XML file '" + _file.getName() + "'" );
 			try {
-				//_xmlDbConfig = new XmlDbConfig(_file) ;
-				_xmlDbConfig = new XmlDbConfig( EclipseWksUtil.toFile(_file) );
+				DbConfigManager dbDonfigManager = new DbConfigManager( EclipseWksUtil.toFile(_file) );
+				this.databasesConfigurations = dbDonfigManager.load() ;
+
 			} catch (TelosysToolsException e) {
 				MsgBox.error("Cannot load repository : \nXML error \n" + e.getMessage() );
 			}		
@@ -170,11 +173,10 @@ public class DbConfigEditor extends FormEditor
 		return _file.getProject() ;
 	}
 	
-	public XmlDbConfig getXmlDbConfig()
-	{
-		return _xmlDbConfig ;
+	public DatabasesConfigurations getDatabasesConfigurations() {
+		return this.databasesConfigurations ;
 	}
-
+	
 	public TextWidgetLogger getTextWidgetLogger()
 	{
 		return _logger ;
