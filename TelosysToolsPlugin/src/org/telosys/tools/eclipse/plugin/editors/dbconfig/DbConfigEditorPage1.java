@@ -82,6 +82,8 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 {
 
     private final static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd.HHmmss");
+    private final static String  TEXT_DATA_MAPPER       = "TEXT_DATA_MAPPER" ;
+    private final static String  TEXT_DATA_UPDATE_COMBO = "TEXT_DATA_UPDATE_COMBO" ;
 
     private final static int GROUP_X = 12 ;
 	private final static int GROUP_WIDTH = 600 ;
@@ -390,6 +392,7 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 	    bindViewToModel(_tPassword,       "setPassword",       String.class);
 	    bindViewToModel(_tIsolationLevel, "setIsolationLevel", String.class);
 	    bindViewToModel(_tPoolSize,       "setPoolSize",       int.class );
+	    _tName.setData( TEXT_DATA_UPDATE_COMBO, "true" ) ; // Flag for update combo item 
 	}
 	
 	//----------------------------------------------------------------------------------------------
@@ -873,6 +876,10 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 				MsgBox.error("Database '" + databaseId + "' not found in the configuration.");
 			}
 		}
+		else 
+		{
+			MsgBox.error("Databases configurations not loaded.");
+		}
 
 		_bPopulateInProgress = false ;
 	}
@@ -927,7 +934,7 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     {
     	MapperTextBean<DatabaseConfiguration> mapperInstance = 
     		new MapperTextBean<DatabaseConfiguration>(text, DatabaseConfiguration.class, setterMethodName, setterMethodArgType);
-    	text.setData(mapperInstance);
+    	text.setData(TEXT_DATA_MAPPER, mapperInstance);
     	
     	//--- Add the listener
     	text.addModifyListener(new ModifyListener()
@@ -939,18 +946,25 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 				{					
 					Text text = (Text) e.widget ;
 					String sTextValue = text.getText();
-	        		log(this, "Text modified : '" + sTextValue + "'" );
+	        		//log(this, "Text modified : '" + sTextValue + "'" );
 	        		//--- Update the model 
-	        		MapperTextBean<DatabaseConfiguration> mapper = (MapperTextBean<DatabaseConfiguration>) text.getData();
+	        		MapperTextBean<DatabaseConfiguration> mapper = (MapperTextBean<DatabaseConfiguration>) text.getData(TEXT_DATA_MAPPER);
 	        		DatabaseConfiguration currentDatabaseConfig = getCurrentDatabaseConfig() ;
 	        		mapper.updateBean( currentDatabaseConfig );
-	        		log(this, "Model bean : '" + currentDatabaseConfig + "'" );
+	        		//log(this, "Model bean : '" + currentDatabaseConfig + "'" );
+	        		//--- Update the combo current text
+	        		if ( text.getData(TEXT_DATA_UPDATE_COMBO) != null ) {
+		        		//log(this, "Text modified : Update combo item with '" + sTextValue + "'" );
+	   		            String s = currentDatabaseConfig.getDatabaseId() + " - " + currentDatabaseConfig.getDatabaseName() ;
+		        		int index = _ComboDatabases.getSelectionIndex();
+		        		_ComboDatabases.setItem(index, s);
+	        		}
 	        		//--- Set "dirty" flag ON for this editor
 					setDirty();
 				}
 				else
 				{
-	        		log(this, "Text modified : populate in progress => no action" );
+	        		//log(this, "Text modified : populate in progress => no action" );
 				}
 			}
     		

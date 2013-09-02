@@ -5,7 +5,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.IPageChangedListener;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
@@ -31,9 +30,9 @@ public class DbConfigEditor extends FormEditor
 {
 	/** The dirty flag : see isDirty() */
     private boolean           _dirty = false;
-	private String            _fileName = "???" ;
+//	private String            _fileName = "???" ;
 	private IFile             _file = null ;
-	DatabasesConfigurations   databasesConfigurations = new DatabasesConfigurations(); // Void configuration
+	private DatabasesConfigurations   databasesConfigurations = new DatabasesConfigurations(); // Void configuration
 		
 	private TextWidgetLogger  _logger = new TextWidgetLogger() ;
 	
@@ -76,22 +75,22 @@ public class DbConfigEditor extends FormEditor
 
 		monitor.beginTask( "Saving the repository...", IProgressMonitor.UNKNOWN );
 
-		// TODO ************************************
-//		try {
-//			_xmlDbConfig.save();
-//		} catch (TelosysToolsException e) {
-//			MsgBox.error("Cannot save XML file." + e);
-//		}
-		
-		setDirty(false);
-		
+		//--- Save the file
+		DbConfigManager dbDonfigManager = new DbConfigManager( EclipseWksUtil.toFile(_file) );
+		try {
+			dbDonfigManager.save(this.databasesConfigurations) ;
+			setDirty(false);
+		} catch (TelosysToolsException e) {
+			MsgBox.error("Cannot save file." + e);
+		}
 //		IEditorInput input = getEditorInput();
 //		IPersistableElement e = input.getPersistable();
 		
+		//--- Refresh the file in the Eclipse workspace
 		try {
 			_file.refreshLocal(IResource.DEPTH_ZERO, monitor);
 		} catch (CoreException e) {
-			MsgBox.error("Cannot refresh the XML file after save\n Exception : " + e.getMessage() );
+			MsgBox.error("Cannot refresh the file after save." + e );
 		}
 		
 		monitor.done();
@@ -102,19 +101,15 @@ public class DbConfigEditor extends FormEditor
 	 */
 	public void doSaveAs() {
 		PluginLogger.log(this, "doSaveAs()..." );
-		// Auto-generated method stub
+		// Never called because isSaveAsAllowed() returns false
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.EditorPart#isSaveAsAllowed()
 	 */
-	/*
-	 * Allow the "Save as"
-	 */
 	public boolean isSaveAsAllowed() {
-		PluginLogger.log(this, "isSaveAsAllowed()..." );
-		// Auto-generated method stub
-		return false ;
+		//PluginLogger.log(this, "isSaveAsAllowed()..." );
+		return false ; // "Save as..." not allowed for this file
 	}
 
 	/* (non-Javadoc)
@@ -126,28 +121,30 @@ public class DbConfigEditor extends FormEditor
 
 		// MsgBox.debug("DbConfig editor : init ");
 
-		PluginLogger.log(this, "init(..,..)..." );
+		PluginLogger.log(this, "--- INIT ---" );
 		PluginLogger.log(this, "init(..,..) : site id = '" + site.getId() + "'" );
 		PluginLogger.log(this, "init(..,..) : input name = '" + input.getName() + "'" );
 		setPartName(input.getName());
 		
-		_fileName = input.getName() ;
+//		_fileName = input.getName() ;
 
 		if ( input instanceof IFileEditorInput )
 		{
 			IFileEditorInput fileInput = (IFileEditorInput) input;
 			_file = fileInput.getFile();
 
-			PluginLogger.log(this, "init(..,..) : parse XML file '" + _file.getName() + "'" );
+			PluginLogger.log(this, "init(..,..) : file name = '" + _file.getName() + "'" );
 			try {
 				DbConfigManager dbDonfigManager = new DbConfigManager( EclipseWksUtil.toFile(_file) );
 				this.databasesConfigurations = dbDonfigManager.load() ;
+				PluginLogger.log(this, "init(..,..) : file loaded, " 
+						+ this.databasesConfigurations.getNumberOfDatabases() + " db configuartion(s)." );
 
 			} catch (TelosysToolsException e) {
-				MsgBox.error("Cannot load repository : \nXML error \n" + e.getMessage() );
+				MsgBox.error("Cannot load databases configurations." + e );
 			}		
 		}
-		else // never happends
+		else // never happen 
 		{
 			MsgBox.error("The editor input '" + input.getName() + "' is not a File ! ");
 		}
@@ -158,10 +155,10 @@ public class DbConfigEditor extends FormEditor
 		return _logger ;
 	}
 
-	public String getFileName ()
-	{
-		return _fileName ;
-	}
+//	public String getFileName ()
+//	{
+//		return _fileName ;
+//	}
 	
 	public IFile getFile ()
 	{
@@ -182,9 +179,8 @@ public class DbConfigEditor extends FormEditor
 		return _logger ;
 	}
 
-	public void addPageChangedListener(IPageChangedListener listener) {
-		// TODO Auto-generated method stub
-		super.addPageChangedListener(listener);
-	}
+//	public void addPageChangedListener(IPageChangedListener listener) {
+//		super.addPageChangedListener(listener);
+//	}
 
 }
