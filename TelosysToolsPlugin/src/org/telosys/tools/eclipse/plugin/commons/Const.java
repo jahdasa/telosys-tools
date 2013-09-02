@@ -38,6 +38,12 @@ public class Const {
     public static final String VELOCITY_BEAN_GENERATOR_IMAGE   = "velocity_bean_generator.png";
     public static final String VELOCITY_PREDEFNAMES_IMAGE      = "velocity_predefnames.png";
 	
+    // Icons for Database configurations editor ( v 2.0.6 )
+    public static final String NEW_DATABASE     = "database_add_16.png"; 
+    public static final String DELETE_DATABASE  = "database_delete_16.png"; 
+    public static final String GENERATE_REPO    = "repo_generate_16.png"; 
+    public static final String UPDATE_REPO      = "repo_update_16.png"; 
+    
 	//-------------------------------------------------------------------------------
 	//--- Templates files
 	//-------------------------------------------------------------------------------

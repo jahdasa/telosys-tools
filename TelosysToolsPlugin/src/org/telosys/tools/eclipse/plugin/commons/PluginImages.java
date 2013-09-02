@@ -29,6 +29,11 @@ public class PluginImages {
 	
 	public static final String LINK_MANY_TO_ONE   = "LINK_MANY_TO_ONE" ; 
 	
+	public static final String NEW_DATABASE    = "NEW_DATABASE" ; // v 2.0.6
+	public static final String DELETE_DATABASE = "DELETE_DATABASE" ; // v 2.0.6
+	public static final String GENERATE_REPO   = "GENERATE_REPO" ; // v 2.0.6
+	public static final String UPDATE_REPO     = "UPDATE_REPO" ; // v 2.0.6
+	
 	public static final String EDIT_ICON   = "EDIT_ICON" ; // v 2.0
 	public static final String GENERATE    = "GENERATE" ; // v 2.0
 	public static final String REFRESH     = "REFRESH" ; // v 2.0
@@ -86,6 +91,11 @@ public class PluginImages {
 		
 		registerImage(LINK_MANY_TO_ONE, Const.LINK_MANY_TO_ONE_IMAGE );
 
+		registerImage(NEW_DATABASE,    Const.NEW_DATABASE );  // v 2.0.6 
+		registerImage(DELETE_DATABASE, Const.DELETE_DATABASE ); // v 2.0.6
+		registerImage(GENERATE_REPO,   Const.GENERATE_REPO );  // v 2.0.6 
+		registerImage(UPDATE_REPO,     Const.UPDATE_REPO );  // v 2.0.6 
+		
 		registerImage(EDIT_ICON,    Const.EDIT_ICON );
 		registerImage(GENERATE,     Const.GENERATE );
 		registerImage(REFRESH,      Const.REFRESH );

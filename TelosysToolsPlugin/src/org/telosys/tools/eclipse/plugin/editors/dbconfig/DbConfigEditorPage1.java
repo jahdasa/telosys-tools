@@ -59,6 +59,7 @@ import org.telosys.tools.db.metadata.TableMetaData;
 import org.telosys.tools.eclipse.plugin.commons.EclipseProjUtil;
 import org.telosys.tools.eclipse.plugin.commons.EclipseWksUtil;
 import org.telosys.tools.eclipse.plugin.commons.MsgBox;
+import org.telosys.tools.eclipse.plugin.commons.PluginImages;
 import org.telosys.tools.eclipse.plugin.commons.Util;
 import org.telosys.tools.eclipse.plugin.commons.mapping.MapperTextBean;
 import org.telosys.tools.eclipse.plugin.config.ProjectClassNameProvider;
@@ -86,7 +87,7 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     private final static String  TEXT_DATA_UPDATE_COMBO = "TEXT_DATA_UPDATE_COMBO" ;
 
     private final static int GROUP_X = 12 ;
-	private final static int GROUP_WIDTH = 600 ;
+	private final static int GROUP_WIDTH = 700 ;
 	
 	private final static int TEXT_X = 10 ;
 
@@ -231,23 +232,63 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 		body.setLayout( bodyLayout );
 		
 		//--------------------------------------------------------------
-		//--- Combo Box "Database table"
+		//--- Group "Database" ( composite )
 		Group group1 = new Group(body, SWT.NONE);
 		group1.setText("Database");
-		group1.setSize(GROUP_WIDTH, 60);
+		//group1.setSize(GROUP_WIDTH, 60);
 		//tab.setBackground(DAOColor.color(disp));
 		//group1.setLocation(GROUP_X, 20);
         group1.setBackground( getBackgroundColor() );
 
+		//--- Combo Box "Database table"
 		_ComboDatabases = new Combo(group1, SWT.BORDER | SWT.READ_ONLY);
 		_ComboDatabases.setBounds(TEXT_X, 25, 260, TEXT_HEIGHT);
 		_ComboDatabases.setVisibleItemCount(12);
 		setDatabasesComboAction(_ComboDatabases);
 
 		//--------------------------------------------------------------
-		Button button = new Button(group1, SWT.NONE);
+		Button button ;
+		//--------------------------------------------------------------
+		button = new Button(group1, SWT.NONE);
+		button.setText("New");
+		button.setBounds(280, 25, 70, 25); // (x,y, width, height)
+		button.setImage( PluginImages.getImage(PluginImages.NEW_DATABASE ) );
+		button.setToolTipText("New database configuration");
+
+    	button.addSelectionListener( new SelectionListener() 
+    	{
+            public void widgetSelected(SelectionEvent arg0)
+            {
+                //actionGenerateRepository();
+            }
+            public void widgetDefaultSelected(SelectionEvent arg0)
+            {
+            }
+        });
+		//--------------------------------------------------------------
+		button = new Button(group1, SWT.NONE);
+		button.setText("Delete");
+		button.setBounds(360, 25, 70, 25); // (x,y, width, height)
+		button.setImage( PluginImages.getImage(PluginImages.DELETE_DATABASE ) );
+		button.setToolTipText("Delete database configuration");
+
+    	button.addSelectionListener( new SelectionListener() 
+    	{
+            public void widgetSelected(SelectionEvent arg0)
+            {
+            	actionDeleteDatabase() ;
+            }
+            public void widgetDefaultSelected(SelectionEvent arg0)
+            {
+            }
+        });
+		
+		//--------------------------------------------------------------
+		button = new Button(group1, SWT.NONE);
 		button.setText("Generate repository");
-		button.setBounds(300, 25, 180, 25);
+		button.setBounds(450, 25, 140, 25); // (x,y, width, height)
+		button.setImage( PluginImages.getImage(PluginImages.GENERATE_REPO ) );
+		button.setToolTipText("Generate a new repository");
 
     	button.addSelectionListener( new SelectionListener() 
     	{
@@ -263,7 +304,9 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 		//--------------------------------------------------------------
 		button = new Button(group1, SWT.NONE);
 		button.setText("Update repository");
-		button.setBounds(500, 25, 180, 25);
+		button.setBounds(600, 25, 140, 25); // (x,y, width, height)
+		button.setImage( PluginImages.getImage(PluginImages.UPDATE_REPO ) );
+		button.setToolTipText("Update existing repository");
 
     	button.addSelectionListener( new SelectionListener() 
     	{
@@ -301,7 +344,7 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 		
 		log(this, "Populate DATABASES combo ..." );
 
-		populateDatabases();
+		populateComboDatabases();
 		
 		log(this, "Populate DATABASES combo : done." );
 	}
@@ -747,11 +790,11 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
         
         if ( comboBases.getItemCount() > 0 ) {
         	comboBases.select(0);
-        	selectDatabase(comboBases);
+        	populateDatabaseConfigFields(comboBases);
         }
     }
 	
-    private void populateDatabases() 
+    private void populateComboDatabases() 
     {
     	DatabasesConfigurations databasesConfigurations = _editor.getDatabasesConfigurations() ;
         if ( databasesConfigurations != null )
@@ -897,37 +940,74 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
             {
         		//log(this, "Tables combo listener : widgetSelected()" );
                 Combo combo = (Combo) event.widget ;
-        		selectDatabase(combo);
+                populateDatabaseConfigFields(combo);
             }
         });
+    }
+    
+    private int getSelectedDatabaseId(Combo databasesCombo, boolean required)
+    {
+    	if ( databasesCombo.getSelectionIndex() >= 0 ) {
+            String s = databasesCombo.getText();
+            if ( s != null )
+            {
+        		log(this, "Database selected in combo : '" + s + "'");
+                String[] parts = StrUtil.split(s, '-');
+                if ( parts.length > 0 )
+                {
+                	String sDbId = parts[0].trim();
+            		int databaseId = databaseIdAsInt(sDbId);
+            		return databaseId ;
+                }
+                else {
+        			MsgBox.error("Invalid selected text in combobox");
+                }
+            }
+            else {
+    			MsgBox.error("Invalid selected text in combobox");
+            }
+    	}
+    	else {
+    		if ( required ) {
+    			MsgBox.warning("No database selected.");
+    		}
+    	}
+    	return -99999 ;
     }
     
     /**
      * Load and show the database configuration associated with the database ID selected in the combo
      * @param databasesCombo
      */
-    private void selectDatabase(Combo databasesCombo)
+    private void populateDatabaseConfigFields(Combo databasesCombo)
     {
-    	//--- Get database id from the current selected text
-        String s = databasesCombo.getText();
-        if ( s != null )
-        {
-    		log(this, "Databases combo listener : selected = '" + s + "'");
-            String[] parts = StrUtil.split(s, '-');
-            if ( parts.length > 0 )
-            {
-            	String sDbId = parts[0].trim();
-        		int databaseId = databaseIdAsInt(sDbId);
-        		//--- Clear the fields
-            	clearFields();
-        		//--- Populate the fields
-        		populateDatabaseConfigFields(databaseId);
-            }
+//    	//--- Get database id from the current selected text
+//        String s = databasesCombo.getText();
+//        if ( s != null )
+//        {
+//    		log(this, "Databases combo listener : selected = '" + s + "'");
+//            String[] parts = StrUtil.split(s, '-');
+//            if ( parts.length > 0 )
+//            {
+//            	String sDbId = parts[0].trim();
+//        		int databaseId = databaseIdAsInt(sDbId);
+//        		//--- Clear the fields
+//            	clearFields();
+//        		//--- Populate the fields
+//        		populateDatabaseConfigFields(databaseId);
+//            }
+//        }
+//        else {
+//    		log(this, "Databases combo listener : nothing selected");
+//        }
+
+        int databaseId = getSelectedDatabaseId(databasesCombo, true);
+        if ( databaseId >= 0 ) {
+    		//--- Clear the fields
+        	clearFields();
+    		//--- Populate the fields
+    		populateDatabaseConfigFields(databaseId);
         }
-        else {
-    		log(this, "Databases combo listener : nothing selected");
-        }
-        	
     }    
     
     private void bindViewToModel(Text text, String setterMethodName, Class<?> setterMethodArgType )
@@ -943,24 +1023,33 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     		// without user action
 			public void modifyText(ModifyEvent e) {
 				if ( ! _bPopulateInProgress )
-				{					
-					Text text = (Text) e.widget ;
-					String sTextValue = text.getText();
-	        		//log(this, "Text modified : '" + sTextValue + "'" );
-	        		//--- Update the model 
-	        		MapperTextBean<DatabaseConfiguration> mapper = (MapperTextBean<DatabaseConfiguration>) text.getData(TEXT_DATA_MAPPER);
-	        		DatabaseConfiguration currentDatabaseConfig = getCurrentDatabaseConfig() ;
-	        		mapper.updateBean( currentDatabaseConfig );
-	        		//log(this, "Model bean : '" + currentDatabaseConfig + "'" );
-	        		//--- Update the combo current text
-	        		if ( text.getData(TEXT_DATA_UPDATE_COMBO) != null ) {
-		        		//log(this, "Text modified : Update combo item with '" + sTextValue + "'" );
-	   		            String s = currentDatabaseConfig.getDatabaseId() + " - " + currentDatabaseConfig.getDatabaseName() ;
-		        		int index = _ComboDatabases.getSelectionIndex();
-		        		_ComboDatabases.setItem(index, s);
-	        		}
-	        		//--- Set "dirty" flag ON for this editor
-					setDirty();
+				{
+					if ( _ComboDatabases.getSelectionIndex() >= 0 ) {
+						
+						Text text = (Text) e.widget ;
+		        		//log(this, "Text modified : '" + text.getText() + "'" );
+		        		//--- Update the model 
+		        		MapperTextBean<DatabaseConfiguration> mapper = (MapperTextBean<DatabaseConfiguration>) text.getData(TEXT_DATA_MAPPER);
+		        		DatabaseConfiguration currentDatabaseConfig = getCurrentDatabaseConfig(true) ;
+		        		if ( currentDatabaseConfig != null ) {		        			
+			        		try {
+								mapper.updateBean( currentDatabaseConfig ); // Update bean or throw exception
+				        		//--- Update the combo current text if flag is set for this field
+				        		if ( text.getData(TEXT_DATA_UPDATE_COMBO) != null ) {
+					        		//log(this, "Text modified : Update combo item with '" + sTextValue + "'" );
+				   		            String s = currentDatabaseConfig.getDatabaseId() + " - " + currentDatabaseConfig.getDatabaseName() ;
+					        		int index = _ComboDatabases.getSelectionIndex();
+					        		_ComboDatabases.setItem(index, s);
+				        		}
+				        		//--- Set "dirty" flag ON for this editor
+								setDirty();
+							} catch (Exception e1) {
+								// TODO Auto-generated catch block
+								MsgBox.error("Cannot update the bean from the view", e1);
+							}
+			        		//log(this, "Model bean : '" + currentDatabaseConfig + "'" );
+		        		}
+					}
 				}
 				else
 				{
@@ -985,20 +1074,25 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
      * ( loaded from the XML DOM tree )
      * @return
      */
-    private DatabaseConfiguration getCurrentDatabaseConfig() 
+    private DatabaseConfiguration getCurrentDatabaseConfig(boolean bConfigRequired) 
     {
     	DatabasesConfigurations databasesConfigurations = _editor.getDatabasesConfigurations() ;
         if ( databasesConfigurations != null )
         {
-        	int id = databaseIdAsInt(_tId.getText() ) ;
-        	DatabaseConfiguration db = databasesConfigurations.getDatabaseConfiguration(id);
-        	if ( db != null )
-        	{
-        		return db ;
-        	}
-        	else
-        	{
-        		MsgBox.error("No database configuration for id '" + id + "'" );
+        	int id = getSelectedDatabaseId(_ComboDatabases, bConfigRequired) ;
+        	if ( id >= 0 ) {
+            	DatabaseConfiguration db = databasesConfigurations.getDatabaseConfiguration(id);
+            	if ( db != null )
+            	{
+            		return db ;
+            	}
+            	else
+            	{
+            		if ( bConfigRequired ) {
+                		MsgBox.error("No database configuration for id '" + id + "'" );        			
+            		}
+                    return null ;
+            	}
         	}
         }
         else
@@ -1185,8 +1279,7 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     
     private Connection getConnection() 
     {
-        //XmlDatabase db = getDatabaseConfig() ;
-    	DatabaseConfiguration db = getCurrentDatabaseConfig() ;
+    	DatabaseConfiguration db = getCurrentDatabaseConfig(true) ;
         if ( null == db ) return null ;
         
 		ConnectionManager cm = getConnectionManager();
@@ -1194,7 +1287,6 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 
         Connection con = null ;
 		try {
-			//con = cm.getConnection( db.getDriverClass(), db.getJdbcUrl(), db.getProperties() );
 			// Use screen fields  
 			String sDriverClass = _tDriver.getText() ;
 			String sJdbcUrl     = _tUrl.getText();
@@ -1429,64 +1521,81 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     private void getMetaDataColumns(MetaDataManager metaDataManager, DatabaseMetaData dbmd, 
     		List<TableMetaData> tables, String sCatalog, String sSchema) 
     {
-		//--- Get the columns for each table
-		for ( TableMetaData t : tables ) {
-			String sTableName = t.getTableName();
-			try {
-				List<ColumnMetaData> columns = metaDataManager.getColumns(dbmd, sCatalog, sSchema, sTableName );
-				printMetaDataColumns(sTableName, columns);
-			} catch (SQLException e) {
-		    	logException(e);
-				MsgBox.error("Cannot get columns for table '" + sTableName + "'", e );
-				break;
-			} catch (Exception e) {
-		    	logException(e);
-				MsgBox.error("Cannot get columns for table '" + sTableName + "'", e );
-				break;
+    	if ( tables.size() > 0 ) {    		
+			//--- Get the columns for each table
+			for ( TableMetaData t : tables ) {
+				String sTableName = t.getTableName();
+				try {
+					List<ColumnMetaData> columns = metaDataManager.getColumns(dbmd, sCatalog, sSchema, sTableName );
+					printMetaDataColumns(sTableName, columns);
+				} catch (SQLException e) {
+			    	logException(e);
+					MsgBox.error("Cannot get columns for table '" + sTableName + "'", e );
+					break;
+				} catch (Exception e) {
+			    	logException(e);
+					MsgBox.error("Cannot get columns for table '" + sTableName + "'", e );
+					break;
+				}
 			}
-		}
+    	}
+    	else {
+    		_tMetaData.append("No table => no column.\n");
+    	}
     }
     
     private void getMetaDataPrimaryKeys(MetaDataManager metaDataManager, DatabaseMetaData dbmd, 
     		List<TableMetaData> tables, String sCatalog, String sSchema) 
     {
-		//--- Get the columns for each table
-		for ( TableMetaData t : tables ) {
-			String sTableName = t.getTableName();
-			try {
-				List<PrimaryKeyColumnMetaData> columns = metaDataManager.getPKColumns(dbmd, sCatalog, sSchema, sTableName );
-				printMetaDataPrimaryKeys(sTableName, columns);
-			} catch (SQLException e) {
-		    	logException(e);
-				MsgBox.error("Cannot get Primary Key for table '" + sTableName + "'", e );
-				break;
-			} catch (Exception e) {
-		    	logException(e);
-				MsgBox.error("Cannot get Primary Key for table '" + sTableName + "'", e );
-				break;
-			} 
+    	if ( tables.size() > 0 ) {
+    		
+			//--- Get the columns for each table
+			for ( TableMetaData t : tables ) {
+				String sTableName = t.getTableName();
+				try {
+					List<PrimaryKeyColumnMetaData> columns = metaDataManager.getPKColumns(dbmd, sCatalog, sSchema, sTableName );
+					printMetaDataPrimaryKeys(sTableName, columns);
+				} catch (SQLException e) {
+			    	logException(e);
+					MsgBox.error("Cannot get Primary Key for table '" + sTableName + "'", e );
+					break;
+				} catch (Exception e) {
+			    	logException(e);
+					MsgBox.error("Cannot get Primary Key for table '" + sTableName + "'", e );
+					break;
+				} 
+			}
 		}
+		else {
+			_tMetaData.append("No table => no primary key.\n");
+		}		
     }
 
     private void getMetaDataForeignKeys(MetaDataManager metaDataManager, DatabaseMetaData dbmd, 
     		List<TableMetaData> tables, String sCatalog, String sSchema) 
     {
-		//--- Get the columns for each table
-		for ( TableMetaData t : tables ) {
-			String sTableName = t.getTableName();
-			try {
-				List<ForeignKeyColumnMetaData> columns = metaDataManager.getFKColumns(dbmd, sCatalog, sSchema, sTableName );
-				printMetaDataForeignKeys(sTableName, columns);
-			} catch (SQLException e) {
-		    	logException(e);
-				MsgBox.error("Cannot get Foreign Keys for table '" + sTableName + "'", e );
-				break;
-			} catch (Exception e) {
-		    	logException(e);
-				MsgBox.error("Cannot get Foreign Keys for table '" + sTableName + "'", e );
-				break;
-			} 
-		}
+    	if ( tables.size() > 0 ) {
+    		
+			//--- Get the columns for each table
+			for ( TableMetaData t : tables ) {
+				String sTableName = t.getTableName();
+				try {
+					List<ForeignKeyColumnMetaData> columns = metaDataManager.getFKColumns(dbmd, sCatalog, sSchema, sTableName );
+					printMetaDataForeignKeys(sTableName, columns);
+				} catch (SQLException e) {
+			    	logException(e);
+					MsgBox.error("Cannot get Foreign Keys for table '" + sTableName + "'", e );
+					break;
+				} catch (Exception e) {
+			    	logException(e);
+					MsgBox.error("Cannot get Foreign Keys for table '" + sTableName + "'", e );
+					break;
+				} 
+			}
+    	}
+    	else {
+    		_tMetaData.append("No table => no foreign key.\n");    		
+    	}
     }
     
     //----------------------------------------------------------------------------------------------------
@@ -1505,9 +1614,14 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     }
     private void printMetaDataCatalogs(List<String> list)
     {
-		for ( String s : list ) {
-			_tMetaData.append(" . " + s + " \n");
-		}
+    	if ( list.size() > 0 ) {
+    		for ( String s : list ) {
+    			_tMetaData.append(" . " + s + " \n");
+    		}
+    	}
+    	else {
+			_tMetaData.append("No catalog.\n");
+    	}
     }
 
     //----------------------------------------------------------------------------------------------------
@@ -1526,21 +1640,31 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     }
     private void printMetaDataSchemas(List<SchemaMetaData> list)
     {
-		for ( SchemaMetaData schema : list ) {
-			_tMetaData.append(" . " + schema.getSchemaName() + " ( catalog : "+ schema.getSchemaName() + " ) \n");
-		}
+    	if ( list.size() > 0 ) {
+			for ( SchemaMetaData schema : list ) {
+				_tMetaData.append(" . " + schema.getSchemaName() + " ( catalog : "+ schema.getSchemaName() + " ) \n");
+			}
+    	}
+    	else {
+			_tMetaData.append("No schema.\n");
+    	}
     }
     //----------------------------------------------------------------------------------------------------
     
     private void printMetaDataTables(List<TableMetaData> tables)
     {
-		for ( TableMetaData t : tables ) {
-			_tMetaData.append(" . " + t.getTableName() + " (" + t.getTableType() + ") "
-				+ " catalog = '" + t.getCatalogName() + "'"
-				+ " schema = '" + t.getSchemaName() + "'" 
-				+ "\n");
-
-		}
+    	if ( tables.size() > 0 ) {
+			for ( TableMetaData t : tables ) {
+				_tMetaData.append(" . " + t.getTableName() + " (" + t.getTableType() + ") "
+					+ " catalog = '" + t.getCatalogName() + "'"
+					+ " schema = '" + t.getSchemaName() + "'" 
+					+ "\n");
+	
+			}
+    	}
+    	else {
+			_tMetaData.append("No table.\n");
+    	}
     }
     private void printMetaDataColumns(String tableName, List<ColumnMetaData> columns)
     {
@@ -1623,6 +1747,33 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     	
     }
 
+    //---------------------------------------------------------------------------------------------------------
+    /**
+     * Delete current database
+     */
+    private void actionDeleteDatabase() 
+    {
+    	DatabaseConfiguration db = getCurrentDatabaseConfig(false);
+    	if ( db != null ) {
+    		String sMsg = "Do you realy want to delete this database configuration ?" 
+    			+ "\n\n" 
+    			+ ". Id : " + db.getDatabaseId() 
+    			+ "\n" 
+    			+ ". Name : " + db.getDatabaseName()  ;
+    		if ( MsgBox.confirm(" Confirm generation", sMsg) )
+    		{
+    	    	DatabasesConfigurations databasesConfigurations = _editor.getDatabasesConfigurations() ;
+    	    	databasesConfigurations.removeDatabaseConfiguration( db.getDatabaseId() ) ;
+    	    	setDirty();
+    	    	clearFields();
+    	    	populateComboDatabases() ;
+    		}
+    	}
+    	else {
+    		MsgBox.info("No current database.");
+    	}
+    }
+    //---------------------------------------------------------------------------------------------------------
     /**
      * Generates the repository file 
      */
@@ -1641,7 +1792,8 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 
         TelosysToolsLogger logger = _editor.getTextWidgetLogger();	
 		
-        DatabaseConfiguration db = getCurrentDatabaseConfig() ;
+        DatabaseConfiguration db = getCurrentDatabaseConfig(true) ;
+        if ( null == db ) return ;
 		String sDatabaseName = db.getDatabaseName();		
 		sRepositoryFile = getRepositoryFileName( db.getDatabaseName() ) ;
 		
@@ -1782,7 +1934,8 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
         }
 
         //XmlDatabase db = getDatabaseConfig() ;
-        DatabaseConfiguration db = getCurrentDatabaseConfig() ;
+        DatabaseConfiguration db = getCurrentDatabaseConfig(true) ;
+        if ( null == db ) return ;
 		String sDatabaseName = db.getDatabaseName();
 		String sRepositoryFile = getRepositoryFileName( db.getDatabaseName() ) ;
 		

@@ -9,6 +9,7 @@ public class MapperTextBean<T> {
 	
 	private final static String ERROR_SEARCH_SETTER = "Cannot get setter method " ;
 	private final static String ERROR_INVOKE_SETTER = "Cannot invoke setter " ;
+	//private final static String INVALID_INTEGER = "Invalid integer (cannot parse) " ;
 
 	private final Text     text ;
 	private final Class<T> beanClass ;
@@ -36,8 +37,7 @@ public class MapperTextBean<T> {
 			throw new RuntimeException(ERROR_SEARCH_SETTER + methodName + "(SecurityException)", e);
 		} catch (NoSuchMethodException e) {
 			throw new RuntimeException(ERROR_SEARCH_SETTER + methodName + "(NoSuchMethodException)", e);
-		}
-		
+		}		
 	}
 
 	public Class<T> getBeanClass() {
@@ -52,7 +52,7 @@ public class MapperTextBean<T> {
 		return propertyType;
 	}
 
-	public void updateBean(T bean) {
+	public void updateBean(T bean) throws Exception {
 		
 		//--- Text value to be set in the bean
 		Object params[] = new Object[1];		
@@ -66,23 +66,27 @@ public class MapperTextBean<T> {
 		}
 		else {
 			//--- Not supported 
-			throw new RuntimeException("Type '" + propertyType.getName() + "' not supported");
+			throw new Exception("Type '" + propertyType.getName() + "' not supported");
 		}
 		
 		
 		try {
 			this.method.invoke(bean, params);
 		} catch (IllegalArgumentException e) {
-			throw new RuntimeException(ERROR_INVOKE_SETTER + methodName, e);
+			throw new Exception(ERROR_INVOKE_SETTER + methodName, e);
 		} catch (IllegalAccessException e) {
-			throw new RuntimeException(ERROR_INVOKE_SETTER + methodName, e);
+			throw new Exception(ERROR_INVOKE_SETTER + methodName, e);
 		} catch (InvocationTargetException e) {
-			throw new RuntimeException(ERROR_INVOKE_SETTER + methodName, e);
+			throw new Exception(ERROR_INVOKE_SETTER + methodName, e);
 		}
 		
 	}
 
 	private int toInt(String s) {
-		return Integer.parseInt(s);
+		try {
+			return Integer.parseInt(s);
+		} catch (NumberFormatException e) {
+			return 0 ;
+		}
 	}
 }
