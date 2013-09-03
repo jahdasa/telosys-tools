@@ -87,7 +87,6 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     private final static String  TEXT_DATA_UPDATE_COMBO = "TEXT_DATA_UPDATE_COMBO" ;
 
     private final static int GROUP_X = 12 ;
-	private final static int GROUP_WIDTH = 700 ;
 	
 	private final static int TEXT_X = 10 ;
 
@@ -549,13 +548,13 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 			gd.widthHint = 260;
 			gd.verticalAlignment = SWT.BEGINNING ;
 
-			_tMetaDataCatalog = createTextWithLabel(panel, "Catalog", gd, true );
+			_tMetaDataCatalog = createTextWithLabel(panel, "Catalog ('!' for null) ", gd, true );
 
-			_tMetaDataSchema = createTextWithLabel(panel, "Schema", gd, true );
+			_tMetaDataSchema = createTextWithLabel(panel, "Schema ('!' for null) ", gd, true );
 	
 			_tMetaDataTablePattern = createTextWithLabel(panel, "Table name pattern", gd, true );
 	
-			_tMetaDataTableTypes = createTextWithLabel(panel, "Table types", gd, true );
+			_tMetaDataTableTypes = createTextWithLabel(panel, "Table types (separated by blanks)", gd, true );
 			
 			
 			bindViewToModel(_tMetaDataCatalog,      "setMetadataCatalog",          String.class);
@@ -859,27 +858,34 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 		return s != null ? s : "" ;
 	}
 
+	private String quote ( String s )
+	{
+		if ( s == null ) return "null" ;
+		return "'" + s + "'" ;
+	}
 	private String arrayToString ( String[] array )
 	{
-		if ( array == null ) return "" ;
+		if ( array == null ) return "null" ;
 		StringBuilder sb = new StringBuilder();
+		sb.append("[ ");
 		for ( int i = 0 ; i < array.length ; i++ )
 		{
 			if ( i > 0 ) sb.append(", ");
 			sb.append(array[i]);
 		}
+		sb.append(" ]");
 		return sb.toString();
 	}
-	private String[] stringToArray ( String s )
-	{
-		if ( s == null ) return new String[0] ;
-		String[] parts = s.split(",");
-		String[] parts2 = new String[parts.length];
-		for ( int i = 0 ; i < parts.length ; i++ ) {
-			parts2[i] = parts[i].trim() ;
-		}
-		return parts2 ;
-	}
+//	private String[] stringToArray ( String s )
+//	{
+//		if ( s == null ) return new String[0] ;
+//		String[] parts = s.split(",");
+//		String[] parts2 = new String[parts.length];
+//		for ( int i = 0 ; i < parts.length ; i++ ) {
+//			parts2[i] = parts[i].trim() ;
+//		}
+//		return parts2 ;
+//	}
 	
 	
 	//private void populateDatabaseConfigFields( String sDbId )
@@ -1279,34 +1285,29 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     
     private Connection getConnection() 
     {
-    	DatabaseConfiguration db = getCurrentDatabaseConfig(true) ;
-        if ( null == db ) return null ;
+    	DatabaseConfiguration databaseConfiguration = getCurrentDatabaseConfig(true) ;
+        if ( null == databaseConfiguration ) return null ;
         
 		ConnectionManager cm = getConnectionManager();
         if ( null == cm ) return null ;
 
         Connection con = null ;
 		try {
-			// Use screen fields  
-			String sDriverClass = _tDriver.getText() ;
-			String sJdbcUrl     = _tUrl.getText();
-
-			//--- Connection properties 
-			// TODO : manage other set of properties for each database ???
-//			Properties prop = db.getProperties() ;
-//			prop.put(XmlDatabase.PROPERTY_USER,     _User.getText() );
-//			prop.put(XmlDatabase.PROPERTY_PASSWORD, _Password.getText() );
+			//--- Connection parameters, from DatabaseConfiguration (always up to date thanks to field binding )
+			String sDriverClass = databaseConfiguration.getDriverClass(); // _tDriver.getText() ;
+			String sJdbcUrl     = databaseConfiguration.getJdbcUrl(); // _tUrl.getText();
 			Properties prop = new Properties() ;
-			prop.put("user",     _tUser.getText()     );
-			prop.put("password", _tPassword.getText() );
+			prop.put("user",     databaseConfiguration.getUser() ) ; // _tUser.getText()     );
+			prop.put("password", databaseConfiguration.getPassword() ) ;// _tPassword.getText() );
+			// TODO : manage other set of properties for each database (more than user/password) ???
 			
 			log("Try to get a database connection...");
-			log(" . Driver class = " + sDriverClass );
-			log(" . JDBC URL     = " + sJdbcUrl );
+			log(" . Driver class = " + quote(sDriverClass) );
+			log(" . JDBC URL     = " + quote(sJdbcUrl) );
 			log(" . Properties : " );
 			Set<Object> keys = prop.keySet();
 			for ( Object key : keys ) {
-				log("   . '" + key + "' = '" + prop.get(key) + "'" );
+				log("   . '" + key + "' = " + quote( (String) prop.get(key) ) );
 			}
 			con = cm.getConnection( sDriverClass, sJdbcUrl, prop );
 
@@ -1317,9 +1318,9 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 				SQLException sqlException = (SQLException)cause;
 	            MsgBox.error("Cannot connect to the database ! "
 	                      + "\n SQLException :"
-	                      + "\n . Message : " + sqlException.getMessage() 
+	                      + "\n . Message   : " + sqlException.getMessage() 
 	                      + "\n . ErrorCode : " + sqlException.getErrorCode() 
-	                      + "\n . SQLState : " + sqlException.getSQLState() 
+	                      + "\n . SQLState  : " + sqlException.getSQLState() 
 	                      );
 			}
 			else {
@@ -1456,11 +1457,20 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     	Connection con = getConnection();
     	if ( con != null )
     	{
-    		String sCatalog = _tMetaDataCatalog.getText();
-    		String sSchema  = _tMetaDataSchema.getText();
-    		String sTableNamePattern = _tMetaDataTablePattern.getText();
-    		String[] tableTypes = stringToArray(_tMetaDataTableTypes.getText());
+    		log("connected.");
+//    		String sCatalog = _tMetaDataCatalog.getText();
+//    		String sSchema  = _tMetaDataSchema.getText();
+//    		String sTableNamePattern = _tMetaDataTablePattern.getText();
+//    		String[] tableTypes = stringToArray(_tMetaDataTableTypes.getText());
+
+    		DatabaseConfiguration db = getCurrentDatabaseConfig(true) ;
+            if ( null == db ) return ;
+    		String sCatalog = db.getMetadataCatalog() ;
+    		String sSchema  = db.getMetadataSchema() ;
+    		String sTableNamePattern = db.getMetadataTableNamePattern() ;
+    		String[] tableTypes = db.getMetadataTableTypesArray() ;
     		
+    		log("get DatabaseMetaData from connection...");
 			DatabaseMetaData dbmd = null ;
 			List<TableMetaData> tables = null ;
 			try {
@@ -1471,11 +1481,18 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 		    	logException(e);
 				MsgBox.error("Cannot get meta-data ! ", e );
 			} 
+
+			log("DatabaseMetaData instance ready.");
 			
 			TelosysToolsLogger logger = _editor.getTextWidgetLogger();
     		MetaDataManager metaDataManager = new MetaDataManager(logger);
 
     		//--- Get the tables
+    		log("get tables from DatabaseMetaData ... ");
+    		log(" . catalog = " + quote(sCatalog) );
+    		log(" . schema  = " + quote(sSchema) );
+    		log(" . pattern = " + quote(sTableNamePattern) );
+    		log(" . types   = " + arrayToString(tableTypes) );
     		try {
 				tables = metaDataManager.getTables(dbmd, sCatalog, sSchema, sTableNamePattern, tableTypes );
 			} catch (SQLException e) {
@@ -1489,22 +1506,27 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 				switch ( whatElse )
 				{
 				case GET_COLUMNS :
+		    		log("get columns ... ");
 					getMetaDataColumns( metaDataManager, dbmd, tables, sCatalog, sSchema);
 					break;
 					
 				case GET_PRIMARY_KEYS :
+		    		log("get primary keys ... ");
 					getMetaDataPrimaryKeys( metaDataManager, dbmd, tables, sCatalog, sSchema);
 					break;
 					
 				case GET_FOREIGN_KEYS :
+		    		log("get foreign keys ... ");
 					getMetaDataForeignKeys( metaDataManager, dbmd, tables, sCatalog, sSchema);
 					break;
 					
 				case GET_CATALOGS :
+		    		log("get catalogs ... ");
 					getMetaDataCatalogs( metaDataManager, dbmd);
 					break;
 					
 				case GET_SCHEMAS :
+		    		log("get schemas ... ");
 					getMetaDataSchemas( metaDataManager, dbmd);
 					break;
 					
