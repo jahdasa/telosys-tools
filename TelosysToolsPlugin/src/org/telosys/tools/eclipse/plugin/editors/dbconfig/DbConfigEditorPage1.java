@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -30,6 +31,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
@@ -85,6 +87,7 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     private final static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd.HHmmss");
     private final static String  TEXT_DATA_MAPPER       = "TEXT_DATA_MAPPER" ;
     private final static String  TEXT_DATA_UPDATE_COMBO = "TEXT_DATA_UPDATE_COMBO" ;
+    private final static String  TO_BE_DEFINED          = "TO_BE_DEFINED" ;
 
     private final static int GROUP_X = 12 ;
 	
@@ -258,7 +261,7 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     	{
             public void widgetSelected(SelectionEvent arg0)
             {
-                //actionGenerateRepository();
+            	actionNewDatabase() ;
             }
             public void widgetDefaultSelected(SelectionEvent arg0)
             {
@@ -344,7 +347,8 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 		log(this, "Populate DATABASES combo ..." );
 
 		populateComboDatabases();
-		
+		selectFirstDatabaseInCombo();
+
 		log(this, "Populate DATABASES combo : done." );
 	}
 	
@@ -774,24 +778,24 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 	
 	
     //------------------------------------------------------------------------------------------------------
-	private void populateComboDatabases(Combo comboBases, DatabasesConfigurations databasesConfigurations )
-    {
-		log(this, "loadComboBases()");
-        comboBases.removeAll(); 
-        
-        List<DatabaseConfiguration> list = databasesConfigurations.getDatabaseConfigurationsList() ;
-		log(this, "loadComboBases() : nb bases = " + list.size() );
-		for ( DatabaseConfiguration db : list ) {
-            String sItem = db.getDatabaseId() + " - " + db.getDatabaseName() ;
-            comboBases.add(sItem);
-    		log(this, "loadComboBases() : add " + sItem );			
-		}
-        
-        if ( comboBases.getItemCount() > 0 ) {
-        	comboBases.select(0);
-        	populateDatabaseConfigFields(comboBases);
-        }
-    }
+//	private void populateComboDatabases(Combo comboBases, DatabasesConfigurations databasesConfigurations )
+//    {
+//		log(this, "loadComboBases()");
+//        comboBases.removeAll(); 
+//        
+//        List<DatabaseConfiguration> list = databasesConfigurations.getDatabaseConfigurationsList() ;
+//		log(this, "loadComboBases() : nb bases = " + list.size() );
+//		for ( DatabaseConfiguration db : list ) {
+//            String sItem = db.getDatabaseId() + " - " + db.getDatabaseName() ;
+//            comboBases.add(sItem);
+//    		log(this, "loadComboBases() : add " + sItem );			
+//		}
+////        if ( comboBases.getItemCount() > 0 ) {
+////        	comboBases.select(0);
+////        	populateDatabaseConfigFields(comboBases);
+////        }
+////		selectFirstDatabaseInCombo();
+//    }
 	
     private void populateComboDatabases() 
     {
@@ -800,7 +804,16 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     	{
     		if ( _ComboDatabases != null )
     		{
-        		populateComboDatabases(_ComboDatabases, databasesConfigurations);
+//        		populateComboDatabases(_ComboDatabases, databasesConfigurations);
+    			_ComboDatabases.removeAll(); 
+                
+                List<DatabaseConfiguration> list = databasesConfigurations.getDatabaseConfigurationsList() ;
+        		log(this, "loadComboBases() : nb bases = " + list.size() );
+        		for ( DatabaseConfiguration db : list ) {
+                    String sItem = db.getDatabaseId() + " - " + db.getDatabaseName() ;
+                    _ComboDatabases.add(sItem);
+            		log(this, "loadComboBases() : add " + sItem );			
+        		}
     		}
     		else
     		{
@@ -1771,6 +1784,90 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 
     //---------------------------------------------------------------------------------------------------------
     /**
+     * Add a new database
+     */
+    private void actionNewDatabase() 
+    {
+		Display display = Display.getCurrent();
+		 
+		//--- New DialogBox instance
+		DialogBoxNewDatabase dialogBox = new DialogBoxNewDatabase(display.getActiveShell(), 
+					_editor.getDatabasesConfigurations() );
+		
+		//--- Open the Dialog Box Window ( Modal Window )
+		log( "openDialogBox() : before dialog.open() ----- " );		
+		int iRet = dialogBox.open();
+		log( "openDialogBox() : after dialog.open() ----- " );		
+		
+		//--- Use result if "Ok" has been pressed
+		if ( Window.OK == iRet ) {
+			int dbId = dialogBox.getDatabaseId() ;
+			DatabaseType dbType = dialogBox.getDatabaseType();
+//			MsgBox.info("Dialog Box 'Ok' : "
+//					+ "\n db id = "   + dbId 
+//					+ "\n db type = " + dbType );
+			if ( dbId < 0 ) {
+				MsgBox.error("Invalid database id " + dbId );
+				return ;
+			}
+			if ( null == dbType ) {
+				MsgBox.error("No database type selected ! " );
+				return ;
+			}
+			// Everything ok : add the database
+			DatabaseConfiguration databaseConfiguration = new DatabaseConfiguration();
+		    //--- Init Connection info (must be initialized)
+			databaseConfiguration.setDatabaseId(dbId);
+			databaseConfiguration.setDatabaseName( dbType.getTypeName() + " database") ;
+			databaseConfiguration.setDriverClass( dbType.getDriver() ) ;
+			databaseConfiguration.setJdbcUrl( dbType.getUrl() ) ;
+			databaseConfiguration.setUser(TO_BE_DEFINED) ;
+			databaseConfiguration.setPassword(TO_BE_DEFINED);
+			databaseConfiguration.setPoolSize(1);
+			databaseConfiguration.setIsolationLevel("");
+			
+		    //--- Init Meta-Data info (must be initialized)
+			databaseConfiguration.setMetadataCatalog( dbType.getMetadataCatalog() ) ;
+			databaseConfiguration.setMetadataSchema(TO_BE_DEFINED);
+			databaseConfiguration.setMetadataTableNamePattern("%") ;
+			databaseConfiguration.setMetadataTableTypes("TABLE");
+			
+	    	DatabasesConfigurations databasesConfigurations = _editor.getDatabasesConfigurations() ;
+	    	databasesConfigurations.storeDatabaseConfiguration(databaseConfiguration); 
+	    	setDirty();
+	    	clearFields();
+	    	populateComboDatabases() ;
+	    	selectDatabaseInCombo(dbId) ; // Select the new database
+		}
+		else {
+//			MsgBox.info("Dialog Box 'Cancel' ");
+		}		
+    }
+    
+    private void selectFirstDatabaseInCombo() 
+    {
+        if ( _ComboDatabases.getItemCount() > 0 ) {
+        	_ComboDatabases.select(0);
+        	populateDatabaseConfigFields(_ComboDatabases);
+        }
+
+    }
+    private void selectDatabaseInCombo(int databaseId) 
+    {
+    	String sDbId = databaseId + " "; // item format = "ID - Name"
+    	int n =_ComboDatabases.getItemCount() ;
+    	for ( int i = 0 ; i < n ; i++ ) {
+    		String s = _ComboDatabases.getItem(i);
+    		if ( s.startsWith(sDbId) ) {
+    			_ComboDatabases.select(i);
+            	populateDatabaseConfigFields(_ComboDatabases);
+    			return;
+    		}
+    	}
+    }
+    
+    //---------------------------------------------------------------------------------------------------------
+    /**
      * Delete current database
      */
     private void actionDeleteDatabase() 
@@ -1789,6 +1886,7 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     	    	setDirty();
     	    	clearFields();
     	    	populateComboDatabases() ;
+    			selectFirstDatabaseInCombo();
     		}
     	}
     	else {
