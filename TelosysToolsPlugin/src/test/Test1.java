@@ -1,4 +1,4 @@
-package org.telosys.tools.eclipse.plugin.commons.test;
+package test;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

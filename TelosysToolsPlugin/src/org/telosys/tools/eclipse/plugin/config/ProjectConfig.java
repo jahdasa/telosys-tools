@@ -49,7 +49,9 @@ public class ProjectConfig
 	//----------------------------------------------------------------------------------------
 	// [22-Jan-2012] Removed	
 	//--- Packages 	
-	private String _sEntitiesPackage = "org.demo.bean" ;
+	//private String _sEntitiesPackage = "org.demo.bean" ;
+	private String _ENTITY_PKG = "org.demo.bean" ;
+	private String _ROOT_PKG   = "org.demo" ;
 
 	private String _SRC      =  "" ;
 	private String _RES      =  "" ;
@@ -158,7 +160,9 @@ public class ProjectConfig
     	_sLibrariesFolder = prop.getProperty(GeneratorConfigConst.LIBRARIES_FOLDER, _sLibrariesFolder);
     	
     	//--- Packages 
-    	_sEntitiesPackage = prop.getProperty(GeneratorConfigConst.ENTITIES_PACKAGE, _sEntitiesPackage);
+    	//_sEntitiesPackage = prop.getProperty(GeneratorConfigConst.ENTITIES_PACKAGE, _sEntitiesPackage);
+    	_ROOT_PKG   = prop.getProperty(ContextName.ROOT_PKG,   _ROOT_PKG);
+    	_ENTITY_PKG = prop.getProperty(ContextName.ENTITY_PKG, _ENTITY_PKG);
 
     	//--- Folders  
     	_SRC      =  prop.getProperty(ContextName.SRC,      _SRC);
@@ -322,12 +326,24 @@ public class ProjectConfig
     // Packages 
     //==============================================================================
 	/**
+	 * Returns the package for entity classes 
 	 * ie "org.demo.bean"
 	 * @return 
 	 */
-	public String getPackageForJavaBeans() 
+	//public String getPackageForJavaBeans() 
+	public String getEntityPackage() 
 	{
-		return _sEntitiesPackage ;
+		return _ENTITY_PKG ;
+	}
+	
+	/**
+	 * Returns the root package  
+	 * ie "org.demo"
+	 * @return 
+	 */
+	public String getRootPackage() 
+	{
+		return _ROOT_PKG ;
 	}
 	
 //	/**

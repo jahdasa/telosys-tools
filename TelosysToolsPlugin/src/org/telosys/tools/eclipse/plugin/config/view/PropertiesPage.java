@@ -66,14 +66,15 @@ public class PropertiesPage extends PropertyPage {
 	private Text _tLibrariesFolder = null ;
 	
     //--- Tab "Packages"
-	private Text _tBeanPackage = null ;
+	private Text _tEntityPackage = null ;
+	private Text _tRootPackage = null ; // v 2.0.6
 	
 	//--- Tab "Variables"
 	private VariablesTable _variablesTable = null ;
 	
 	//--- Tab "Download"
-	private Text  _tGitHubUserName = null;
-	private Text  _tGitHubUrlPattern  = null;
+	private Text    _tGitHubUserName = null;
+	private Text    _tGitHubUrlPattern  = null;
 	private List    _listGitHubRepositories = null ;
 	private Button  _checkBoxUnzipDownload = null ;
 	private Text    _tLogger = null ;
@@ -451,9 +452,13 @@ public class PropertiesPage extends PropertyPage {
 		tabContent.setLayout(new GridLayout(3, false));
 		tabItem.setControl(tabContent);
 
-		_tBeanPackage = createTextField(tabContent, "Entity classes package ") ;
+		//_tEntityPackage = createTextField(tabContent, "Entity classes package ") ;
+		createSingleLabel(tabContent, "Define here the project packages variables (usable in targets and templates)");
+		_tRootPackage   = createTextField(tabContent, "Root package ",           "${ROOT_PKG}") ;
+		_tEntityPackage = createTextField(tabContent, "Entity classes package ", "${ENTITY_PKG}") ;
 		
-		createTwoLabels(tabContent, "", "" ); // Separator
+		createOneLabel(tabContent, "" ); 
+		createOneLabel(tabContent, "If you need more packages define them in the \"Variables\" " );
 
 	}
 	
@@ -1238,7 +1243,9 @@ public class PropertiesPage extends PropertyPage {
 		_tLibrariesFolder.setText( projectConfig.getLibrariesFolder() );
 		
 		//--- Tab "Packages"
-		_tBeanPackage.setText( projectConfig.getPackageForJavaBeans() );
+		//_tEntityPackage.setText( projectConfig.getPackageForJavaBeans() );
+		_tEntityPackage.setText( projectConfig.getEntityPackage() ); // v 2.0.6
+		_tRootPackage.setText( projectConfig.getRootPackage() ); // v 2.0.6
 		
 		//--- Tab "Folders" ( considered as pre-defined variables )
 		_tSrcFolder.setText( projectConfig.getSRC() ) ;
@@ -1307,7 +1314,9 @@ public class PropertiesPage extends PropertyPage {
 		props.put(GeneratorConfigConst.LIBRARIES_FOLDER,  _tLibrariesFolder.getText() );
 				
 		//--- Tab "Packages"
-		props.put(GeneratorConfigConst.ENTITIES_PACKAGE,  _tBeanPackage.getText());
+		//props.put(GeneratorConfigConst.ENTITIES_PACKAGE,  _tEntityPackage.getText());
+		props.put(ContextName.ENTITY_PKG,  _tEntityPackage.getText());
+		props.put(ContextName.ROOT_PKG,    _tRootPackage.getText());
 		
 		//--- Tab "Folders" ( considered as pre-defined variables )
 		props.put(ContextName.SRC,       _tSrcFolder.getText() );
