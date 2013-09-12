@@ -19,5 +19,19 @@ public class StrUtilTest extends TestCase {
 
 	}
 
-
+	private void replaceVar(String s, String varName, String varValue, String expectedResult ) {
+		System.out.println("Replace var " + varName + " in '" + s + "'");
+		String result = StrUtil.replaceVar(s, varName, varValue) ;
+		System.out.println("  result : '" + result + "'");
+		assertEquals(expectedResult, result);
+	}
+	
+	public void testReplaceVar() {
+		replaceVar("aaaaabbbccccc",   "bbb",     "BBB",      "aaaaaBBBccccc") ;
+		replaceVar("aaaaa[x]ccccc",   "[x]",     "X",        "aaaaaXccccc") ;
+		replaceVar("aaaaa$TOTObbb",   "$TOTO",   "MyValue",  "aaaaaMyValuebbb") ;
+		replaceVar("aaaaa${TOTO}bbb", "${TOTO}", "MyValue",  "aaaaaMyValuebbb") ;
+		replaceVar("aaaaa${TOTO}bbb", "${TOTO}", "",         "aaaaabbb") ;
+		replaceVar("aaaaa$bbb",       "$",       "DOLLAR",   "aaaaaDOLLARbbb") ;
+	}
 }

@@ -16,6 +16,8 @@
 package org.telosys.tools.commons;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Variable manager designed to store a set of variables and replace them by their values  
@@ -30,17 +32,22 @@ public class VariablesManager {
 	 * 
 	 * e.g.  "${VAR1}" --> "VALUE1"
 	 */
-	HashMap<String,String> hmVariables = null ; 
+	private final HashMap<String,String> hmVariables ; 
 	
 	
 	/**
 	 * Constructor
 	 * @param hmVariables set of variables, each variable name is supposed to contains "${" and "}" 
 	 */
-	public VariablesManager(HashMap<String,String> hmVariables) 
+	public VariablesManager(HashMap<String,String> hmInitialVariables) 
 	{
 		super();
-		this.hmVariables = hmVariables;
+		//this.hmVariables = hmVariables;
+		// v 2.0.6 : init by copy in order to be able to change some values after
+		this.hmVariables = new HashMap<String,String>() ;
+		for (String varName : hmInitialVariables.keySet()) {
+			hmVariables.put(varName, hmInitialVariables.get(varName));
+		}
 	}
 
 	/**
@@ -50,11 +57,11 @@ public class VariablesManager {
 	public VariablesManager(Variable[] variables) 
 	{
 		super();
+		this.hmVariables = new HashMap<String,String>() ;
 		if ( variables != null )
 		{
 			if ( variables.length > 0 )
 			{
-				this.hmVariables = new HashMap<String,String>();
 				for ( int i = 0 ; i < variables.length ; i++ )
 				{
 					Variable v = variables[i];
@@ -70,7 +77,23 @@ public class VariablesManager {
 		}
 	}
 
-	private String getVariableValue(String var)
+	/**
+	 * Returns all the variables names ( list of ${name} )
+	 * @return
+	 */
+	public List<String> getVariablesNames()
+	{
+		LinkedList<String> list = new LinkedList<String>() ;
+		if ( hmVariables != null )
+		{
+			for (String varName : hmVariables.keySet()) {
+				list.add(varName);
+			}
+		}
+		return list ;
+	}
+	
+	public String getVariableValue(String var)
 	{
 		if ( hmVariables != null )
 		{
@@ -124,4 +147,36 @@ public class VariablesManager {
             sb.append( s ) ;
         }
 	}
+
+	/**
+	 * Change the value for a given variable (only in the VariableManger context)
+	 * @param variableName
+	 * @param variableValue
+	 * @return
+	 */
+	public void changeVariableValue(String variableName, String variableValue )
+	{
+		if ( null == variableName ) return ;
+		if ( null == variableValue ) return ;
+		if ( hmVariables.get(variableName) != null ) {
+			hmVariables.put(variableName, variableValue);
+		}
+		else {
+			throw new RuntimeException("Unknown variable '" + variableName +"'");
+		}
+	}
+	
+	/**
+	 * Transform all the values of variables ending by "_PKG" (replace '.' by '/' )
+	 */
+	public void transformPackageVariablesToDirPath(){
+		List<String> names = this.getVariablesNames();
+		for ( String name : names ) {
+			if ( name.endsWith("_PKG}" ) ) {
+				String value = this.getVariableValue(name) ;
+				String newValue = value.replace('.', '/');
+				this.changeVariableValue(name, newValue);
+			}
+		}		
+	}	
 }
