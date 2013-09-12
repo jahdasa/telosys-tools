@@ -32,7 +32,8 @@ public class ContextInfoTest  extends TestCase {
 		String[] names = contextInfo.getVariableNames() ;
 		print("Variable names", names);
 		
-		assertTrue ( names.length == 15 );
+		//assertTrue ( names.length == 15 );
+		assertTrue ( names.length == 17 ); // v 2.0.6
 	}
 
 	public void testObjectNames() {

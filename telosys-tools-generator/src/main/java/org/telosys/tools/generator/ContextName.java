@@ -33,6 +33,10 @@ public class ContextName {
 	public final static String  LBRACE = "LBRACE" ; // left brace
 	public final static String  RBRACE = "RBRACE" ; // right brace
 	
+	//--- PACKAGES predefined variables names ( v 2.0.6 )		
+	public final static String  ROOT_PKG    = "ROOT_PKG" ;
+	public final static String  ENTITY_PKG  = "ENTITY_PKG" ;
+	
 	//--- FOLDERS predefined variables names ( v 2.0.3 )		
 	public final static String  SRC      = "SRC" ;
 	public final static String  RES      = "RES" ;

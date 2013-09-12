@@ -35,6 +35,7 @@ public class GeneratorConfigConst {
     public final static String LIBRARIES_FOLDER  = "LibrariesFolder";
     
     //--- Packages 
-    public final static String ENTITIES_PACKAGE  = "packageVo";
+    //public final static String ENTITIES_PACKAGE  = "packageVo";
+    // removed in v 2.0.6 ( replaced by ContextName.ENTITY_PKG )
 
 }

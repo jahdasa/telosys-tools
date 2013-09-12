@@ -45,6 +45,10 @@ public class VariableNames {
 		VARIABLES_LIST.add( ContextName.LBRACE );
 		VARIABLES_LIST.add( ContextName.RBRACE );
 		
+		//--- PACKAGES predefined variables names ( v 2.0.6 )
+		VARIABLES_LIST.add( ContextName.ROOT_PKG );
+		VARIABLES_LIST.add( ContextName.ENTITY_PKG );
+		
 		//--- FOLDERS predefined variables names ( v 2.0.3 )
 		VARIABLES_LIST.add( ContextName.SRC );
 		VARIABLES_LIST.add( ContextName.RES );

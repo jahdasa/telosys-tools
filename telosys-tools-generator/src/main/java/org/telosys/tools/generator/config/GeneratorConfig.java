@@ -50,7 +50,8 @@ public class GeneratorConfig implements IGeneratorConfig
     	_sTemplatesFolder     = prop.getProperty(GeneratorConfigConst.TEMPLATES_FOLDER, null);
 		
 		//--- Packages names
-    	_sEntityClassPackage  = prop.getProperty(GeneratorConfigConst.ENTITIES_PACKAGE, null);
+    	//_sEntityClassPackage  = prop.getProperty(GeneratorConfigConst.ENTITIES_PACKAGE, null);
+    	_sEntityClassPackage  = prop.getProperty(ContextName.ENTITY_PKG, null); // v 2.0.6
     	
     	//--- All variables : specific project variables + folders 
     	Hashtable<String, String> allVariables = new Hashtable<String, String>();
@@ -60,7 +61,10 @@ public class GeneratorConfig implements IGeneratorConfig
     	for ( Variable v : specificVariables ) {
     		allVariables.put(v.getName(), v.getValue());
     	}
-    	//--- 2) Folders ( at the end to override specific variables if any )
+    	//--- 2) Packages and folders ( at the end to override specific variables if any )
+    	allVariables.put( ContextName.ROOT_PKG,   prop.getProperty(ContextName.ROOT_PKG,    "") ); // v 2.0.6
+    	allVariables.put( ContextName.ENTITY_PKG, prop.getProperty(ContextName.ENTITY_PKG,  "") ); // v 2.0.6
+    	
     	allVariables.put( ContextName.SRC,      prop.getProperty(ContextName.SRC,      "") );
     	allVariables.put( ContextName.RES,      prop.getProperty(ContextName.RES,      "") );
     	allVariables.put( ContextName.WEB,      prop.getProperty(ContextName.WEB,      "") );

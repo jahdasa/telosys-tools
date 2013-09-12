@@ -97,6 +97,8 @@ public class Target
 			variablesManager = new VariablesManager( variables );
 		}
 		this.file   = replaceVariables( genericTarget.getFile(),   entityJavaClassName, variablesManager );
+		
+		variablesManager.transformPackageVariablesToDirPath(); // for each variable ${XXXX_PKG} : replace '.' by '/' 
 		this.folder = replaceVariables( genericTarget.getFolder(), entityJavaClassName, variablesManager );
 	}
 
