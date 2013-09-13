@@ -36,18 +36,16 @@ Before trying to connect to a database you must have the JDBC driver.<br>
 The JAR file can be located either in the <b>Telosys Tools library folder</b> (usually "TelosysTools/lib")  <br>
 or in the <b>project class path</b> if it's a Java project.<br>
 <br>
-To define a new database, open the <b>"databases.dbcfg"</b> file with a text editor : <br>
-Right-click <b>"Open With" - "Text Editor"</b>  ( this file is a XML file )<br>
-Edit the file in order to allow a JDBC connection <br>
-Find the example corresponding to your database (Oracle, PostgreSQL, MySQL, Derby, ... )<br>
-and remove XML comments for this database<br>
+To define a new database, open the <b>"databases.dbcfg"</b> <br>
+Just double-click on the file to open the databases configuration editor. <br>
+Here you can : <br>
+. Define a new database with its JDBC configuration <br>
+. Test the connection <br>
+. Check that all the expected meta-data can be retrieved <br>
 <br>
-Save the file<br>
+When everything works correctly, save the file.<br>
 <br>
-Re-open the same file with the plugin editor : Right-click <b>"Open With" - "Dbconfig Editor"</b><br>
-In the editor's window select the database and test the connection<br> 
-When the connection is OK you can check the tool is able to retrieve the database metadata<br>
-Finally you can generate the repository <br>
+Finally you can <b>generate a new repository</b> (or later update an existing repository).<br>
 
 <!-- ========== -->
 <h2>Customize the repository</h2>
