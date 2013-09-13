@@ -1,8 +1,11 @@
 <project name="TelosysToolsUpdateSite" default="build">
+	<tstamp>
+	    <format property="DSTAMP" pattern="yyyy-MM-dd" />
+	</tstamp>
 
-	<property name="version"   value="2.0.5" />
+	<property name="version"   value="2.0.6" />
 	<property name="dist_dir"  value="./dist" />
-	<property name="zip_file"  value="${dist_dir}/TelosysTools-${version}-UpdateSite.zip" />
+	<property name="zip_file"  value="${dist_dir}/TelosysTools-${version}-UpdateSite-${DSTAMP}.zip" />
 
 	<!-- ============================================================================== -->
 	<!--                                                      -->
