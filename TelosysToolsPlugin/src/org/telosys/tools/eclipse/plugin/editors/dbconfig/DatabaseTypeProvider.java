@@ -73,6 +73,12 @@ public class DatabaseTypeProvider {
 				"jdbc:sqlserver://localhost:1433;databaseName=DB_NAME",
 				"") ) ;
 		
+		dbTypesList.add( new DatabaseType(
+				"( other )",  
+				"driver.package.DriverClass",
+				"jdbc:xxxxxx",
+				"") ) ;
+		
 		for ( DatabaseType t : dbTypesList ) {
 			dbTypesMap.put(t.getTypeName(), t);
 		}

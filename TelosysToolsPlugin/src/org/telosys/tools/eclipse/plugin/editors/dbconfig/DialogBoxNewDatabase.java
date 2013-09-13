@@ -144,7 +144,7 @@ public class DialogBoxNewDatabase extends TitleAreaDialog
 		gdComboDatabaseType.widthHint    = 260 ;
 		gdComboDatabaseType.minimumWidth = 260 ;
 		comboDatabaseType = new Combo(group, SWT.BORDER | SWT.READ_ONLY);
-		comboDatabaseType.setVisibleItemCount(10);
+		comboDatabaseType.setVisibleItemCount(12);
 		comboDatabaseType.setLayoutData(gdComboDatabaseType);
 
 		//-------------------------------------------------------------------
