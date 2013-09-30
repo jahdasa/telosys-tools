@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="lib" path="lib/json-simple-1.1.1.jar"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="lib/velocity-1.7-dep.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/telosys-tools-commons-2.0.6.jar"/>
+	<classpathentry kind="lib" path="lib/telosys-tools-database-2.0.6.jar"/>
+	<classpathentry kind="lib" path="lib/telosys-tools-generator-2.0.6.jar"/>
+	<classpathentry kind="lib" path="lib/telosys-tools-repository-2.0.6.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
