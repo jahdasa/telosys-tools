@@ -1,0 +1,172 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">		
+<html>								
+<head>								
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">	
+	<title> $fn</title>	
+	<style type="text/css">		
+	h1 {							
+		font-size:28px;				
+		font-family: verdana		
+	}								
+	p.otherNames{					
+		font-size:20px;				
+		font-family: verdana;		
+	}								
+	p.desc {						
+		font-size:12px;				
+		font-family: verdana;		
+	}								
+	p.doc {							
+		margin-left:2cm;			
+	}								
+	td.doc {						
+		font-size:12px;				
+		font-family: verdana;		
+		vertical-align:text-top;	
+		padding-top: 6px;			
+		padding-bottom: 12px;		
+	}								
+	tr.title {						
+		font-family: verdana;		
+		font-size:20px;				
+		font-weight:bold;			
+		background-color: #CCCCFF ;	
+	}								
+	code.simpledesc {				
+		font-size:15px;				
+		color: #000099; 			
+	}								
+	</style>						
+</head>							
+<body>											
+<h1> $fn</h1>	
+<p class="desc">								
+Object providing a set of utility functions <br>
+<br>
+<br>
+Since : 2.0.3<br>
+</p>		
+<table width="100%" border="1" cellspacing="0">		
+<TR class="title">										
+  <TD>Attributes and methods</TD>			
+</TR>		
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.argumentsList(List fields) : String</B> </CODE>
+<p class="doc">
+Returns a string containing a list of field names separated by a comma<br>
+<br>
+<b>Parameters : </b><br>
+&nbsp;&nbsp;&nbsp;<b>fields</b> : list of fields to be added in the arguments list<br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;$fn.argumentsList( $entity.attributes )<br>
+&nbsp;&nbsp;&nbsp;Returns : 'id, firstName, lastName, age' <br>
+</code>
+<br>
+<b>Since : </b>2.0.5<br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.argumentsListWithGetter(String object, List fields) : String</B> </CODE>
+<p class="doc">
+Returns a string containing a list of fields getters separated by a comma<br>
+<br>
+<b>Parameters : </b><br>
+&nbsp;&nbsp;&nbsp;<b>object</b> : name of the object providing the getters<br>
+&nbsp;&nbsp;&nbsp;<b>fields</b> : list of fields to be added in the arguments list<br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;$fn.argumentsListWithGetter( 'person', $entity.attributes )<br>
+&nbsp;&nbsp;&nbsp;Returns : 'person.getId(), person.getFirstName(), person.getLastName(), person.getAge()' <br>
+</code>
+<br>
+<b>Since : </b>2.0.5<br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.argumentsListWithType(List fields) : String</B> </CODE>
+<p class="doc">
+Returns a string containing a list of fields (type and name) separated by a comma<br>
+<br>
+<b>Parameters : </b><br>
+&nbsp;&nbsp;&nbsp;<b>fields</b> : list of fields to be added in the arguments list<br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;$fn.argumentsListWithType( $entity.attributes )<br>
+&nbsp;&nbsp;&nbsp;Returns : 'int id, String firstName, String lastName, int age' <br>
+</code>
+<br>
+<b>Since : </b>2.0.5<br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.escapeXml(String s) : String</B> </CODE>
+<p class="doc">
+Returns the XML string for the given string<br>
+Replaces special characters (&, <, >, etc) by their corresponding XML notation <br>
+<br>
+<b>Parameters : </b><br>
+&nbsp;&nbsp;&nbsp;<b>s</b> : the string to be escaped<br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.isBlank(String s) : boolean</B> </CODE>
+<p class="doc">
+Returns true if the given string is 'blank' <br>
+(true if the string is null or void or only composed of blanks)<br>
+<br>
+<b>Parameters : </b><br>
+&nbsp;&nbsp;&nbsp;<b>s</b> : the string to be tested<br>
+<br>
+<b>Since : </b>2.0.3<br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.isNotBlank(String s) : boolean</B> </CODE>
+<p class="doc">
+Returns true if the given string is not 'blank' <br>
+(true if the string is not null, not void and not only composed of blanks)<br>
+<br>
+<b>Parameters : </b><br>
+&nbsp;&nbsp;&nbsp;<b>s</b> : the string to be tested<br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.quote(String s) : String</B> </CODE>
+<p class="doc">
+Adds a double quote character at the beginning and at the end of the given string <br>
+<br>
+<b>Parameters : </b><br>
+&nbsp;&nbsp;&nbsp;<b>s</b> : the string to be quoted<br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.tab : String</B> </CODE>
+<p class="doc">
+Returns a single tabulation character <br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.tab(int n) : String</B> </CODE>
+<p class="doc">
+Returns N tabulation characters <br>
+<br>
+<b>Parameters : </b><br>
+&nbsp;&nbsp;&nbsp;<b>n</b> : the number of tabulations to be returned<br>
+</p>
+</TD>
+</TR>
+</table>
+</body>
+</html>
