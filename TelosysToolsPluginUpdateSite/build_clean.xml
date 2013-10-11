@@ -1,9 +1,5 @@
 <project name="TelosysToolsUpdateSite" default="clean">
 
-	<property name="version"   value="2.0.3" />
-	<property name="dist_dir"  value="./dist" />
-	<property name="zip_file"  value="${dist_dir}/TelosysTools-${version}-UpdateSite.zip" />
-
 	<!-- ============================================================================== -->
 	<!--                                                      -->
 	<!-- ============================================================================== -->
