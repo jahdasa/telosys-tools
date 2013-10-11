@@ -67,7 +67,7 @@ public class DocBuilderTest  extends TestCase {
 
 		assertTrue ( "Fn".equals( classInfo.getJavaClassName() ) );
 		assertTrue ( ContextName.FN.equals( classInfo.getContextName() ) );
-		assertTrue ( classInfo.getMethodsCount() == 9 );
+		assertTrue ( classInfo.getMethodsCount() == 17 );
 	}
 
 	public void testClassToday() {

@@ -25,6 +25,7 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -44,6 +45,7 @@ import org.telosys.tools.generator.context.Loader;
 import org.telosys.tools.generator.context.ProjectConfiguration;
 import org.telosys.tools.generator.context.Target;
 import org.telosys.tools.generator.context.Today;
+import org.telosys.tools.generator.directive.Using;
 import org.telosys.tools.generator.events.GeneratorEvents;
 import org.telosys.tools.repository.model.RepositoryModel;
 
@@ -149,7 +151,15 @@ public class Generator {
 			_velocityEngine = new VelocityEngine();
 			_velocityEngine.setProperty(VelocityEngine.FILE_RESOURCE_LOADER_PATH, sTemplateDirectory);
 			try {
-				_velocityEngine.init();
+				// init() : 
+				//   initialize the Velocity runtime engine, using the default properties of the Velocity distribution
+				// _velocityEngine.init();
+
+				// init(Properties p) : 
+				//    initialize the Velocity runtime engine, using default properties 
+				//    plus the properties in the passed in java.util.Properties object
+				_velocityEngine.init( getSpecificVelocityProperties() ); // ver 2.0.7
+				
 			} catch (Exception e) {
 				throw new GeneratorException("Cannot init VelocityEngine", e );
 			}
@@ -202,6 +212,24 @@ public class Generator {
 			throw new GeneratorException("Template file '" + sTemplateFullPath
 					+ "' is not a file !");
 		}
+	}
+	
+	//========================================================================
+	// CONTEXT MANAGEMENT
+	//========================================================================
+	/**
+	 * Returns the Specific Velocity properties to be added at the default Velocity runtime properties
+	 * @return
+	 */
+	private Properties getSpecificVelocityProperties()
+	{
+		Properties p = new Properties();
+		
+		// User Directives 
+		// userdirective=com.example.MyDirective1, com.example.MyDirective2
+		p.setProperty("userdirective", Using.class.getCanonicalName()); // Here onlu one directive
+		
+		return p;
 	}
 	
 	//========================================================================
