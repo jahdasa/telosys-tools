@@ -330,6 +330,22 @@ public class JavaBeanClass extends JavaClass
 
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod ( text= { 
+			"Returns the number of attributes defined for this entity"
+		},
+		example="$entity.attributesCount",
+		since="2.0.7"
+	)
+	public int getAttributesCount() 
+	{
+		if ( _attributes != null )
+		{
+			return _attributes.size() ;
+		}
+		return 0 ;
+	}
+
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( text= { 
 			"Returns a list of all the links defined for the current entity"
 		},
 		example={	
@@ -545,6 +561,23 @@ public class JavaBeanClass extends JavaClass
 
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod ( text= { 
+			"Returns the number of attributes used in the Primary Key for this entity"
+		},
+		example= {
+			"$entity.keyAttributesCount"
+		},
+		since="2.0.7"
+	)
+	public int getKeyAttributesCount() 
+	{
+		if ( _keyAttributes != null ) {
+			return _keyAttributes.size() ;
+		}
+		return 0 ;
+	}
+
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( text= { 
 			"Returns the attributes NOT used in the Primary Key for this entity"
 		},
 		example= {
@@ -560,6 +593,23 @@ public class JavaBeanClass extends JavaClass
 			return _nonKeyAttributes ;
 		}
 		return VOID_ATTRIBUTES_LIST ;
+	}
+
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( text= { 
+			"Returns the number of attributes NOT used in the Primary Key for this entity"
+		},
+		example= {
+			"$entity.nonKeyAttributesCount"
+		},
+		since="2.0.7"
+	)
+	public int getNonKeyAttributesCount() 
+	{
+		if ( _nonKeyAttributes != null ) {
+			return _nonKeyAttributes.size() ;
+		}
+		return 0 ;
 	}
 
 	//-------------------------------------------------------------------------------------
@@ -933,6 +983,26 @@ public class JavaBeanClass extends JavaClass
 	{
 		if ( _keyAttributes != null ) {
 			return _keyAttributes.size() > 1 ;
+		}
+		return false ; // No key attributes
+	}
+	
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( text= { 
+			"Returns TRUE if this entity has a primary key ",
+			"( a primary key composed of one or more attributes )"
+		},
+		example= {
+			"#if ( $entity.hasPrimaryKey() )",
+			"...",
+			"#end"
+		},
+		since="2.0.7"
+	)
+	public boolean hasPrimaryKey() 
+	{
+		if ( _keyAttributes != null ) {
+			return _keyAttributes.size() > 0 ;
 		}
 		return false ; // No key attributes
 	}
