@@ -111,7 +111,6 @@ public class ContextInfoTest  extends TestCase {
 	public void testGetAllMethodInfo() {
 		MethodInfo[] methodsInfo = getAllMethodsInfo("fn");
 		assertNotNull( methodsInfo );
-		assertTrue(methodsInfo.length == 17 ) ;
 		ContextInfo contextInfo = new ContextInfo();
 		String signature = methodsInfo[0].getSignature() ;
 		MethodInfo mi = contextInfo.getMethodInfo("fn", signature);

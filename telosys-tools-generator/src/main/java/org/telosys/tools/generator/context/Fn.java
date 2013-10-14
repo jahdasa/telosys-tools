@@ -226,77 +226,6 @@ public class Fn {
 	//==============================================================================================
 	// Version 2.0.7
 	//==============================================================================================
-	@VelocityMethod(
-			text={	
-				"Checks if the given expression is TRUE, else throws an Exception with the given message"
-				},
-			example={ 
-				"$fn.assertTrue( $entity.attributes, \"...\" )"
-				},
-			parameters = { 	"expr : expression to be evaluted as TRUE", 
-							"message : the error message if not true" },
-			since = "2.0.7"
-				)
-	public void assertTrue(boolean expr, String message) throws Exception {
-		if ( expr != true ) {
-			throw new Exception(message) ;
-		}
-	}
-
-	//-------------------------------------------------------------------------------------
-	@VelocityMethod(
-			text={	
-				"Checks if the given expression is FALSE, else throws an Exception with the given message"
-				},
-			example={ 
-				"$fn.assertFalse( $entity.attributes, \"...\" )"
-				},
-			parameters = { 	"expr : expression to be evaluted as FALSE", 
-							"message : the error message if not false" },
-			since = "2.0.7"
-				)
-	public void assertFalse(boolean expr, String message) throws Exception {
-		if ( expr != false ) {
-			throw new Exception(message) ;
-		}
-	}
-
-	//-------------------------------------------------------------------------------------
-	@VelocityMethod(
-			text={	
-				"Checks if the given List/Array is NOT VOID, else throws an Exception with the given message"
-				},
-			example={ 
-				"$fn.assertNotVoid( $entity.attributes, \"No attributes\" )"
-				},
-			parameters = { 	"collection : List or Array", 
-							"message : the error message if void" },
-			since = "2.0.7"
-				)
-	public void assertNotVoid(Object o, String message) throws Exception {
-		if ( isVoid(o, "assertNotVoid" ) == true ) {
-			throw new Exception(message) ;
-		}
-	}
-	
-	//-------------------------------------------------------------------------------------
-	@VelocityMethod(
-			text={	
-				"Checks if the given List/Array is VOID, else throws an Exception with the given message"
-				},
-			example={ 
-				"$fn.assertVoid( $entity.attributes, \"Attributes Not void\" )"
-				},
-			parameters = { 	"collection : List or Array", 
-							"message : the error message if not void" },
-			since = "2.0.7"
-				)
-	public void assertVoid(Object o, String message) throws Exception {
-		if ( isVoid(o, "assertVoid" ) == false ) {
-			throw new Exception(message) ;
-		}
-	}
-
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
 			text={	
@@ -356,18 +285,32 @@ public class Fn {
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
 			text={	
-				"Throws an Exception with the given message"
+				"Returns the SIZE of the given List or Array"
 				},
 			example={ 
-				"#if ( $fn.isVoid( $entity.attributes ) ) ",
-				"$fn.error( \"No attributes\" )",
-				"#end"
+				"Number of attribute = $fn.size( $entity.attributes )  "
 				},
-			parameters = { 	"message : the error message" },
+			parameters = { 	"collection : List or Array" },
 			since = "2.0.7"
 				)
-	public void error (String message) throws Exception  {
-		throw new Exception(message) ;
+	public int size(Object o) throws Exception {
+		final String functionName = "size" ;
+		if ( o != null ) {
+			if ( o instanceof List ) {
+				return ((List<?>) o).size() ;
+			}
+			else if ( o instanceof Object[] ) {
+				return ((Object[]) o).length ;
+			}
+			else {
+				throw new Exception(functionName + " : list or array expected") ;
+			}
+		}
+		else {
+			throw new Exception(functionName + " : list or array is null") ;
+		}
 	}
+
+	//-------------------------------------------------------------------------------------
 		
 }
