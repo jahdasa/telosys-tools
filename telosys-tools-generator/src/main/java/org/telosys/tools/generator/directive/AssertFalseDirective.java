@@ -22,7 +22,6 @@ import org.apache.velocity.context.InternalContextAdapter;
 import org.apache.velocity.exception.MethodInvocationException;
 import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
-import org.apache.velocity.runtime.directive.Directive;
 import org.apache.velocity.runtime.parser.node.Node;
 /*
  * NB : each user directive must be defines in the Velocity properties
@@ -38,20 +37,12 @@ import org.apache.velocity.runtime.parser.node.Node;
  * @author Laurent Guerin
  *
  */
-public class Using extends Directive {
+public class AssertFalseDirective extends AbstractLineDirective {
 
-	@Override
-	// returns the name of the directive that will be used in templates.
-	public String getName() {
-		return "using"; // for "#using" in the template
+	public AssertFalseDirective() {
+		super("assertFalse", 2);
 	}
-
-	@Override
-	// returns BLOCK or LINE constants which determine a directive type.
-	public int getType() {
-		return LINE; // LINE or BLOCK
-	}
-
+	
 	@Override
 	// InternalContextAdapter contains everything Velocity needs to know about the template in order to render it
 	// Writer is our template writer where we are going to write the result.
@@ -61,50 +52,18 @@ public class Using extends Directive {
 			throws IOException, ResourceNotFoundException, ParseErrorException,
 			MethodInvocationException {
 		
-		StringBuilder sbErrors = new StringBuilder();
-		int errorsCount = 0 ;
-		int n = node.jjtGetNumChildren();
-//		StringBuilder sb = new StringBuilder();
-//		sb.append("// " + n + " args : \n") ;
-		for ( int i = 0 ; i < n ; i++ ) {
-			Node arg = node.jjtGetChild(i) ;
-			if (arg != null) {
-				String name = String.valueOf(arg.value(context));
-				// other conversions :
-				//(Integer)node.jjtGetChild(1).value(context);
-				//(Boolean)node.jjtGetChild(3).value(context);
-				String nameInContext = getObjectNameInContext(name) ;
-				boolean found = context.containsKey( nameInContext );
-				if ( ! found ) {
-					errorsCount++ ;
-					if ( errorsCount > 1 ) {
-						sbErrors.append(", ");
-					}
-					sbErrors.append("'"+ nameInContext + "'");
-				}
-//				sb.append("'" + argValue + "' : " + found + "\n") ;
-			}
+		checkArgumentsCount(node);
+
+		// 0 : Expr : literal or variable
+		boolean expr = getArgumentAsBoolean(0, node, context);		
+		// 1 : Message
+		String  message = getArgumentAsString(1, node, context);
+		// TEST EXPR
+		if ( expr != false ) {
+			throw new DirectiveException( message, this.getName(), node.getTemplateName(), node.getLine() );
 		}
-		if ( errorsCount > 0 ) {
-			throw new RuntimeException("#using : " + sbErrors.toString() + " not defined");
-		}
-//		writer.write(sb.toString());
-		
+
 		return true;
 	}
 	
-	private String getObjectNameInContext(String name) {
-		if ( name != null ) {
-			if ( name.length() > 0  ) {
-				if ( name.charAt(0) == '$' ) {
-					return name.substring(1);
-				}
-				else {
-					return name ;
-				}
-			}
-		}
-		throw new RuntimeException("#using : invalid argument");
-	}
-
 }

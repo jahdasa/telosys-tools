@@ -45,7 +45,11 @@ import org.telosys.tools.generator.context.Loader;
 import org.telosys.tools.generator.context.ProjectConfiguration;
 import org.telosys.tools.generator.context.Target;
 import org.telosys.tools.generator.context.Today;
-import org.telosys.tools.generator.directive.Using;
+import org.telosys.tools.generator.directive.AssertFalseDirective;
+import org.telosys.tools.generator.directive.AssertTrueDirective;
+import org.telosys.tools.generator.directive.DirectiveException;
+import org.telosys.tools.generator.directive.ErrorDirective;
+import org.telosys.tools.generator.directive.UsingDirective;
 import org.telosys.tools.generator.events.GeneratorEvents;
 import org.telosys.tools.repository.model.RepositoryModel;
 
@@ -227,7 +231,15 @@ public class Generator {
 		
 		// User Directives 
 		// userdirective=com.example.MyDirective1, com.example.MyDirective2
-		p.setProperty("userdirective", Using.class.getCanonicalName()); // Here onlu one directive
+		p.setProperty("userdirective", 
+				  UsingDirective.class.getCanonicalName() 
+				+ ", " 
+				+ AssertTrueDirective.class.getCanonicalName() 
+				+ ", " 
+				+ AssertFalseDirective.class.getCanonicalName() 
+				+ ", " 
+				+ ErrorDirective.class.getCanonicalName() 
+				); // one or n directive(s) separated by a comma 
 		
 		return p;
 	}
@@ -353,6 +365,8 @@ public class Generator {
 			throw new GeneratorException("Generation error : MethodInvocationException ", e);
 		} catch (GeneratorContextException e) {
 			throw new GeneratorException("Generation error : GeneratorContextException ", e);
+		} catch (DirectiveException e) {
+			throw new GeneratorException("Generation error : DirectiveException ", e);
 		} catch (Exception e) {
 			throw new GeneratorException("Generation error : Exception ", e);
 		}
