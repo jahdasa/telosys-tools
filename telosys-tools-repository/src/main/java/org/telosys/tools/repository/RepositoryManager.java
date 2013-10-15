@@ -208,19 +208,23 @@ public abstract class RepositoryManager extends StandardTool
 
 		//--- Get the VO Bean class name from the Table Name
 		String sBeanClassName      = _inichk.getJavaBeanClassName(entity.getName());
-		
-		//--- Get the other class names from the VO Bean class name
-		String sVOListClassName    = _classNameProvider.getVOListClassName(sBeanClassName);
-		String sDAOClassName       = _classNameProvider.getDAOClassName(sBeanClassName);
-		String sXmlMapperClassName = _classNameProvider.getXmlMapperClassName(sBeanClassName);
+
+// REMOVED in v 2.0.7 
+//		//--- Get the other class names from the VO Bean class name
+//		String sVOListClassName    = _classNameProvider.getVOListClassName(sBeanClassName);
+//		String sDAOClassName       = _classNameProvider.getDAOClassName(sBeanClassName);
+//		String sXmlMapperClassName = _classNameProvider.getXmlMapperClassName(sBeanClassName);
 
 		entity.setBeanJavaClass(sBeanClassName);		
-		entity.setListJavaClass(sVOListClassName);
-		entity.setDaoJavaClass(sDAOClassName);
-		entity.setConverterJavaClass(sXmlMapperClassName);
+// REMOVED in v 2.0.7 
+//		entity.setListJavaClass(sVOListClassName);
+//		entity.setDaoJavaClass(sDAOClassName);
+//		entity.setConverterJavaClass(sXmlMapperClassName);
 		
-		entity.setCatalog ( dbTable.getCatalogName() ); // v 1.0 #LGU
-		entity.setSchema  ( dbTable.getSchemaName() ); // v 1.0 #LGU
+		entity.setCatalog ( dbTable.getCatalogName() ); 
+		entity.setSchema  ( dbTable.getSchemaName() ); 
+		
+		entity.setDatabaseType ( dbTable.getTableType() ) ; // v 2.0.7 #LGU
 		
 		//--- Add the columns of this table
 		addColumns( entity, dbTable) ;

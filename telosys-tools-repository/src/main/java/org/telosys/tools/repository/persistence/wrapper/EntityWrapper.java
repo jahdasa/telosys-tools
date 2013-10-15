@@ -29,12 +29,14 @@ public class EntityWrapper {
 	public Entity getEntity(final Element table) {
 		final Entity entity = new Entity();
 		entity.setBeanJavaClass(table.getAttribute(RepositoryConst.TABLE_JAVA_BEAN));
-		entity.setConverterJavaClass(table.getAttribute(RepositoryConst.TABLE_JAVA_BEAN_CONV));
-		entity.setDaoJavaClass(table.getAttribute(RepositoryConst.TABLE_JAVA_BEAN_DAO));
-		entity.setListJavaClass(table.getAttribute(RepositoryConst.TABLE_JAVA_BEAN_LIST));
+//		entity.setConverterJavaClass(table.getAttribute(RepositoryConst.TABLE_JAVA_BEAN_CONV));  // removed in v 2.0.7
+//		entity.setDaoJavaClass(table.getAttribute(RepositoryConst.TABLE_JAVA_BEAN_DAO));  // removed in v 2.0.7
+//		entity.setListJavaClass(table.getAttribute(RepositoryConst.TABLE_JAVA_BEAN_LIST));  // removed in v 2.0.7
 		entity.setName(table.getAttribute(RepositoryConst.TABLE_NAME));
 		entity.setCatalog(table.getAttribute(RepositoryConst.TABLE_CATALOG)); // v 1.0 #LGU
 		entity.setSchema(table.getAttribute(RepositoryConst.TABLE_SCHEMA)); // v 1.0 #LGU
+		
+		entity.setDatabaseType(table.getAttribute(RepositoryConst.TABLE_DATABASE_TYPE)); // added in v 2.0.7
 		return entity;
 	}
 
@@ -42,12 +44,15 @@ public class EntityWrapper {
 		final Element table = doc.createElement(RepositoryConst.TABLE);
 		
 		table.setAttribute(RepositoryConst.TABLE_JAVA_BEAN, entity.getBeanJavaClass());
-		table.setAttribute(RepositoryConst.TABLE_JAVA_BEAN_CONV, entity.getConverterJavaClass());
-		table.setAttribute(RepositoryConst.TABLE_JAVA_BEAN_DAO, entity.getDaoJavaClass());
-		table.setAttribute(RepositoryConst.TABLE_JAVA_BEAN_LIST, entity.getListJavaClass());
+//		table.setAttribute(RepositoryConst.TABLE_JAVA_BEAN_CONV, entity.getConverterJavaClass());  // removed in v 2.0.7
+//		table.setAttribute(RepositoryConst.TABLE_JAVA_BEAN_DAO, entity.getDaoJavaClass());  // removed in v 2.0.7
+//		table.setAttribute(RepositoryConst.TABLE_JAVA_BEAN_LIST, entity.getListJavaClass());  // removed in v 2.0.7
+		
 		table.setAttribute(RepositoryConst.TABLE_NAME, entity.getName());		
 		table.setAttribute(RepositoryConst.TABLE_CATALOG, entity.getCatalog()); // v 1.0 #LGU	
 		table.setAttribute(RepositoryConst.TABLE_SCHEMA, entity.getSchema()); // v 1.0 #LGU
+		
+		table.setAttribute(RepositoryConst.TABLE_DATABASE_TYPE, entity.getDatabaseType()); // added in v 2.0.7
 		return table;
 	}
 

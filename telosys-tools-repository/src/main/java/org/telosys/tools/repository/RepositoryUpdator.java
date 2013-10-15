@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.commons.TelosysToolsException;
 import org.telosys.tools.commons.TelosysToolsLogger;
 import org.telosys.tools.commons.config.ClassNameProvider;
@@ -36,7 +37,7 @@ import org.telosys.tools.repository.model.ForeignKey;
 import org.telosys.tools.repository.model.RepositoryModel;
 
 /**
- * @author Sylvain LEROY, Laurent GUERIN, Eric LEMELIN
+ * @author Laurent GUERIN, Eric LEMELIN
  * 
  */
 
@@ -275,7 +276,27 @@ public class RepositoryUpdator extends RepositoryManager
 	private int updateEntity( RepositoryModel repositoryModel, DatabaseTable dbTable, Entity entity) throws SQLException 
 	{
 		int changeCount = 0;
-
+		//--------------------------------------------------------------------------------
+		// 0) added in ver 2.0.7 
+		//--------------------------------------------------------------------------------
+		//--- Set or update TABLE TYPE ( "TABLE", "VIEW", ... )
+		String tableType = dbTable.getTableType() ;
+		if ( tableType != null ) {
+			if ( StrUtil.nullOrVoid(entity.getDatabaseType()) ) {
+				// Not set yet => Set type
+				entity.setDatabaseType(tableType);
+			}
+			else {
+				String originalType = entity.getDatabaseType() ;
+				if ( tableType.equals(originalType) == false ) {
+					// The type has changed => Update type
+					entity.setDatabaseType(tableType);
+					changeCount++;
+					_updateLogger.println(" . Type has changed '" + originalType + "' --> '" + tableType + "'");
+				}
+			}
+		}
+		
 		//--------------------------------------------------------------------------------
 		// 1) remove the colums that doesn't exist in the Database 
 		//--------------------------------------------------------------------------------
@@ -319,10 +340,6 @@ public class RepositoryUpdator extends RepositoryManager
 		//--------------------------------------------------------------------------------
 		//--- For each column of the table in the DataBase ...
 		List<DatabaseColumn> dbColumns = dbTable.getColumns();
-//		Iterator iter = dbColumns.iterator();
-//		while ( iter.hasNext() )
-//		{
-//			DatabaseColumn dbColumn = (DatabaseColumn) iter.next();
 		for ( DatabaseColumn dbColumn : dbColumns ) {
 			String sColumnName = dbColumn.getColumnName();
 			
@@ -348,10 +365,6 @@ public class RepositoryUpdator extends RepositoryManager
 		//--------------------------------------------------------------------------------
 		//--- For each FK of the table in the DataBase ...( v 0.9.0 )
 		List<DatabaseForeignKey> dbForeignKeys = dbTable.getForeignKeys();
-//		Iterator iterDbForeignKeys = dbForeignKeys.iterator();
-//		while ( iterDbForeignKeys.hasNext() )
-//		{
-//			DatabaseForeignKey dbForeignKey = (DatabaseForeignKey) iterDbForeignKeys.next();
 		for ( DatabaseForeignKey dbForeignKey : dbForeignKeys ) {
 			
 			String sFkName = dbForeignKey.getForeignKeyName();

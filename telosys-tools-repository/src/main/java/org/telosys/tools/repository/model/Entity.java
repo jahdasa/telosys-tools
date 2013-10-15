@@ -36,17 +36,20 @@ public class Entity implements Comparable<Entity>
 
 	private String name ;
 	
-	private String catalog ; // v 1.0 #LGU
+	private String catalog ; 
 	
-	private String schema ; // v 1.0 #LGU
+	private String schema ; 
+
+	private String databaseType ; // v 2.0.7 #LGU
 	
 	private String beanJavaClass ;
 	
-	private String listJavaClass ;
-	
-	private String daoJavaClass ;
-
-	private String converterJavaClass ;
+// REMOVED in ver 2.0.7
+//	private String listJavaClass ; 
+//	
+//	private String daoJavaClass ;
+//
+//	private String converterJavaClass ;
 	
 	private Hashtable<String,Column>     columns     = new Hashtable<String,Column>() ; 
 
@@ -124,6 +127,26 @@ public class Entity implements Comparable<Entity>
 	//--------------------------------------------------------------------------
 	
 	/**
+	 * Returns the database type of the entity ( TABLE, VIEW, ... )
+	 * @return
+	 * @since 2.0.7
+	 */
+	public String getDatabaseType() {
+		return databaseType;
+	}
+
+	/**
+	 * Set the database type of the entity ( TABLE, VIEW, ... )
+	 * @param s
+	 * @since 2.0.7
+	 */
+	public void setDatabaseType(String s) {
+		this.databaseType = s;
+	}
+	
+	//--------------------------------------------------------------------------
+	
+	/**
 	 * Returns the database catalog of the entity 
 	 * @return
 	 * @since 1.0
@@ -157,49 +180,49 @@ public class Entity implements Comparable<Entity>
 	}
 
 	//--------------------------------------------------------------------------
-	
-	/**
-	 * Returns the short name of the bean convertor Java Class ( without the package ) <br>
-	 * Example : "BookMapper"
-	 * @return
-	 */
-	public String getConverterJavaClass() {
-		return converterJavaClass;
-	}
+//	
+//	/**
+//	 * Returns the short name of the bean convertor Java Class ( without the package ) <br>
+//	 * Example : "BookMapper"
+//	 * @return
+//	 */
+//	public String getConverterJavaClass() {
+//		return converterJavaClass;
+//	}
+//
+//	public void setConverterJavaClass(String covertorJavaClass) {
+//		this.converterJavaClass = covertorJavaClass;
+//	}
 
-	public void setConverterJavaClass(String covertorJavaClass) {
-		this.converterJavaClass = covertorJavaClass;
-	}
+	//--------------------------------------------------------------------------
+//	
+//	/**
+//	 * Returns the short name of the bean DAO Java Class ( without the package ) <br>
+//	 * Example : "BookDAO"
+//	 * @return
+//	 */
+//	public String getDaoJavaClass() {
+//		return daoJavaClass;
+//	}
+//
+//	public void setDaoJavaClass(String daoJavaClass) {
+//		this.daoJavaClass = daoJavaClass;
+//	}
 
 	//--------------------------------------------------------------------------
 	
-	/**
-	 * Returns the short name of the bean DAO Java Class ( without the package ) <br>
-	 * Example : "BookDAO"
-	 * @return
-	 */
-	public String getDaoJavaClass() {
-		return daoJavaClass;
-	}
-
-	public void setDaoJavaClass(String daoJavaClass) {
-		this.daoJavaClass = daoJavaClass;
-	}
-
-	//--------------------------------------------------------------------------
-	
-	/**
-	 * Returns the short name of the bean list Java Class ( without the package ) <br>
-	 * Example : "BookList"
-	 * @return
-	 */
-	public String getListJavaClass() {
-		return listJavaClass;
-	}
-
-	public void setListJavaClass(String listJavaClass) {
-		this.listJavaClass = listJavaClass;
-	}
+//	/**
+//	 * Returns the short name of the bean list Java Class ( without the package ) <br>
+//	 * Example : "BookList"
+//	 * @return
+//	 */
+//	public String getListJavaClass() {
+//		return listJavaClass;
+//	}
+//
+//	public void setListJavaClass(String listJavaClass) {
+//		this.listJavaClass = listJavaClass;
+//	}
 
 	//--------------------------------------------------------------------------
 	// COLUMNS management

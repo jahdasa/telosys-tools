@@ -108,11 +108,10 @@ public class RepositoryConst {
 	public final static String TABLE_SCHEMA     = "schema";  // v 1.0 #LGU
 	//public final static String TABLE_BOOLEAN_STORAGE = "booleanStorage";
 	public final static String TABLE_JAVA_BEAN      = "javaBean";
-	public final static String TABLE_JAVA_BEAN_LIST = "javaBeanList";
-	public final static String TABLE_JAVA_BEAN_DAO  = "javaBeanDAO";
-	public final static String TABLE_JAVA_BEAN_CONV = "javaBeanConv";
-	//public final static String TABLE_TESTDAO_FILE_GENERATE_ATTRIBUTE = "testDao";
-	//public final static String TABLE_TESTDAOLIST_FILE_GENERATE_ATTRIBUTE = "testDaoList";
+//	public final static String TABLE_JAVA_BEAN_LIST = "javaBeanList"; // removed in v 2.0.7
+//	public final static String TABLE_JAVA_BEAN_DAO  = "javaBeanDAO";// removed in v 2.0.7
+//	public final static String TABLE_JAVA_BEAN_CONV = "javaBeanConv";// removed in v 2.0.7
+	public final static String TABLE_DATABASE_TYPE  = "databaseType"; // added in v 2.0.7
 
 	//--------------------------------------------------------------------------------------------------
 	//--- XML <column> element and attributes
