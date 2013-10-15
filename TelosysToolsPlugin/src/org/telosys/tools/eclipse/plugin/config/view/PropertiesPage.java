@@ -1124,15 +1124,15 @@ public class PropertiesPage extends PropertyPage {
 		label.setLayoutData(getColSpan(3));
 	}
 	//------------------------------------------------------------------------------------------
-	private void createTwoLabels(Composite composite, String sLabel1, String sLabel2) {
-		//--- Creates the 1st Label 
-		Label label = new Label(composite, SWT.NONE);
-		label.setText(sLabel1);
-		//--- Creates the 2nd Label 
-		label = new Label(composite, SWT.NONE);
-		label.setText(sLabel2);
-		label.setLayoutData(getColSpan(2));
-	}
+//	private void createTwoLabels(Composite composite, String sLabel1, String sLabel2) {
+//		//--- Creates the 1st Label 
+//		Label label = new Label(composite, SWT.NONE);
+//		label.setText(sLabel1);
+//		//--- Creates the 2nd Label 
+//		label = new Label(composite, SWT.NONE);
+//		label.setText(sLabel2);
+//		label.setLayoutData(getColSpan(2));
+//	}
 
 	//------------------------------------------------------------------------------------------
 	private GridData getColSpan(int n) {

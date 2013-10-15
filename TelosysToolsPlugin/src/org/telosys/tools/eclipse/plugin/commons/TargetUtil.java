@@ -18,7 +18,7 @@ public class TargetUtil {
 
 	// Editor id defined in "plugin.xml" 
 	private final static String VELOCITY_EDITOR_ID = "org.telosys.tools.eclipse.plugin.editors.velocity.VelocityEditor";
-	private final static String TEXT_EDITOR_ID     = "org.eclipse.ui.DefaultTextEditor" ;
+	//private final static String TEXT_EDITOR_ID     = "org.eclipse.ui.DefaultTextEditor" ;
 	
 	private static void log(String s) 
 	{

@@ -8,6 +8,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -370,6 +371,20 @@ public class EclipseWksUtil {
 		}
 		
 	}
+	//----------------------------------------------------------------------------------
+	public static boolean setBuildAutomatically(boolean flag)
+	{
+		IWorkspace workspace = getWorkspace() ;
+		final IWorkspaceDescription desc = workspace.getDescription();
+		boolean originalFlag = desc.isAutoBuilding();
+		desc.setAutoBuilding(flag);
+		try {
+			workspace.setDescription(desc);
+		} catch (CoreException e) {
+			MsgBox.error("setBuildAutomatically : Cannot set workspace description ", e );
+		}
+		return originalFlag ;
+	}	
 //	//----------------------------------------------------------------------------------
 //	/**
 //	 * Refresh the given resource 

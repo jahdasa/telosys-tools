@@ -10,6 +10,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.telosys.tools.commons.ConsoleLogger;
 import org.telosys.tools.commons.TelosysToolsLogger;
+import org.telosys.tools.eclipse.plugin.commons.EclipseWksUtil;
 import org.telosys.tools.eclipse.plugin.commons.MsgBox;
 import org.telosys.tools.eclipse.plugin.commons.TelosysPluginException;
 import org.telosys.tools.eclipse.plugin.commons.Util;
@@ -78,6 +79,9 @@ public class GenerationTask {
     		return 0 ;
 		}
 		
+		//--- De-activate "Build Automatically"  ( ver 2.0.7 )
+		boolean originalFlag = EclipseWksUtil.setBuildAutomatically(false);
+		
 		//--- Run the generation task via the progress monitor 
 		ProgressMonitorDialog progressMonitorDialog = new ProgressMonitorDialog( Util.getActiveWindowShell() ) ;
 		try {
@@ -93,6 +97,9 @@ public class GenerationTask {
 		} catch (InterruptedException e) {
 			MsgBox.info("Generation interrupted");
 		}
+		
+		//--- Re-activate "Build Automatically"  ( ver 2.0.7 )
+		EclipseWksUtil.setBuildAutomatically(originalFlag);
 		
     	return generationTask.getResult();
 		
