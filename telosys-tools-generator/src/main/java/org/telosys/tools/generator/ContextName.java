@@ -53,6 +53,7 @@ public class ContextName {
 	public final static String  FN         = "fn" ;	
 	public final static String  LOADER     = "loader" ;
 	public final static String  PROJECT    = "project" ;
+	public final static String  JAVA       = "java" ; // ver 2.0.7
 	//---  
 	public final static String  ENTITY            = "entity" ;    // New name 
 	public final static String  BEAN_CLASS        = "beanClass" ; // Other name for "entity"

@@ -26,6 +26,7 @@ import java.util.Map;
 import org.telosys.tools.generator.context.Const;
 import org.telosys.tools.generator.context.EmbeddedGenerator;
 import org.telosys.tools.generator.context.Fn;
+import org.telosys.tools.generator.context.Java;
 import org.telosys.tools.generator.context.JavaBeanClass;
 import org.telosys.tools.generator.context.JavaBeanClassAttribute;
 import org.telosys.tools.generator.context.JavaBeanClassLink;
@@ -208,6 +209,7 @@ public class DocBuilder {
 		Const.class,
 		EmbeddedGenerator.class,
 		Fn.class,
+		Java.class, // ver 2.0.7
 		JavaBeanClass.class,
 		JavaBeanClassAttribute.class,
 		JavaBeanClassLink.class,

@@ -7,6 +7,7 @@ import junit.framework.TestCase;
 import org.telosys.tools.generator.ContextName;
 import org.telosys.tools.generator.context.Const;
 import org.telosys.tools.generator.context.Fn;
+import org.telosys.tools.generator.context.Java;
 import org.telosys.tools.generator.context.JavaBeanClass;
 import org.telosys.tools.generator.context.Today;
 import org.telosys.tools.generator.context.doc.ClassInfo;
@@ -68,6 +69,16 @@ public class DocBuilderTest  extends TestCase {
 		assertTrue ( "Fn".equals( classInfo.getJavaClassName() ) );
 		assertTrue ( ContextName.FN.equals( classInfo.getContextName() ) );
 		assertTrue ( classInfo.getMethodsCount() == 13 );
+	}
+
+	public void testClassJava() {
+		DocBuilder docBuilder = new DocBuilder();
+		ClassInfo classInfo = docBuilder.getClassInfo(Java.class);
+		print(classInfo);
+
+		assertTrue ( "Java".equals( classInfo.getJavaClassName() ) );
+		assertTrue ( ContextName.JAVA.equals( classInfo.getContextName() ) );
+		assertTrue ( classInfo.getMethodsCount() == 4 );
 	}
 
 	public void testClassToday() {

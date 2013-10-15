@@ -41,7 +41,7 @@ public class ContextInfoTest  extends TestCase {
 		String[] names = contextInfo.getObjectNames();
 		print("Object names", names);
 		
-		assertTrue ( names.length == 10 );
+		assertTrue ( names.length == 11 );
 	}
 
 	public void testObjectAndVariableNames() {

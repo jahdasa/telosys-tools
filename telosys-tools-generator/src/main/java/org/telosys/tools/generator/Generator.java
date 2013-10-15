@@ -39,6 +39,7 @@ import org.telosys.tools.generator.config.IGeneratorConfig;
 import org.telosys.tools.generator.context.Const;
 import org.telosys.tools.generator.context.EmbeddedGenerator;
 import org.telosys.tools.generator.context.Fn;
+import org.telosys.tools.generator.context.Java;
 import org.telosys.tools.generator.context.JavaBeanClass;
 import org.telosys.tools.generator.context.JavaClass;
 import org.telosys.tools.generator.context.Loader;
@@ -266,6 +267,7 @@ public class Generator {
 		_velocityContext.put(ContextName.TODAY,         new Today()); // Current date and time 
 		_velocityContext.put(ContextName.CONST,         new Const()); // Constants (static values)
 		_velocityContext.put(ContextName.FN,            new Fn());    // Utility function
+		_velocityContext.put(ContextName.JAVA,          new Java());  // Java utility function
 		_velocityContext.put(ContextName.CLASS, null);
 		
 		ProjectConfiguration projectConfiguration = generatorConfig.getProjectConfiguration();

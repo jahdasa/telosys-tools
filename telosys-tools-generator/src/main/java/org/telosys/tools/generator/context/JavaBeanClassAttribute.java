@@ -1864,6 +1864,7 @@ public class JavaBeanClassAttribute
 		}
 	}
 
+	//------------------------------------------------------------------------------------------
 	@VelocityMethod(
 	text={	
 		"Returns TRUE if the attribute's type is a Java primitive type",
@@ -1875,6 +1876,59 @@ public class JavaBeanClassAttribute
 		return JavaTypeUtil.isPrimitiveType( _sType );
 	}
 
+	//------------------------------------------------------------------------------------------
+	@VelocityMethod(
+	text={	
+		"Returns TRUE if the attribute's type is a Java boolean/Boolean type"
+		}
+	)
+	public boolean isBooleanType()
+	{
+    	if ( "boolean".equals(_sType) )   return true ;
+    	if ( "Boolean".equals(_sType) )   return true ;
+    	return false ;
+	}
+
+	//------------------------------------------------------------------------------------------
+	@VelocityMethod(
+	text={	
+		"Returns TRUE if the attribute's type is a Java long/Long type"
+		}
+	)
+	public boolean isLongType()
+	{
+    	if ( "long".equals(_sType) )   return true ;
+    	if ( "Long".equals(_sType) )   return true ;
+    	return false ;
+	}
+
+	//------------------------------------------------------------------------------------------
+	@VelocityMethod(
+	text={	
+		"Returns TRUE if the attribute's type is a Java float/Float type"
+		}
+	)
+	public boolean isFloatType()
+	{
+    	if ( "float".equals(_sType) )   return true ;
+    	if ( "Float".equals(_sType) )   return true ;
+    	return false ;
+	}
+	
+	//------------------------------------------------------------------------------------------
+	@VelocityMethod(
+	text={	
+		"Returns TRUE if the attribute's type is a Java double/Double type"
+		}
+	)
+	public boolean isDoubleType()
+	{
+    	if ( "double".equals(_sType) )   return true ;
+    	if ( "Double".equals(_sType) )   return true ;
+    	return false ;
+	}
+
+	//------------------------------------------------------------------------------------------
 	private boolean isJavaLangWrapperType()
 	{
     	if ( "Boolean".equals(_sType) )   return true ;
