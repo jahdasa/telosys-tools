@@ -108,6 +108,10 @@ public class Java {
 						lb.append(indent, "if ( " + attributeName + " != other." + attributeName + " ) return false ; ");
 					}
 				}
+				else if ( attribute.isArrayType() ) {
+					// char[], byte[], String[], ...
+					lb.append(indent, "if ( ! Arrays.equals(" + attributeName + ", other." + attributeName + ") ) return false ; ");
+				}
 				else {
 					lb.append(indent, "if ( " + attributeName + " == null ) { ");
 						lb.append(indent+1, "if ( other." + attributeName + " != null ) ");
@@ -206,6 +210,10 @@ public class Java {
 							// char, byte, short, int 
 							lb.append(indent, "result = prime * result + " + attributeName + ";");
 						}
+					}
+					else if ( attribute.isArrayType() ) {
+						// char[], byte[], String[], ...
+						lb.append(indent, "result = prime * result + Arrays.hashCode(" + attributeName + ");");
 					}
 					else {
 						//--- Objects : just use the 'hashCode' method

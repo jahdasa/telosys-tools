@@ -1879,6 +1879,23 @@ public class JavaBeanClassAttribute
 	//------------------------------------------------------------------------------------------
 	@VelocityMethod(
 	text={	
+		"Returns TRUE if the attribute's type is a Java array ( byte[], String[], ... )"
+		}
+	)
+	public boolean isArrayType()
+	{
+		String s = _sType ;
+		if ( s != null ) {
+			if ( s.trim().endsWith("]")) {
+				return true ;
+			}
+		}
+    	return false ;
+	}
+
+	//------------------------------------------------------------------------------------------
+	@VelocityMethod(
+	text={	
 		"Returns TRUE if the attribute's type is a Java boolean/Boolean type"
 		}
 	)
