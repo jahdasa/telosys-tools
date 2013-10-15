@@ -92,7 +92,7 @@ class TableViewerLabelProvider 	extends LabelProvider implements ITableLabelProv
 				String sDbType = modelColumn.getDatabaseTypeName();
 				//--- If VARCHAR type add the size
 				int iJdbcType = modelColumn.getJdbcTypeCode() ;
-				if ( iJdbcType == Types.VARCHAR )
+				if ( iJdbcType == Types.VARCHAR || iJdbcType == Types.CHAR )
 				{
 					sDbType = sDbType + "(" + modelColumn.getDatabaseSize() + ")" ;
 				}
