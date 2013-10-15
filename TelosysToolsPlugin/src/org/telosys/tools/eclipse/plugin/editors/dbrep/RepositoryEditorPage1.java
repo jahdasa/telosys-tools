@@ -100,25 +100,12 @@ import org.telosys.tools.repository.model.RepositoryModel;
 	//--- Tab "Mapping" 
 	private TableViewer _tableViewer = null ;
 	
-//	private Button _CheckVOBeanClass = null ;
 	private Text   _textJavaBeanClass  = null ;
 
-////	private Button _CheckVOListClass = null ;
-//	private Text   _TextVOListClass  = null ;
-//	
-////	private Button _CheckDAOClass    = null ;
-//	private Text   _TextDAOClass     = null ;
-//	
-////	private Button _CheckXMLClass    = null ;
-//	private Text   _TextXMLClass     = null ;
-	
-	//private Button _ButtonGenerateStandard = null ;
-	
 	//--- Tab 2 : "Foreign Keys" 
 	private Table  _tableForeignKeys     = null ;
 
 	//--- Tab 3 : "Generation Targets" 
-//	private Table  _tableStandardTargets = null ;
 	private Table  _tableSpecificTargets = null ;
 	
 	private SelectDeselectButtons _buttonsSelectDeselect = null ;
@@ -143,9 +130,6 @@ import org.telosys.tools.repository.model.RepositoryModel;
 	}
 	
 	private final static int BEAN_JAVA_CLASS      = 1 ;
-//	private final static int LIST_JAVA_CLASS      = 2 ;
-//	private final static int DAO_JAVA_CLASS       = 3 ;
-//	private final static int CONVERTER_JAVA_CLASS = 4 ;
 	
 	protected String getModelValue( int id )
 	{
@@ -154,9 +138,6 @@ import org.telosys.tools.repository.model.RepositoryModel;
 			switch (id) 
 			{
 			case BEAN_JAVA_CLASS :      return _currentEntity.getBeanJavaClass() ;
-//			case LIST_JAVA_CLASS :      return _currentEntity.getListJavaClass() ;		
-//			case DAO_JAVA_CLASS  :      return _currentEntity.getDaoJavaClass() ;		
-//			case CONVERTER_JAVA_CLASS : return _currentEntity.getConverterJavaClass() ;		
 			}
 			MsgBox.error("getModelValue("+id+") : unknown id !");
 		}
@@ -176,15 +157,6 @@ import org.telosys.tools.repository.model.RepositoryModel;
 			case BEAN_JAVA_CLASS :      
 				_currentEntity.setBeanJavaClass(v) ; 
 				break ;
-//			case LIST_JAVA_CLASS :      
-//				_currentEntity.setListJavaClass(v) ; 
-//				break ;
-//			case DAO_JAVA_CLASS :       
-//				_currentEntity.setDaoJavaClass(v) ; 
-//				break ;	
-//			case CONVERTER_JAVA_CLASS : 
-//				_currentEntity.setConverterJavaClass(v) ; 
-//				break ;
 			default : 
 				MsgBox.error("getModelValue("+id+") : unknown id !"); 
 				return ;
@@ -436,7 +408,6 @@ import org.telosys.tools.repository.model.RepositoryModel;
 	{
 		log(this, "Populate combo Tables/Entities..." );
 
-		//RepositoryModel repositoryModel = _repEditor.getDatabaseRepository();
 		RepositoryModel repositoryModel = getRepositoryModel();
 		
 		combo.removeAll(); 
@@ -448,9 +419,19 @@ import org.telosys.tools.repository.model.RepositoryModel;
 		{
 			for ( int i = 0 ; i < tableNames.length ; i++ )
 			{
-				combo.add(tableNames[i]);
+				//combo.add(tableNames[i]);
+				// ver 2.0.7
+				String entityName = tableNames[i];
+				Entity entity = repositoryModel.getEntityByName(entityName);
+				if ( ! StrUtil.nullOrVoid( entity.getDatabaseType() ) ) {
+					if ( ! entity.getDatabaseType().equalsIgnoreCase("TABLE") ) {
+						entityName = entityName + "   (" + entity.getDatabaseType() + ")" ;
+					}
+				}
+				combo.add(entityName);
 			}
 		}
+		combo.setData(tableNames); // ver 2.0.7
 		
 		log(this, "Populate TABLES combo : done." );
 	}
@@ -655,112 +636,6 @@ import org.telosys.tools.repository.model.RepositoryModel;
 		populateTableGenerationTargets(_tableSpecificTargets);
 	}
 	//----------------------------------------------------------------------------------------------
-	
-/***
-	private void setCheckedForAll(Table table, boolean flag )
-	{
-		try {
-			int n = table.getItemCount() ;
-			for ( int i = 0 ; i < n ; i++ )
-			{
-				TableItem item = table.getItem(i);
-				item.setChecked(flag);
-			}
-		} catch (RuntimeException e1) {
-			MsgBox.error("setCheckedForAll : " + e1.getMessage() );
-		}
-	}
-***/
-	
-	
-	/***
-	private Group createJavaClassesGroup( Composite container ) {
-
-		int yGap = 40 ;
-		int yGap2 = 24 ;
-		
-		Group group2 = new Group(container, SWT.NONE);
-		group2.setText("Java classes");
-		group2.setSize(200, 320);
-		//group2.setLocation(GROUP_X, 20);
-        group2.setBackground( _backgroundColor );
-        
-        //group2.setLayout(new RowLayout());
-
-        int y = 25 ;
-		//-----  BEAN ( VO )
-        _CheckVOBeanClass = new Button(group2, SWT.CHECK);
-        _CheckVOBeanClass.setText("Value Object Bean ( VO )");
-        _CheckVOBeanClass.setBounds(TEXT_X, y, TEXT_WIDTH, TEXT_HEIGHT);
-        _CheckVOBeanClass.setBackground(_backgroundColor);
-        _CheckVOBeanClass.setSelection(true);        
-        y = y + yGap2 ;
-		_TextVOBeanClass = new Text(group2, SWT.BORDER);
-		_TextVOBeanClass.setText("");
-		_TextVOBeanClass.setBounds(TEXT_X, y, TEXT_WIDTH, TEXT_HEIGHT);
-		//setModifyListener(_TextVOBeanClass, DatabaseRepository.TABLE_VO_FILE_GENERATE_ATTRIBUTE );
-		_TextVOBeanClass.addModifyListener( new GenericModifyListener(this, BEAN_JAVA_CLASS) );
-		//-----
-        y = y + yGap ;
-        //----- LIST ( VO LIST )
-        _CheckVOListClass = new Button(group2, SWT.CHECK);
-        _CheckVOListClass.setText("Bean list ( VO List )");
-        _CheckVOListClass.setBounds(TEXT_X, y, TEXT_WIDTH, TEXT_HEIGHT);
-        _CheckVOListClass.setBackground(_backgroundColor);
-        _CheckVOListClass.setSelection(true);        
-        y = y + yGap2 ;
-		_TextVOListClass = new Text(group2, SWT.BORDER);
-		_TextVOListClass.setText("");
-		_TextVOListClass.setBounds(TEXT_X, y, TEXT_WIDTH, TEXT_HEIGHT);
-		//setModifyListener(_TextVOListClass, DatabaseRepository.TABLE_VOLIST_FILE_GENERATE_ATTRIBUTE );
-		_TextVOListClass.addModifyListener( new GenericModifyListener(this, LIST_JAVA_CLASS) );
-
-		//-----
-        y = y + yGap ;
-		//-----
-        _CheckDAOClass = new Button(group2, SWT.CHECK);
-        _CheckDAOClass.setText("Bean D.A.O.");
-        _CheckDAOClass.setBounds(TEXT_X, y, TEXT_WIDTH, TEXT_HEIGHT);
-        _CheckDAOClass.setBackground(_backgroundColor);
-        _CheckDAOClass.setSelection(true);        
-        y = y + yGap2 ;
-		_TextDAOClass = new Text(group2, SWT.BORDER);
-		_TextDAOClass.setText("");
-		_TextDAOClass.setBounds(TEXT_X, y, TEXT_WIDTH, TEXT_HEIGHT);
-		//setModifyListener(_TextDAOClass, DatabaseRepository.TABLE_DAO_FILE_GENERATE_ATTRIBUTE );
-		_TextDAOClass.addModifyListener( new GenericModifyListener(this, DAO_JAVA_CLASS) );
-
-		//-----
-        y = y + yGap ;
-		//-----
-        _CheckXMLClass = new Button(group2, SWT.CHECK);
-        _CheckXMLClass.setText("Bean converter (XML)");
-        _CheckXMLClass.setBounds(TEXT_X, y, TEXT_WIDTH, TEXT_HEIGHT);
-        _CheckXMLClass.setBackground(_backgroundColor);
-        _CheckXMLClass.setSelection(true);        
-        y = y + yGap2 ;
-		_TextXMLClass = new Text(group2, SWT.BORDER);
-		_TextXMLClass.setText("");
-		_TextXMLClass.setBounds(TEXT_X, y, TEXT_WIDTH, TEXT_HEIGHT);
-		//setModifyListener(_TextXMLClass, DatabaseRepository.TABLE_VOCONV_FILE_GENERATE_ATTRIBUTE );
-		_TextXMLClass.addModifyListener( new GenericModifyListener(this, CONVERTER_JAVA_CLASS) );
-		
-		
-		//-----
-        y = y + yGap ;
-		//-----
-        _ButtonGenerateStandard = new Button(group2, SWT.NONE);
-        _ButtonGenerateStandard.setText("Generate");
-        _ButtonGenerateStandard.setBounds(TEXT_X, y, TEXT_WIDTH, 25);
-
-		_ButtonGenerateStandard.setEnabled(false);
-
-        setGenerateButtonAction(_ButtonGenerateStandard);
-		
-        return group2 ;
-	}
-	***/
-	//----------------------------------------------------------------------------------------------
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorPart#init(org.eclipse.ui.IEditorSite, org.eclipse.ui.IEditorInput)
 	 */
@@ -910,11 +785,8 @@ import org.telosys.tools.repository.model.RepositoryModel;
 	{
 		log(this, "loadTableEntity('" + sTableName + "')");
 		
-		//DatabaseRepository dbRep = _repEditor.getDatabaseRepository();
-//		RepositoryModel repositoryModel =_repEditor.getDatabaseRepository();
 		RepositoryModel repositoryModel = getRepositoryModel();
 
-		//_tableEntity = dbRep.getTableEntity(sTableName);
 		_currentEntity = repositoryModel.getEntityByName(sTableName);
 
 		//--- Tab 1
@@ -925,7 +797,6 @@ import org.telosys.tools.repository.model.RepositoryModel;
 		populateTableForeignKeys(_currentEntity, _tableForeignKeys);
 
 		//--- Tab 3
-//		updateStandardTargets(_tableStandardTargets, _currentEntity);
 		_buttonGenerate.setEnabled(true);		
 	}
 	
@@ -934,14 +805,11 @@ import org.telosys.tools.repository.model.RepositoryModel;
 		log(this, "populateTableMapping()...");
 		
 		//--- Init the "jFace Table Viewer" with the table rows
-		//TableRowList tableRows = _tableEntity.getTableRowList() ;
-		//Column[] columns = _tableEntity.getColumns();
 		
 		_labelCatalog.setText( blankIfNull( entity.getCatalog() ) );
 		_labelSchema.setText(  blankIfNull( entity.getSchema()  ) );
 			
 		log(this, "populateTableWidgets() : before setInput() ---");
-		//_tableViewer.setInput(tableRows);
 		_tableViewer.setInput(entity); 
 		//----------
 		// This call to "setInput" is propagated to 
@@ -957,13 +825,9 @@ import org.telosys.tools.repository.model.RepositoryModel;
 		for ( int i = 0 ; i < tableItems.length ; i++ )
 		{
 			TableItem item = tableItems[i];
-			//TableRow tr = TableUtil.getTableRow( item ) ;
 			Column column = TableUtil.getTableColumn( item ) ;
-			//item.setChecked(tr.getSelected());
 			item.setChecked(column.getSelected());
 		}
-		
-		
 	}
 	
 	private void populateClassesFields(Entity entity)
@@ -971,17 +835,7 @@ import org.telosys.tools.repository.model.RepositoryModel;
 		log(this, "populateFields()...");		
 		_bPopulateInProgress = true ;
 		
-		//populateField( _TextVOBeanClass );
 		_textJavaBeanClass.setText( blankIfNull( entity.getBeanJavaClass() ) );
-		
-//		//populateField( _TextVOListClass );
-//		_TextVOListClass.setText( blankIfNull( entity.getListJavaClass() ) );
-//		
-//		//populateField( _TextDAOClass );
-//		_TextDAOClass.setText( blankIfNull( entity.getDaoJavaClass() ) );
-//		
-//		//populateField( _TextXMLClass );
-//		_TextXMLClass.setText( blankIfNull( entity.getConverterJavaClass() ) );
 		
 		_bPopulateInProgress = false ;
 	}
@@ -995,20 +849,15 @@ import org.telosys.tools.repository.model.RepositoryModel;
 	{
 		log(this, "populateForeignKeysTable()...");
 		
-		//List fkParts = _tableEntity.getForeignKeyParts();
 		ForeignKey[] foreignKeys = entity.getForeignKeys();
 		
-		//String previousName = "";
-		//if ( fkParts != null )
 		if ( foreignKeys != null )
 		{
 			table.removeAll();
 	        TableItem tableItem ; 
-			//int n = fkParts.size();		
 			int n = foreignKeys.length ;
 			for ( int i = 0 ; i < n ; i++ ) // For each Foreign Key 
 			{
-				//ForeignKeyPart fkp = (ForeignKeyPart) fkParts.get(i);
 				ForeignKey fk = foreignKeys[i];
 				
 				ForeignKeyColumn fkColumns[] = fk.getForeignKeyColumns();
@@ -1160,7 +1009,6 @@ import org.telosys.tools.repository.model.RepositoryModel;
 		{
 			return ;
 		}
-		//List<SpecificTemplate> list = projectConfig.getSpecificTemplates(); // NB : the list can be null 
 		List<TargetDefinition> list = projectConfig.getTemplates(); // NB : the list can be null 
 		if ( list != null )
 		{
@@ -1199,7 +1047,25 @@ import org.telosys.tools.repository.model.RepositoryModel;
         		//log(this, "Tables combo listener : widgetSelected()" );
                 Combo combo = (Combo) event.widget ;
                 
-                String sTableName = combo.getText();
+//                String sTableName = combo.getText();
+        		
+                // ver 2.0.7 : table names array is attached with the combo box
+                String sTableName = "" ;
+        		int index = combo.getSelectionIndex();
+        		//MsgBox.info("Selected index = " + index );
+        		String[] tableNames = (String[]) combo.getData();
+        		if ( tableNames != null ) {
+            		if ( index >= 0 && index < tableNames.length ) {
+            			sTableName = tableNames[index] ;
+            		}
+            		else {
+            			MsgBox.error("Invalid index " + index);
+            		}
+        		}
+        		else {
+        			MsgBox.error("No table names for this combo ( getData returns null )" );
+        		}
+
         		log(this, "Tables combo listener : widgetSelected() : " + sTableName );
                 
         		//--- Load the new current table entity and populate the table and the fields
@@ -1226,7 +1092,6 @@ import org.telosys.tools.repository.model.RepositoryModel;
         		TableItem tableItem = (TableItem) e.item ;
         		
         		log(this, "*** TABLE : widgetSelected : checked ? " + tableItem.getChecked()  );				
-        		//TableRow row = TableUtil.getTableRow(tableItem);
         		Column row = TableUtil.getTableColumn(tableItem);
         		log(this, "*** TABLE : widgetSelected : row : " + row );
         		if ( row.isPrimaryKey() )
@@ -1279,7 +1144,6 @@ import org.telosys.tools.repository.model.RepositoryModel;
 		entities.addLast(sEntityName);
 		
 		//--- Get the generic targets for generation : here the selected targets
-		//LinkedList<GenericTarget> selectedTargets = new LinkedList<GenericTarget>();
 		LinkedList<TargetDefinition> selectedTargets = new LinkedList<TargetDefinition>();
 		
 		//--- Specific targets 
