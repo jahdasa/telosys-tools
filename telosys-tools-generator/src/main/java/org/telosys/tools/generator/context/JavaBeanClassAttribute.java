@@ -1880,7 +1880,8 @@ public class JavaBeanClassAttribute
 	@VelocityMethod(
 	text={	
 		"Returns TRUE if the attribute's type is a Java array ( byte[], String[], ... )"
-		}
+		},
+	since="2.0.7"
 	)
 	public boolean isArrayType()
 	{
@@ -1897,7 +1898,8 @@ public class JavaBeanClassAttribute
 	@VelocityMethod(
 	text={	
 		"Returns TRUE if the attribute's type is a Java boolean/Boolean type"
-		}
+		},
+	since="2.0.7"
 	)
 	public boolean isBooleanType()
 	{
@@ -1910,7 +1912,8 @@ public class JavaBeanClassAttribute
 	@VelocityMethod(
 	text={	
 		"Returns TRUE if the attribute's type is a Java long/Long type"
-		}
+		},
+	since="2.0.7"
 	)
 	public boolean isLongType()
 	{
@@ -1923,7 +1926,8 @@ public class JavaBeanClassAttribute
 	@VelocityMethod(
 	text={	
 		"Returns TRUE if the attribute's type is a Java float/Float type"
-		}
+		},
+	since="2.0.7"
 	)
 	public boolean isFloatType()
 	{
@@ -1936,7 +1940,8 @@ public class JavaBeanClassAttribute
 	@VelocityMethod(
 	text={	
 		"Returns TRUE if the attribute's type is a Java double/Double type"
-		}
+		},
+	since="2.0.7"
 	)
 	public boolean isDoubleType()
 	{
