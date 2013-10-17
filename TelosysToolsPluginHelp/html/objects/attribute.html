@@ -373,6 +373,15 @@ Typically for HTML 5 : 'number', 'date', ...<br>
 </TD>
 </TR>
 <TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.isArrayType() : boolean</B> </CODE>
+<p class="doc">
+Returns TRUE if the attribute's type is a Java array ( byte[], String[], ... )<br>
+<br>
+<b>Since : </b>2.0.7<br>
+</p>
+</TD>
+</TR>
+<TR>
 <TD class="doc" ><CODE class="simpledesc"> <B>.isAutoIncremented() : boolean</B> </CODE>
 <p class="doc">
 Returns TRUE if the attribute is 'auto-incremented' by the database<br>
@@ -381,9 +390,36 @@ when a new entity is inserted in the database<br>
 </TD>
 </TR>
 <TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.isBooleanType() : boolean</B> </CODE>
+<p class="doc">
+Returns TRUE if the attribute's type is a Java boolean/Boolean type<br>
+<br>
+<b>Since : </b>2.0.7<br>
+</p>
+</TD>
+</TR>
+<TR>
 <TD class="doc" ><CODE class="simpledesc"> <B>.isDatabaseNotNull() : boolean</B> </CODE>
 <p class="doc">
 Returns TRUE if the attribute must be NOT NULL when stored in the database<br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.isDoubleType() : boolean</B> </CODE>
+<p class="doc">
+Returns TRUE if the attribute's type is a Java double/Double type<br>
+<br>
+<b>Since : </b>2.0.7<br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.isFloatType() : boolean</B> </CODE>
+<p class="doc">
+Returns TRUE if the attribute's type is a Java float/Float type<br>
+<br>
+<b>Since : </b>2.0.7<br>
 </p>
 </TD>
 </TR>
@@ -409,6 +445,15 @@ Returns TRUE if the attribute is the Primary Key or a part of the Primary Key in
 Returns TRUE if the attribute is a 'Long Text' <br>
 i.e. that cannot be transported in a classical string<br>
 Typically a text stored as a CLOB or a BLOB<br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.isLongType() : boolean</B> </CODE>
+<p class="doc">
+Returns TRUE if the attribute's type is a Java long/Long type<br>
+<br>
+<b>Since : </b>2.0.7<br>
 </p>
 </TD>
 </TR>

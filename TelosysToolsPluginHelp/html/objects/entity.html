@@ -68,6 +68,20 @@ Returns all the attributes defined for this entity<br>
 </TD>
 </TR>
 <TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.attributesCount : int</B> </CODE>
+<p class="doc">
+Returns the number of attributes defined for this entity<br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;$entity.attributesCount<br>
+</code>
+<br>
+<b>Since : </b>2.0.7<br>
+</p>
+</TD>
+</TR>
+<TR>
 <TD class="doc" ><CODE class="simpledesc"> <B>.autoincrementedKeyAttribute : 'attribute' object</B> </CODE>
 <p class="doc">
 Returns the attribute used as the autoincremented key <br>
@@ -183,6 +197,23 @@ Returns TRUE if this entity has a composite primary key <br>
 </TD>
 </TR>
 <TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.hasPrimaryKey() : boolean</B> </CODE>
+<p class="doc">
+Returns TRUE if this entity has a primary key <br>
+( a primary key composed of one or more attributes )<br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;#if ( $entity.hasPrimaryKey() )<br>
+&nbsp;&nbsp;&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;#end<br>
+</code>
+<br>
+<b>Since : </b>2.0.7<br>
+</p>
+</TD>
+</TR>
+<TR>
 <TD class="doc" ><CODE class="simpledesc"> <B>.hasTextAttribute() : boolean</B> </CODE>
 <p class="doc">
 Returns TRUE if this entity has at least one attribute tagged as 'long text'<br>
@@ -283,6 +314,20 @@ Returns the attributes used in the Primary Key for this entity<br>
 </TD>
 </TR>
 <TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.keyAttributesCount : int</B> </CODE>
+<p class="doc">
+Returns the number of attributes used in the Primary Key for this entity<br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;$entity.keyAttributesCount<br>
+</code>
+<br>
+<b>Since : </b>2.0.7<br>
+</p>
+</TD>
+</TR>
+<TR>
 <TD class="doc" ><CODE class="simpledesc"> <B>.links : List of 'link' objects</B> </CODE>
 <p class="doc">
 Returns a list of all the links defined for the current entity<br>
@@ -319,6 +364,20 @@ Returns the attributes NOT used in the Primary Key for this entity<br>
 &nbsp;&nbsp;&nbsp;...<br>
 &nbsp;&nbsp;&nbsp;#end<br>
 </code>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.nonKeyAttributesCount : int</B> </CODE>
+<p class="doc">
+Returns the number of attributes NOT used in the Primary Key for this entity<br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;$entity.nonKeyAttributesCount<br>
+</code>
+<br>
+<b>Since : </b>2.0.7<br>
 </p>
 </TD>
 </TR>

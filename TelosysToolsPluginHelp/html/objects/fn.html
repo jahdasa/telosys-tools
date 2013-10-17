@@ -141,12 +141,72 @@ Returns true if the given string is not 'blank' <br>
 </TD>
 </TR>
 <TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.isNotVoid(Object collection) : boolean</B> </CODE>
+<p class="doc">
+Returns TRUE if the given List/Array is NOT VOID<br>
+<br>
+<b>Parameters : </b><br>
+&nbsp;&nbsp;&nbsp;<b>collection</b> : List or Array<br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;#if ( $fn.isNotVoid( $entity.attributes ) ) <br>
+</code>
+<br>
+<b>Since : </b>2.0.7<br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.isVariableDefined(String ?) : boolean</B> </CODE>
+<p class="doc">
+<br>
+<b>Parameters : </b><br>
+&nbsp;&nbsp;&nbsp;<b>?</b> : <br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.isVoid(Object collection) : boolean</B> </CODE>
+<p class="doc">
+Returns TRUE if the given List/Array is VOID<br>
+<br>
+<b>Parameters : </b><br>
+&nbsp;&nbsp;&nbsp;<b>collection</b> : List or Array<br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;#if ( $fn.isVoid( $entity.attributes ) ) <br>
+</code>
+<br>
+<b>Since : </b>2.0.7<br>
+</p>
+</TD>
+</TR>
+<TR>
 <TD class="doc" ><CODE class="simpledesc"> <B>.quote(String s) : String</B> </CODE>
 <p class="doc">
 Adds a double quote character at the beginning and at the end of the given string <br>
 <br>
 <b>Parameters : </b><br>
 &nbsp;&nbsp;&nbsp;<b>s</b> : the string to be quoted<br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.size(Object collection) : int</B> </CODE>
+<p class="doc">
+Returns the SIZE of the given List or Array<br>
+<br>
+<b>Parameters : </b><br>
+&nbsp;&nbsp;&nbsp;<b>collection</b> : List or Array<br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;Number of attribute = $fn.size( $entity.attributes )  <br>
+</code>
+<br>
+<b>Since : </b>2.0.7<br>
 </p>
 </TD>
 </TR>

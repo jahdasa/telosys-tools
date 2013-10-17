@@ -26,6 +26,7 @@
 		<topic label="$entity"     href="html/objects/entity.html"/> 
 		<topic label="$fn"         href="html/objects/fn.html"/> 
 		<topic label="$generator"  href="html/objects/generator.html"/> 
+		<topic label="$java"       href="html/objects/java.html"/> 
 		<topic label="$link"       href="html/objects/link.html"/> 
 		<topic label="$loader"     href="html/objects/loader.html"/> 
 		<topic label="$project"    href="html/objects/project.html"/> 

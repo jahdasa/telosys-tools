@@ -1,0 +1,133 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">		
+<html>								
+<head>								
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">	
+	<title> $java</title>	
+	<style type="text/css">		
+	h1 {							
+		font-size:28px;				
+		font-family: verdana		
+	}								
+	p.otherNames{					
+		font-size:20px;				
+		font-family: verdana;		
+	}								
+	p.desc {						
+		font-size:12px;				
+		font-family: verdana;		
+	}								
+	p.doc {							
+		margin-left:2cm;			
+	}								
+	td.doc {						
+		font-size:12px;				
+		font-family: verdana;		
+		vertical-align:text-top;	
+		padding-top: 6px;			
+		padding-bottom: 12px;		
+	}								
+	tr.title {						
+		font-family: verdana;		
+		font-size:20px;				
+		font-weight:bold;			
+		background-color: #CCCCFF ;	
+	}								
+	code.simpledesc {				
+		font-size:15px;				
+		color: #000099; 			
+	}								
+	</style>						
+</head>							
+<body>											
+<h1> $java</h1>	
+<p class="desc">								
+Object providing a set of utility functions for JAVA language code generation<br>
+<br>
+<br>
+Since : 2.0.7<br>
+</p>		
+<table width="100%" border="1" cellspacing="0">		
+<TR class="title">										
+  <TD>Attributes and methods</TD>			
+</TR>		
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.equalsMethod(String className, List fieldsList) : String</B> </CODE>
+<p class="doc">
+Returns a string containing all the code for a Java 'equals' method<br>
+Tabulations are used for code indentation<br>
+<br>
+<b>Parameters : </b><br>
+&nbsp;&nbsp;&nbsp;<b>className</b> : the Java class name (simple name or full name)<br>
+&nbsp;&nbsp;&nbsp;<b>fieldsList</b> : list of fields to be used in the equals method<br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;$java.equalsMethod( $entity.name, $entity.attributes )<br>
+</code>
+<br>
+<b>Since : </b>2.0.7<br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.equalsMethod(String className, List fieldsList, int indentSpaces) : String</B> </CODE>
+<p class="doc">
+Returns a string containing all the code for a Java 'equals' method<br>
+Spaces are used for code indentation<br>
+<br>
+<b>Parameters : </b><br>
+&nbsp;&nbsp;&nbsp;<b>className</b> : the Java class name (simple name or full name)<br>
+&nbsp;&nbsp;&nbsp;<b>fieldsList</b> : list of fields to be used in the equals method<br>
+&nbsp;&nbsp;&nbsp;<b>indentSpaces</b> : number of spaces to be used for each indentation level<br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;$java.equalsMethod( $entity.name, $entity.attributes, 4 )<br>
+</code>
+<br>
+<b>Since : </b>2.0.7<br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.hashCodeMethod(String className, List fieldsList) : String</B> </CODE>
+<p class="doc">
+Returns a string containing all the code for a Java 'hashCode' method<br>
+Tabulations are used for code indentation<br>
+<br>
+<b>Parameters : </b><br>
+&nbsp;&nbsp;&nbsp;<b>className</b> : the Java class name (simple name or full name)<br>
+&nbsp;&nbsp;&nbsp;<b>fieldsList</b> : list of fields to be used in the equals method<br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;$java.hashCode( $entity.name, $entity.attributes )<br>
+</code>
+<br>
+<b>Since : </b>2.0.7<br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.hashCodeMethod(String className, List fieldsList, int indentSpaces) : String</B> </CODE>
+<p class="doc">
+Returns a string containing all the code for a Java 'hashCode' method<br>
+Spaces are used for code indentation<br>
+<br>
+<b>Parameters : </b><br>
+&nbsp;&nbsp;&nbsp;<b>className</b> : the Java class name (simple name or full name)<br>
+&nbsp;&nbsp;&nbsp;<b>fieldsList</b> : list of fields to be used in the equals method<br>
+&nbsp;&nbsp;&nbsp;<b>indentSpaces</b> : number of spaces to be used for each indentation level<br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;$java.hashCode( $entity.name, $entity.attributes, 4 )<br>
+</code>
+<br>
+<b>Since : </b>2.0.7<br>
+</p>
+</TD>
+</TR>
+</table>
+</body>
+</html>
