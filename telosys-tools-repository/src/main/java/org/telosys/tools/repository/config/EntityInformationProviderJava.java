@@ -20,19 +20,18 @@ import java.util.StringTokenizer;
 
 import org.telosys.tools.commons.jdbctypes.JdbcTypes;
 import org.telosys.tools.commons.jdbctypes.JdbcTypesManager;
-import org.telosys.tools.repository.model.Column;
 
 /**
- * Default implementation 
+ * EntityInformationProvider implementation for JAVA
  * 
  * @author L.GUERIN
  * 
  */
-public class DefaultInitializerChecker implements InitializerChecker
+public class EntityInformationProviderJava implements EntityInformationProvider
 {   
 	
 	//------------------------------------------------------------------------------
-    public DefaultInitializerChecker() {
+    public EntityInformationProviderJava() {
 		super();
 	}
 
@@ -76,31 +75,31 @@ public class DefaultInitializerChecker implements InitializerChecker
         }
     }
     
-    private String toSeparatedWords(String sName)
-    {
-        if (sName != null)
-        {
-            StringBuffer sb = new StringBuffer( sName.length() );
-            String sToken = null;
-            String s = sName.trim(); // to be secure
-            StringTokenizer st = new StringTokenizer(s, "_");
-            int i = 0 ;
-            while (st.hasMoreTokens())
-            {
-            	i++ ;
-                sToken = st.nextToken();
-                if ( i > 1 ) {
-                    sb.append( " " );
-                }
-                sb.append( transformToken( sToken ) );
-            }
-            return sb.toString();
-        }
-        else
-        {
-            return null;
-        }
-    }
+//    private String toSeparatedWords(String sName)
+//    {
+//        if (sName != null)
+//        {
+//            StringBuffer sb = new StringBuffer( sName.length() );
+//            String sToken = null;
+//            String s = sName.trim(); // to be secure
+//            StringTokenizer st = new StringTokenizer(s, "_");
+//            int i = 0 ;
+//            while (st.hasMoreTokens())
+//            {
+//            	i++ ;
+//                sToken = st.nextToken();
+//                if ( i > 1 ) {
+//                    sb.append( " " );
+//                }
+//                sb.append( transformToken( sToken ) );
+//            }
+//            return sb.toString();
+//        }
+//        else
+//        {
+//            return null;
+//        }
+//    }
 	
     //------------------------------------------------------------------------------
     // Classes
@@ -108,7 +107,7 @@ public class DefaultInitializerChecker implements InitializerChecker
     /* (non-Javadoc)
      * @see org.telosys.daogen.common.InitializerChecker#getClassNameForVO(java.lang.String)
      */
-    public String getJavaBeanClassName(String sTableName)
+    public String getEntityClassName(String sTableName)
     {
     	return toCamelCase(sTableName);
     }
@@ -134,7 +133,7 @@ public class DefaultInitializerChecker implements InitializerChecker
     /* (non-Javadoc)
      * @see org.telosys.daogen.common.InitializerChecker#getAttributeType(java.lang.String)
      */
-    public String getAttributeType(String sColumnTypeName, int iJdbcTypeCode, boolean bColumnNotNull)
+    public String getAttributeType(String databaseColumnType, int iJdbcTypeCode, boolean bColumnNotNull)
     {
     	//--- Special cases for Date/Time/Timestamp
     	if ( iJdbcTypeCode == Types.DATE  || iJdbcTypeCode == Types.TIME || iJdbcTypeCode == Types.TIMESTAMP ) 
@@ -147,85 +146,85 @@ public class DefaultInitializerChecker implements InitializerChecker
     	return ( sJavaType != null ? sJavaType : "java.lang.String" );    	
     }
 
-    //------------------------------------------------------------------------------
-    /* (non-Javadoc)
-     * @see org.telosys.daogen.common.InitializerChecker#getAttributeType(java.lang.String)
-     */
-    public String getAttributeLongTextFlag (String sColumnType, int iColumnTypeCode, String sJavaType )
-    {
-    	if ( sJavaType.equals("java.lang.String") )
-    	{
-    		if (   iColumnTypeCode == Types.LONGVARCHAR
-    			|| iColumnTypeCode == Types.CLOB
-    			|| iColumnTypeCode == Types.BLOB )
-    		{
-    			// Considered as a "Long Text"
-    			return Column.SPECIAL_LONG_TEXT_TRUE ; 
-    		}
-    	}
-    	return null ;
-    }
+//    //------------------------------------------------------------------------------
+//    /* (non-Javadoc)
+//     * @see org.telosys.daogen.common.InitializerChecker#getAttributeType(java.lang.String)
+//     */
+//    public String getAttributeLongTextFlag (String databaseColumnType, int jdbcColumnType, String javaType )
+//    {
+//    	if ( javaType.equals("java.lang.String") )
+//    	{
+//    		if (   jdbcColumnType == Types.LONGVARCHAR
+//    			|| jdbcColumnType == Types.CLOB
+//    			|| jdbcColumnType == Types.BLOB )
+//    		{
+//    			// Considered as a "Long Text"
+//    			return Column.SPECIAL_LONG_TEXT_TRUE ; 
+//    		}
+//    	}
+//    	return null ;
+//    }
     
-    public String getAttributeDateType(String sColumnType, int iColumnTypeCode, String sJavaType )
-    {
-    	if ( sJavaType.equals("java.util.Date") )
-    	{
-        	switch ( iColumnTypeCode )
-        	{
-        		//--- Type of Date :
-        		case Types.DATE : 
-        			return Column.SPECIAL_DATE_ONLY ; 
-        		case Types.TIME : 
-        			return Column.SPECIAL_TIME_ONLY ; 
-        		case Types.TIMESTAMP : 
-        			return Column.SPECIAL_DATE_AND_TIME ;
-        	}
-    	}
-    	return null ;
-    }
+//    public String getAttributeDateType(String databaseColumnType, int jdbcColumnType, String javaType )
+//    {
+//    	if ( javaType.equals("java.util.Date") )
+//    	{
+//        	switch ( jdbcColumnType )
+//        	{
+//        		//--- Type of Date :
+//        		case Types.DATE : 
+//        			return Column.SPECIAL_DATE_ONLY ; 
+//        		case Types.TIME : 
+//        			return Column.SPECIAL_TIME_ONLY ; 
+//        		case Types.TIMESTAMP : 
+//        			return Column.SPECIAL_DATE_AND_TIME ;
+//        	}
+//    	}
+//    	return null ;
+//    }
     
-    public String getAttributeLabel(String sColumnName, String sColumnTypeName, int iJdbcTypeCode) 
-    {
-        //--- Colum name converted in "Word1 Word2"
-        return toSeparatedWords(sColumnName);
-        
-    }
-    
-    /* (non-Javadoc)
-     * @see org.telosys.tools.repository.config.InitializerChecker#getAttributeInputType(java.lang.String, java.lang.String, int, java.lang.String)
-     */
-    public String getAttributeInputType(String sColumnName, String sColumnTypeName, int iJdbcTypeCode, String sJavaType)
-    {
-    	//--- Returns the HTML 5 input type
-    	switch ( iJdbcTypeCode ) {
-	    	case Types.CHAR :
-	    	case Types.VARCHAR :
-	    	case Types.LONGVARCHAR :
-	    		return "text" ;
-    		
-	    	case Types.NUMERIC :
-	    	case Types.DECIMAL :
-	    	case Types.TINYINT :
-	    	case Types.SMALLINT :
-	    	case Types.INTEGER :
-	    	case Types.BIGINT :    		
-	    	case Types.REAL :
-	    	case Types.FLOAT :
-	    	case Types.DOUBLE :
-	    		return "number" ;
-    		
-    		case Types.DATE :
-    			return "date" ;
-    			
-    		case Types.TIME :
-    			return "time" ;
-    			
-    		case Types.BIT :
-    		case Types.BOOLEAN :
-    			return "checkbox" ;
-    			
-    	}
-    	return "" ;
-    }
+//    public String getAttributeLabel(String sColumnName, String sColumnTypeName, int iJdbcTypeCode) 
+//    {
+//        //--- Colum name converted in "Word1 Word2"
+//        return toSeparatedWords(sColumnName);
+//        
+//    }
+//    
+//    /* (non-Javadoc)
+//     * @see org.telosys.tools.repository.config.InitializerChecker#getAttributeInputType(java.lang.String, java.lang.String, int, java.lang.String)
+//     */
+//    public String getAttributeInputType(String sColumnName, String sColumnTypeName, int iJdbcTypeCode, String sJavaType)
+//    {
+//    	//--- Returns the HTML 5 input type
+//    	switch ( iJdbcTypeCode ) {
+//	    	case Types.CHAR :
+//	    	case Types.VARCHAR :
+//	    	case Types.LONGVARCHAR :
+//	    		return "text" ;
+//    		
+//	    	case Types.NUMERIC :
+//	    	case Types.DECIMAL :
+//	    	case Types.TINYINT :
+//	    	case Types.SMALLINT :
+//	    	case Types.INTEGER :
+//	    	case Types.BIGINT :    		
+//	    	case Types.REAL :
+//	    	case Types.FLOAT :
+//	    	case Types.DOUBLE :
+//	    		return "number" ;
+//    		
+//    		case Types.DATE :
+//    			return "date" ;
+//    			
+//    		case Types.TIME :
+//    			return "time" ;
+//    			
+//    		case Types.BIT :
+//    		case Types.BOOLEAN :
+//    			return "checkbox" ;
+//    			
+//    	}
+//    	return "" ;
+//    }
 
 }

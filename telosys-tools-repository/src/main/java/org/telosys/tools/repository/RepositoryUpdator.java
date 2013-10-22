@@ -24,13 +24,13 @@ import java.util.List;
 import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.commons.TelosysToolsException;
 import org.telosys.tools.commons.TelosysToolsLogger;
-import org.telosys.tools.commons.config.ClassNameProvider;
 import org.telosys.tools.db.model.DatabaseColumn;
 import org.telosys.tools.db.model.DatabaseForeignKey;
 import org.telosys.tools.db.model.DatabaseModelManager;
 import org.telosys.tools.db.model.DatabaseTable;
 import org.telosys.tools.db.model.DatabaseTables;
-import org.telosys.tools.repository.config.InitializerChecker;
+import org.telosys.tools.repository.config.EntityInformationProvider;
+import org.telosys.tools.repository.config.UserInterfaceInformationProvider;
 import org.telosys.tools.repository.model.Column;
 import org.telosys.tools.repository.model.Entity;
 import org.telosys.tools.repository.model.ForeignKey;
@@ -45,17 +45,23 @@ public class RepositoryUpdator extends RepositoryManager
 {
 	private UpdateLogWriter _updateLogger = null;
 
-	/**
-	 * Constructor
-	 * @param inichk
-	 * @param classNameProvider
-	 * @param logger
-	 * @param updateLogger
-	 */
-	public RepositoryUpdator(InitializerChecker inichk, ClassNameProvider classNameProvider, 
+//	/**
+//	 * Constructor
+//	 * @param inichk
+//	 * @param classNameProvider
+//	 * @param logger
+//	 * @param updateLogger
+//	 */
+//	public RepositoryUpdator(InitializerChecker inichk, ClassNameProvider classNameProvider, 
+//			TelosysToolsLogger logger, UpdateLogWriter updateLogger) 
+//	{
+//		super(inichk, classNameProvider, logger);
+//		_updateLogger = updateLogger;
+//	}
+	public RepositoryUpdator(EntityInformationProvider entityInformationProvider, UserInterfaceInformationProvider uiInfoProvider, 
 			TelosysToolsLogger logger, UpdateLogWriter updateLogger) 
 	{
-		super(inichk, classNameProvider, logger);
+		super(entityInformationProvider, uiInfoProvider, logger);
 		_updateLogger = updateLogger;
 	}
 
@@ -174,11 +180,11 @@ public class RepositoryUpdator extends RepositoryManager
 		Date now = new Date();
 
 		try {
-			_logger.log(" . get meta-data ");
+			logger.log(" . get meta-data ");
 
 			try {
 
-				_logger.log(" . update repository from database tables");
+				logger.log(" . update repository from database tables");
 				_updateLogger.println("Update date : " + now);
 				
 				//--- Load the Database Model
@@ -217,8 +223,8 @@ public class RepositoryUpdator extends RepositoryManager
 		for ( DatabaseTable dbTable : dbTables.getTables() ) {
 			iTablesCount++;
 			
-			_logger.log("   --------------------------------------------------------------");
-			_logger.log("   Table '" + dbTable.getTableName() 
+			logger.log("   --------------------------------------------------------------");
+			logger.log("   Table '" + dbTable.getTableName() 
 					+ "' ( catalog = '" + dbTable.getCatalogName() 
 					+ "', schema = '"+ dbTable.getSchemaName() + "' )");
 
