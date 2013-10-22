@@ -48,7 +48,6 @@ import org.telosys.tools.commons.FileUtil;
 import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.commons.TelosysToolsException;
 import org.telosys.tools.commons.TelosysToolsLogger;
-import org.telosys.tools.commons.config.ClassNameProvider;
 import org.telosys.tools.commons.dbcfg.DatabaseConfiguration;
 import org.telosys.tools.commons.dbcfg.DatabasesConfigurations;
 import org.telosys.tools.commons.jdbc.ConnectionManager;
@@ -64,14 +63,15 @@ import org.telosys.tools.eclipse.plugin.commons.MsgBox;
 import org.telosys.tools.eclipse.plugin.commons.PluginImages;
 import org.telosys.tools.eclipse.plugin.commons.Util;
 import org.telosys.tools.eclipse.plugin.commons.mapping.MapperTextBean;
-import org.telosys.tools.eclipse.plugin.config.ProjectClassNameProvider;
 import org.telosys.tools.eclipse.plugin.config.ProjectConfig;
 import org.telosys.tools.eclipse.plugin.config.ProjectConfigManager;
 import org.telosys.tools.repository.RepositoryGenerator;
 import org.telosys.tools.repository.RepositoryUpdator;
 import org.telosys.tools.repository.UpdateLogWriter;
-import org.telosys.tools.repository.config.DefaultInitializerChecker;
-import org.telosys.tools.repository.config.InitializerChecker;
+import org.telosys.tools.repository.config.EntityInformationProvider;
+import org.telosys.tools.repository.config.EntityInformationProviderJava;
+import org.telosys.tools.repository.config.UserInterfaceInformationProvider;
+import org.telosys.tools.repository.config.UserInterfaceInformationProviderHTML5;
 import org.telosys.tools.repository.model.RepositoryModel;
 import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 
@@ -1959,22 +1959,28 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 			Util.cursorArrow(shell);
 		}
     }
+    private EntityInformationProvider getEntityInformationProvider() {
+    	return new EntityInformationProviderJava();
+    }
+	private UserInterfaceInformationProvider getUserInterfaceInformationProvider() {
+    	return new UserInterfaceInformationProviderHTML5();
+	}
     
     private boolean generateRepository(Connection con, DatabaseConfiguration db, ProjectConfig projectConfig, 
     		IFile repositoryFile,
     		TelosysToolsLogger logger ) 
     {
-		InitializerChecker initchk = new DefaultInitializerChecker();
-		ClassNameProvider classNameProvider = new ProjectClassNameProvider(projectConfig);
-
+		//InitializerChecker initchk = new DefaultInitializerChecker();
+		//ClassNameProvider classNameProvider = new ProjectClassNameProvider(projectConfig);
+    	EntityInformationProvider entityInformationProvider = getEntityInformationProvider();
+    	UserInterfaceInformationProvider uiInformationProvider = getUserInterfaceInformationProvider();
+    	
 		RepositoryModel repo = null ;
 
 		//--- 1) Generate the repository in memory
 		try {
-			RepositoryGenerator generator = new RepositoryGenerator(initchk, classNameProvider, logger) ;			
-//			repo = generator.generate(con, 
-//					db.getDatabaseName(), db.getMetadataCatalog(), db.getMetadataSchema(), 
-//					db.getMetadataTableNamePattern(), db.getMetadataTableTypes());
+			//RepositoryGenerator generator = new RepositoryGenerator(initchk, classNameProvider, logger) ;			
+			RepositoryGenerator generator = new RepositoryGenerator(entityInformationProvider, uiInformationProvider, logger) ;			
 			repo = generator.generate(con, 
 					db.getDatabaseName(), db.getMetadataCatalog(), db.getMetadataSchema(), 
 					db.getMetadataTableNamePattern(), db.getMetadataTableTypesArray() );
@@ -2003,8 +2009,10 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     private int updateRepository(Connection con, DatabaseConfiguration db, ProjectConfig projectConfig, TelosysToolsLogger logger ) 
     	throws TelosysToolsException
     {
-		InitializerChecker initchk = new DefaultInitializerChecker();
-		ClassNameProvider classNameProvider = new ProjectClassNameProvider(projectConfig);
+		//InitializerChecker initchk = new DefaultInitializerChecker();
+		//ClassNameProvider classNameProvider = new ProjectClassNameProvider(projectConfig);
+    	EntityInformationProvider entityInformationProvider = getEntityInformationProvider();
+    	UserInterfaceInformationProvider uiInformationProvider = getUserInterfaceInformationProvider();
 		
 		//--- 1) LOAD the repository from the file
 		File repositoryFile = getRepositoryFile( db.getDatabaseName() );
@@ -2019,10 +2027,8 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 		UpdateLogWriter    updateLogger      = new UpdateLogWriter( updateLogFile ) ;
 		
 
-		RepositoryUpdator updator = new RepositoryUpdator(initchk, classNameProvider, logger,  updateLogger);
-//		int nbChanges = updator.updateRepository(con, repositoryModel, 
-//					db.getMetadataCatalog(), db.getMetadataSchema(), 
-//					db.getMetadataTableNamePattern(), db.getMetadataTableTypes() );
+		//RepositoryUpdator updator = new RepositoryUpdator(initchk, classNameProvider, logger,  updateLogger);
+		RepositoryUpdator updator = new RepositoryUpdator(entityInformationProvider, uiInformationProvider, logger,  updateLogger);
 		int nbChanges = updator.updateRepository(con, repositoryModel, 
 				db.getMetadataCatalog(), db.getMetadataSchema(), 
 				db.getMetadataTableNamePattern(), db.getMetadataTableTypesArray() );
