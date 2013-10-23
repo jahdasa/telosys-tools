@@ -251,6 +251,12 @@ public class Column implements Comparable<Column>
 		_iJdbcTypeCode = typeCode ;
 	}
 
+	public String getJdbcTypeName() {
+		String text = _jdbcTypes.getTextForCode( getJdbcTypeCode() );
+		return text != null ? text : "???" ;
+	}
+
+
 	public String getJdbcTypeCodeWithText() {
 		int code = getJdbcTypeCode();
 		String text = _jdbcTypes.getTextForCode(code);
