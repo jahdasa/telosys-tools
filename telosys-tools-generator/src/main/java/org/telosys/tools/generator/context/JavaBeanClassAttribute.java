@@ -88,7 +88,8 @@ public class JavaBeanClassAttribute
     private boolean _bAutoIncremented  = false ;  // True if auto-incremented by the database
     private String  _sDataBaseName     = null ;  // Column name in the DB table
     private String  _sDataBaseType     = null ;  // Column type in the DB table
-    private int     _iJdbcTypeCode     = 0 ;     // JDBC type for this column
+    private int     _iJdbcTypeCode     = 0 ;     // JDBC type code for this column
+    private String  _sJdbcTypeName     = null ;  // JDBC type name : added in ver 2.0.7
     private int     _iDatabaseSize     = 0 ;     // Size of this column (if Varchar ) etc..
     private String  _sDatabaseDefaultValue = null ; // keep null (do not initialize to "" )  
     private boolean _bDatabaseNotNull  = false ;  // True if "not null" in the database
@@ -191,6 +192,7 @@ public class JavaBeanClassAttribute
 		_sDataBaseName     = column.getDatabaseName() ;
         _sDataBaseType     = column.getDatabaseTypeName() ;
         _iJdbcTypeCode     = column.getJdbcTypeCode() ;
+        _sJdbcTypeName     = column.getJdbcTypeName(); // Added in ver 2.0.7
         _bKeyElement       = column.isPrimaryKey() ;
         _bUsedInForeignKey = column.isForeignKey();
         _bAutoIncremented  = column.isAutoIncremented();
@@ -493,6 +495,24 @@ public class JavaBeanClassAttribute
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
 		text={	
+			"Returns the database native type for the attribute with the size if it makes sens",
+			"For example : INTEGER, VARCHAR(24), NUMBER, CHAR(3), etc..."
+			},
+		since="2.0.7"
+	)
+    public String getDatabaseTypeWithSize()
+    {
+        if ( _iJdbcTypeCode == Types.VARCHAR || _iJdbcTypeCode == Types.CHAR ) {
+        	return _sDataBaseType + "(" + _iDatabaseSize + ")" ;
+        }
+        else {
+        	return _sDataBaseType ;
+        }
+    }
+
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
 			"Returns the database size for the attribute"
 			}
 	)
@@ -557,6 +577,18 @@ public class JavaBeanClassAttribute
     public int getJdbcTypeCode()
     {
         return _iJdbcTypeCode ;
+    }
+
+	//----------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the JDBC type name ('CHAR', 'VARCHAR', 'NUMERIC', ... )<br>",
+			"The 'java.sql.Types' constant name for the current JDBC type code"
+			}
+		)
+    public String getJdbcTypeName()
+    {
+        return _sJdbcTypeName ;
     }
 
 	//----------------------------------------------------------------------

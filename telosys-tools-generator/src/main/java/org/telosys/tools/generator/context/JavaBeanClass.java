@@ -81,6 +81,7 @@ public class JavaBeanClass extends JavaClass
     private String     _sDatabaseTable   = null ; // Table name this class is mapped with
     private String     _sDatabaseCatalog = null ; // The table's catalog 
     private String     _sDatabaseSchema  = null ; // The table's schema 
+    private String     _sDatabaseType    = null ; // The table's type "table" or "view" 
     
 	private LinkedList<JavaBeanClassAttribute>  _keyAttributes     = null ; // The KEY attributes for this class
 	private LinkedList<JavaBeanClassAttribute>  _nonKeyAttributes  = null ; // The NON KEY attributes for this class
@@ -110,9 +111,10 @@ public class JavaBeanClass extends JavaClass
 		super(entity.getBeanJavaClass(), sPackage);
 		
 		this._entite = entity;
-		this._sDatabaseTable = entity.getName();
-		_sDatabaseCatalog = entity.getCatalog();
-		_sDatabaseSchema  = entity.getSchema();
+		this._sDatabaseTable   = entity.getName();
+		this._sDatabaseCatalog = entity.getCatalog();
+		this._sDatabaseSchema  = entity.getSchema();
+		this._sDatabaseType    = entity.getDatabaseType(); // ver 2.0.7
 		
 		/*
 		 * Set all the attributes of the current Java class
@@ -657,6 +659,49 @@ public class JavaBeanClass extends JavaClass
 	public String getDatabaseSchema() 
 	{
 		return _sDatabaseSchema ;
+	}
+	
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( text= { 
+			"Returns the database type of the table mapped with this entity <br>",
+			"Type retruned by the database meta-data ( 'TABLE', 'VIEW', ... ) "
+		},
+		example="$entity.databaseType",
+		since="2.0.7"
+	)
+	public String getDatabaseType() 
+	{
+		return _sDatabaseType ;
+	}
+	
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( text= { 
+			"Returns TRUE if the database type is 'TABLE' ",
+		},
+		example="$entity.isTableType()",
+		since="2.0.7"
+	)
+	public boolean isTableType() 
+	{
+		if ( _sDatabaseType != null ) {
+			return "TABLE".equalsIgnoreCase( _sDatabaseType.trim() ) ;
+		}
+		return false;
+	}
+	
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( text= { 
+			"Returns TRUE if the database type is 'VIEW' ",
+		},
+		example="$entity.isViewType()",
+		since="2.0.7"
+	)
+	public boolean isViewType() 
+	{
+		if ( _sDatabaseType != null ) {
+			return "VIEW".equalsIgnoreCase( _sDatabaseType.trim() ) ;
+		}
+		return false;
 	}
 	
 	//-------------------------------------------------------------------------------------
