@@ -46,7 +46,6 @@ import org.telosys.tools.eclipse.plugin.commons.widgets.GridPanel;
 import org.telosys.tools.eclipse.plugin.commons.widgets.RefreshButton;
 import org.telosys.tools.eclipse.plugin.commons.widgets.SelectDeselectButtons;
 import org.telosys.tools.eclipse.plugin.commons.widgets.TargetsButton;
-import org.telosys.tools.eclipse.plugin.config.ProjectConfig;
 import org.telosys.tools.generator.target.TargetDefinition;
 import org.telosys.tools.repository.model.Column;
 import org.telosys.tools.repository.model.Entity;
@@ -112,16 +111,18 @@ import org.telosys.tools.repository.model.RepositoryModel;
 	
 	private Button _buttonGenerate = null ;
 
+	private final List<TargetDefinition> initialTargetsList ; // v 2.0.7
 	
 	/**
 	 * @param editor
 	 * @param id
 	 * @param title 
 	 */
-	public RepositoryEditorPage1(FormEditor editor, String id, String title) {
+	public RepositoryEditorPage1(FormEditor editor, String id, String title, List<TargetDefinition> targetsList) {
 		super(editor, id, title);
 		//super(editor, id, null); // ERROR if title is null
 		log(this, "constructor(.., '"+id+"', '"+ title +"')..." );
+		this.initialTargetsList = targetsList ;
 	}
 
 	protected boolean isPopulateInProgress()
@@ -578,8 +579,9 @@ import org.telosys.tools.repository.model.RepositoryModel;
 		
 		_buttonsSelectDeselect.setTable(_tableSpecificTargets);
 		
-//		populateTableStandardTargets(_tableStandardTargets);
-		populateTableGenerationTargets(_tableSpecificTargets);		
+		//populateTableGenerationTargets(_tableSpecificTargets);		
+		populateTableGenerationTargets(_tableSpecificTargets, initialTargetsList); // v 2.0.7 		
+		
 	}
 	//----------------------------------------------------------------------------------------------
 	private Composite createButtonsPanel(Composite composite) 
@@ -590,22 +592,22 @@ import org.telosys.tools.repository.model.RepositoryModel;
 
 		gridPanel.addFiller(200); // 1 filler
 		
-		//TargetsButton targetsButton = 
-			new TargetsButton(gridPanel.getPanel(), getProject() );  // 1 button
+		new TargetsButton(gridPanel.getPanel(), this.getRepositoryEditor(), getProject() );  // 1 button
 			
-		RefreshButton refreshButton = new RefreshButton(gridPanel.getPanel());  // 1 button
-		refreshButton.addSelectionListener(new SelectionListener() 
-    	{
-            public void widgetSelected(SelectionEvent arg0)
-            {
-            	//--- Reload the targets list
-            	RepositoryEditor editor = getRepositoryEditor();
-            	editor.refreshAllTargetsTablesFromConfigFile();
-            }
-            public void widgetDefaultSelected(SelectionEvent arg0)
-            {
-            }
-        });
+//		RefreshButton refreshButton = new RefreshButton(gridPanel.getPanel());  // 1 button
+//		refreshButton.addSelectionListener(new SelectionListener() 
+//    	{
+//            public void widgetSelected(SelectionEvent arg0)
+//            {
+//            	//--- Reload the targets list
+//            	RepositoryEditor editor = getRepositoryEditor();
+//            	editor.refreshAllTargetsTablesFromConfigFile();
+//            }
+//            public void widgetDefaultSelected(SelectionEvent arg0)
+//            {
+//            }
+//        });
+		new RefreshButton(gridPanel.getPanel(), getRepositoryEditor() );  // 1 button // v 2.0.7
 
 		gridPanel.addFiller(200); // 1 filler
 		
@@ -630,10 +632,13 @@ import org.telosys.tools.repository.model.RepositoryModel;
 	/**
 	 * Refresh the targets table from the current configuration supposed to be up to date 
 	 */
-	protected void refreshTargetsTable()
+	//protected void refreshTargetsTable()
+	protected void refreshTargetsTable(List<TargetDefinition> targetslist)	
 	{
+		log("refreshTargetsTable");
 		//--- Re-populate the SWT table
-		populateTableGenerationTargets(_tableSpecificTargets);
+		//populateTableGenerationTargets(_tableSpecificTargets);
+		populateTableGenerationTargets(_tableSpecificTargets, targetslist);
 	}
 	//----------------------------------------------------------------------------------------------
 	/* (non-Javadoc)
@@ -996,20 +1001,21 @@ import org.telosys.tools.repository.model.RepositoryModel;
 		col.setWidth(20);
 		
 		// Edit template file if click on column 2
-		OpenTemplateFileInEditor listener = new OpenTemplateFileInEditor( getProject(), table, 4 ) ;
+		OpenTemplateFileInEditor listener = new OpenTemplateFileInEditor( getRepositoryEditor(), getProject(), table, 4 ) ;
 		table.addListener(SWT.MouseDown, listener );
 		
 		return table;
 	}
 	
-	private void populateTableGenerationTargets(Table table)
+	//private void populateTableGenerationTargets(Table table)
+	private void populateTableGenerationTargets(Table table, List<TargetDefinition> list) // v 2.0.7
 	{
-		ProjectConfig projectConfig = getProjectConfig();
-		if ( projectConfig == null )
-		{
-			return ;
-		}
-		List<TargetDefinition> list = projectConfig.getTemplates(); // NB : the list can be null 
+//		ProjectConfig projectConfig = getProjectConfig();
+//		if ( projectConfig == null )
+//		{
+//			return ;
+//		}
+//		List<TargetDefinition> list = projectConfig.getTemplates(); // NB : the list can be null 
 		if ( list != null )
 		{
 			table.removeAll();

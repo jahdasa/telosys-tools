@@ -10,6 +10,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
+import org.telosys.tools.commons.FileUtil;
+import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.eclipse.plugin.config.ProjectConfig;
 import org.telosys.tools.eclipse.plugin.config.ProjectConfigManager;
 import org.telosys.tools.generator.target.TargetDefinition;
@@ -25,20 +27,35 @@ public class TargetUtil {
 		PluginLogger.log( TargetUtil.class.getName() + " : " + s );
 	}
 
-	public static IFile getFileFromTemplatesFolder( IProject project, String fileName ) {
+	/**
+	 * @param project
+	 * @param bundleName
+	 * @param fileName
+	 * @return
+	 */
+	private static IFile getFileFromTemplatesFolder( IProject project, String bundleName, String fileName ) {
 		log( "getFileFromTemplatesFolder(..)..." + fileName );
 		ProjectConfig projectConfig = ProjectConfigManager.getProjectConfig( project );
 		if ( projectConfig != null ) {
-			String templateFile = null ;
 			String templatesFolder = projectConfig.getTemplatesFolder();
-			log( "  templates folder = " + templatesFolder );
-			if ( templatesFolder.endsWith("/") || templatesFolder.endsWith("\\") ) {
-				templateFile = templatesFolder + fileName;
+			
+			// Add bundle folder if any
+			if ( ! StrUtil.nullOrVoid(bundleName) ) {
+				templatesFolder = FileUtil.buildFilePath(templatesFolder, bundleName );
 			}
-			else {
-				templateFile = templatesFolder + "/" + fileName;
-			}		
-			log("getTemplateFile(target) : file = " + templateFile );			
+
+//			String templateFile = null ;
+//			log( "  templates folder = " + templatesFolder );
+//			if ( templatesFolder.endsWith("/") || templatesFolder.endsWith("\\") ) {
+//				templateFile = templatesFolder + fileName;
+//			}
+//			else {
+//				templateFile = templatesFolder + "/" + fileName;
+//			}
+			String templateFile = FileUtil.buildFilePath(templatesFolder, fileName );
+			
+			log("Templates file (path in project) = " + templateFile );		
+			
 			File f = EclipseProjUtil.getResourceAsFile( project, templateFile);
 			if ( f != null) {
 				return EclipseWksUtil.toIFile(f);
@@ -56,20 +73,21 @@ public class TargetUtil {
 	 * @param target
 	 * @return
 	 */
-	public static IFile getTemplateFile( IProject project,  TargetDefinition target ) {
+	private static IFile getTemplateFile( IProject project, String bundleName, TargetDefinition target ) {
 		
 		log( "getTemplateFile(target)..." + target );
-		return getFileFromTemplatesFolder( project, target.getTemplate() );
+		return getFileFromTemplatesFolder( project, bundleName, target.getTemplate() );
 	}
 	
 	/**
-	 * Opens the template file of the given target in an editor
+	 * Opens the template file of the given target in the specialized editor
 	 * @param project
+	 * @param bundleName
 	 * @param target
 	 */
-	public static void openTemplateFileInEditor(IProject project, TargetDefinition target) {
+	public static void openTemplateFileInEditor(IProject project, String bundleName, TargetDefinition target) {
 		
-		IFile templateFile = getTemplateFile( project, target );
+		IFile templateFile = getTemplateFile( project, bundleName, target );
 		
 		IEditorInput editorInput = new FileEditorInput(templateFile);
 		
@@ -86,9 +104,9 @@ public class TargetUtil {
 		}
 	}
 
-	public static void openTargetsConfigFileInEditor(IProject project) {
+	public static void openTargetsConfigFileInEditor(IProject project, String bundleName) {
 		
-		IFile targetsConfigFile = getFileFromTemplatesFolder( project, ProjectConfig.TEMPLATES_CFG );
+		IFile targetsConfigFile = getFileFromTemplatesFolder( project, bundleName, ProjectConfig.TEMPLATES_CFG );
 		
 		IEditorInput editorInput = new FileEditorInput(targetsConfigFile);
 		

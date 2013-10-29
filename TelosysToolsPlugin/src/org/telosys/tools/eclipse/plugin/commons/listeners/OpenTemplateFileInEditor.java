@@ -9,17 +9,20 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.telosys.tools.eclipse.plugin.commons.MsgBox;
 import org.telosys.tools.eclipse.plugin.commons.TargetUtil;
+import org.telosys.tools.eclipse.plugin.editors.dbrep.RepositoryEditor;
 import org.telosys.tools.generator.target.TargetDefinition;
 
 public class OpenTemplateFileInEditor implements Listener {
 
+	private final RepositoryEditor editor ;
 	private final IProject project ;
 	private final Table    table ;
 	private final int      columnClick ;
 	
 	
-	public OpenTemplateFileInEditor(IProject project, Table table, int columnClick) {
+	public OpenTemplateFileInEditor(RepositoryEditor editor, IProject project, Table table, int columnClick) {
 		super();
+		this.editor = editor ;
 		this.project = project;
 		this.table = table;
 		this.columnClick = columnClick;
@@ -49,7 +52,8 @@ public class OpenTemplateFileInEditor implements Listener {
 	        			TargetDefinition target = (TargetDefinition) item.getData();
 //			        	MsgBox.info("Edit template : " + target.getName() + " - " + target.getTemplate() + 
 //			        			"\n Column = " + column );
-			        	TargetUtil.openTemplateFileInEditor(project, target);
+	        			
+			        	TargetUtil.openTemplateFileInEditor(project, editor.getCurrentBundleName(), target);
 	        		}
 	        		else {
 	        			MsgBox.error("Edit event : this row is not a target instance");

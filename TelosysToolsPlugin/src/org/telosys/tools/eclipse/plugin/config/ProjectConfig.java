@@ -82,9 +82,8 @@ public class ProjectConfig
 	private Variable[] _projectVariables = null ;
 	
 	//----------------------------------------------------------------------------------------
-	//private String _sTemplatesDirectory = "" ;
-	// private List<SpecificTemplate> _specificTemplates = null ;
-	private List<TargetDefinition> _templates = null ;
+// Removed in v 2.0.7
+//	private List<TargetDefinition> _templates = null ;
 	
 	//----------------------------------------------------------------------------------------	
 //	/**
@@ -177,8 +176,8 @@ public class ProjectConfig
     	//_projectVariables = initProjectVariables( prop ); // Can be null
     	_projectVariables = VariablesUtil.getVariablesFromProperties( prop );
     	
-    	
-    	_templates = loadTemplates();
+    	// Removed in v 2.0.7
+    	//_templates = loadTemplates();
     }
     
     //==============================================================================
@@ -213,12 +212,30 @@ public class ProjectConfig
     public String getTMP() {
     	return _TMP;
 	}
+    
+    /**
+     * Returns the templates folder in the Eclipse project <br>
+     * ( ie 'TelosysTools/templates' )
+     * @return
+     */
     public String getTemplatesFolder() {
     	return _sTemplatesFolder;
 	}
+
+    /**
+     * Returns the download folder in the Eclipse project <br>
+     * ( ie 'TelosysTools/downloads' )
+     * @return
+     */
     public String getDownloadsFolder() {
     	return _sDownloadsFolder;
     }
+    
+    /**
+     * Returns the libraries folder in the Eclipse project <br>
+     * ( ie 'TelosysTools/lib' )
+     * @return
+     */
     public String getLibrariesFolder() {
     	return _sLibrariesFolder ;
     }
@@ -492,21 +509,32 @@ public class ProjectConfig
      */
     public void refreshTemplates()
 	{
-    	_templates = loadTemplates();
+    	// Removed in v 2.0.7
+    	//_templates = loadTemplates();
 	}
 
     /**
      * Returns the list of targets defined in "templates.cfg" or null if none
      * @return
      */
-    public List<TargetDefinition> getTemplates()
+    public List<TargetDefinition> getTemplates(String bundleName)
 	{
-    	return _templates ;
+    	//return _templates ;
+    	return loadTemplates(bundleName) ; // v 2.0.7
 	}
 
-	private List<TargetDefinition> loadTemplates()
+	private List<TargetDefinition> loadTemplates(String bundleName)
 	{
+		// Initial templates folder 
 		String sTemplatesFolder = getTemplatesFolderFullPath();
+		// Add bundle folder if any  ( v 2.0.7 )
+		if ( bundleName != null ) {
+			String bundleFolder = bundleName.trim() ;
+			if ( bundleFolder.length() > 0 ) {
+				sTemplatesFolder = FileUtil.buildFilePath(sTemplatesFolder, bundleFolder );
+			}
+		}
+		// templates.cfg full path  
 		String sFile = FileUtil.buildFilePath(sTemplatesFolder, TEMPLATES_CFG );
 		
 		TargetsFile targetsFile = new TargetsFile(sFile) ;

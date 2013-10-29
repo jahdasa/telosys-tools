@@ -49,6 +49,10 @@ public abstract class RepositoryEditorPage extends FormPage
 		_backgroundColor = device.getSystemColor(SWT.COLOR_GRAY);
 	}
 	
+//	//----------------------------------------------------------------------------------------------
+//	public void setPageTitle(String title) { // v 2.0.7
+//		super.setPartName(title); 
+//	}
 	//----------------------------------------------------------------------------------------------
 	protected IProject getProject()
 	{

@@ -3,7 +3,6 @@ package org.telosys.tools.eclipse.plugin.editors.dbrep;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -30,9 +29,8 @@ import org.telosys.tools.eclipse.plugin.commons.widgets.GenerateButton;
 import org.telosys.tools.eclipse.plugin.commons.widgets.GridPanel;
 import org.telosys.tools.eclipse.plugin.commons.widgets.RefreshButton;
 import org.telosys.tools.eclipse.plugin.commons.widgets.SelectDeselectButtons;
+import org.telosys.tools.eclipse.plugin.commons.widgets.SwitchBundleButton;
 import org.telosys.tools.eclipse.plugin.commons.widgets.TargetsButton;
-import org.telosys.tools.eclipse.plugin.config.ProjectConfig;
-import org.telosys.tools.eclipse.plugin.config.ProjectConfigManager;
 import org.telosys.tools.generator.target.TargetDefinition;
 import org.telosys.tools.repository.model.Entity;
 import org.telosys.tools.repository.model.RepositoryModel;
@@ -47,17 +45,20 @@ import org.telosys.tools.repository.model.RepositoryModel;
 	
 	private Table  _tableTargets = null ;
 	
+	private final List<TargetDefinition> initialTargetsList ; // v 2.0.7
+	
 	/**
 	 * Constructor
 	 * @param editor
 	 * @param id
 	 * @param title
 	 */
-	public RepositoryEditorPage2(FormEditor editor, String id, String title) {
+	public RepositoryEditorPage2(FormEditor editor, String id, String title, List<TargetDefinition> initialTargetsList ) {
 		super(editor, id, title);
 		//super(editor, id, null); // ERROR if title is null
 		
 		log(this, "constructor(.., '"+id+"', '"+ title +"')..." );
+		this.initialTargetsList = initialTargetsList ;
 	}
 
 	/* (non-Javadoc)
@@ -173,29 +174,35 @@ import org.telosys.tools.repository.model.RepositoryModel;
 		
 
 		//--- Create the buttons 
-		GridPanel gridPanel = new GridPanel(panel2, 7); // 7 columns
+		//GridPanel gridPanel = new GridPanel(panel2, 7); // 7 columns
+		GridPanel gridPanel = new GridPanel(panel2, 8); // 8 columns
 		SelectDeselectButtons buttons2 = new SelectDeselectButtons( gridPanel.getPanel() ) ; // 2 buttons
 
-		gridPanel.addFiller(45); // 1 filler
+		//gridPanel.addFiller(45); // 1 filler
+		gridPanel.addFiller(24); // 1 filler
+		
+		new SwitchBundleButton(gridPanel.getPanel(), getRepositoryEditor(), getProject()) ; // 1 button
 		
 		//TargetsButton targetsButton = 
-		new TargetsButton(gridPanel.getPanel(), getProject() );  // 1 button
+		new TargetsButton(gridPanel.getPanel(), getRepositoryEditor(), getProject() );  // 1 button
 		
-		RefreshButton refreshButton = new RefreshButton(gridPanel.getPanel());  // 1 button
-		refreshButton.addSelectionListener(new SelectionListener() 
-		{
-	        public void widgetSelected(SelectionEvent arg0)
-	        {
-	        	//--- Reload the targets list
-	        	RepositoryEditor editor = getRepositoryEditor();
-	        	editor.refreshAllTargetsTablesFromConfigFile();
-	        }
-	        public void widgetDefaultSelected(SelectionEvent arg0)
-	        {
-	        }
-	    });
+//		RefreshButton refreshButton = new RefreshButton(gridPanel.getPanel());  // 1 button
+//		refreshButton.addSelectionListener(new SelectionListener() 
+//		{
+//	        public void widgetSelected(SelectionEvent arg0)
+//	        {
+//	        	//--- Reload the targets list
+//	        	RepositoryEditor editor = getRepositoryEditor();
+//	        	editor.refreshAllTargetsTablesFromConfigFile();
+//	        }
+//	        public void widgetDefaultSelected(SelectionEvent arg0)
+//	        {
+//	        }
+//	    });
+		new RefreshButton(gridPanel.getPanel(), getRepositoryEditor());  // 1 button // v 2.0.7
 	
-		gridPanel.addFiller(45); // 1 filler
+		//gridPanel.addFiller(45); // 1 filler
+		gridPanel.addFiller(24); // 1 filler
 		
 		GenerateButton generateButton = new GenerateButton(gridPanel.getPanel()); // 1 button
 		generateButton.addSelectionListener(new SelectionListener() 
@@ -227,8 +234,8 @@ import org.telosys.tools.repository.model.RepositoryModel;
 		// Populate the 2 tables 
 		//---------------------------------------------------------------
 		populateEntitiesTable();
-		populateTargetsTable();
-
+		//populateTargetsTable();
+		populateTargetsTable(initialTargetsList); // v 2.0.7
 	}
 	
 	//----------------------------------------------------------------------------------------------
@@ -353,23 +360,29 @@ import org.telosys.tools.repository.model.RepositoryModel;
 	/**
 	 * Refresh the targets table from the current configuration supposed to be up to date 
 	 */
-	protected void refreshTargetsTable()
+	//protected void refreshTargetsTable()
+	protected void refreshTargetsTable(List<TargetDefinition> targetslist)	// v 2.0.7
+	
 	{
+		log("refreshTargetsTable");
+
 		//--- Re-populate the SWT table
-		populateTargetsTable();
+		//populateTargetsTable();
+		populateTargetsTable(targetslist);
 	}
 
 	//----------------------------------------------------------------------------------------------
-	private void populateTargetsTable()
+	//private void populateTargetsTable()
+	private void populateTargetsTable(List<TargetDefinition> list) // v 2.0.7
 	{
-		ProjectConfig projectConfig = getProjectConfig();
-		if ( projectConfig == null )
-		{
-			return ;
-		}
+		log("populateTargetsTable");
+//		ProjectConfig projectConfig = getProjectConfig();
+//		if ( projectConfig == null )
+//		{
+//			return ;
+//		}
 		
-		//List<SpecificTemplate> list = projectConfig.getSpecificTemplates(); // NB : the list can be null 
-		List<TargetDefinition> list = projectConfig.getTemplates(); // NB : the list can be null 
+//		List<TargetDefinition> list = projectConfig.getTemplates(); // NB : the list can be null 
 		if ( list != null )
 		{
 			_tableTargets.removeAll();
@@ -407,7 +420,7 @@ import org.telosys.tools.repository.model.RepositoryModel;
 		}
 		
 		// Edit template file if click on column 2
-		OpenTemplateFileInEditor listener = new OpenTemplateFileInEditor( getProject(), _tableTargets, 2 ) ;
+		OpenTemplateFileInEditor listener = new OpenTemplateFileInEditor(getRepositoryEditor(), getProject(), _tableTargets, 2 ) ;
 		_tableTargets.addListener(SWT.MouseDown, listener );
 	}
 	
@@ -473,14 +486,14 @@ import org.telosys.tools.repository.model.RepositoryModel;
     	
         //--- Get the project configuration
     	//RepositoryEditor editor = (RepositoryEditor) getEditor();
-		IProject iProject = getProject();
+//		IProject iProject = getProject();
     	
-		ProjectConfig projectConfig = ProjectConfigManager.getProjectConfig( iProject );
-        if ( projectConfig == null )
-        {
-        	MsgBox.error("Cannot get project configuration");
-        	return 0;
-        }
+//		ProjectConfig projectConfig = ProjectConfigManager.getProjectConfig( iProject );
+//        if ( projectConfig == null )
+//        {
+//        	MsgBox.error("Cannot get project configuration");
+//        	return 0;
+//        }
 //        String sSourceDir = projectConfig.getSourceFolder();
 //		PluginLogger.log( "Source Folder : " + sSourceDir );
 		

@@ -1,6 +1,7 @@
 package org.telosys.tools.eclipse.plugin.editors.dbrep;
 
 import java.io.File;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -21,6 +22,7 @@ import org.telosys.tools.eclipse.plugin.commons.MsgBox;
 import org.telosys.tools.eclipse.plugin.commons.PluginLogger;
 import org.telosys.tools.eclipse.plugin.config.ProjectConfig;
 import org.telosys.tools.eclipse.plugin.config.ProjectConfigManager;
+import org.telosys.tools.generator.target.TargetDefinition;
 import org.telosys.tools.repository.model.RepositoryModel;
 import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 
@@ -34,14 +36,19 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
  */
 public class RepositoryEditor extends FormEditor 
 {
+	private final static String PAGE_1_TITLE = " Entities mapping and generation " ;
+	private final static String PAGE_2_TITLE = " Bulk generation " ;
+	
 	protected final static int LAYOUT_MARGIN_WIDTH = 10 ;
 	
 	/** The dirty flag : see isDirty() */
     private boolean  _dirty = false;
 
-	private String   _fileName = "???" ;
-	private IFile    _file = null ;
+	private String          _fileName = "???" ;
+	private IFile           _file     = null ;
 	private RepositoryModel _repositoryModel = null;
+	
+	private String          _currentBundle = null ; // v 2.0.7
 	
 	//--- Pages managed by this editor
 	private RepositoryEditorPage1 _page1 = null ;
@@ -134,8 +141,16 @@ public class RepositoryEditor extends FormEditor
 	protected void addPages() {
 		PluginLogger.log(this, "addPages()..." );
 
-		_page1 = new RepositoryEditorPage1(this, "RepositoryEditorPage1", " Entities mapping and generation ");
-		_page2 = new RepositoryEditorPage2(this, "RepositoryEditorPage2", " Bulk generation ");
+		//--- Get the initial list of targets/templates
+		List<TargetDefinition> targetsList = null ;
+		ProjectConfig projectConfig = getProjectConfig();
+		if ( projectConfig != null )
+		{
+			targetsList = projectConfig.getTemplates(null); // NB : the list can be null 
+		}
+
+		_page1 = new RepositoryEditorPage1(this, "RepositoryEditorPage1", PAGE_1_TITLE, targetsList);
+		_page2 = new RepositoryEditorPage2(this, "RepositoryEditorPage2", PAGE_2_TITLE, targetsList);
 		
 		IFormPage page3 = new RepositoryEditorPage3(this, "RepositoryEditorPage3", " Links between entities ");
 		IFormPage page4 = new RepositoryEditorPage4(this, "RepositoryEditorPage4", " Project configuration ");
@@ -251,16 +266,31 @@ public class RepositoryEditor extends FormEditor
 		return _repositoryModel ;
 	}
 	
+//	//----------------------------------------------------------------------------------------------
+//	public void refreshAllTargetsTablesFromConfigFile(String bundleName)
+//	{
+//		//_page2.setPageTitle("bundle '" + bundleName + "'");
+//		// TODO 
+//	}
 	//----------------------------------------------------------------------------------------------
-	protected void refreshAllTargetsTablesFromConfigFile()
+	public void setCurrentBundleName(String bundleName) {
+		_currentBundle = bundleName ;
+	}
+	//----------------------------------------------------------------------------------------------
+	public String getCurrentBundleName() {
+		return _currentBundle ;
+	}
+	//----------------------------------------------------------------------------------------------
+	public void refreshAllTargetsTablesFromConfigFile()
 	{
 		ProjectConfig projectConfig = getProjectConfig();
 		if ( projectConfig != null ) {
 			//--- Reload from file
-			projectConfig.refreshTemplates() ;
+			//projectConfig.refreshTemplates() ;
+			List<TargetDefinition> targetsList = projectConfig.getTemplates(_currentBundle);
 			//--- Refresh all the lists in the editor pages 
-			_page1.refreshTargetsTable();
-			_page2.refreshTargetsTable();
+			_page1.refreshTargetsTable(targetsList);
+			_page2.refreshTargetsTable(targetsList);
 		}
 	}
 	

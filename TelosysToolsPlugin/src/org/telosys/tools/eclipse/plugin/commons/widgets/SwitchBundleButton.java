@@ -8,29 +8,29 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.telosys.tools.eclipse.plugin.commons.PluginImages;
-import org.telosys.tools.eclipse.plugin.commons.TargetUtil;
+import org.telosys.tools.eclipse.plugin.commons.dialogbox.TemplateBundleUtil;
 import org.telosys.tools.eclipse.plugin.editors.dbrep.RepositoryEditor;
 
-public class TargetsButton {
+public class SwitchBundleButton {
 
 	private final static int  BUTTON_HEIGHT =  26 ;
-	private final static int  BUTTON_WIDTH  =  74 ; //80 ;
+	private final static int  BUTTON_WIDTH  =  74 ;
 	
 	private final Button           _button ;
 	private final RepositoryEditor _editor ;
 	private final IProject         _project ;
-
-	public TargetsButton(Composite parent, RepositoryEditor editor, IProject project ) {
+	
+	public SwitchBundleButton(Composite parent, RepositoryEditor editor, IProject project ) {
 		super();
 
-		_editor = editor ;
 		_project = project ;
+		_editor  = editor ;
 		
 		_button = new Button(parent, SWT.NONE);
-		_button.setText("Edit");
-		_button.setToolTipText("Edit targets/templates file");
+		_button.setText("Switch");
+		_button.setToolTipText("Switch template bundle");
 
-		_button.setImage( PluginImages.getImage(PluginImages.TARGETS ) );
+		_button.setImage( PluginImages.getImage(PluginImages.SWITCH_BUNDLE ) );
 		
 		_button.setLayoutData ( new GridData (BUTTON_WIDTH, BUTTON_HEIGHT) );
 		
@@ -39,7 +39,11 @@ public class TargetsButton {
 	            public void widgetSelected(SelectionEvent arg0)
 	            {
 	            	//--- Standard behavior : open the targets/templates configuration file in text editor
-	            	TargetUtil.openTargetsConfigFileInEditor(_project, _editor.getCurrentBundleName());
+	            	//String bundleName = TemplateBundleUtil.selectBundle( _project);
+	            	TemplateBundleUtil.selectBundle(_editor, _project);
+	            	//MsgBox.info("Selected bundle : '" + bundleName + "'");
+//	            	_editor.setCurrentBundleName(bundleName);
+//	            	_editor.refreshAllTargetsTablesFromConfigFile();
 	            }
 	            public void widgetDefaultSelected(SelectionEvent arg0)
 	            {

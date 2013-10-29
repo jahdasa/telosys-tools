@@ -34,10 +34,11 @@ public class PluginImages {
 	public static final String GENERATE_REPO   = "GENERATE_REPO" ; // v 2.0.6
 	public static final String UPDATE_REPO     = "UPDATE_REPO" ; // v 2.0.6
 	
-	public static final String EDIT_ICON   = "EDIT_ICON" ; // v 2.0
-	public static final String GENERATE    = "GENERATE" ; // v 2.0
-	public static final String REFRESH     = "REFRESH" ; // v 2.0
-	public static final String TARGETS     = "TARGETS" ; // v 2.0
+	public static final String EDIT_ICON      = "EDIT_ICON" ; // v 2.0
+	public static final String GENERATE       = "GENERATE" ; // v 2.0
+	public static final String REFRESH        = "REFRESH" ; // v 2.0
+	public static final String TARGETS        = "TARGETS" ; // v 2.0
+	public static final String SWITCH_BUNDLE  = "SWITCH_BUNDLE" ; // v 2.0.7
 
 	public static final String CHECKED_ON     = "CHECKED_ON" ; // v 2.0
 	public static final String CHECKED_OFF    = "CHECKED_OFF" ; // v 2.0
@@ -96,12 +97,13 @@ public class PluginImages {
 		registerImage(GENERATE_REPO,   Const.GENERATE_REPO );  // v 2.0.6 
 		registerImage(UPDATE_REPO,     Const.UPDATE_REPO );  // v 2.0.6 
 		
-		registerImage(EDIT_ICON,    Const.EDIT_ICON );
-		registerImage(GENERATE,     Const.GENERATE );
-		registerImage(REFRESH,      Const.REFRESH );
-		registerImage(TARGETS,      Const.TARGETS );
-		registerImage(CHECKED_OFF,  Const.CHECKED_OFF );
-		registerImage(CHECKED_ON,   Const.CHECKED_ON );
+		registerImage(EDIT_ICON,     Const.EDIT_ICON );
+		registerImage(GENERATE,      Const.GENERATE );
+		registerImage(REFRESH,       Const.REFRESH );
+		registerImage(TARGETS,       Const.TARGETS );
+		registerImage(SWITCH_BUNDLE, Const.SWITCH_BUNDLE );
+		registerImage(CHECKED_OFF,   Const.CHECKED_OFF );
+		registerImage(CHECKED_ON,    Const.CHECKED_ON );
 		
 		// Velocity Templates Editor ( v 2.0.5 )
 		registerImage(VELOCITY_BEAN_GENERATOR,   Const.VELOCITY_BEAN_GENERATOR_IMAGE );

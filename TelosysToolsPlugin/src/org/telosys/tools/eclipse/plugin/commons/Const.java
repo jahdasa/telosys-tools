@@ -27,6 +27,8 @@ public class Const {
 	public static final String GENERATE = "generate16pix.png" ; 
 	public static final String REFRESH  = "refresh16pix.png" ; 
 	public static final String TARGETS  = "targets16pix.png" ; 
+	public static final String SWITCH_BUNDLE  = "switch_bundle_16pix.png" ; // v 2.0.7
+	
 	public static final String CHECKED_ON  = "checkbox_on_16pix.png" ; 
 	public static final String CHECKED_OFF = "checkbox_off_16pix.png" ; 
 	
