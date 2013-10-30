@@ -85,7 +85,7 @@ public class TemplatesBundleDialogBox extends Dialog
         {
             public void widgetSelected(SelectionEvent event)
             {
-                Combo combo = (Combo) event.widget ;
+//                Combo combo = (Combo) event.widget ;
 //        		String[] items = combo.getItems();
 //        		selectedItem = items[ combo.getSelectionIndex() ] ;
         		updateSelectedItem();
