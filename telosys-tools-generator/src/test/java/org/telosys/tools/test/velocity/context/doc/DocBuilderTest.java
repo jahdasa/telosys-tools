@@ -99,6 +99,7 @@ public class DocBuilderTest  extends TestCase {
 		assertTrue ( "JavaBeanClass".equals( classInfo.getJavaClassName() ) );
 		assertTrue ( ContextName.ENTITY.equals( classInfo.getContextName() ) );
 		System.out.println("Methods count = " + classInfo.getMethodsCount() );
-		assertTrue ( classInfo.getMethodsCount() == 35 );
+		//assertTrue ( classInfo.getMethodsCount() == 35 );
+		assertTrue ( classInfo.getMethodsCount() == 38 );
 	}
 }

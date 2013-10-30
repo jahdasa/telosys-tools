@@ -19,6 +19,8 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Properties;
 
+import org.telosys.tools.commons.FileUtil;
+import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.commons.Variable;
 import org.telosys.tools.commons.VariablesUtil;
 import org.telosys.tools.generator.ContextName;
@@ -40,9 +42,16 @@ public class GeneratorConfig implements IGeneratorConfig
 	
 	private final String     _sEntityClassPackage ;
 
+	private final String     _sBundleName ;
+
 	private final Variable[] _projectVariables ;
 	
-	public GeneratorConfig(String sProjectLocation, Properties prop) 
+	/**
+	 * @param sProjectLocation project location (project folder)
+	 * @param prop project configuration (project properties)
+	 * @param bundleName current bundle name if any (or null if none)
+	 */
+	public GeneratorConfig(String sProjectLocation, Properties prop, String bundleName) 
 	{
 		_sProjectLocation = sProjectLocation;
 		
@@ -52,6 +61,9 @@ public class GeneratorConfig implements IGeneratorConfig
 		//--- Packages names
     	//_sEntityClassPackage  = prop.getProperty(GeneratorConfigConst.ENTITIES_PACKAGE, null);
     	_sEntityClassPackage  = prop.getProperty(ContextName.ENTITY_PKG, null); // v 2.0.6
+    	
+    	//--- Bundle name to use (can be null or void)
+    	_sBundleName = bundleName ; // v 2.0.7
     	
     	//--- All variables : specific project variables + folders 
     	Hashtable<String, String> allVariables = new Hashtable<String, String>();
@@ -142,10 +154,10 @@ public class GeneratorConfig implements IGeneratorConfig
     
 	
     /**
-     * Returns the "full path" templates folder (never null)<br>
-     * e.g. : "C:/dir/workspace/project/folder"
-     * It can be the plugin templates folder ( if the template folder property is not set )
-     * or the project templates folder
+     * Returns the "full path" templates folder defined in the project properties or null if not defined.<br>
+     * e.g. : "C:/dir/workspace/project/TelosysTools/templates" <br>
+     * If a current bundle is defined it is added at the end of the path <br>
+     * ( eg : "C:/dir/workspace/project/TelosysTools/templates/mybundle" )
      * @return
      */
     public String getTemplatesFolderFullPath()
@@ -161,7 +173,17 @@ public class GeneratorConfig implements IGeneratorConfig
     		else
     		{
     			// Templates folder is set => build the full path
-    			return getProjectFullPath(_sTemplatesFolder) ;
+    			//return getProjectFullPath(_sTemplatesFolder) ;
+    			// new in v 2.0.7
+    			String templateFolderFullPath = getProjectFullPath(_sTemplatesFolder) ;
+    			if ( StrUtil.nullOrVoid(_sBundleName) == false ) {
+    				// There's a bundle defined => use it
+    				return FileUtil.buildFilePath(templateFolderFullPath, _sBundleName.trim() );
+    			}
+    			else {
+    				// No current bundle => use the standard templates folder as is
+    				return templateFolderFullPath ;
+    			}
     		}
     	}
     	else
@@ -169,12 +191,5 @@ public class GeneratorConfig implements IGeneratorConfig
     		return null ;
     	}
 	}
-
-//	//---------------------------------------------------------------------
-//	// Packages
-//	//---------------------------------------------------------------------
-//	public String getVOPackage() {
-//		return _sPackageVO ;
-//	}
 
 }

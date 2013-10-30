@@ -56,15 +56,17 @@ public class GeneratorConfigManager
 		}
 	}
 	
+	//public IGeneratorConfig initFromDirectory ( String sProjectLocation ) throws GeneratorException
 	/**
-	 * Initializes the GeneratorConfiguration using standard properties file
-	 * 
-	 * @param sProjectLocation the project location to be stored in the configuration and where the properties file is located
+	 * Initializes the GeneratorConfiguration using the project properties file
+	 * @param sProjectLocation the project location where the properties file is located
+	 * @param bundleName the current bundle name if any (or null if none)
 	 * @return
+	 * @throws GeneratorException
 	 */
-	public IGeneratorConfig initFromDirectory ( String sProjectLocation ) throws GeneratorException
+	public IGeneratorConfig initFromDirectory ( String sProjectLocation, String bundleName ) throws GeneratorException
 	{
-		log ( "initFromDirectory ("+ sProjectLocation + ")" );
+		log ( "initFromDirectory ("+ sProjectLocation + ", " + bundleName + ")" );
 		if ( null == sProjectLocation ) throw new GeneratorException("Invalid parameter : Directory is null") ;
 
 		String sFullFileName ;
@@ -76,11 +78,12 @@ public class GeneratorConfigManager
 		{
 			sFullFileName = sProjectLocation + "/" + GeneratorConfig.PROJECT_CONFIG_FILE ;
 		}
-		return init ( sProjectLocation, sFullFileName);
+		return init ( sProjectLocation, sFullFileName, bundleName);
 	}
 	
 	/**
-	 * Initializes the GeneratorConfiguration using the given full file name
+	 * Initializes the GeneratorConfiguration using the given full file name<br>
+	 * Used by WIZARDS
 	 * 
 	 * @param sFullFileName the full name of the file
 	 * @return
@@ -91,17 +94,18 @@ public class GeneratorConfigManager
 		if ( null == sFullFileName ) throw new GeneratorException("Invalid parameter : File name is null") ;
 
 		File file = new File(sFullFileName);
-		return init ( file.getParent(), sFullFileName);
+		return init ( file.getParent(), sFullFileName, null);
 	}
 	
 	/**
 	 * Initializes the GeneratorConfiguration using a specific properties file
-	 * 
 	 * @param sProjectLocation the project location to be stored in the configuration
 	 * @param sConfigFileName the full path of the properties file to use 
+	 * @param bundleName bundle name if any
 	 * @return
+	 * @throws GeneratorException
 	 */
-	private IGeneratorConfig init ( String sProjectLocation, String sConfigFileName ) throws GeneratorException
+	private IGeneratorConfig init ( String sProjectLocation, String sConfigFileName, String bundleName ) throws GeneratorException
 	{
 		log ( "init ("+ sProjectLocation + "," + sConfigFileName + ")");
 		if ( null == sProjectLocation ) throw new GeneratorException("Invalid parameter : Project location is null") ;
@@ -111,7 +115,7 @@ public class GeneratorConfigManager
 		if ( prop != null )
 		{
 			// Properties loaded
-			GeneratorConfig config = new GeneratorConfig( sProjectLocation, prop );
+			GeneratorConfig config = new GeneratorConfig( sProjectLocation, prop, bundleName );
 			return config ;
 		}
 		else

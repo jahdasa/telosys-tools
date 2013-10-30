@@ -676,7 +676,7 @@ public class JavaBeanClass extends JavaClass
 	
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod ( text= { 
-			"Returns TRUE if the database type is 'TABLE' ",
+			"Returns TRUE if the database type is 'TABLE' "
 		},
 		example="$entity.isTableType()",
 		since="2.0.7"
@@ -691,7 +691,7 @@ public class JavaBeanClass extends JavaClass
 	
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod ( text= { 
-			"Returns TRUE if the database type is 'VIEW' ",
+			"Returns TRUE if the database type is 'VIEW' "
 		},
 		example="$entity.isViewType()",
 		since="2.0.7"

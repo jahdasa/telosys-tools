@@ -91,7 +91,7 @@ public class GeneratorRunner {
 		
 		//--- Load the configuration
 		GeneratorConfigManager configManager = new GeneratorConfigManager(logger);
-		IGeneratorConfig config = configManager.initFromDirectory(projectLocation);
+		IGeneratorConfig config = configManager.initFromDirectory(projectLocation, null);
 		this.generatorConfig = config ;
  
 	}
