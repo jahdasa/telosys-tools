@@ -51,15 +51,15 @@ public class SwitchBundleButton {
 	        });
 	}
 	
-	public Button getButton() {
-		return _button ;
-	}
+//	public Button getButton() {
+//		return _button ;
+//	}
 	
 	public void setEnabled(boolean enabled) {
 		_button.setEnabled(enabled);
 	}
 	
-	public void addSelectionListener(SelectionListener listener) {
-		_button.addSelectionListener( listener ) ;
-	}
+//	public void addSelectionListener(SelectionListener listener) {
+//		_button.addSelectionListener( listener ) ;
+//	}
 }

@@ -86,8 +86,9 @@ public class TemplatesBundleDialogBox extends Dialog
             public void widgetSelected(SelectionEvent event)
             {
                 Combo combo = (Combo) event.widget ;
-        		String[] items = combo.getItems();
-        		selectedItem = items[ combo.getSelectionIndex() ] ;
+//        		String[] items = combo.getItems();
+//        		selectedItem = items[ combo.getSelectionIndex() ] ;
+        		updateSelectedItem();
             }
         });
 		
@@ -97,6 +98,9 @@ public class TemplatesBundleDialogBox extends Dialog
 		}
 		if ( initialItem < comboItems.size() ) {
 			combo.select(initialItem);
+//    		String[] items = combo.getItems();
+//    		selectedItem = items[ combo.getSelectionIndex() ] ;
+    		updateSelectedItem();
 		}
 		
 		Label label ;
@@ -119,8 +123,17 @@ public class TemplatesBundleDialogBox extends Dialog
 		return container;
 	}
 	
+	/**
+	 * Returns the selected item text (never null)
+	 * @return
+	 */
 	public String getSelectedItem() {
 		return selectedItem ;
+		// Cannot use combo widget here : "Widget is disposed"
 	}
 	
+	private void updateSelectedItem() {
+		String[] items = combo.getItems();
+		selectedItem = items[ combo.getSelectionIndex() ] ;
+	}	
 }

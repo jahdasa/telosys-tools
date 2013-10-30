@@ -42,6 +42,9 @@ public class GenerationTask {
 //    	{
 //    		telosysToolsLogger = new ConsoleLogger();
 //    	}
+    	
+    	String currentBundelName = editor.getCurrentBundleName();
+    	
     	telosysToolsLogger.log("GenerationTask initialization");
     	
     	repositoryModel = editor.getDatabaseRepository();
@@ -50,7 +53,7 @@ public class GenerationTask {
 		
 		GeneratorConfigManager configManager = new GeneratorConfigManager(null);
     	try {
-			generatorConfig = configManager.initFromDirectory( projectConfig.getProjectFolder() );
+			generatorConfig = configManager.initFromDirectory( projectConfig.getProjectFolder(), currentBundelName );
 		} catch (GeneratorException e) {
         	MsgBox.error("GenerationTask constructor : Cannot initialize the generator configuration");
         	throw new RuntimeException("Cannot initialize the generator configuration");
