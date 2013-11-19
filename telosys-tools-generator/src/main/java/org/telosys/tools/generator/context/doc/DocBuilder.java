@@ -29,6 +29,8 @@ import org.telosys.tools.generator.context.Fn;
 import org.telosys.tools.generator.context.Java;
 import org.telosys.tools.generator.context.JavaBeanClass;
 import org.telosys.tools.generator.context.JavaBeanClassAttribute;
+import org.telosys.tools.generator.context.JavaBeanClassForeignKey;
+import org.telosys.tools.generator.context.JavaBeanClassForeignKeyColumn;
 import org.telosys.tools.generator.context.JavaBeanClassLink;
 import org.telosys.tools.generator.context.Loader;
 import org.telosys.tools.generator.context.ProjectConfiguration;
@@ -212,6 +214,8 @@ public class DocBuilder {
 		Java.class, // ver 2.0.7
 		JavaBeanClass.class,
 		JavaBeanClassAttribute.class,
+		JavaBeanClassForeignKey.class, // ver 2.0.7
+		JavaBeanClassForeignKeyColumn.class, // ver 2.0.7
 		JavaBeanClassLink.class,
 		Loader.class,
 		ProjectConfiguration.class,

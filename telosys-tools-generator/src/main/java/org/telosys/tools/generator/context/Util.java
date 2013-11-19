@@ -21,20 +21,52 @@ import org.telosys.tools.commons.JavaClassUtil;
 
 public class Util {
 	
-    public static String buildGetter(String attName, String sLongType) {
-		String s = attName.substring(0, 1).toUpperCase()+attName.substring(1, attName.length());
+    /**
+     * Returns 'getFoo' for 'foo'(or 'isFoo' if foo is boolean )
+     * @param attributeName
+     * @param sLongType
+     * @return
+     */
+    public static String buildGetter(String attributeName, String sLongType) {
+		//String s = attName.substring(0, 1).toUpperCase()+attName.substring(1, attName.length());
 		if ( "boolean".equals(sLongType) )
 		{
-			return "is"+s;
+			//return "is" + s;
+			return "is" + transformAttributeName(attributeName) ;
 		}
 		else
 		{
-			return "get"+s;
+			//return "get" + s;
+			return "get" + transformAttributeName(attributeName) ;
 		}
 	}
+    
+    /**
+     * Returns 'getFoo' for 'foo'
+     * @param attributeName
+     * @return
+     */
+    public static String buildGetter( String attributeName ) {
+		return "get" + transformAttributeName(attributeName) ;
+    }
+    
+    /**
+     * Returns 'setFoo' for 'foo'
+     * @param attributeName
+     * @return
+     */
+    public static String buildSetter(String attributeName) {
+		// return "set" + attName.substring(0, 1).toUpperCase()+attName.substring(1, attName.length());
+		return "set" + transformAttributeName(attributeName) ;
+	}
 
-    public static String buildSetter(String attName) {
-		return "set"+attName.substring(0, 1).toUpperCase()+attName.substring(1, attName.length());
+    /**
+     * Transform the given attribute name, eg : "foo" to "Foo", "firstName" to "FirstName"
+     * @param attributeName
+     * @return
+     */
+    private static String transformAttributeName(String attributeName) {
+		return attributeName.substring(0, 1).toUpperCase() + attributeName.substring(1, attributeName.length());
 	}
 
     private static boolean inList (String sLongType, LinkedList<String> fullNames) 

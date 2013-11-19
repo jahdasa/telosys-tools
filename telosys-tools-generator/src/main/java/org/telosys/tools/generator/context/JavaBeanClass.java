@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.telosys.tools.commons.StrUtil;
+import org.telosys.tools.commons.TelosysToolsException;
 import org.telosys.tools.generator.ContextName;
 import org.telosys.tools.generator.GeneratorContextException;
 import org.telosys.tools.generator.GeneratorUtil;
@@ -32,6 +33,8 @@ import org.telosys.tools.generator.context.doc.VelocityReturnType;
 import org.telosys.tools.generator.context.tools.AnnotationsBuilder;
 import org.telosys.tools.repository.model.Column;
 import org.telosys.tools.repository.model.Entity;
+import org.telosys.tools.repository.model.ForeignKey;
+import org.telosys.tools.repository.model.ForeignKeyColumn;
 import org.telosys.tools.repository.model.Link;
 import org.telosys.tools.repository.model.RepositoryModel;
 
@@ -64,7 +67,8 @@ import org.telosys.tools.repository.model.RepositoryModel;
 public class JavaBeanClass extends JavaClass
 {
 	
-	private final static List<JavaBeanClassAttribute> VOID_ATTRIBUTES_LIST  = new LinkedList<JavaBeanClassAttribute>();
+	private final static List<JavaBeanClassAttribute>  VOID_ATTRIBUTES_LIST    = new LinkedList<JavaBeanClassAttribute>();
+	private final static List<JavaBeanClassForeignKey> VOID_FOREIGN_KEYS_LIST  = new LinkedList<JavaBeanClassForeignKey>();
 
 	private final static List<String>                 VOID_STRINGS_LIST    = new LinkedList<String>();
 	private final static Set<String>                  VOID_STRINGS_SET     = new LinkedHashSet<String>();
@@ -87,6 +91,8 @@ public class JavaBeanClass extends JavaClass
 	private LinkedList<JavaBeanClassAttribute>  _nonKeyAttributes  = null ; // The NON KEY attributes for this class
 	private String     _sSqlKeyColumns = null ;
 	private String     _sSqlNonKeyColumns = null ;
+	
+	private LinkedList<JavaBeanClassForeignKey>  _foreignKeys  = null ; // The database FOREIGN KEYS attributes for this entity ( v 2.0.7)
 	
 	//--- XML mapper infos
 	private LinkedList<JavaBeanClassAttribute> _nonTextAttributes  = null ; // Standard attributes for this class ( not "long text" )
@@ -141,6 +147,31 @@ public class JavaBeanClass extends JavaClass
 			this.addImportsJpa(jbci);
 			this.addLink(jcl);
 		}
+		
+		/*
+		 * DATABASE FOREIGN KEYS  ( v 2.0.7 )
+		 */
+		this._foreignKeys = new LinkedList<JavaBeanClassForeignKey>();
+		Collection<ForeignKey> foreignKeys = entity.getForeignKeysCollection();
+		for ( ForeignKey fk : foreignKeys ) {
+			
+			try {
+				String table = fk.getTableName() ;
+				String targetTable = fk.getTableRef() ;
+				// from here the FK is valid (no exception)
+				//JavaBeanClassForeignKey foreignKey = new JavaBeanClassForeignKey(fk.getName(), table, targetTable );
+				//Collection<ForeignKeyColumn> ForeignKeyColumn = fk.getForeignKeyColumnsCollection() ;
+				List<JavaBeanClassForeignKeyColumn> fkColumns = new LinkedList<JavaBeanClassForeignKeyColumn>();
+				for ( ForeignKeyColumn fkColumn : fk.getForeignKeyColumnsCollection() ) {
+					fkColumns.add( new JavaBeanClassForeignKeyColumn(fkColumn) ) ;
+				}
+				_foreignKeys.add( new JavaBeanClassForeignKey(fk.getName(), table, targetTable, fkColumns ) );
+			} catch (TelosysToolsException e) {
+				// Invalid Foreign Key : nothing to do just not use it !
+			}
+		}
+		
+		 
 		
 		// import resolution
 		this.endOfDefinition();
@@ -661,6 +692,47 @@ public class JavaBeanClass extends JavaClass
 		return _sDatabaseSchema ;
 	}
 	
+	//-------------------------------------------------------------------------------------
+	/**
+	 * Returns all the database foreign keys defined for this entity
+	 * @return
+	 */
+	@VelocityMethod ( text= { 
+			"Returns all the database foreign keys defined for this entity"
+		},
+		example="$entity.databaseForeignKeys",
+		since="2.0.7"		
+	)
+	@VelocityReturnType("List of 'foreign keys' objects")
+	public List<JavaBeanClassForeignKey> getDatabaseForeignKeys() 
+	{
+		if ( _foreignKeys != null )
+		{
+			return _foreignKeys ;
+		}
+		return VOID_FOREIGN_KEYS_LIST ;
+	}
+
+	//-------------------------------------------------------------------------------------
+	/**
+	 * Returns all the database foreign keys defined for this entity
+	 * @return
+	 */
+	@VelocityMethod ( text= { 
+			"Returns the number of database foreign keys defined for this entity"
+		},
+		example="$entity.databaseForeignKeysCount",
+		since="2.0.7"		
+	)
+	public int getDatabaseForeignKeysCount() 
+	{
+		if ( _foreignKeys != null )
+		{
+			return _foreignKeys.size() ;
+		}
+		return 0 ;
+	}
+
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod ( text= { 
 			"Returns the database type of the table mapped with this entity <br>",

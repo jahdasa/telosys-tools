@@ -73,12 +73,12 @@ public class JavaBeanClassAttribute
     
 	//--- Basic minimal attribute info -------------------------------------------------
 	private final String  _sName ;  // attribute name 
-	private String        _sType = "" ;  // Short java type without package, without blank, eg : "int", "BigDecimal", "Date"
+	private String  _sType ;  // Short java type without package, without blank, eg : "int", "BigDecimal", "Date"
 	private final String  _sFullType ;  // Full java type with package, : "java.math.BigDecimal", "java.util.Date"
 	
 	private final String  _sInitialValue ; // can be null 
-	private final String  _sGetter ;
-	private final String  _sSetter ;
+//	private final String  _sGetter ; // Dynamic since v 2.0.7
+//	private final String  _sSetter ; // Dynamic since v 2.0.7
 	
 	private final String  _sDefaultValue ; // can be null 
 	
@@ -157,18 +157,19 @@ public class JavaBeanClassAttribute
 	 *              can be a full type ( eg : if "java.util.Date" and "java.sql.Date" are used in the same class ) 
 	 * @param sFullType standard full type with package ( "java.lang.String", "int", "java.math.BigDecimal", ... )
 	 * @param sInitialValue
-	 * @param sGetter
-	 * @param sSetter
 	 */
-	public JavaBeanClassAttribute(String sName, String sType, String sFullType, String sInitialValue, String sGetter, String sSetter) 
+	//public JavaBeanClassAttribute(String sName, String sType, String sFullType, String sInitialValue, String sGetter, String sSetter) 
+	public JavaBeanClassAttribute(String sName, String sType, String sFullType, String sInitialValue ) // v 2.0.7
 	{
 		_sName = sName ; 
 		_sType = StrUtil.removeAllBlanks(sType);    
 		_sFullType = StrUtil.removeAllBlanks(sFullType);  
 		_sInitialValue = sInitialValue; // can be null 
 		_sDefaultValue = null ; // keep null ( for hasDefaultValue )
-		_sGetter = sGetter ;
-		_sSetter = sSetter ;		
+		
+		// v 2.0.7
+//		_sGetter = sGetter ;
+//		_sSetter = sSetter ;		
 	}
 	
 	//-----------------------------------------------------------------------------------------------
@@ -179,13 +180,15 @@ public class JavaBeanClassAttribute
 	public JavaBeanClassAttribute(final Column column) 
 	{
 		_sName   = column.getJavaName();
-		_sGetter = Util.buildGetter(_sName, _sType);
-		_sSetter = Util.buildSetter(_sName);
 		
 		// TODO gerer les duplicatedShortNames dans Util.shortestType mais dans ce cas a quoi cela peut servir ????
 		_sType     = StrUtil.removeAllBlanks(Util.shortestType(column.getJavaType(), new LinkedList<String>()));
 		_sFullType = StrUtil.removeAllBlanks(column.getJavaType());
 				
+		// v 2.0.7
+//		_sGetter = Util.buildGetter(_sName, _sType);
+//		_sSetter = Util.buildSetter(_sName);
+
 		_sInitialValue    = null ; // TODO : column.getJavaInitialValue()  ???
 		_sDefaultValue    = column.getJavaDefaultValue();
 		
@@ -373,7 +376,6 @@ public class JavaBeanClassAttribute
 		}
 	}
 
-
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
 		text={	
@@ -445,12 +447,26 @@ public class JavaBeanClassAttribute
 	@VelocityMethod(
 		text={	
 				"Returns the getter for the attribute",
-				"e.g : 'getFoo' for 'foo' "
+				"e.g : 'getFoo' for 'foo' (or 'isFoo' for a boolean primitive type)"
 					}
 	)
 	public String getGetter()
 	{
-		return _sGetter;
+		// return _sGetter;
+		return Util.buildGetter(_sName, _sType); // v 2.0.7
+	}
+
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+				"Returns the getter for the attribute with always a 'get' prefix",
+				"even for a boolean"
+					}
+	)
+	public String getGetterWithGetPrefix()
+	{
+		// return _sGetter;
+		return Util.buildGetter(_sName); // v 2.0.7
 	}
 	
 	//-------------------------------------------------------------------------------------
@@ -462,9 +478,32 @@ public class JavaBeanClassAttribute
 	)
 	public String getSetter()
 	{
-		return _sSetter;
+		//return _sSetter;
+		return Util.buildSetter(_sName);
 	}
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the value to use for a boolean when is TRUE (eg to be stored in a database) "
+			}
+	)
+	public String getBooleanTrueValue()
+	{
+		return _sBooleanTrueValue;
+	}
+	
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the value to use for a boolean when is FALSE (eg to be stored in a database) "
+			}
+	)
+	public String getBooleanFalseValue()
+	{
+		return _sBooleanFalseValue ;
+	}
+	
 	//----------------------------------------------------------------------
 	// Database 
 	//----------------------------------------------------------------------
@@ -788,203 +827,203 @@ public class JavaBeanClassAttribute
     	return firstCharUC(_sType);
     }
     
-    /**
-     * Returns the "QueryContext setter" method name to use to set a query parameter <br>
-     * Examples : setParamString, setParamByte, setParamBooleanAsInt, etc..
-     * @return
-     */
-	@VelocityMethod(
-			text={	
-				"Returns the 'QueryContext setter' method name to use to set a query result",
-				" eg 'setParamBooleanAsInt', 'setParamBlob', 'setParamBigDecimal', etc ) "
-				}
-		)
-		@Deprecated
-    public String getQuerySetter()
-    {
-    	if ( "boolean".equals(_sType) || "Boolean".equals(_sType) ) 
-    	{
-    		if ( isJdbcInteger() )
-    		{
-    			// 'boolean' or 'Boolean' stored as 'integer' in the DataBase
-    			return "setParamBooleanAsInt" ;
-    		}
-    		if ( isJdbcString() )
-    		{
-    			return "setParamBooleanAsString" ;
-    		}        		
-    	}
-    	if ( "byte[]".equals(_sType) ) 
-    	{
-    		if ( isJdbcBlob() )
-    		{
-    			return "setParamBlob" ;
-    		}
-    		return "setParamBytes" ;
-    	}
-    	if ( "Date".equals(_sType) ) 
-    	{
-    		if ( isJdbcTime())
-    		{
-    			return "setParamTime" ;
-    		}
-    		if ( isJdbcTimestamp() )
-    		{
-    			return "setParamTimestamp" ;
-    		}
-    	}
-    	
-    	if ( "Integer".equals(_sType) )     return "setParamInt" ; 
-    	if ( "BigDecimal".equals(_sType) )  return "setParamBigDecimal" ; 
-    	if ( "BigInteger".equals(_sType) )  return "setParamBigInteger" ; 
-    	
-		//--- Standard type name that can be used "as is" to buil the "setter"
-		return "setParam" + firstCharUC(_sType) ;
-    }
+//    /**
+//     * Returns the "QueryContext setter" method name to use to set a query parameter <br>
+//     * Examples : setParamString, setParamByte, setParamBooleanAsInt, etc..
+//     * @return
+//     */
+//	@VelocityMethod(
+//			text={	
+//				"Returns the 'QueryContext setter' method name to use to set a query result",
+//				" eg 'setParamBooleanAsInt', 'setParamBlob', 'setParamBigDecimal', etc ) "
+//				}
+//		)
+//		@Deprecated
+//    public String getQuerySetter()
+//    {
+//    	if ( "boolean".equals(_sType) || "Boolean".equals(_sType) ) 
+//    	{
+//    		if ( isJdbcInteger() )
+//    		{
+//    			// 'boolean' or 'Boolean' stored as 'integer' in the DataBase
+//    			return "setParamBooleanAsInt" ;
+//    		}
+//    		if ( isJdbcString() )
+//    		{
+//    			return "setParamBooleanAsString" ;
+//    		}        		
+//    	}
+//    	if ( "byte[]".equals(_sType) ) 
+//    	{
+//    		if ( isJdbcBlob() )
+//    		{
+//    			return "setParamBlob" ;
+//    		}
+//    		return "setParamBytes" ;
+//    	}
+//    	if ( "Date".equals(_sType) ) 
+//    	{
+//    		if ( isJdbcTime())
+//    		{
+//    			return "setParamTime" ;
+//    		}
+//    		if ( isJdbcTimestamp() )
+//    		{
+//    			return "setParamTimestamp" ;
+//    		}
+//    	}
+//    	
+//    	if ( "Integer".equals(_sType) )     return "setParamInt" ; 
+//    	if ( "BigDecimal".equals(_sType) )  return "setParamBigDecimal" ; 
+//    	if ( "BigInteger".equals(_sType) )  return "setParamBigInteger" ; 
+//    	
+//		//--- Standard type name that can be used "as is" to buil the "setter"
+//		return "setParam" + firstCharUC(_sType) ;
+//    }
     
-	@VelocityMethod(
-			text={	
-				"Returns TRUE if the 'QueryContext setter' needs parameters "
-				}
-		)
-	@Deprecated
-    public boolean getNeedsQuerySetterParams() // Velocity : $attrib.needsQuerySetterParams
-    {
-    	return needsParamsForBoolean();
-    }
+//	@VelocityMethod(
+//			text={	
+//				"Returns TRUE if the 'QueryContext setter' needs parameters "
+//				}
+//		)
+//	@Deprecated
+//    public boolean getNeedsQuerySetterParams() // Velocity : $attrib.needsQuerySetterParams
+//    {
+//    	return needsParamsForBoolean();
+//    }
     
-	@VelocityMethod(
-			text={	
-				"Returns 'QueryContext setter' optional parameters ( the true/false values for booleans ) "
-				}
-		)
-	@Deprecated
-	public String getQuerySetterParams()
-    {
-    	if ( needsParamsForBoolean() )
-    	{
-    		//--- Specific storage type for boolean 
-			// eg : ", 1, 0" or ", 'Yes', 'No'"
-			String p1 = _sBooleanTrueValue ;
-			String p2 = _sBooleanFalseValue ;
-			if ( isJdbcString() )
-			{
-				p1 = addQuotes(p1);
-				p2 = addQuotes(p2);
-			}
-			return p1 + ", " + p2 ;
-    	}
-		return "" ;
-    }
+//	@VelocityMethod(
+//			text={	
+//				"Returns 'QueryContext setter' optional parameters ( the true/false values for booleans ) "
+//				}
+//		)
+//	@Deprecated
+//	public String getQuerySetterParams()
+//    {
+//    	if ( needsParamsForBoolean() )
+//    	{
+//    		//--- Specific storage type for boolean 
+//			// eg : ", 1, 0" or ", 'Yes', 'No'"
+//			String p1 = _sBooleanTrueValue ;
+//			String p2 = _sBooleanFalseValue ;
+//			if ( isJdbcString() )
+//			{
+//				p1 = addQuotes(p1);
+//				p2 = addQuotes(p2);
+//			}
+//			return p1 + ", " + p2 ;
+//    	}
+//		return "" ;
+//    }
     
-    /**
-     * Returns the "QueryContext getter" method name to use to get a query result <br>
-     * @return
-     */
-	@VelocityMethod(
-		text={	
-			"Returns the 'QueryContext getter' method name to use to get a query result",
-			" eg 'getResultLongObject', 'getResultBooleanFromInt', 'getResultTimeAsDate', etc ) "
-			}
-	)
-	@Deprecated
-    public String getQueryGetter()
-    {
-		//--- There's a specific storage type for this field 
-    	if ( "boolean".equals(_sType) || "Boolean".equals(_sType) ) 
-    	{
-    		if ( isJdbcInteger() )
-    		{
-    			return "getResultBooleanFromInt" ;
-    		}
-    		if ( isJdbcString() )
-    		{
-    			return "getResultBooleanFromString" ;
-    		}
-    	}
-    	if ( "byte[]".equals(_sType) ) 
-    	{
-    		if ( isJdbcBlob() )
-    		{
-    			return "getResultBlobAsByteArray" ;
-    		}
-    	}
-    	if ( "Date".equals(_sType) ) 
-    	{
-    		if ( isJdbcTime() )
-    		{
-    			return "getResultTimeAsDate" ;
-    		}
-    		if ( isJdbcTimestamp() )
-    		{
-    			return "getResultTimestampAsDate" ;
-    		}
-    	}
-    	
-    	//--- Standard Java "wrapper objects"
-    	if ( "Boolean".equals(_sType) ) return "getResultBooleanObject" ;
-    	if ( "Byte".equals(_sType) )    return "getResultByteObject" ;
-    	if ( "Double".equals(_sType) )  return "getResultDoubleObject" ;
-    	if ( "Float".equals(_sType) )   return "getResultFloatObject" ;
-    	if ( "Integer".equals(_sType) ) return "getResultIntObject" ;
-    	if ( "Long".equals(_sType) )    return "getResultLongObject" ;
-    	if ( "Short".equals(_sType) )   return "getResultShortObject" ;
-    	
-    	//--- Date 
-    	if ( "Date".equals(_sType) ) 
-    	{
-    		if ( "java.util.Date".equals(_sFullType) ) return "getResultDate" ;
-    		if ( "java.sql.Date".equals(_sFullType) )  return "getResultDateSql" ;
-    	}
-    	
-    	//--- Primitive types arrays
-    	if ( "byte[]".equals(_sType) )      return "getResultBytes" ;
-    	
-    	if ( "BigDecimal".equals(_sType) )  return "getResultBigDecimal" ; 
-    	if ( "BigInteger".equals(_sType) )  return "getResultBigInteger" ; 
-
-		//--- No specific storage type : use the Java Type itself 
-		return "getResult" + firstCharUC(_sType) ;
-    }
+//    /**
+//     * Returns the "QueryContext getter" method name to use to get a query result <br>
+//     * @return
+//     */
+//	@VelocityMethod(
+//		text={	
+//			"Returns the 'QueryContext getter' method name to use to get a query result",
+//			" eg 'getResultLongObject', 'getResultBooleanFromInt', 'getResultTimeAsDate', etc ) "
+//			}
+//	)
+//	@Deprecated
+//    public String getQueryGetter()
+//    {
+//		//--- There's a specific storage type for this field 
+//    	if ( "boolean".equals(_sType) || "Boolean".equals(_sType) ) 
+//    	{
+//    		if ( isJdbcInteger() )
+//    		{
+//    			return "getResultBooleanFromInt" ;
+//    		}
+//    		if ( isJdbcString() )
+//    		{
+//    			return "getResultBooleanFromString" ;
+//    		}
+//    	}
+//    	if ( "byte[]".equals(_sType) ) 
+//    	{
+//    		if ( isJdbcBlob() )
+//    		{
+//    			return "getResultBlobAsByteArray" ;
+//    		}
+//    	}
+//    	if ( "Date".equals(_sType) ) 
+//    	{
+//    		if ( isJdbcTime() )
+//    		{
+//    			return "getResultTimeAsDate" ;
+//    		}
+//    		if ( isJdbcTimestamp() )
+//    		{
+//    			return "getResultTimestampAsDate" ;
+//    		}
+//    	}
+//    	
+//    	//--- Standard Java "wrapper objects"
+//    	if ( "Boolean".equals(_sType) ) return "getResultBooleanObject" ;
+//    	if ( "Byte".equals(_sType) )    return "getResultByteObject" ;
+//    	if ( "Double".equals(_sType) )  return "getResultDoubleObject" ;
+//    	if ( "Float".equals(_sType) )   return "getResultFloatObject" ;
+//    	if ( "Integer".equals(_sType) ) return "getResultIntObject" ;
+//    	if ( "Long".equals(_sType) )    return "getResultLongObject" ;
+//    	if ( "Short".equals(_sType) )   return "getResultShortObject" ;
+//    	
+//    	//--- Date 
+//    	if ( "Date".equals(_sType) ) 
+//    	{
+//    		if ( "java.util.Date".equals(_sFullType) ) return "getResultDate" ;
+//    		if ( "java.sql.Date".equals(_sFullType) )  return "getResultDateSql" ;
+//    	}
+//    	
+//    	//--- Primitive types arrays
+//    	if ( "byte[]".equals(_sType) )      return "getResultBytes" ;
+//    	
+//    	if ( "BigDecimal".equals(_sType) )  return "getResultBigDecimal" ; 
+//    	if ( "BigInteger".equals(_sType) )  return "getResultBigInteger" ; 
+//
+//		//--- No specific storage type : use the Java Type itself 
+//		return "getResult" + firstCharUC(_sType) ;
+//    }
     
-	@VelocityMethod(
-		text={	
-			"Returns TRUE if the 'QueryContext getter' needs parameters "
-			}
-	)
-	@Deprecated
-    public boolean getNeedsQueryGetterParams() // Velocity : $attrib.needsQueryGetterParams
-    {
-    	return needsParamsForBoolean();
-    }
+//	@VelocityMethod(
+//		text={	
+//			"Returns TRUE if the 'QueryContext getter' needs parameters "
+//			}
+//	)
+//	@Deprecated
+//    public boolean getNeedsQueryGetterParams() // Velocity : $attrib.needsQueryGetterParams
+//    {
+//    	return needsParamsForBoolean();
+//    }
     
-    /**
-     * Returns the "QueryContext getter" optional parameters <br>
-     * The true value for booleans 
-     * 
-     * @return
-     */
-	@VelocityMethod(
-			text={	
-				"Returns 'QueryContext getter' optional parameters ( the true value for booleans ) "
-				}
-		)
-	@Deprecated
-    public String getQueryGetterParams()
-    {
-    	if ( needsParamsForBoolean() )
-    	{
-    		//--- String or Integer storage for boolean 
-			// eg : ", 1, 0" or ", 'Yes', 'No'"
-			String p1 = _sBooleanTrueValue ;
-			if ( isJdbcString() )
-			{
-				p1 = addQuotes(p1); // e.g. : "Yes" 
-			}
-			return p1 ;
-    	}
-		return "" ;
-    }
+//    /**
+//     * Returns the "QueryContext getter" optional parameters <br>
+//     * The true value for booleans 
+//     * 
+//     * @return
+//     */
+//	@VelocityMethod(
+//			text={	
+//				"Returns 'QueryContext getter' optional parameters ( the true value for booleans ) "
+//				}
+//		)
+//	@Deprecated
+//    public String getQueryGetterParams()
+//    {
+//    	if ( needsParamsForBoolean() )
+//    	{
+//    		//--- String or Integer storage for boolean 
+//			// eg : ", 1, 0" or ", 'Yes', 'No'"
+//			String p1 = _sBooleanTrueValue ;
+//			if ( isJdbcString() )
+//			{
+//				p1 = addQuotes(p1); // e.g. : "Yes" 
+//			}
+//			return p1 ;
+//    	}
+//		return "" ;
+//    }
 
     /**
      * Returns the GUI maximum input length if any ( else returns "" )
@@ -1423,70 +1462,70 @@ public class JavaBeanClassAttribute
         return _bNotBlank;
     }
 	//-----------------------------------------------------------------------------
-    /**
-     * Returns true if the attribute need a conversion to be stored as an XML attribute value<br>
-     * ( true if the attribute needs a "attributeString(...)" processing )
-     * @return
-     */
-	@VelocityMethod(
-		text={	
-			"Returns TRUE if the attribute needs a conversion to be stored as an XML attribute value "
-			}
-		)
-	@Deprecated
-    public boolean getNeedsXmlConversion() // Velocity : $attrib.needsXmlConversion
-    {
-    	// always true except if primitive type and not "boolean"
-		if ( "boolean".equals(_sType)) return true ; // boolean needs conversion
-    	if ( isPrimitiveType() ) 
-		{
-    		//--- Primitive types (except boolean ) : doesn't need conversion
-    		return false ; 
-		}
-    	else
-    	{
-    		//--- If not a primitive type => need conversion 
-        	return true ;
-    	}
-    }
+//    /**
+//     * Returns true if the attribute need a conversion to be stored as an XML attribute value<br>
+//     * ( true if the attribute needs a "attributeString(...)" processing )
+//     * @return
+//     */
+//	@VelocityMethod(
+//		text={	
+//			"Returns TRUE if the attribute needs a conversion to be stored as an XML attribute value "
+//			}
+//		)
+//	@Deprecated
+//    public boolean getNeedsXmlConversion() // Velocity : $attrib.needsXmlConversion
+//    {
+//    	// always true except if primitive type and not "boolean"
+//		if ( "boolean".equals(_sType)) return true ; // boolean needs conversion
+//    	if ( isPrimitiveType() ) 
+//		{
+//    		//--- Primitive types (except boolean ) : doesn't need conversion
+//    		return false ; 
+//		}
+//    	else
+//    	{
+//    		//--- If not a primitive type => need conversion 
+//        	return true ;
+//    	}
+//    }
     
-	@VelocityMethod(
-		text={	
-			"Returns TRUE if the attribute needs a conversion to be stored as an XML attribute value "
-			}
-		)
-	@Deprecated
-    public boolean getNeedsXmlConversionParams() // Velocity : $attrib.needsXmlConversionParams
-    {
-		if ( "java.util.Date".equals(_sFullType) ) return true ;
-		return false ;
-    }
+//	@VelocityMethod(
+//		text={	
+//			"Returns TRUE if the attribute needs a conversion to be stored as an XML attribute value "
+//			}
+//		)
+//	@Deprecated
+//    public boolean getNeedsXmlConversionParams() // Velocity : $attrib.needsXmlConversionParams
+//    {
+//		if ( "java.util.Date".equals(_sFullType) ) return true ;
+//		return false ;
+//    }
 
-    /**
-     * Returns the additional parameters required for the XML String conversion if any <br>
-     * Returns 'params' for "attributeString(arg1, params )"
-     * Useful for Date conversion attributeString(arg1, params )
-     * @return
-     */
-	@VelocityMethod(
-		text={	
-			"Returns the additional parameters required for the XML String conversion if any "
-			}
-	)
-	@Deprecated
-    public String getXmlConversionParams() // Velocity : $attrib.xmlConversionParams
-    {
-		if ( "java.util.Date".equals(_sFullType) || "java.util.Calendar".equals(_sFullType) ) 
-		{
-			switch ( _iDateType )
-			{
-			case DATE_ONLY : return "DATE_ONLY" ;
-			case TIME_ONLY : return "TIME_ONLY" ;
-			case DATE_AND_TIME : return "DATE_AND_TIME" ;
-			}
-		}
-		return "" ;
-    }
+//    /**
+//     * Returns the additional parameters required for the XML String conversion if any <br>
+//     * Returns 'params' for "attributeString(arg1, params )"
+//     * Useful for Date conversion attributeString(arg1, params )
+//     * @return
+//     */
+//	@VelocityMethod(
+//		text={	
+//			"Returns the additional parameters required for the XML String conversion if any "
+//			}
+//	)
+//	@Deprecated
+//    public String getXmlConversionParams() // Velocity : $attrib.xmlConversionParams
+//    {
+//		if ( "java.util.Date".equals(_sFullType) || "java.util.Calendar".equals(_sFullType) ) 
+//		{
+//			switch ( _iDateType )
+//			{
+//			case DATE_ONLY : return "DATE_ONLY" ;
+//			case TIME_ONLY : return "TIME_ONLY" ;
+//			case DATE_AND_TIME : return "DATE_AND_TIME" ;
+//			}
+//		}
+//		return "" ;
+//    }
     
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
@@ -1509,102 +1548,102 @@ public class JavaBeanClassAttribute
     	return _sDefaultValue ;
     }
 
-	@VelocityMethod(
-	text={	
-		"Returns the specific XML getter  ",
-		"Exampe : getBooleanObject, getLongObject, getBigInteger, etc..."
-		}
-	)
-	@Deprecated
-    public String getXmlGetter() // Velocity : $attrib.xmlGetter
-    {
-    	//--- Standard Java primitive types
-    	if ( isPrimitiveType() ) //  "int", "long", ... 
-    	{
-    		return "get" + firstCharUC(_sType) ;
-    	}
-    	
-    	// if ( "String".equals(_sType) )   // No getter for "String"
-    	
-    	//--- Standard Java "wrapper classes"
-    	if ( "Boolean".equals(_sType) )   return "getBooleanObject" ;
-    	if ( "Byte".equals(_sType) )      return "getByteObject" ;
-    	if ( "Character".equals(_sType) ) return "getCharObject" ; // new : implemented in Telosys 1.0.2
-    	if ( "Double".equals(_sType) )    return "getDoubleObject" ;
-    	if ( "Float".equals(_sType) )     return "getFloatObject" ;
-    	if ( "Integer".equals(_sType) )   return "getIntObject" ;
-    	if ( "Long".equals(_sType) )      return "getLongObject" ;
-    	if ( "Short".equals(_sType) )     return "getShortObject" ;
-    	
-    	//--- Date
-		if ( "java.util.Date".equals(_sFullType) ) 
-		{
-			return "getUtilDate" ; // new : implemented in Telosys 1.0.2
-			// New function ( check if length = 10, 8 or 19 ) : can be implemented in the template for old versions
-			// "YYYY-MM-DD", "HH:mm:ss", "YYYY-MM-DD HH:MM:SS"
-			// switch to getDateISO, getTimeISO or getDateTimeISO
-		}
-    	
-		//--- "java.math" types 
-    	if ( "BigDecimal".equals(_sType) )   return "getBigDecimal" ;
-    	if ( "BigInteger".equals(_sType) )   return "getBigInteger" ;
-    	
-		//--- "java.sql" types 
-		if ( "java.sql.Date".equals(_sFullType) )       return "getSqlDate" ;      // new : implemented in Telosys 1.0.2
-		if ( "java.sql.Time".equals(_sFullType) )       return "getSqlTime" ;      // new : implemented in Telosys 1.0.2
-		if ( "java.sql.Timestamp".equals(_sFullType) )  return "getSqlTimestamp" ; // new : implemented in Telosys 1.0.2
-
-// OLD :
-//		return "getDateISO" ;     // "YYYY-MM-DD"
-//		return "getTimeISO" ;     // "HH:mm:ss"
-//		return "getDateTimeISO" ; // "YYYY-MM-DD HH:MM:SS"
-		
-		//--- Others : not supported  
-		return "getUnsupportedType_" + _sType  ;
-    }
+//	@VelocityMethod(
+//	text={	
+//		"Returns the specific XML getter  ",
+//		"Exampe : getBooleanObject, getLongObject, getBigInteger, etc..."
+//		}
+//	)
+//	@Deprecated
+//    public String getXmlGetter() // Velocity : $attrib.xmlGetter
+//    {
+//    	//--- Standard Java primitive types
+//    	if ( isPrimitiveType() ) //  "int", "long", ... 
+//    	{
+//    		return "get" + firstCharUC(_sType) ;
+//    	}
+//    	
+//    	// if ( "String".equals(_sType) )   // No getter for "String"
+//    	
+//    	//--- Standard Java "wrapper classes"
+//    	if ( "Boolean".equals(_sType) )   return "getBooleanObject" ;
+//    	if ( "Byte".equals(_sType) )      return "getByteObject" ;
+//    	if ( "Character".equals(_sType) ) return "getCharObject" ; // new : implemented in Telosys 1.0.2
+//    	if ( "Double".equals(_sType) )    return "getDoubleObject" ;
+//    	if ( "Float".equals(_sType) )     return "getFloatObject" ;
+//    	if ( "Integer".equals(_sType) )   return "getIntObject" ;
+//    	if ( "Long".equals(_sType) )      return "getLongObject" ;
+//    	if ( "Short".equals(_sType) )     return "getShortObject" ;
+//    	
+//    	//--- Date
+//		if ( "java.util.Date".equals(_sFullType) ) 
+//		{
+//			return "getUtilDate" ; // new : implemented in Telosys 1.0.2
+//			// New function ( check if length = 10, 8 or 19 ) : can be implemented in the template for old versions
+//			// "YYYY-MM-DD", "HH:mm:ss", "YYYY-MM-DD HH:MM:SS"
+//			// switch to getDateISO, getTimeISO or getDateTimeISO
+//		}
+//    	
+//		//--- "java.math" types 
+//    	if ( "BigDecimal".equals(_sType) )   return "getBigDecimal" ;
+//    	if ( "BigInteger".equals(_sType) )   return "getBigInteger" ;
+//    	
+//		//--- "java.sql" types 
+//		if ( "java.sql.Date".equals(_sFullType) )       return "getSqlDate" ;      // new : implemented in Telosys 1.0.2
+//		if ( "java.sql.Time".equals(_sFullType) )       return "getSqlTime" ;      // new : implemented in Telosys 1.0.2
+//		if ( "java.sql.Timestamp".equals(_sFullType) )  return "getSqlTimestamp" ; // new : implemented in Telosys 1.0.2
+//
+//// OLD :
+////		return "getDateISO" ;     // "YYYY-MM-DD"
+////		return "getTimeISO" ;     // "HH:mm:ss"
+////		return "getDateTimeISO" ; // "YYYY-MM-DD HH:MM:SS"
+//		
+//		//--- Others : not supported  
+//		return "getUnsupportedType_" + _sType  ;
+//    }
     
-    /**
-     * Returns the getter to retrieve a parameter held by a ScreenRequest or a ServiceRequest
-     * @return
-     */
-	@VelocityMethod(
-			text={	
-				"Returns the getter to retrieve a parameter held by a ScreenRequest or a ServiceRequest "
-				}
-		)
-	@Deprecated
-    public String getReqParamGetter() // Velocity : $attrib.reqParamGetter
-    {
-    	if ( "String".equals(_sType) )
-    	{
-    		return "getParameter" ;
-    	}
-
-    	//--- Standard Java primitive types
-    	if ( isPrimitiveType() ) //  "int", "long", ... 
-    	{
-    		return "getParamAs" + firstCharUC(_sType) ;
-    	}
-
-    	//--- Standard Java wrapper types
-    	if ( "Integer".equals(_sType) )
-    	{
-    		// The method returns a primitive type, but it works thanks to "autoboxing" 
-    		return "getParamAsInt" ;
-    	}
-    	if ( "Char".equals(_sType)  || "Byte".equals(_sType)  || "Short".equals(_sType) || "Long".equals(_sType) 
-    	  || "Float".equals(_sType) || "Double".equals(_sType) 
-    	  || "Boolean".equals(_sType) 
-    	  || "Date".equals(_sType) 
-    	  )
-    	{
-    		// The method returns a primitive type, but it works thanks to "autoboxing" 
-    		return "getParamAs" + _sType ;
-    	}
-
-    	//--- Others : not supported  
-		return "getUnsupportedParamType_" + _sType  ;
-    }
+//    /**
+//     * Returns the getter to retrieve a parameter held by a ScreenRequest or a ServiceRequest
+//     * @return
+//     */
+//	@VelocityMethod(
+//			text={	
+//				"Returns the getter to retrieve a parameter held by a ScreenRequest or a ServiceRequest "
+//				}
+//		)
+//	@Deprecated
+//    public String getReqParamGetter() // Velocity : $attrib.reqParamGetter
+//    {
+//    	if ( "String".equals(_sType) )
+//    	{
+//    		return "getParameter" ;
+//    	}
+//
+//    	//--- Standard Java primitive types
+//    	if ( isPrimitiveType() ) //  "int", "long", ... 
+//    	{
+//    		return "getParamAs" + firstCharUC(_sType) ;
+//    	}
+//
+//    	//--- Standard Java wrapper types
+//    	if ( "Integer".equals(_sType) )
+//    	{
+//    		// The method returns a primitive type, but it works thanks to "autoboxing" 
+//    		return "getParamAsInt" ;
+//    	}
+//    	if ( "Char".equals(_sType)  || "Byte".equals(_sType)  || "Short".equals(_sType) || "Long".equals(_sType) 
+//    	  || "Float".equals(_sType) || "Double".equals(_sType) 
+//    	  || "Boolean".equals(_sType) 
+//    	  || "Date".equals(_sType) 
+//    	  )
+//    	{
+//    		// The method returns a primitive type, but it works thanks to "autoboxing" 
+//    		return "getParamAs" + _sType ;
+//    	}
+//
+//    	//--- Others : not supported  
+//		return "getUnsupportedParamType_" + _sType  ;
+//    }
     
 //	public boolean getIsPrimitiveType() // Velocity : $attrib.isPrimitiveType
 //	{
@@ -1616,34 +1655,34 @@ public class JavaBeanClassAttribute
 //		return isJavaLangWrapperType();
 //	}
 
-	@VelocityMethod(
-		text={	
-			"Returns TRUE if usable in XML "
-			}
-	)
-	@Deprecated
-	public boolean getTypeIsUsableInXml() // Velocity : $attrib.typeIsUsableInXml
-	{
-		if ( isPrimitiveType() ) return true ;
-		if ( isJavaLangWrapperType() ) return true ;		
-		if ( "java.lang.String".equals(_sFullType) ) return true ;
-		if ( "java.util.Date".equals(_sFullType) ) return true ;
-		//--- "java.math" types 
-    	if ( "java.math.BigDecimal".equals(_sFullType) )   return true ;
-    	if ( "java.math.BigInteger".equals(_sFullType) )   return true ;
-		//--- "java.sql" types 
-		if ( "java.sql.Date".equals(_sFullType) )       return true ;  // new : implemented in Telosys 1.0.2
-		if ( "java.sql.Time".equals(_sFullType) )       return true ;  // new : implemented in Telosys 1.0.2
-		if ( "java.sql.Timestamp".equals(_sFullType) )  return true ;  // new : implemented in Telosys 1.0.2
-
-		//--- Other types : not usable in XML
-    	return false ;
-	}
+//	@VelocityMethod(
+//		text={	
+//			"Returns TRUE if usable in XML "
+//			}
+//	)
+//	@Deprecated
+//	public boolean getTypeIsUsableInXml() // Velocity : $attrib.typeIsUsableInXml
+//	{
+//		if ( isPrimitiveType() ) return true ;
+//		if ( isJavaLangWrapperType() ) return true ;		
+//		if ( "java.lang.String".equals(_sFullType) ) return true ;
+//		if ( "java.util.Date".equals(_sFullType) ) return true ;
+//		//--- "java.math" types 
+//    	if ( "java.math.BigDecimal".equals(_sFullType) )   return true ;
+//    	if ( "java.math.BigInteger".equals(_sFullType) )   return true ;
+//		//--- "java.sql" types 
+//		if ( "java.sql.Date".equals(_sFullType) )       return true ;  // new : implemented in Telosys 1.0.2
+//		if ( "java.sql.Time".equals(_sFullType) )       return true ;  // new : implemented in Telosys 1.0.2
+//		if ( "java.sql.Timestamp".equals(_sFullType) )  return true ;  // new : implemented in Telosys 1.0.2
+//
+//		//--- Other types : not usable in XML
+//    	return false ;
+//	}
 	
 	public String toString()
 	{
 		String s =  _sInitialValue != null ? " = " + _sInitialValue : "" ;
-		return _sType + " " + _sName + s + " ( " + _sGetter + "/" + _sSetter + " ) ";
+		return _sType + " " + _sName + s ; // + " ( " + _sGetter + "/" + _sSetter + " ) ";
 	}
 
 	//-------------------------------------------------------------------------------------------------------------
@@ -1808,73 +1847,73 @@ public class JavaBeanClassAttribute
    		return "" ;
     }
     
-    /**
-     * Returns TRUE if the JDBC type is an "integer type" 
-     * @return
-     */
-    private boolean isJdbcInteger()
-    {
-		if ( _iJdbcTypeCode == Types.TINYINT || _iJdbcTypeCode == Types.SMALLINT 
-      		  || _iJdbcTypeCode == Types.INTEGER || _iJdbcTypeCode == Types.BIGINT )
-		{
-			return true ;
-		}
-		return false ;
-    }
+//    /**
+//     * Returns TRUE if the JDBC type is an "integer type" 
+//     * @return
+//     */
+//    private boolean isJdbcInteger()
+//    {
+//		if ( _iJdbcTypeCode == Types.TINYINT || _iJdbcTypeCode == Types.SMALLINT 
+//      		  || _iJdbcTypeCode == Types.INTEGER || _iJdbcTypeCode == Types.BIGINT )
+//		{
+//			return true ;
+//		}
+//		return false ;
+//    }
 
-    /**
-     * Returns true if the JDBC type is a "string type" ( CHAR, VARCHAR or LONGVARCHAR )
-     * @return
-     */
-    private boolean isJdbcString()
-    {
-		if ( _iJdbcTypeCode == Types.CHAR || _iJdbcTypeCode == Types.VARCHAR 
-                || _iJdbcTypeCode == Types.LONGVARCHAR )
-		{
-			return true ;
-		}
-		return false ;
-    }
+//    /**
+//     * Returns true if the JDBC type is a "string type" ( CHAR, VARCHAR or LONGVARCHAR )
+//     * @return
+//     */
+//    private boolean isJdbcString()
+//    {
+//		if ( _iJdbcTypeCode == Types.CHAR || _iJdbcTypeCode == Types.VARCHAR 
+//                || _iJdbcTypeCode == Types.LONGVARCHAR )
+//		{
+//			return true ;
+//		}
+//		return false ;
+//    }
 
-    private boolean isJdbcBlob()
-    {
-		if ( _iJdbcTypeCode == Types.BLOB )
-		{
-			return true ;
-		}
-		return false ;
-    }
+//    private boolean isJdbcBlob()
+//    {
+//		if ( _iJdbcTypeCode == Types.BLOB )
+//		{
+//			return true ;
+//		}
+//		return false ;
+//    }
 
-    private boolean isJdbcTime()
-    {
-		if ( _iJdbcTypeCode == Types.TIME )
-		{
-			return true ;
-		}
-		return false ;
-    }
+//    private boolean isJdbcTime()
+//    {
+//		if ( _iJdbcTypeCode == Types.TIME )
+//		{
+//			return true ;
+//		}
+//		return false ;
+//    }
 
-    private boolean isJdbcTimestamp()
-    {
-		if ( _iJdbcTypeCode == Types.TIMESTAMP )
-		{
-			return true ;
-		}
-		return false ;
-    }
+//    private boolean isJdbcTimestamp()
+//    {
+//		if ( _iJdbcTypeCode == Types.TIMESTAMP )
+//		{
+//			return true ;
+//		}
+//		return false ;
+//    }
 
-    private boolean needsParamsForBoolean() 
-    {
-    	if ( "boolean".equals(_sType) || "Boolean".equals(_sType) )
-    	{
-    		if ( _sBooleanTrueValue != null && _sBooleanFalseValue != null ) 
-    		{
-        		if ( isJdbcInteger() )  return true ;
-        		if ( isJdbcString() )   return true ;
-    		}
-    	}
-    	return false ;
-    }
+//    private boolean needsParamsForBoolean() 
+//    {
+//    	if ( "boolean".equals(_sType) || "Boolean".equals(_sType) )
+//    	{
+//    		if ( _sBooleanTrueValue != null && _sBooleanFalseValue != null ) 
+//    		{
+//        		if ( isJdbcInteger() )  return true ;
+//        		if ( isJdbcString() )   return true ;
+//    		}
+//    	}
+//    	return false ;
+//    }
 
 	private String voidIfNull ( String s ) {
 		return s != null ? s : "" ;
@@ -1982,19 +2021,19 @@ public class JavaBeanClassAttribute
     	return false ;
 	}
 
-	//------------------------------------------------------------------------------------------
-	private boolean isJavaLangWrapperType()
-	{
-    	if ( "Boolean".equals(_sType) )   return true ;
-    	if ( "Byte".equals(_sType) )      return true ;
-    	if ( "Character".equals(_sType) ) return true ;
-    	if ( "Double".equals(_sType) )    return true ;
-    	if ( "Float".equals(_sType) )     return true ;
-    	if ( "Integer".equals(_sType) )   return true ;
-    	if ( "Long".equals(_sType) )      return true ;
-    	if ( "Short".equals(_sType) )     return true ;
-		return false ;
-	}
+//	//------------------------------------------------------------------------------------------
+//	private boolean isJavaLangWrapperType()
+//	{
+//    	if ( "Boolean".equals(_sType) )   return true ;
+//    	if ( "Byte".equals(_sType) )      return true ;
+//    	if ( "Character".equals(_sType) ) return true ;
+//    	if ( "Double".equals(_sType) )    return true ;
+//    	if ( "Float".equals(_sType) )     return true ;
+//    	if ( "Integer".equals(_sType) )   return true ;
+//    	if ( "Long".equals(_sType) )      return true ;
+//    	if ( "Short".equals(_sType) )     return true ;
+//		return false ;
+//	}
 
 	//-----------------------------------------------------------------------------------------
 	// JPA "@GeneratedValue"
