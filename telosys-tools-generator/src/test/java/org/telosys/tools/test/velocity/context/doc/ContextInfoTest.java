@@ -58,7 +58,7 @@ public class ContextInfoTest  extends TestCase {
 		String[] names = contextInfo.getPredefinedNames();
 		print("Predefined names", names);
 		
-		assertTrue ( names.length == 4 );
+		assertTrue ( names.length == 6 );
 	}
 	
 	//------------------------------------------------------------------------------------------
