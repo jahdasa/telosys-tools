@@ -257,10 +257,9 @@ public class Fn {
 	}
 
 	//-------------------------------------------------------------------------------------
-	public boolean isVariableDefined (String variableName) {
-		// TODO
-		return true ;
-	}
+//	public boolean isVariableDefined (String variableName) {
+//		return true ;
+//	}
 	
 	//-------------------------------------------------------------------------------------
 	private boolean isVoid(Object o, String functionName ) throws Exception {

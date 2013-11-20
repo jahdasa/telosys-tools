@@ -1309,7 +1309,8 @@ public class JavaBeanClass extends JavaClass
 				if ( collidedTypes.contains( sFullType ) ) // if this attribute is impacted
 				{
 					//--- force this attributes to use its "full type" for variable declaration
-					attr.forceType ( sFullType );
+					//attr.forceType ( sFullType );
+					attr.useFullType() ; // v 2.0.7
 				}
 			}
 		}

@@ -19,6 +19,7 @@ import java.sql.Types;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.telosys.tools.commons.JavaClassUtil;
 import org.telosys.tools.commons.JavaTypeUtil;
 import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.commons.jdbctypes.JdbcTypes;
@@ -73,8 +74,10 @@ public class JavaBeanClassAttribute
     
 	//--- Basic minimal attribute info -------------------------------------------------
 	private final String  _sName ;  // attribute name 
-	private String  _sType ;  // Short java type without package, without blank, eg : "int", "BigDecimal", "Date"
-	private final String  _sFullType ;  // Full java type with package, : "java.math.BigDecimal", "java.util.Date"
+	//private String  _sType ;  // Short java type without package, without blank, eg : "int", "BigDecimal", "Date"
+	private final String  _sSimpleType ;  // Short java type without package, without blank, eg : "int", "BigDecimal", "Date"
+	private final String  _sFullType ;    // Full java type with package, : "java.math.BigDecimal", "java.util.Date"
+	private boolean _bUseFullType = false ;
 	
 	private final String  _sInitialValue ; // can be null 
 //	private final String  _sGetter ; // Dynamic since v 2.0.7
@@ -152,19 +155,20 @@ public class JavaBeanClassAttribute
 	 * Constructor to create a Java Class Attribute without model <br>
 	 * This constructor is designed to be used by the WIZARDS GENERATOR<br>
 	 * 
-	 * @param sName internal (private) java attribute name
-	 * @param sType the shortest type to use ( "String", "int", "BigDecimal", "Date", "java.util.Date", ... ), <br>
+	 * @param name internal (private) java attribute name
+	 * @param simpleType the shortest type to use ( "String", "int", "BigDecimal", "Date", "java.util.Date", ... ), <br>
 	 *              can be a full type ( eg : if "java.util.Date" and "java.sql.Date" are used in the same class ) 
-	 * @param sFullType standard full type with package ( "java.lang.String", "int", "java.math.BigDecimal", ... )
-	 * @param sInitialValue
+	 * @param fullType standard full type with package ( "java.lang.String", "int", "java.math.BigDecimal", ... )
+	 * @param initialValue
 	 */
 	//public JavaBeanClassAttribute(String sName, String sType, String sFullType, String sInitialValue, String sGetter, String sSetter) 
-	public JavaBeanClassAttribute(String sName, String sType, String sFullType, String sInitialValue ) // v 2.0.7
+	public JavaBeanClassAttribute(String name, String simpleType, String fullType, String initialValue ) // v 2.0.7
 	{
-		_sName = sName ; 
-		_sType = StrUtil.removeAllBlanks(sType);    
-		_sFullType = StrUtil.removeAllBlanks(sFullType);  
-		_sInitialValue = sInitialValue; // can be null 
+		_sName = name ; 
+//		_sType = StrUtil.removeAllBlanks(sType);    
+		_sSimpleType   = StrUtil.removeAllBlanks(simpleType);    // v 2.0.7
+		_sFullType     = StrUtil.removeAllBlanks(fullType);  
+		_sInitialValue = initialValue; // can be null 
 		_sDefaultValue = null ; // keep null ( for hasDefaultValue )
 		
 		// v 2.0.7
@@ -181,9 +185,9 @@ public class JavaBeanClassAttribute
 	{
 		_sName   = column.getJavaName();
 		
-		// TODO gerer les duplicatedShortNames dans Util.shortestType mais dans ce cas a quoi cela peut servir ????
-		_sType     = StrUtil.removeAllBlanks(Util.shortestType(column.getJavaType(), new LinkedList<String>()));
-		_sFullType = StrUtil.removeAllBlanks(column.getJavaType());
+//		_sType     = StrUtil.removeAllBlanks(Util.shortestType(column.getJavaType(), new LinkedList<String>()));
+		_sFullType   = StrUtil.removeAllBlanks( column.getJavaType() );
+		_sSimpleType = JavaClassUtil.shortName( _sFullType );    // v 2.0.7
 				
 		// v 2.0.7
 //		_sGetter = Util.buildGetter(_sName, _sType);
@@ -284,12 +288,16 @@ public class JavaBeanClassAttribute
 	}
     
 	//-----------------------------------------------------------------------------------------------
-	protected void forceType ( String sTypeToUse )
+//	protected void forceType ( String sTypeToUse )
+//	{
+//		if ( sTypeToUse != null )
+//		{
+//			_sType = sTypeToUse ;
+//		}
+//	}
+	/* package */ void useFullType ()
 	{
-		if ( sTypeToUse != null )
-		{
-			_sType = sTypeToUse ;
-		}
+		_bUseFullType = true ;
 	}
 	
 	@VelocityMethod(
@@ -325,18 +333,29 @@ public class JavaBeanClassAttribute
 
 	//-------------------------------------------------------------------------------------
 	/**
-	 * Returns the "short java type" without package, without blank, eg : "int", "BigDecimal", "Date"
+	 * Returns the "java type" to use <br>
+	 * usually the simple type ( "int", "BigDecimal", "Date" ) <br>
+	 * sometimes the full type ( if the simple type is ambiguous )
 	 * @return
 	 */
 	@VelocityMethod(
 		text={	
-			"Returns the 'short type' for the attribute without package and without blank",
-			"Examples for Java : 'int', 'BigDecimal', 'Date' "
+			"Returns the recommended type for the attribute",
+			"usually the simple type ( 'int', 'BigDecimal', 'Date' ) ",
+			"sometimes the full type ( if the simple type is considered as ambiguous )",
+			"Examples for Java : 'int', 'BigDecimal', 'Date', 'java.util.Date', 'java.sql.Date' "
 			}
 	)
 	public String getType()
 	{
-		return _sType;
+		// return _sType;
+		// v 2.0.7
+		if ( _bUseFullType ) {
+			return _sFullType ;
+		}
+		else {
+			return _sSimpleType ;
+		}
 	}
 
 	/**
@@ -352,27 +371,27 @@ public class JavaBeanClassAttribute
 	)
 	public String getWrapperType()
 	{
-		if ( null == _sType ) return "UnknownType" ;
+		if ( null == _sSimpleType ) return "UnknownType" ;
 		
-		final String typeObjectTmp = _sType.trim();
-		if ("byte".equals(typeObjectTmp)) {
+		final String t = _sSimpleType;
+		if ("byte".equals(t)) {
 			return "Byte";
-		} else if ("short".equals(typeObjectTmp)) {
+		} else if ("short".equals(t)) {
 			return "Short";
-		} else if ("int".equals(typeObjectTmp)) {
+		} else if ("int".equals(t)) {
 			return "Integer";
-		} else if ("long".equals(typeObjectTmp)) {
+		} else if ("long".equals(t)) {
 			return "Long";
-		} else if ("float".equals(typeObjectTmp)) {
+		} else if ("float".equals(t)) {
 			return "Float";
-		} else if ("double".equals(typeObjectTmp)) {
+		} else if ("double".equals(t)) {
 			return "Double";
-		} else if ("boolean".equals(typeObjectTmp)) {
+		} else if ("boolean".equals(t)) {
 			return "Boolean";
-		} else if ("char".equals(typeObjectTmp)) {
+		} else if ("char".equals(t)) {
 			return "Character";
 		} else {
-			return typeObjectTmp;
+			return t;
 		}
 	}
 
@@ -398,13 +417,14 @@ public class JavaBeanClassAttribute
 	)
 	public String formatedType(int iSize)
     {
+		String sType = this.getType() ;
         String sTrailingBlanks = "";
-        int iDelta = iSize - _sType.length();
+        int iDelta = iSize - sType.length();
         if (iDelta > 0) // if needs trailing blanks
         {
             sTrailingBlanks = GeneratorUtil.blanks(iDelta);
         }
-        return _sType + sTrailingBlanks;
+        return sType + sTrailingBlanks;
     }	
     
 	/**
@@ -453,7 +473,7 @@ public class JavaBeanClassAttribute
 	public String getGetter()
 	{
 		// return _sGetter;
-		return Util.buildGetter(_sName, _sType); // v 2.0.7
+		return Util.buildGetter(_sName, this.getType() ); // v 2.0.7
 	}
 
 	//-------------------------------------------------------------------------------------
@@ -824,7 +844,9 @@ public class JavaBeanClassAttribute
 	)
     public String javaTypeStartingByUC()
     {
-    	return firstCharUC(_sType);
+    	//return firstCharUC(_sType);
+    	//return firstCharUC( this.getType() );
+    	return StrUtil.firstCharUC( this.getType() );
     }
     
 //    /**
@@ -1040,23 +1062,24 @@ public class JavaBeanClassAttribute
 	)
     public String getGuiMaxLength() 
     {
+		String t = _sSimpleType ;
     	//--- Max length depending on the Java type
-    	if ( "byte".equals(_sType)  || "Byte".equals(_sType)    ) return  "4" ; // -128 to +127
-    	if ( "short".equals(_sType) || "Short".equals(_sType)   ) return  "6" ; // -32768 to +32767
-    	if ( "int".equals(_sType)   || "Integer".equals(_sType) ) return "11" ; // -2147483648 to +2147483647
-    	if ( "long".equals(_sType)  || "Long".equals(_sType)    ) return "20" ; // -9223372036854775808 to +9223372036854775807
+    	if ( "byte".equals(t)  || "Byte".equals(t)    ) return  "4" ; // -128 to +127
+    	if ( "short".equals(t) || "Short".equals(t)   ) return  "6" ; // -32768 to +32767
+    	if ( "int".equals(t)   || "Integer".equals(t) ) return "11" ; // -2147483648 to +2147483647
+    	if ( "long".equals(t)  || "Long".equals(t)    ) return "20" ; // -9223372036854775808 to +9223372036854775807
     	
-    	if ( "double".equals(_sType) || "Double".equals(_sType) ) return "20" ; // Arbitrary fixed value like long
-    	if ( "float".equals(_sType)  || "Float".equals(_sType)  ) return "20" ; // Arbitrary fixed value like long
+    	if ( "double".equals(t) || "Double".equals(t) ) return "20" ; // Arbitrary fixed value like long
+    	if ( "float".equals(t)  || "Float".equals(t)  ) return "20" ; // Arbitrary fixed value like long
     	
-    	if ( "BigDecimal".equals(_sType) ) return "20" ; // Arbitrary fixed value like long
-    	if ( "BigInteger".equals(_sType) ) return "20" ; // Arbitrary fixed value like long
+    	if ( "BigDecimal".equals(t) ) return "20" ; // Arbitrary fixed value like long
+    	if ( "BigInteger".equals(t) ) return "20" ; // Arbitrary fixed value like long
     	
-    	if ( "Date".equals(_sType) ) return "10" ; // "YYYY-MM-DD", "DD/MM/YYYY", etc ...
-    	if ( "Time".equals(_sType) ) return "8" ; // "HH:MM:SS"
+    	if ( "Date".equals(t) ) return "10" ; // "YYYY-MM-DD", "DD/MM/YYYY", etc ...
+    	if ( "Time".equals(t) ) return "8" ; // "HH:MM:SS"
 
     	//--- Max length from Database column size (only for String)
-    	if ( "String".equals(_sType) )
+    	if ( "String".equals(t) )
     	{
     		return voidIfNull ( _sMaxLength ) ;
     	}
@@ -1276,23 +1299,24 @@ public class JavaBeanClassAttribute
 		)
     public String getGuiType() 
     {
+		String t = _sSimpleType ; // v 2.0.7
     	//--- type="int"
-    	if ( "byte".equals(_sType)  || "Byte".equals(_sType)    ) return TYPE_INT ;
-    	if ( "short".equals(_sType) || "Short".equals(_sType)   ) return TYPE_INT ; 
-    	if ( "int".equals(_sType)   || "Integer".equals(_sType) ) return TYPE_INT ; 
-    	if ( "long".equals(_sType)  || "Long".equals(_sType) )    return TYPE_INT ; 
-    	if ( "BigInteger".equals(_sType) )   return TYPE_INT ;
+    	if ( "byte".equals(t)  || "Byte".equals(t)    ) return TYPE_INT ;
+    	if ( "short".equals(t) || "Short".equals(t)   ) return TYPE_INT ; 
+    	if ( "int".equals(t)   || "Integer".equals(t) ) return TYPE_INT ; 
+    	if ( "long".equals(t)  || "Long".equals(t) )    return TYPE_INT ; 
+    	if ( "BigInteger".equals(t) )   return TYPE_INT ;
 
     	//--- type="num"
-    	if ( "float".equals(_sType)  || "Float".equals(_sType) )    return TYPE_NUM ; 
-    	if ( "double".equals(_sType) || "Double".equals(_sType) )   return TYPE_NUM ; 
-    	if ( "BigDecimal".equals(_sType) )   return TYPE_NUM ;
+    	if ( "float".equals(t)  || "Float".equals(t) )    return TYPE_NUM ; 
+    	if ( "double".equals(t) || "Double".equals(t) )   return TYPE_NUM ; 
+    	if ( "BigDecimal".equals(t) )   return TYPE_NUM ;
     	
     	//--- type="date"
-    	if ( "Date".equals(_sType) )   return TYPE_DATE ;
+    	if ( "Date".equals(t) )   return TYPE_DATE ;
     	
     	//--- type="time"
-    	if ( "Time".equals(_sType) )   return TYPE_TIME ;
+    	if ( "Time".equals(t) )   return TYPE_TIME ;
     	
     	return "" ;
     }
@@ -1682,7 +1706,7 @@ public class JavaBeanClassAttribute
 	public String toString()
 	{
 		String s =  _sInitialValue != null ? " = " + _sInitialValue : "" ;
-		return _sType + " " + _sName + s ; // + " ( " + _sGetter + "/" + _sSetter + " ) ";
+		return this.getType() + " " + _sName + s ; // + " ( " + _sGetter + "/" + _sSetter + " ) ";
 	}
 
 	//-------------------------------------------------------------------------------------------------------------
@@ -1821,31 +1845,26 @@ public class JavaBeanClassAttribute
 	
 	
 	// -------------------------------------------------------------------------------------------------------------
-
-	//
-	// TODO refactoring ---> classe utilitaire
-	//
-	
-    /**
-     * Returns the given string starting by an Upper Case <br>
-     * @param s
-     * @return
-     */
-    private String firstCharUC(String s)
-    {
-    	if ( s != null )
-    	{
-    		if ( s.length() > 1 )
-    		{
-                return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
-    		}
-    		else if ( s.length() == 1 )
-    		{
-    			return s.substring(0, 1).toUpperCase() ;
-    		}
-    	}
-   		return "" ;
-    }
+//    /**
+//     * Returns the given string starting by an Upper Case <br>
+//     * @param s
+//     * @return
+//     */
+//    private String firstCharUC(String s)
+//    {
+//    	if ( s != null )
+//    	{
+//    		if ( s.length() > 1 )
+//    		{
+//                return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
+//    		}
+//    		else if ( s.length() == 1 )
+//    		{
+//    			return s.substring(0, 1).toUpperCase() ;
+//    		}
+//    	}
+//   		return "" ;
+//    }
     
 //    /**
 //     * Returns TRUE if the JDBC type is an "integer type" 
@@ -1944,7 +1963,7 @@ public class JavaBeanClassAttribute
 	)
 	public boolean isPrimitiveType()
 	{
-		return JavaTypeUtil.isPrimitiveType( _sType );
+		return JavaTypeUtil.isPrimitiveType( _sSimpleType );
 	}
 
 	//------------------------------------------------------------------------------------------
@@ -1956,7 +1975,7 @@ public class JavaBeanClassAttribute
 	)
 	public boolean isArrayType()
 	{
-		String s = _sType ;
+		String s = _sSimpleType ;
 		if ( s != null ) {
 			if ( s.trim().endsWith("]")) {
 				return true ;
@@ -1974,8 +1993,8 @@ public class JavaBeanClassAttribute
 	)
 	public boolean isBooleanType()
 	{
-    	if ( "boolean".equals(_sType) )   return true ;
-    	if ( "Boolean".equals(_sType) )   return true ;
+    	if ( "boolean".equals(_sSimpleType) )   return true ;
+    	if ( "Boolean".equals(_sSimpleType) )   return true ;
     	return false ;
 	}
 
@@ -1988,8 +2007,8 @@ public class JavaBeanClassAttribute
 	)
 	public boolean isLongType()
 	{
-    	if ( "long".equals(_sType) )   return true ;
-    	if ( "Long".equals(_sType) )   return true ;
+    	if ( "long".equals(_sSimpleType) )   return true ;
+    	if ( "Long".equals(_sSimpleType) )   return true ;
     	return false ;
 	}
 
@@ -2002,8 +2021,8 @@ public class JavaBeanClassAttribute
 	)
 	public boolean isFloatType()
 	{
-    	if ( "float".equals(_sType) )   return true ;
-    	if ( "Float".equals(_sType) )   return true ;
+    	if ( "float".equals(_sSimpleType) )   return true ;
+    	if ( "Float".equals(_sSimpleType) )   return true ;
     	return false ;
 	}
 	
@@ -2016,8 +2035,8 @@ public class JavaBeanClassAttribute
 	)
 	public boolean isDoubleType()
 	{
-    	if ( "double".equals(_sType) )   return true ;
-    	if ( "Double".equals(_sType) )   return true ;
+    	if ( "double".equals(_sSimpleType) )   return true ;
+    	if ( "Double".equals(_sSimpleType) )   return true ;
     	return false ;
 	}
 
