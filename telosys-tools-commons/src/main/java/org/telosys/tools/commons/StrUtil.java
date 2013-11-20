@@ -481,6 +481,29 @@ public final class StrUtil
 	}	
 	
 	//-------------------------------------------------------------------------------
+    /**
+     * Returns the given string starting by an Upper Case <br>
+     * @param s
+     * @return
+     * @since 2.0.7
+     */
+    public static String firstCharUC(String s)
+    {
+    	if ( s != null )
+    	{
+    		if ( s.length() > 1 )
+    		{
+                return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
+    		}
+    		else if ( s.length() == 1 )
+    		{
+    			return s.substring(0, 1).toUpperCase() ;
+    		}
+    	}
+   		return "" ;
+    }
+	
+	//-------------------------------------------------------------------------------
 	/**
 	 * Returns true if the 2 strings are different
 	 * @param s1
