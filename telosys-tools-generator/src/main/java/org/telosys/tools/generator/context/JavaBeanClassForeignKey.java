@@ -30,7 +30,7 @@ import org.telosys.tools.generator.context.doc.VelocityObject;
  */
 //-------------------------------------------------------------------------------------
 @VelocityObject(
-		contextName = ContextName.FOREIGN_KEY ,
+		contextName = ContextName.FK ,
 		text = {
 				"This object provides all information about a database foreign key",
 				"Each foreign key is retrieved from the entity class ",

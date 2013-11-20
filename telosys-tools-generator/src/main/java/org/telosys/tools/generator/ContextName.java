@@ -65,9 +65,10 @@ public class ContextName {
 	public final static String  ATTRIB            = "attrib" ; // Other name for "attribute"
 	public final static String  FIELD             = "field" ;  // Other name for "attribute"
 	
-	public final static String  LINK               = "link" ;
-	public final static String  FOREIGN_KEY        = "fk" ;
-	public final static String  FOREIGN_KEY_COLUMN = "fkcol" ;
+	public final static String  LINK              = "link" ;
+	
+	public final static String  FK     = "fk" ;    // v 2.0.7
+	public final static String  FKCOL  = "fkcol" ; // v 2.0.7
 
 	//---  
 	public final static String  CLASS             = "class" ;

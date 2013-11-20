@@ -83,11 +83,18 @@ public class VariableNames {
 
 	private static List<String> PREDEFINED_NAMES_LIST = new LinkedList<String>();
 	static {
-		PREDEFINED_NAMES_LIST.add( "attribute" ); 
-		PREDEFINED_NAMES_LIST.add( "attrib" ); 
-		PREDEFINED_NAMES_LIST.add( "field" ); 
-		
-		PREDEFINED_NAMES_LIST.add( "link" ); 
+		//PREDEFINED_NAMES_LIST.add( "attribute" ); 
+		PREDEFINED_NAMES_LIST.add( ContextName.ATTRIBUTE ); 
+		//PREDEFINED_NAMES_LIST.add( "attrib" ); 
+		PREDEFINED_NAMES_LIST.add( ContextName.ATTRIB ); 
+		//PREDEFINED_NAMES_LIST.add( "field" ); 
+		PREDEFINED_NAMES_LIST.add( ContextName.FIELD ); 
+				
+		//PREDEFINED_NAMES_LIST.add( "link" ); 
+		PREDEFINED_NAMES_LIST.add( ContextName.LINK ); 
+
+		PREDEFINED_NAMES_LIST.add( ContextName.FK ); // v 2.0.7
+		PREDEFINED_NAMES_LIST.add( ContextName.FKCOL ); // v 2.0.7
 	}
 
 	private static List<String> WIZARDS_OBJECTS_LIST = new LinkedList<String>();

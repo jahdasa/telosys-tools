@@ -28,7 +28,7 @@ import org.telosys.tools.repository.model.ForeignKeyColumn;
  */
 //-------------------------------------------------------------------------------------
 @VelocityObject(
-		contextName = ContextName.FOREIGN_KEY_COLUMN ,
+		contextName = ContextName.FKCOL ,
 		text = {
 				"This object provides all information about a database foreign key column",
 				""
