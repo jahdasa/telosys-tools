@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.Hashtable;
 
 import org.telosys.tools.commons.StrUtil;
-import org.telosys.tools.commons.TelosysToolsException;
 
 public class ForeignKey implements Comparable<ForeignKey>
 {
@@ -38,46 +37,49 @@ public class ForeignKey implements Comparable<ForeignKey>
 		this.name = v;
 	}
 	
-	public String getTableName() throws TelosysToolsException {
-		// The table name must be not void and identical for all foreignKeyColumns
-		if (foreignKeyColumns.isEmpty()) {
-			throw new TelosysToolsException("aucune colonne pour la foreignkey " + this.name);
-		} else {
-			String tableName = null;
+	public String getTableName() { // throws TelosysToolsException { // No exception since v 2.0.7
+		// The table name is supposed to be the same for all foreignKeyColumns
+		String tableName = "";
+		if (foreignKeyColumns != null) {
+			// keep the last one 
 			for (ForeignKeyColumn fkc : foreignKeyColumns.values()) {
-				if (StrUtil.nullOrVoid(fkc.getTableName())) {
-					throw new TelosysToolsException("TableName vide pour une ForeignKeyColumn de " + this.name);
-				} else {
-					if (StrUtil.nullOrVoid(tableName)) {
-						tableName = fkc.getTableName();
-					} else if (StrUtil.identical(fkc.getTableName(), tableName) == false) {
-						throw new TelosysToolsException("TableName different pour la foreignkey " + this.name);
-					}
+				if ( ! StrUtil.nullOrVoid(fkc.getTableName())) {
+					tableName = fkc.getTableName();
 				}
 			}
-			return tableName;
 		}
+		return tableName;
 	}
 	
-	public String getTableRef() throws TelosysToolsException {
-		// The table name ref must be not void and identical for all foreignKeyColumns
-		if (foreignKeyColumns.isEmpty()) {
-			throw new TelosysToolsException("aucune colonne pour la foreignkey " + this.name);
-		} else {
-			String tableref = null;
+	public String getTableRef() { // throws TelosysToolsException { // No exception since v 2.0.7
+//		// The table name ref must be not void and identical for all foreignKeyColumns
+//		if (foreignKeyColumns.isEmpty()) {
+//			throw new TelosysToolsException("aucune colonne pour la foreignkey " + this.name);
+//		} else {
+//			String tableref = null;
+//			for (ForeignKeyColumn fkc : foreignKeyColumns.values()) {
+//				if (StrUtil.nullOrVoid(fkc.getTableRef())) {
+//					throw new TelosysToolsException("Tableref vide pour une ForeignKeyColumn de " + this.name);
+//				} else {
+//					if (StrUtil.nullOrVoid(tableref)) {
+//						tableref = fkc.getTableRef();
+//					} else if (StrUtil.identical(fkc.getTableRef(), tableref) == false) {
+//						throw new TelosysToolsException("Tableref different pour la foreignkey " + this.name);
+//					}
+//				}
+//			}
+//			return tableref;
+//		}
+		String referencedTableName = "";
+		if (foreignKeyColumns != null) {
+			// keep the last one 
 			for (ForeignKeyColumn fkc : foreignKeyColumns.values()) {
-				if (StrUtil.nullOrVoid(fkc.getTableRef())) {
-					throw new TelosysToolsException("Tableref vide pour une ForeignKeyColumn de " + this.name);
-				} else {
-					if (StrUtil.nullOrVoid(tableref)) {
-						tableref = fkc.getTableRef();
-					} else if (StrUtil.identical(fkc.getTableRef(), tableref) == false) {
-						throw new TelosysToolsException("Tableref different pour la foreignkey " + this.name);
-					}
+				if ( ! StrUtil.nullOrVoid(fkc.getTableRef())) {
+					referencedTableName = fkc.getTableRef();
 				}
 			}
-			return tableref;
 		}
+		return referencedTableName;
 	}
 	
 	//--------------------------------------------------------------------------
@@ -156,11 +158,9 @@ public class ForeignKey implements Comparable<ForeignKey>
 	/* (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(T)
 	 */
-	//public int compareTo(Object o) {
 	public int compareTo(ForeignKey other) {
 		if ( other != null )
 		{
-			// ForeignKey other = (ForeignKey) o;
 			String sThisName  = this.getName() ;
 			String sOtherName = other.getName();
 			if ( sThisName != null && sOtherName != null )
