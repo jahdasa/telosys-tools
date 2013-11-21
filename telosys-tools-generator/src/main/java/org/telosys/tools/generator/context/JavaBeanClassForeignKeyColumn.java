@@ -18,7 +18,6 @@ package org.telosys.tools.generator.context;
 import org.telosys.tools.generator.ContextName;
 import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityObject;
-import org.telosys.tools.repository.model.ForeignKeyColumn;
 
 /**
  * Database Foreign Key Column exposed in the generator context
@@ -42,20 +41,14 @@ import org.telosys.tools.repository.model.ForeignKeyColumn;
 		}
  )
 //-------------------------------------------------------------------------------------
-public class JavaBeanClassForeignKeyColumn implements Comparable<JavaBeanClassForeignKeyColumn>
+public class JavaBeanClassForeignKeyColumn //implements Comparable<JavaBeanClassForeignKeyColumn>
 {
 	private final int    _sequence ;
 
 	private final String _columnName ;
 	
-	private final String _columnRef ;
+	private final String _referencedColumnName ;
 	
-	private final String _updateRule ;
-	
-	private final String _deleteRule ;
-	
-	private final String _deferrable ;
-
 	//-------------------------------------------------------------------------------------
 //	public JavaBeanClassForeignKeyColumn(int sequence, String columnName, String columnRef, 
 //			String updateRule, String deleteRule, String deferrable) {
@@ -67,14 +60,11 @@ public class JavaBeanClassForeignKeyColumn implements Comparable<JavaBeanClassFo
 //		this._deleteRule = deleteRule;
 //		this._deferrable = deferrable;
 //	}
-	public JavaBeanClassForeignKeyColumn( ForeignKeyColumn fkColumn ) {
+	public JavaBeanClassForeignKeyColumn( int sequence, String columnName, String referencedColumnName ) {
 		super();
-		this._sequence   = fkColumn.getSequence();
-		this._columnName = fkColumn.getColumnName();
-		this._columnRef  = fkColumn.getColumnRef();
-		this._updateRule = fkColumn.getUpdateRule();
-		this._deleteRule = fkColumn.getDeleteRule();
-		this._deferrable = fkColumn.getDeferrable();
+		this._sequence   = sequence;
+		this._columnName = columnName;
+		this._referencedColumnName  = referencedColumnName;
 	}
 	 
 	//-------------------------------------------------------------------------------------
@@ -100,52 +90,20 @@ public class JavaBeanClassForeignKeyColumn implements Comparable<JavaBeanClassFo
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
 		text={	
-			"Returns the name of the target column (column referenced in the target table)"
+			"Returns the name of the referenced column "
 			}
 	)
-	public String getTargetColumnName() {
-		return _columnRef;
-	}
-
-	//-------------------------------------------------------------------------------------
-	@VelocityMethod(
-		text={	
-			"Returns the 'DEFERABLE' status "
-			}
-	)
-	public String getDeferrable() {
-		return _deferrable;
-	}
-
-	//-------------------------------------------------------------------------------------
-	@VelocityMethod(
-		text={	
-			"Returns the 'ON DELETE' rule "
-			}
-	)
-	public String getDeleteRule() {
-		return _deleteRule;
-	}
-
-	//-------------------------------------------------------------------------------------
-	@VelocityMethod(
-		text={	
-			"Returns the 'ON UPDATE' rule "
-			}
-	)
-	public String getUpdateRule() {
-		return _updateRule;
+	public String getReferencedColumnName() {
+		return _referencedColumnName;
 	}
 
 	//-------------------------------------------------------------------------------
-	//public int compareTo(Object o) {
-	public int compareTo(JavaBeanClassForeignKeyColumn other) {
-		if ( other != null )
-		{
-			//ForeignKeyColumn other = (ForeignKeyColumn) o;
-			return ( this.getSequence() - other.getSequence() );
-		}
-		return 0;
-	}
+//	public int compareTo(JavaBeanClassForeignKeyColumn other) {
+//		if ( other != null )
+//		{
+//			return ( this.getSequence() - other.getSequence() );
+//		}
+//		return 0;
+//	}
 	
 }

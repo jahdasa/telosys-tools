@@ -154,24 +154,8 @@ public class JavaBeanClass extends JavaClass
 		this._foreignKeys = new LinkedList<JavaBeanClassForeignKey>();
 		Collection<ForeignKey> foreignKeys = entity.getForeignKeysCollection();
 		for ( ForeignKey fk : foreignKeys ) {
-			
-			try {
-				String table = fk.getTableName() ;
-				String targetTable = fk.getTableRef() ;
-				// from here the FK is valid (no exception)
-				//JavaBeanClassForeignKey foreignKey = new JavaBeanClassForeignKey(fk.getName(), table, targetTable );
-				//Collection<ForeignKeyColumn> ForeignKeyColumn = fk.getForeignKeyColumnsCollection() ;
-				List<JavaBeanClassForeignKeyColumn> fkColumns = new LinkedList<JavaBeanClassForeignKeyColumn>();
-				for ( ForeignKeyColumn fkColumn : fk.getForeignKeyColumnsCollection() ) {
-					fkColumns.add( new JavaBeanClassForeignKeyColumn(fkColumn) ) ;
-				}
-				_foreignKeys.add( new JavaBeanClassForeignKey(fk.getName(), table, targetTable, fkColumns ) );
-			} catch (TelosysToolsException e) {
-				// Invalid Foreign Key : nothing to do just not use it !
-			}
+			_foreignKeys.add( new JavaBeanClassForeignKey(fk ) );
 		}
-		
-		 
 		
 		// import resolution
 		this.endOfDefinition();

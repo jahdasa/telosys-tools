@@ -21,6 +21,8 @@ import java.util.List;
 import org.telosys.tools.generator.ContextName;
 import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityObject;
+import org.telosys.tools.repository.model.ForeignKey;
+import org.telosys.tools.repository.model.ForeignKeyColumn;
 
 /**
  * Database Foreign Key exposed in the generator context
@@ -52,18 +54,53 @@ public class JavaBeanClassForeignKey {
 	private final String  targetTableName  ;
 	private final List<JavaBeanClassForeignKeyColumn> fkColumns ;
 	
+	private String _updateRule = "" ;
+	private String _deleteRule = "" ;
+	private String _deferrable = "" ;
+
+//	//-------------------------------------------------------------------------------------
+//	public JavaBeanClassForeignKey(final String fkName, 
+//			final String tableName, final String targetTableName, 
+//			List<JavaBeanClassForeignKeyColumn> fkColumns,
+//			final String updateRule, final String deleteRule, final String deferrable  ) 
+//	{
+//		this.fkName = fkName ;
+//		this.tableName = tableName ;
+//		this.targetTableName = targetTableName ;
+//		if ( fkColumns != null ) {
+//			this.fkColumns = fkColumns ;
+//		}
+//		else {
+//			this.fkColumns = new LinkedList<JavaBeanClassForeignKeyColumn>() ;
+//		}
+//		
+//		this._updateRule = updateRule ;
+//		this._deleteRule = deleteRule ;
+//		this._deferrable = deferrable ;
+//	}
+
 	//-------------------------------------------------------------------------------------
-	public JavaBeanClassForeignKey(final String fkName, final String tableName, final String targetTableName, 
-			List<JavaBeanClassForeignKeyColumn> fkColumns ) 
+	public JavaBeanClassForeignKey(final ForeignKey metadataFK ) 
 	{
-		this.fkName = fkName ;
-		this.tableName = tableName ;
-		this.targetTableName = targetTableName ;
-		if ( fkColumns != null ) {
-			this.fkColumns = fkColumns ;
-		}
-		else {
-			this.fkColumns = new LinkedList<JavaBeanClassForeignKeyColumn>() ;
+		this.fkName = metadataFK.getName() ;
+		this.tableName = metadataFK.getTableName() ;
+		this.targetTableName = metadataFK.getTableRef() ;
+		
+		this._updateRule = "" ;
+		this._deleteRule = "" ;
+		this._deferrable = "" ;
+		this.fkColumns = new LinkedList<JavaBeanClassForeignKeyColumn>() ;
+		if ( metadataFK.getForeignKeyColumnsCollection().size() > 0 ) {
+			for ( ForeignKeyColumn metadataFKColumn : metadataFK.getForeignKeyColumnsCollection() ) {
+				int    sequence = metadataFKColumn.getSequence();
+				String columnName = metadataFKColumn.getColumnName();
+				String referencedColumnName = metadataFKColumn.getColumnRef();
+				fkColumns.add( new JavaBeanClassForeignKeyColumn(sequence, columnName, referencedColumnName ) ) ;
+				//--- ON UPDATE, ON DELETE and DEFERRABLE (stored in each column in meta-data, keep the last one)
+				this._updateRule = metadataFKColumn.getUpdateRule() ;
+				this._deleteRule = metadataFKColumn.getDeleteRule() ;
+				this._deferrable = metadataFKColumn.getDeferrable() ;
+			}
 		}
 	}
 
@@ -91,10 +128,10 @@ public class JavaBeanClassForeignKey {
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
 		text={	
-			"Returns the name of the target table (table referenced by the foreign key)"
+			"Returns the name of the referenced table (the table referenced by the foreign key)"
 			}
 	)
-	public String getTargetTableName() {
+	public String getReferencedTableName() {
 		return this.targetTableName ;
 	}
 
@@ -120,4 +157,33 @@ public class JavaBeanClassForeignKey {
 	}
 
 	//-------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the 'DEFERRABILITY' status ( 'DEFERRABLE', 'NOT DEFERRABLE' ) "
+			}
+	)
+	public String getDeferrable() {
+		return _deferrable;
+	}
+
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the 'ON DELETE' rule ( 'NO ACTION', 'RESTRICT', 'SET NULL', 'SET DEFAULT', 'CASCADE'  ) "
+			}
+	)
+	public String getDeleteRule() {
+		return _deleteRule;
+	}
+
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the 'ON UPDATE' rule ( 'NO ACTION', 'RESTRICT', 'SET NULL', 'SET DEFAULT', 'CASCADE' ) "
+			}
+	)
+	public String getUpdateRule() {
+		return _updateRule;
+	}
 }
