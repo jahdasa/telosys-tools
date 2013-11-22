@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.widgets.Shell;
+import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.eclipse.plugin.commons.EclipseProjUtil;
 import org.telosys.tools.eclipse.plugin.commons.MsgBox;
 import org.telosys.tools.eclipse.plugin.commons.PluginLogger;
@@ -55,8 +56,12 @@ public class TemplateBundleUtil {
 					if ( DEFAULT.equals(selectedBundle) ) {
 						selectedBundle = null ;
 					}
-	            	editor.setCurrentBundleName(selectedBundle);
-	            	editor.refreshAllTargetsTablesFromConfigFile();					
+					if ( StrUtil.different( selectedBundle, editor.getCurrentBundleName() )) {
+						// only if the bundle name has changed : to avoid refresh (visual list effect) if unchanged
+		            	editor.setCurrentBundleName(selectedBundle);
+		            	editor.refreshAllTargetsTablesFromConfigFile();					
+					}
+					
 				}
 				else {
 					// CANCEL button or CLOSE [x]

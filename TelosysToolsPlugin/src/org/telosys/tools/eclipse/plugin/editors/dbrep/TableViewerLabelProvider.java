@@ -88,15 +88,15 @@ class TableViewerLabelProvider 	extends LabelProvider implements ITableLabelProv
 				return modelColumn.getDatabaseName();
 				
 			case ColumnNames.DB_TYPE_INDEX : // SMALLINT, VARCHAR(n), DATE, ...
-				//return row.getDatabaseType();
-				String sDbType = modelColumn.getDatabaseTypeName();
-				//--- If VARCHAR type add the size
-				int iJdbcType = modelColumn.getJdbcTypeCode() ;
-				if ( iJdbcType == Types.VARCHAR || iJdbcType == Types.CHAR )
-				{
-					sDbType = sDbType + "(" + modelColumn.getDatabaseSize() + ")" ;
-				}
-				return sDbType ;
+//				String sDbType = modelColumn.getDatabaseTypeName();
+//				//--- If VARCHAR type add the size
+//				int iJdbcType = modelColumn.getJdbcTypeCode() ;
+//				if ( iJdbcType == Types.VARCHAR || iJdbcType == Types.CHAR )
+//				{
+//					sDbType = sDbType + "(" + modelColumn.getDatabaseSize() + ")" ;
+//				}
+//				return sDbType ;
+				return modelColumn.getDatabaseTypeNameWithSize(); // v 2.0.7
 				
 			case ColumnNames.JDBC_TYPE_INDEX :
 				return "" + modelColumn.getJdbcTypeCodeWithText();

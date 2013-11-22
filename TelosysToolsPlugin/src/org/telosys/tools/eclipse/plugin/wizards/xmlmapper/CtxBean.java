@@ -286,7 +286,8 @@ public class CtxBean {
     	}
     	//--- Register 
 		//OldJavaClassAttribute attr = new OldJavaClassAttribute(sName, sType, sFullType, null, sGetter, sSetter);
-		JavaBeanClassAttribute attr = new JavaBeanClassAttribute(sName, sType, sFullType, null, sGetter, sSetter);
+		//JavaBeanClassAttribute attr = new JavaBeanClassAttribute(sName, sType, sFullType, null, sGetter, sSetter);
+		JavaBeanClassAttribute attr = new JavaBeanClassAttribute(sName, sType, sFullType, null); // v 2.0.7
 		_htAttributes.put(sName, attr);
 	}
 	

@@ -8,6 +8,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
@@ -291,6 +292,12 @@ public class RepositoryEditor extends FormEditor
 			//--- Refresh all the lists in the editor pages 
 			_page1.refreshTargetsTable(targetsList);
 			_page2.refreshTargetsTable(targetsList);
+			
+			// TODO : 
+//_page2.refreshBundleName(bundleName) ;		
+//			TableColumn c =_tableTargets.getColumn(1);
+//			c.setText(string)
+
 		}
 	}
 	

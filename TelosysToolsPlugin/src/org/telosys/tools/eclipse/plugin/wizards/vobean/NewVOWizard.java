@@ -71,14 +71,21 @@ public class NewVOWizard extends StandardNewJavaClassWizard {
 						sInitialValue = item.sInitialValue.trim();
 					}
 					
+//					JavaBeanClassAttribute attribute = new JavaBeanClassAttribute(
+//						sAttributeName,
+//						sShortType,
+//						sFullType,
+//						sInitialValue,
+//						(arrayAtt[i].bGetter) ? getGetterName(arrayAtt[i].sAttributeName) : null,
+//						(arrayAtt[i].bSetter) ? getSetterName(arrayAtt[i].sAttributeName) : null
+//					);
+					// v 2.0.7
 					JavaBeanClassAttribute attribute = new JavaBeanClassAttribute(
-						sAttributeName,
-						sShortType,
-						sFullType,
-						sInitialValue,
-						(arrayAtt[i].bGetter) ? getGetterName(arrayAtt[i].sAttributeName) : null,
-						(arrayAtt[i].bSetter) ? getSetterName(arrayAtt[i].sAttributeName) : null
-					);
+							sAttributeName,
+							sShortType,
+							sFullType,
+							sInitialValue
+						);
 					attributes.add(attribute);
 				}
 			}

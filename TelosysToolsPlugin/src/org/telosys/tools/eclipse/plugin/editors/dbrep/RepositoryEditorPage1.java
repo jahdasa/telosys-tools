@@ -873,39 +873,30 @@ import org.telosys.tools.repository.model.RepositoryModel;
 					
 					//--- Create a new row in the table
 					tableItem = new TableItem(table, SWT.NONE );
-			        //tableItem.setChecked(true);
 					int col = 0 ;
-//					if ( name.equals(previousName) )
-//					{
-//						name = "" ;
-//					}
 					String name = ( c == 0 ? fk.getName() : "" ) ;
 
 					tableItem.setText(col++, name );
 
-					//tableItem.setText(col++, fkp.getColName() );			
 					tableItem.setText(col++, fkCol.getColumnName() );			
 			        
-					//tableItem.setText(col++, fkp.getTableRef() );
 					tableItem.setText(col++, fkCol.getTableRef() );
 			        
-					//tableItem.setText(col++, fkp.getColRef());
 					tableItem.setText(col++, fkCol.getColumnRef());
 	
-			        int code = 0 ;
-					//tableItem.setText(col++, fkp.getUpdateRule());
-			        code = StrUtil.getInt(fkCol.getUpdateRule(), 0);
-					tableItem.setText(col++, code + " : " + MetadataUtil.getForeignKeyUpdateRule(code));
+//			        int code = 0 ;
+//			        code = StrUtil.getInt(fkCol.getUpdateRule(), 0);
+//					tableItem.setText(col++, code + " : " + MetadataUtil.getForeignKeyUpdateRule(code));
+					tableItem.setText(col++, fkCol.getUpdateRuleCode() + " : " + fkCol.getUpdateRuleText() );
 			        
-					//tableItem.setText(col++, fkp.getDeleteRule());
-			        code = StrUtil.getInt(fkCol.getDeleteRule(), 0);
-					tableItem.setText(col++, code + " : " + MetadataUtil.getForeignKeyDeleteRule(code));
+//			        code = StrUtil.getInt(fkCol.getDeleteRule(), 0);
+//					tableItem.setText(col++, code + " : " + MetadataUtil.getForeignKeyDeleteRule(code));
+					tableItem.setText(col++, fkCol.getDeleteRuleCode() + " : " + fkCol.getDeleteRuleText() );
 			        
-					//tableItem.setText(col++, fkp.getDeferable());
-			        code = StrUtil.getInt(fkCol.getDeferrable(), 0);
-					tableItem.setText(col++, code + " : " + MetadataUtil.getForeignKeyDeferrability(code));
+//			        code = StrUtil.getInt(fkCol.getDeferrable(), 0);
+//					tableItem.setText(col++, code + " : " + MetadataUtil.getForeignKeyDeferrability(code));
+					tableItem.setText(col++, fkCol.getDeferrableCode() + " : " + fkCol.getDeferrableText() );
 			        
-			        //previousName = fkp.getForeignKeyName() ;
 				}
 			}
 		}
