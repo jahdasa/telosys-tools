@@ -18,6 +18,7 @@ package org.telosys.tools.generator.context;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.telosys.tools.commons.jdbctypes.MetadataUtil;
 import org.telosys.tools.generator.ContextName;
 import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityObject;
@@ -54,9 +55,9 @@ public class JavaBeanClassForeignKey {
 	private final String  targetTableName  ;
 	private final List<JavaBeanClassForeignKeyColumn> fkColumns ;
 	
-	private String _updateRule = "" ;
-	private String _deleteRule = "" ;
-	private String _deferrable = "" ;
+	private int _updateRuleCode = 0 ;
+	private int _deleteRuleCode = 0 ;
+	private int _deferrableCode = 0 ;
 
 //	//-------------------------------------------------------------------------------------
 //	public JavaBeanClassForeignKey(final String fkName, 
@@ -86,9 +87,9 @@ public class JavaBeanClassForeignKey {
 		this.tableName = metadataFK.getTableName() ;
 		this.targetTableName = metadataFK.getTableRef() ;
 		
-		this._updateRule = "" ;
-		this._deleteRule = "" ;
-		this._deferrable = "" ;
+		this._updateRuleCode = 0 ;
+		this._deleteRuleCode = 0 ;
+		this._deferrableCode = 0 ;
 		this.fkColumns = new LinkedList<JavaBeanClassForeignKeyColumn>() ;
 		if ( metadataFK.getForeignKeyColumnsCollection().size() > 0 ) {
 			for ( ForeignKeyColumn metadataFKColumn : metadataFK.getForeignKeyColumnsCollection() ) {
@@ -97,9 +98,9 @@ public class JavaBeanClassForeignKey {
 				String referencedColumnName = metadataFKColumn.getColumnRef();
 				fkColumns.add( new JavaBeanClassForeignKeyColumn(sequence, columnName, referencedColumnName ) ) ;
 				//--- ON UPDATE, ON DELETE and DEFERRABLE (stored in each column in meta-data, keep the last one)
-				this._updateRule = metadataFKColumn.getUpdateRule() ;
-				this._deleteRule = metadataFKColumn.getDeleteRule() ;
-				this._deferrable = metadataFKColumn.getDeferrable() ;
+				this._updateRuleCode = metadataFKColumn.getUpdateRuleCode() ;
+				this._deleteRuleCode = metadataFKColumn.getDeleteRuleCode() ;
+				this._deferrableCode = metadataFKColumn.getDeferrableCode() ;
 			}
 		}
 	}
@@ -160,11 +161,20 @@ public class JavaBeanClassForeignKey {
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
 		text={	
-			"Returns the 'DEFERRABILITY' status ( 'DEFERRABLE', 'NOT DEFERRABLE' ) "
+			"Returns the 'DEFERRABILITY' status ( 'NOT DEFERRABLE', 'INITIALLY IMMEDIATE', 'INITIALLY DEFERRED'  ) "
 			}
 	)
 	public String getDeferrable() {
-		return _deferrable;
+		return MetadataUtil.getForeignKeyDeferrability(_deferrableCode).toUpperCase();
+	}
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+			text={	
+				"Returns the 'DEFERRABILITY' status code ( MetaData Code : 5,6,7 ) "
+				}
+		)
+	public int getDeferrableCode() {
+		return _deferrableCode;
 	}
 
 	//-------------------------------------------------------------------------------------
@@ -174,7 +184,16 @@ public class JavaBeanClassForeignKey {
 			}
 	)
 	public String getDeleteRule() {
-		return _deleteRule;
+		return MetadataUtil.getForeignKeyDeleteRule(_deleteRuleCode).toUpperCase();
+	}
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+			text={	
+				"Returns the 'ON DELETE' rule code ( MetaData Code : 0,1,2,3,4 ) "
+				}
+		)
+	public int getDeleteRuleCode() {
+		return _deleteRuleCode;
 	}
 
 	//-------------------------------------------------------------------------------------
@@ -184,6 +203,15 @@ public class JavaBeanClassForeignKey {
 			}
 	)
 	public String getUpdateRule() {
-		return _updateRule;
+		return MetadataUtil.getForeignKeyUpdateRule(_updateRuleCode).toUpperCase();
+	}
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+			text={	
+				"Returns the 'ON UPDATE' rule code ( MetaData Code : 0,1,2,3,4 ) "
+				}
+		)
+	public int getUpdateRuleCode() {
+		return _updateRuleCode;
 	}
 }

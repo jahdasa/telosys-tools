@@ -19,6 +19,7 @@ import java.sql.Types;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.telosys.tools.commons.DatabaseUtil;
 import org.telosys.tools.commons.JavaClassUtil;
 import org.telosys.tools.commons.JavaTypeUtil;
 import org.telosys.tools.commons.StrUtil;
@@ -561,12 +562,13 @@ public class JavaBeanClassAttribute
 	)
     public String getDatabaseTypeWithSize()
     {
-        if ( _iJdbcTypeCode == Types.VARCHAR || _iJdbcTypeCode == Types.CHAR ) {
-        	return _sDataBaseType + "(" + _iDatabaseSize + ")" ;
-        }
-        else {
-        	return _sDataBaseType ;
-        }
+//        if ( _iJdbcTypeCode == Types.VARCHAR || _iJdbcTypeCode == Types.CHAR ) {
+//        	return _sDataBaseType + "(" + _iDatabaseSize + ")" ;
+//        }
+//        else {
+//        	return _sDataBaseType ;
+//        }
+        return DatabaseUtil.getNativeTypeWithSize(_sDataBaseType, _iDatabaseSize, _iJdbcTypeCode);
     }
 
 	//-------------------------------------------------------------------------------------
