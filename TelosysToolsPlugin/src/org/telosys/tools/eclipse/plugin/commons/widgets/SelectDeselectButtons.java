@@ -20,12 +20,30 @@ public class SelectDeselectButtons {
 	public final static boolean CREATE_PANEL = true ;
 	public final static boolean DO_NOT_CREATE_PANEL = false ;
 	
+	//--- Buttons size
+	private GridData  gridData = new GridData(BUTTON_WIDTH, BUTTON_HEIGHT); // to define Button width and height
 	private Composite buttonsPanel ;
 	private Button    selectAll ;
 	private Button    deselectAll ;
 	
+	/**
+	 * Create the 2 buttons in the same composite 
+	 * @param parent
+	 */
 	public SelectDeselectButtons(Composite parent) {
-		this(parent, DO_NOT_CREATE_PANEL);
+//		this(parent, DO_NOT_CREATE_PANEL);
+		createButtonSelectAll(parent);
+		createButtonDeselectAll(parent);
+	}
+
+	/**
+	 * Create the 2 buttons in 2 separated composites 
+	 * @param parentSelectAll
+	 * @param parentDeselectAll
+	 */
+	public SelectDeselectButtons(Composite parentSelectAll, Composite parentDeselectAll) {
+		createButtonSelectAll(parentSelectAll);
+		createButtonDeselectAll(parentDeselectAll);
 	}
 	
 	public SelectDeselectButtons(Composite parent, boolean createPanel) {
@@ -52,16 +70,53 @@ public class SelectDeselectButtons {
 			buttonsPanel = parent ;
 		}		
 
-		//--- Buttons size
-		GridData gd = new GridData(BUTTON_WIDTH, BUTTON_HEIGHT); // to define Button width and height
+//		//--- Buttons size
+//		GridData gd = new GridData(BUTTON_WIDTH, BUTTON_HEIGHT); // to define Button width and height
 		
 		//--- 1rst button 
-		selectAll = new Button(buttonsPanel, SWT.PUSH);
-		//selectAll.setText("Select All");
+//		selectAll = new Button(buttonsPanel, SWT.PUSH);
+//		//selectAll.setText("Select All");
+//		selectAll.setImage( PluginImages.getImage(PluginImages.CHECKED_ON ) );
+//		selectAll.setToolTipText("Select All");
+//
+//		selectAll.setLayoutData(gd);
+//		selectAll.addSelectionListener(new SelectionAdapter() 
+//		{
+//			public void widgetSelected(SelectionEvent event) 
+//			{
+//				Button button = (Button) event.getSource();
+//				setCheckedStateForAll((Table)button.getData(), true );
+//			}
+//		});
+		createButtonSelectAll(buttonsPanel);
+		
+		//--- 2nd button 
+//		deselectAll = new Button(buttonsPanel, SWT.PUSH);
+//		//deselectAll.setText("Deselect All");
+//		deselectAll.setImage( PluginImages.getImage(PluginImages.CHECKED_OFF ) );
+//		deselectAll.setToolTipText("Deselect All");
+//
+//		deselectAll.setLayoutData(gd);
+//		deselectAll.addSelectionListener(new SelectionAdapter() 
+//		{
+//			public void widgetSelected(SelectionEvent event) 
+//			{
+//				//setCheckedForAll(listTable, false );
+//				Button button = (Button) event.getSource();
+//				setCheckedStateForAll((Table)button.getData(), false );
+//			}
+//		});
+		createButtonDeselectAll(buttonsPanel);
+	}
+
+	private void createButtonSelectAll(Composite panel) {
+		selectAll = new Button(panel, SWT.PUSH);
+		//selectAll.setText("Select All"); // No text for this button (image only)
 		selectAll.setImage( PluginImages.getImage(PluginImages.CHECKED_ON ) );
 		selectAll.setToolTipText("Select All");
 
-		selectAll.setLayoutData(gd);
+		selectAll.setLayoutData(gridData);
+		
 		selectAll.addSelectionListener(new SelectionAdapter() 
 		{
 			public void widgetSelected(SelectionEvent event) 
@@ -70,32 +125,31 @@ public class SelectDeselectButtons {
 				setCheckedStateForAll((Table)button.getData(), true );
 			}
 		});
-		
-		//--- 2nd button 
-		deselectAll = new Button(buttonsPanel, SWT.PUSH);
-		//deselectAll.setText("Deselect All");
+	}
+	private void createButtonDeselectAll(Composite panel) {
+		deselectAll = new Button(panel, SWT.PUSH);
+		//deselectAll.setText("Deselect All"); // No text for this button (image only)
 		deselectAll.setImage( PluginImages.getImage(PluginImages.CHECKED_OFF ) );
 		deselectAll.setToolTipText("Deselect All");
 
-		deselectAll.setLayoutData(gd);
+		deselectAll.setLayoutData(gridData);
+		
 		deselectAll.addSelectionListener(new SelectionAdapter() 
 		{
 			public void widgetSelected(SelectionEvent event) 
 			{
-				//setCheckedForAll(listTable, false );
 				Button button = (Button) event.getSource();
 				setCheckedStateForAll((Table)button.getData(), false );
 			}
 		});
 	}
-
-	/**
-	 * Returns the panel containing the buttons
-	 * @return
-	 */
-	public Composite getPanel() {
-		return buttonsPanel ;		
-	}
+//	/**
+//	 * Returns the panel containing the buttons
+//	 * @return
+//	 */
+//	public Composite getPanel() {
+//		return buttonsPanel ;		
+//	}
 	
 	public void setTable(Table managedTable) {
 		//this.table = managedTable ;
