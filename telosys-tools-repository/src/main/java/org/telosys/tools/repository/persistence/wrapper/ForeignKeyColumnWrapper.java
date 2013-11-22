@@ -35,9 +35,13 @@ public class ForeignKeyColumnWrapper {
 		foreignKeyColumn.setTableRef(xmlElement.getAttribute(RepositoryConst.FKCOL_TABLEREF));
 		foreignKeyColumn.setColumnRef(xmlElement.getAttribute(RepositoryConst.FKCOL_COLREF));
 		
-		foreignKeyColumn.setDeferrable(xmlElement.getAttribute(RepositoryConst.FKCOL_DEFERRABLE));
-		foreignKeyColumn.setUpdateRule(xmlElement.getAttribute(RepositoryConst.FKCOL_UPDATERULE));
-		foreignKeyColumn.setDeleteRule(xmlElement.getAttribute(RepositoryConst.FKCOL_DELETERULE));
+//		foreignKeyColumn.setDeferrable(xmlElement.getAttribute(RepositoryConst.FKCOL_DEFERRABLE));
+//		foreignKeyColumn.setUpdateRule(xmlElement.getAttribute(RepositoryConst.FKCOL_UPDATERULE));
+//		foreignKeyColumn.setDeleteRule(xmlElement.getAttribute(RepositoryConst.FKCOL_DELETERULE));
+		// v 2.0.7
+		foreignKeyColumn.setDeferrableCode(StrUtil.getInt(xmlElement.getAttribute(RepositoryConst.FKCOL_DEFERRABLE)));
+		foreignKeyColumn.setUpdateRuleCode(StrUtil.getInt(xmlElement.getAttribute(RepositoryConst.FKCOL_UPDATERULE)));
+		foreignKeyColumn.setDeleteRuleCode(StrUtil.getInt(xmlElement.getAttribute(RepositoryConst.FKCOL_DELETERULE)));
 		
 		return foreignKeyColumn;
 	}
@@ -54,9 +58,10 @@ public class ForeignKeyColumnWrapper {
 		xmlElement.setAttribute(RepositoryConst.FKCOL_TABLEREF, foreignKeyColumn.getTableRef());
 		xmlElement.setAttribute(RepositoryConst.FKCOL_COLREF, foreignKeyColumn.getColumnRef());
 		
-		xmlElement.setAttribute(RepositoryConst.FKCOL_DEFERRABLE, foreignKeyColumn.getDeferrable());
-		xmlElement.setAttribute(RepositoryConst.FKCOL_UPDATERULE, foreignKeyColumn.getUpdateRule());
-		xmlElement.setAttribute(RepositoryConst.FKCOL_DELETERULE, foreignKeyColumn.getDeleteRule());
+		// v 2.0.7 (String -> int )
+		xmlElement.setAttribute(RepositoryConst.FKCOL_DEFERRABLE, Integer.toString(foreignKeyColumn.getDeferrableCode()));
+		xmlElement.setAttribute(RepositoryConst.FKCOL_UPDATERULE, Integer.toString(foreignKeyColumn.getUpdateRuleCode()));
+		xmlElement.setAttribute(RepositoryConst.FKCOL_DELETERULE, Integer.toString(foreignKeyColumn.getDeleteRuleCode()));
 		
 		return xmlElement;
 	}

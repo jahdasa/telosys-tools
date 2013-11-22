@@ -15,6 +15,7 @@
  */
 package org.telosys.tools.repository.model;
 
+import org.telosys.tools.commons.DatabaseUtil;
 import org.telosys.tools.commons.JavaTypeUtil;
 import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.commons.javatypes.JavaTypes;
@@ -266,8 +267,22 @@ public class Column implements Comparable<Column>
 
 	//-----------------------------------------------------------------------------
 
+	/**
+     * Returns the database native type name <br>
+     * Examples : INTEGER, VARCHAR, NUMBER, CHAR, etc... 
+	 * @return
+	 */
 	public String getDatabaseTypeName() {
 		return _sDatabaseTypeName;
+	}
+	
+	/**
+     * Returns the database native type name with its size if the size make sense.<br>
+     * Examples : INTEGER, VARCHAR(24), NUMBER, CHAR(3), etc... 
+	 * @return
+	 */
+	public String getDatabaseTypeNameWithSize() {
+		return DatabaseUtil.getNativeTypeWithSize(_sDatabaseTypeName, _iDatabaseSize, _iJdbcTypeCode);
 	}
 
 	public void setDatabaseTypeName(String databaseTypeName) {

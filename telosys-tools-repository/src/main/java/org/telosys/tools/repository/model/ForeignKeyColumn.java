@@ -16,6 +16,7 @@
 package org.telosys.tools.repository.model;
 
 import org.telosys.tools.commons.StrUtil;
+import org.telosys.tools.commons.jdbctypes.MetadataUtil;
 
 public class ForeignKeyColumn implements Comparable<ForeignKeyColumn>
 {
@@ -30,11 +31,12 @@ public class ForeignKeyColumn implements Comparable<ForeignKeyColumn>
 	
 	private String _columnRef ;
 	
-	private String _updateRule ;
-	
-	private String _deleteRule ;
-	
-	private String _deferrable ;
+//	private String _updateRule ;
+//	private String _deleteRule ;
+//	private String _deferrable ;
+	private int  _updateRuleCode ; // v 2.0.7
+	private int  _deleteRuleCode ; // v 2.0.7
+	private int  _deferrableCode ; // v 2.0.7
 
 	//-------------------------------------------------------------------------------
 	
@@ -88,32 +90,38 @@ public class ForeignKeyColumn implements Comparable<ForeignKeyColumn>
 
 	//-------------------------------------------------------------------------------
 
-	public String getDeferrable() {
-		return _deferrable;
+	public String getDeferrableText() {
+		return MetadataUtil.getForeignKeyDeferrability(_deferrableCode);
 	}
-
-	public void setDeferrable(String v) {
-		_deferrable = v;
+	public int getDeferrableCode() {
+		return _deferrableCode;
 	}
-
-	//-------------------------------------------------------------------------------
-
-	public String getDeleteRule() {
-		return _deleteRule;
-	}
-
-	public void setDeleteRule(String v) {
-		_deleteRule = v;
+	public void setDeferrableCode(int v) {
+		_deferrableCode = v;
 	}
 
 	//-------------------------------------------------------------------------------
 
-	public String getUpdateRule() {
-		return _updateRule;
+	public String getDeleteRuleText() {
+		return MetadataUtil.getForeignKeyDeleteRule(_deleteRuleCode);
+	}
+	public int getDeleteRuleCode() {
+		return _deleteRuleCode;
+	}
+	public void setDeleteRuleCode(int v) {
+		_deleteRuleCode = v;
 	}
 
-	public void setUpdateRule(String v) {
-		_updateRule = v;
+	//-------------------------------------------------------------------------------
+
+	public String getUpdateRuleText() {
+		return MetadataUtil.getForeignKeyUpdateRule(_updateRuleCode);
+	}
+	public int getUpdateRuleCode() {
+		return _updateRuleCode;
+	}
+	public void setUpdateRuleCode(int v) {
+		_updateRuleCode = v;
 	}
 
 	//-------------------------------------------------------------------------------
@@ -141,11 +149,14 @@ public class ForeignKeyColumn implements Comparable<ForeignKeyColumn>
 		
 		return     StrUtil.identical(_columnName, fkcol.getColumnName() )
 				&& StrUtil.identical(_columnRef, fkcol.getColumnRef() )
-				&& StrUtil.identical(_deferrable, fkcol.getDeferrable() )
-				&& StrUtil.identical(_deleteRule, fkcol.getDeleteRule() )
 				&& StrUtil.identical(_tableName, fkcol.getTableName() )
 				&& StrUtil.identical(_tableRef, fkcol.getTableRef() )
-				&& StrUtil.identical(_updateRule, fkcol.getUpdateRule() )
+//				&& StrUtil.identical(_deferrable, fkcol.getDeferrable() )
+//				&& StrUtil.identical(_deleteRule, fkcol.getDeleteRule() )
+//				&& StrUtil.identical(_updateRule, fkcol.getUpdateRule() )
+				&& _deferrableCode == fkcol.getDeferrableCode()
+				&& _deleteRuleCode == fkcol.getDeleteRuleCode()
+				&& _updateRuleCode == fkcol.getUpdateRuleCode()
 				&& ( this.getSequence() == fkcol.getSequence() )
 				;
 	}

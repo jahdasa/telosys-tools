@@ -296,9 +296,13 @@ public abstract class RepositoryManager extends StandardTool
 			foreignKeyColumn.setTableRef( dbFkCol.getPkTableName() );
 			foreignKeyColumn.setColumnRef( dbFkCol.getPkColumnName() );
 			
-			foreignKeyColumn.setUpdateRule( String.valueOf(dbFkCol.getUpdateRule()) );
-			foreignKeyColumn.setDeleteRule( String.valueOf(dbFkCol.getDeleteRule()) );
-			foreignKeyColumn.setDeferrable( String.valueOf(dbFkCol.getDeferrability()) );
+//			foreignKeyColumn.setUpdateRule( String.valueOf(dbFkCol.getUpdateRule()) );
+//			foreignKeyColumn.setDeleteRule( String.valueOf(dbFkCol.getDeleteRule()) );
+//			foreignKeyColumn.setDeferrable( String.valueOf(dbFkCol.getDeferrability()) );
+			// v 2.0.7
+			foreignKeyColumn.setUpdateRuleCode( dbFkCol.getUpdateRule() );
+			foreignKeyColumn.setDeleteRuleCode( dbFkCol.getDeleteRule() );
+			foreignKeyColumn.setDeferrableCode( dbFkCol.getDeferrability() );
 			
 			foreignKey.storeForeignKeyColumn(foreignKeyColumn);
 		}
