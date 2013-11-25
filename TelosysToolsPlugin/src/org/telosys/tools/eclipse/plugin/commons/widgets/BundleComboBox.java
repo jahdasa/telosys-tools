@@ -10,32 +10,29 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.telosys.tools.commons.StrUtil;
-import org.telosys.tools.eclipse.plugin.commons.MsgBox;
 import org.telosys.tools.eclipse.plugin.commons.dialogbox.TemplateBundleUtil;
 import org.telosys.tools.eclipse.plugin.editors.dbrep.RepositoryEditor;
 
 public class BundleComboBox {
 
-	private final static int COMBO_WIDTH  = 260 ;
-	private final static int COMBO_HEIGHT =  24 ;
-	private final static int COMBO_VISIBLE_ITEMS =  10 ;
+	public final static int COMBO_WIDTH  = 260 ;
+	public final static int COMBO_HEIGHT =  24 ;
+	private final static int COMBO_VISIBLE_ITEMS =  16 ;
 	
 	private final RepositoryEditor _editor ;
 	private final Combo            _combo ;
 	
-	private String _selectedItem = "";
+//	private String _selectedItem = "";
 	
-	public BundleComboBox(Composite parent, int initialItem, RepositoryEditor editor) {
+	public BundleComboBox(Composite parent, RepositoryEditor editor) {
 		super();
 
 		_editor = editor ; 
 		
     	_combo = new Combo(parent, SWT.BORDER | SWT.READ_ONLY);
-		//combo.setSize(COMBO_WIDTH, COMBO_WIDTH);
-//		GridData gdTableTargets = new GridData();
-//		gdTableTargets.heightHint = 344 ;
-//		gdTableTargets.widthHint  = 460 ;
-		//_combo.setLayoutData( new RowData(COMBO_WIDTH, COMBO_HEIGHT));
+		//_combo.setSize(COMBO_WIDTH, COMBO_HEIGHT);
+		GridData gridData = new GridData(COMBO_WIDTH, COMBO_HEIGHT);
+		_combo.setLayoutData( gridData );
 
 		_combo.setVisibleItemCount(COMBO_VISIBLE_ITEMS); // Show a list of N items 
 
@@ -43,21 +40,18 @@ public class BundleComboBox {
         {
             public void widgetSelected(SelectionEvent event)
             {
-        		updateSelectedItem();
-				if ( StrUtil.different( _selectedItem, _editor.getCurrentBundleName() )) {
+            	//--- Update selected item
+        		String[] items = _combo.getItems();
+        		String selectedBundle = items[ _combo.getSelectionIndex() ] ;
+        		
+				if ( StrUtil.different( selectedBundle, _editor.getCurrentBundleName() )) {
 					// only if the bundle name has changed : to avoid refresh (visual list effect) if unchanged
-					_editor.setCurrentBundleName(_selectedItem);
+					_editor.setCurrentBundleName(selectedBundle);
 					_editor.refreshAllTargetsTablesFromConfigFile();					
 				}
             }
         });
         
-		//--- Populate combo
-        IProject eclipseProject = _editor.getProject() ;
-        List<String> bundles = TemplateBundleUtil.getBundlesFromTemplatesFolder(eclipseProject);
-		for ( String s : bundles ) {
-			_combo.add(s); 
-		}
 		
 //		//--- Select initial item 
 //		if ( initialItem >= 0 && initialItem < bundles.size() ) {
@@ -70,17 +64,43 @@ public class BundleComboBox {
 
 	}
 	
-	public Combo getCombo() {
-		return _combo ;
-	}
+//	public Combo getCombo() {
+//		return _combo ;
+//	}
 
-	private void updateSelectedItem() {
-		String[] items = _combo.getItems();
-		_selectedItem = items[ _combo.getSelectionIndex() ] ;
-	}	
+//	private void updateSelectedItem() {
+//		String[] items = _combo.getItems();
+//		_selectedItem = items[ _combo.getSelectionIndex() ] ;
+//	}	
 	
-	public String getSelectedItem() {
-		return _selectedItem ;
+//	public String getSelectedItem() {
+//		return _selectedItem ;
+//	}
+	
+	/**
+	 * Populates the combo box from the project's bundles (workspace folders) <br>
+	 * and select the editor's current bundle if any 
+	 */
+	public void refresh() {
+		
+		//--- Populate combo items 
+        IProject eclipseProject = _editor.getProject() ;
+        List<String> bundles = TemplateBundleUtil.getBundlesFromTemplatesFolder(eclipseProject);
+        _combo.removeAll();
+		for ( String s : bundles ) {
+			_combo.add(s); 
+		}
+		
+		//--- Select the bundle currently selected in the editor
+		String currentBundle = _editor.getCurrentBundleName() ;
+		if ( currentBundle != null ) {
+			currentBundle = currentBundle.trim() ;
+			for ( int index = 0 ; index < _combo.getItemCount() ; index++ ) {
+				if ( currentBundle.equals( _combo.getItem(index) ) ) {
+					_combo.select(index);
+					break;
+				}
+			}
+		}
 	}
-	
 }

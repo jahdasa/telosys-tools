@@ -13,8 +13,8 @@ import org.telosys.tools.eclipse.plugin.editors.dbrep.RepositoryEditor;
 
 public class TargetsButton {
 
-	private final static int  BUTTON_HEIGHT =  26 ;
-	private final static int  BUTTON_WIDTH  =  74 ; //80 ;
+	public final static int  BUTTON_HEIGHT =  26 ;
+	public final static int  BUTTON_WIDTH  =  90 ;
 	
 	private final Button           _button ;
 	private final RepositoryEditor _editor ;
@@ -27,8 +27,8 @@ public class TargetsButton {
 		_project = project ;
 		
 		_button = new Button(parent, SWT.NONE);
-		_button.setText("Edit");
-		_button.setToolTipText("Edit targets/templates file");
+		_button.setText("Configure");
+		_button.setToolTipText("Edit templates.cfg file");
 
 		_button.setImage( PluginImages.getImage(PluginImages.TARGETS ) );
 		

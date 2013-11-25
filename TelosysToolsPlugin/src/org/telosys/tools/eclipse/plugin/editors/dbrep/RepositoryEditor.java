@@ -284,6 +284,7 @@ public class RepositoryEditor extends FormEditor
 	//----------------------------------------------------------------------------------------------
 	public void refreshAllTargetsTablesFromConfigFile()
 	{
+		_logger.log("refreshAllTargetsTablesFromConfigFile() : current bundle = " + _currentBundle);
 		ProjectConfig projectConfig = getProjectConfig();
 		if ( projectConfig != null ) {
 			//--- Reload from file

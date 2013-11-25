@@ -9,8 +9,8 @@ import org.telosys.tools.eclipse.plugin.commons.PluginImages;
 
 public class GenerateButton {
 
-	private final static int  BUTTON_HEIGHT =  26 ; // 28
-	private final static int  BUTTON_WIDTH  = 120 ;
+	public final static int  BUTTON_HEIGHT =  26 ; // 28
+	public final static int  BUTTON_WIDTH  = 120 ;
 	
 	private final Button _buttonGenerate ;
 	

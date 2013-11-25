@@ -9,6 +9,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -41,9 +42,14 @@ import org.telosys.tools.repository.model.RepositoryModel;
  */
 /* package */ class RepositoryEditorPage2 extends RepositoryEditorPage {
 
+	private final static int RIGHT_PART_WIDTH = 484 ;
+	private final static int TABLE_HEIGHT = 380 ;
+	
 	private Table  _tableEntities = null ;
 	
 	private Table  _tableTargets = null ;
+	
+	private BundleComboBox  _comboBundles = null ;
 	
 	private final List<TargetDefinition> initialTargetsList ; // v 2.0.7
 	
@@ -66,8 +72,6 @@ import org.telosys.tools.repository.model.RepositoryModel;
 	 */
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
-		
-		final int FIRST_FILLER_SIZE = 24 ;
 		
 		log(this, "createFormContent(..)..." );
 		Control pageControl = getPartControl();
@@ -118,147 +122,134 @@ import org.telosys.tools.repository.model.RepositoryModel;
 		Composite scrolledFormBody = form.getBody();
 		log(this, "- body class = " + scrolledFormBody.getClass() );
 		
-		GridLayout bodyLayout = new GridLayout(2, false); // Grid 2 columns
+		GridLayout formGridLayout = new GridLayout(2, false); // Grid 2 columns
 
 		// marginWidth specifies the number of pixels of horizontal margin 
 		// that will be placed along the left and right edges of the layout. The default value is 5.
 		//bodyLayout.marginWidth = 20 ;
-		bodyLayout.marginWidth = RepositoryEditor.LAYOUT_MARGIN_WIDTH ;
+		formGridLayout.marginWidth = RepositoryEditor.LAYOUT_MARGIN_WIDTH ;
+		formGridLayout.verticalSpacing = 0;
 		
-		scrolledFormBody.setLayout( bodyLayout );
-		
-		//---------------------------------------------------------------
-		// Line 0 - Columns 1 & 2 (span) : The page title
-		//---------------------------------------------------------------
-		GridData gdTitle = new GridData(GridData.FILL_HORIZONTAL);
-		gdTitle.horizontalSpan = 2;		
-		Label labelTitle = Util.setPageTitle(scrolledFormBody, "Bulk generation" ) ;
-		labelTitle.setLayoutData(gdTitle);
+		scrolledFormBody.setLayout( formGridLayout );
 		
 		//---------------------------------------------------------------
-		// Line 1 - Column 1 in the "body layout" : Entities panel
+		// Row 1 - Column 1 : Title
 		//---------------------------------------------------------------
-/****
-		Composite panel1 = new Composite(scrolledFormBody, SWT.NONE | SWT.BORDER );
-		panel1.setLayout(new GridLayout(1, false));
-		//panel1.setSize(200, 100);
-		GridData gdpanel1 = new GridData();
-		gdpanel1.verticalAlignment = SWT.TOP ;
-		gdpanel1.horizontalAlignment = GridData.FILL ;
-		//gd2.widthHint = 300 ;
-		panel1.setLayoutData(gdpanel1);
-
-//
-//		//--- Create the buttons 
-////		SelectDeselectButtons buttons1 = new SelectDeselectButtons(panel1, SelectDeselectButtons.CREATE_PANEL) ;
-//		GridPanel gridPanelLeft1 = new GridPanel(panel1, 3); // 8 columns
-//		GridPanel gridPanelLeft2 = new GridPanel(panel1, 3); // 3 columns
-//		SelectDeselectButtons buttons1 = new SelectDeselectButtons( gridPanelLeft1.getPanel(), gridPanelLeft2.getPanel() ) ; // 2 buttons
-//
-		SelectDeselectButtons buttons1 = createLeftPartLine( panel1 ) ;
-		
-		//--- Create the standard "SWT Table" for entities
-		_tableEntities = createEntitiesTable(panel1);
-		//_table.setLocation(20, 20);
-		GridData gdTableEntities = new GridData();
-		gdTableEntities.heightHint = 344 ;
-		gdTableEntities.widthHint  = 420 ;
-		_tableEntities.setLayoutData(gdTableEntities);
-		buttons1.setTable(_tableEntities);
-***/
-		_tableEntities = createLeftPart(scrolledFormBody);
+		createFormCellRow1Col1(scrolledFormBody);
 		
 		//---------------------------------------------------------------
-		// Line 1 - Column 2 in the "body layout" : Targets panel
+		// Row 1 - Column 2 : Buttons "Refresh" and "Generate" (ver 2.0.7)
 		//---------------------------------------------------------------
-		Composite panel2 = new Composite(scrolledFormBody, SWT.NONE | SWT.BORDER );
+		createFormCellRow1Col2(scrolledFormBody);
 		
-		panel2.setLayout(new GridLayout(1, false));
-		GridData gdpanel2 = new GridData();
-		//gdpanel2.verticalAlignment   = SWT.TOP ;
-		gdpanel2.verticalAlignment   = GridData.FILL ;
-		gdpanel2.horizontalAlignment = GridData.FILL ;
-		//gd2.widthHint = 300 ;
-		panel2.setLayoutData(gdpanel2);
+		//---------------------------------------------------------------
+		// Row 2 - Column 1 : Entities panel
+		//---------------------------------------------------------------
+		createFormCellRow2Col1(scrolledFormBody);
 		
-/***
-		//--- Create the line with all buttons 
-		//GridPanel gridPanel = new GridPanel(panel2, 7); // 7 columns
-		GridPanel gridPanelRight1 = new GridPanel(panel2, 8); // 8 columns
-		GridPanel gridPanelRight2 = new GridPanel(panel2, 6); // 6 columns
-
-		SelectDeselectButtons buttons2 = new SelectDeselectButtons( gridPanelRight1.getPanel(), gridPanelRight2.getPanel() ) ; // 2 buttons
-
-//		//gridPanel.addFiller(45); // 1 filler
-//		gridPanelRight1.addFiller(24); // 1 filler
-//		
-//		new SwitchBundleButton(gridPanelRight1.getPanel(), getRepositoryEditor(), getProject()) ; // 1 button
-//		
-//		//TargetsButton targetsButton = 
-//		new TargetsButton(gridPanelRight1.getPanel(), getRepositoryEditor(), getProject() );  // 1 button
-//		
-//		new RefreshButton(gridPanelRight1.getPanel(), getRepositoryEditor());  // 1 button // v 2.0.7
-//	
-//		gridPanelRight1.addFiller(24); // 1 filler
-//		
-//		GenerateButton generateButton = new GenerateButton(gridPanelRight1.getPanel()); // 1 button
-//		generateButton.addSelectionListener(new SelectionListener() 
-//    	{
-//            public void widgetSelected(SelectionEvent arg0)
-//            {
-//            	if ( confirmBulkGeneration() )
-//        		{
-//        	    	Shell shell = Util.cursorWait();
-//        	    	launchBulkGeneration();
-//        			Util.cursorArrow(shell);
-//        		}                
-//            }
-//            public void widgetDefaultSelected(SelectionEvent arg0)
-//            {
-//            }
-//        });
-		
-		createRightPartLine1(gridPanelRight1, FIRST_FILLER_SIZE);
-		
-		//--- Create the line with "Templates bundle :" + Combobox 
-//		//createRightPartLine2(panel2);
-//		
-//		gridPanelRight2.addFiller(24);
-//		
-//    	//--- 
-//		Label label = new Label(gridPanelRight2.getPanel(), SWT.NULL);
-//    	//label = new Label(group1, SWT.BORDER );
-//    	label.setText("Templates bundle : ");
-//    	label.setSize(100, 20); // width, height
-    	createRightPartLine2(gridPanelRight2, FIRST_FILLER_SIZE);
-***/
-    	//==========================================================
-    	SelectDeselectButtons buttons2 = createRightPartLine(panel2);
-    	
-		//--- Create the standard "SWT Table" for TARGETS
-		_tableTargets = createTargetsTable(panel2);
-		GridData gdTableTargets = new GridData();
-		gdTableTargets.heightHint = 344 ;
-		gdTableTargets.widthHint  = 460 ;
-		_tableTargets.setLayoutData(gdTableTargets);
-
-		buttons2.setTable(_tableTargets);
+		//---------------------------------------------------------------
+		// Row 2 - Column 2 : Targets panel
+		//---------------------------------------------------------------		
+		createFormCellRow2Col2(scrolledFormBody);
 		
 		//---------------------------------------------------------------
 		// Populate the 2 tables 
 		//---------------------------------------------------------------
 		populateEntitiesTable();
+		
 		//populateTargetsTable();
-		populateTargetsTable(initialTargetsList); // v 2.0.7
+		//populateTargetsTable(initialTargetsList); // v 2.0.7
+		_comboBundles.refresh(); 
 
 		log(this, "createFormContent(..) - END." );
 	}
 	//----------------------------------------------------------------------------------------------
-	private Table createLeftPart(Composite composite) {
+	/**
+	 * Create the cell (1:1) : Form title
+	 * @param formBody
+	 */
+	private void createFormCellRow1Col1(Composite formBody) {
+		Label labelTitle = Util.setPageTitle(formBody, "Bulk generation" ) ;
+		GridData titleGridData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		titleGridData.verticalIndent = 0 ;
+//		titleGridData.verticalAlignment = GridData.VERTICAL_ALIGN_BEGINNING ;
+//		titleGridData.horizontalAlignment = GridData.HORIZONTAL_ALIGN_BEGINNING ;
+		titleGridData.verticalAlignment = GridData.BEGINNING ;
+		titleGridData.horizontalAlignment = GridData.FILL ;
+		//gdTitle.horizontalSpan = 2; // removed in v 2.0.7
+		labelTitle.setLayoutData(titleGridData);
 		
-		log("createLeftPart..");
+	}
+	//----------------------------------------------------------------------------------------------
+	/**
+	 * Create the cell (1:2) : Buttons "Refresh", "Generate"
+	 * @param formBody
+	 */
+	private void createFormCellRow1Col2(Composite formBody) {
+		//Composite panelTopRight = new Composite(formBody, SWT.NONE | SWT.BORDER );
+		Composite panelTopRight = new Composite(formBody, SWT.NONE );
 		
-		Composite panel = new Composite(composite, SWT.NONE | SWT.BORDER );
+		//--- Panel layout
+		GridLayout gridLayout = new GridLayout(3, false) ; // 3 columns
+		gridLayout.marginTop = 0;
+		gridLayout.marginBottom = 0;
+		gridLayout.verticalSpacing = 0 ;
+		//gridLayout.marginWidth = 0 ;
+		gridLayout.marginHeight = 0 ;
+		gridLayout.horizontalSpacing = 0 ;	
+		panelTopRight.setLayout(gridLayout);
+		panelTopRight.setSize(120, 26);
+		
+		//--- Panel "layout data"
+		GridData panelGridData = new GridData();
+		panelGridData.verticalAlignment   = GridData.BEGINNING ;
+		panelGridData.horizontalAlignment = GridData.FILL ; // All the cell width
+		//panelGridData.horizontalAlignment = GridData.END ; // END = Right side
+		panelGridData.verticalIndent = 0 ;
+		panelTopRight.setLayoutData(panelGridData);
+		
+		//--- Button "Refresh"
+		new RefreshButton(panelTopRight, getRepositoryEditor());  // 1 button // v 2.0.7
+
+		//--- Filler 
+		int fillerWidth = RIGHT_PART_WIDTH - GenerateButton.BUTTON_WIDTH - RefreshButton.BUTTON_WIDTH ;
+		Label labelFiller = new Label(panelTopRight, SWT.NONE);
+		labelFiller.setText("");
+		GridData fillerGridData = new GridData();
+		fillerGridData.horizontalAlignment = GridData.FILL ; // All the cell width
+		fillerGridData.verticalIndent = 0 ;
+		fillerGridData.widthHint = fillerWidth ; // Filler SIZE
+		labelFiller.setLayoutData( fillerGridData );
+		
+		//--- Button "Generate"
+		GenerateButton generateButton = new GenerateButton(panelTopRight); // 1 button
+		generateButton.addSelectionListener(new SelectionListener() 
+    	{
+            public void widgetSelected(SelectionEvent arg0)
+            {
+            	if ( confirmBulkGeneration() )
+        		{
+        	    	Shell shell = Util.cursorWait();
+        	    	launchBulkGeneration();
+        			Util.cursorArrow(shell);
+        		}                
+            }
+            public void widgetDefaultSelected(SelectionEvent arg0)
+            {
+            }
+        });
+	}
+	
+	//----------------------------------------------------------------------------------------------
+	/**
+	 * Create the cell (2:1) : Buttons "Select all/Unselect all" + Table of ENTITIES
+	 * @param formBody
+	 */
+	private void createFormCellRow2Col1(Composite formBody) {
+		
+		log("createFormCellRow2Col1...");
+		
+		Composite panel = new Composite(formBody, SWT.NONE | SWT.BORDER );
 		panel.setLayout(new GridLayout(1, false));
 		//panel1.setSize(200, 100);
 		GridData panelGridData = new GridData();
@@ -267,7 +258,7 @@ import org.telosys.tools.repository.model.RepositoryModel;
 		//gd2.widthHint = 300 ;
 		panel.setLayoutData(panelGridData);
 		
-		SelectDeselectButtons buttons = createLeftPartLine(panel) ;
+		SelectDeselectButtons buttons = createLeftPartHeader(panel) ;
 		
 		//--- Create the standard "SWT Table" for entities
 //		_tableEntities = createEntitiesTable(panel);
@@ -277,14 +268,38 @@ import org.telosys.tools.repository.model.RepositoryModel;
 //		gdTableEntities.widthHint  = 420 ;
 //		_tableEntities.setLayoutData(gdTableEntities);
 		
-		Table tableEntities = createLeftPartTable(panel);
+		_tableEntities = createLeftPartTable(panel);
 		
-		buttons.setTable(tableEntities);
+		buttons.setTable(_tableEntities);
 		
-		return tableEntities ;
+		//return tableEntities ;
 	}
 	//----------------------------------------------------------------------------------------------
-	private SelectDeselectButtons createLeftPartLine(Composite panel) {
+	private void createFormCellRow2Col2(Composite formBody) {
+		Composite panel2 = new Composite(formBody, SWT.NONE | SWT.BORDER );
+		
+		panel2.setLayout(new GridLayout(1, false));
+		GridData gdpanel2 = new GridData();
+		//gdpanel2.verticalAlignment   = SWT.TOP ;
+		gdpanel2.verticalAlignment   = GridData.FILL ;
+		gdpanel2.horizontalAlignment = GridData.FILL ;
+		//gd2.widthHint = 300 ;
+		panel2.setLayoutData(gdpanel2);
+		
+    	//--- Header : Buttons Select/Deselect, bundles ComboBox, "Config" button 
+    	SelectDeselectButtons selectDeselectButtons = createRightPartHeader(panel2);
+    	
+		//--- Table ( standard "SWT Table" for TARGETS )
+		_tableTargets = createRightPartTableTargets(panel2);
+		GridData gdTableTargets = new GridData();
+		gdTableTargets.heightHint = TABLE_HEIGHT ;
+		gdTableTargets.widthHint  = 460 ;
+		_tableTargets.setLayoutData(gdTableTargets);
+
+		selectDeselectButtons.setTable(_tableTargets);
+	}
+	//----------------------------------------------------------------------------------------------
+	private SelectDeselectButtons createLeftPartHeader(Composite panel) {
 		
 		log("createLeftPartLine..");
 		
@@ -304,7 +319,7 @@ import org.telosys.tools.repository.model.RepositoryModel;
 		Table tableEntities = createEntitiesTable(panel);
 		//_table.setLocation(20, 20);
 		GridData gdTableEntities = new GridData();
-		gdTableEntities.heightHint = 344 ;
+		gdTableEntities.heightHint = TABLE_HEIGHT ;
 		gdTableEntities.widthHint  = 420 ;
 		tableEntities.setLayoutData(gdTableEntities);
 				
@@ -313,17 +328,17 @@ import org.telosys.tools.repository.model.RepositoryModel;
 
 	//----------------------------------------------------------------------------------------------
 	//----------------------------------------------------------------------------------------------
-	private SelectDeselectButtons createRightPartLine(Composite panel) {
+	private SelectDeselectButtons createRightPartHeader(Composite panel) {
 		
 		log("createRightPartLine..");
 		
 		//--- Create the line with all buttons 
 		GridPanel gridPanel = new GridPanel(panel, 8); // 8 columns
 
-		SelectDeselectButtons buttons2 = new SelectDeselectButtons( gridPanel.getPanel(), gridPanel.getPanel() ) ; // 2 buttons
-		
+		SelectDeselectButtons buttons2 = new SelectDeselectButtons( gridPanel.getPanel() ) ; // 2 buttons
+				
 		//--- First filler
-		gridPanel.addFiller(40);
+		gridPanel.addFiller(14);
 		
 //    	//--- Label
 //		Label label = new Label(gridPanel.getPanel(), SWT.NULL);
@@ -333,64 +348,68 @@ import org.telosys.tools.repository.model.RepositoryModel;
     	
 		//--- Combobox ( bundles list )
 		log("create BundleComboBox...");
-    	new BundleComboBox(gridPanel.getPanel(), 0, getRepositoryEditor() );
+		_comboBundles = new BundleComboBox(gridPanel.getPanel(), getRepositoryEditor() );
 		log("BundleComboBox created.");
 		
+		//--- First filler
+		gridPanel.addFiller(14);
+
+		//--- Button "Edit templates.cfg"
 		new TargetsButton(gridPanel.getPanel(), getRepositoryEditor(), getProject() );  // 1 button
 
 		return buttons2 ;
 	}
-	//----------------------------------------------------------------------------------------------
-	private void createRightPartLine1(GridPanel gridPanel, int firstFillerSize) {
-		
-		//--- First filler
-		gridPanel.addFiller(firstFillerSize);
-		
-		//new SwitchBundleButton(gridPanel.getPanel(), getRepositoryEditor(), getProject()) ; // 1 button
-		
-		//TargetsButton targetsButton = 
-		new TargetsButton(gridPanel.getPanel(), getRepositoryEditor(), getProject() );  // 1 button
-		
-		new RefreshButton(gridPanel.getPanel(), getRepositoryEditor());  // 1 button // v 2.0.7
+//	//----------------------------------------------------------------------------------------------
+//	private void createRightPartLine1(GridPanel gridPanel, int firstFillerSize) {
+//		
+//		//--- First filler
+//		gridPanel.addFiller(firstFillerSize);
+//		
+//		//new SwitchBundleButton(gridPanel.getPanel(), getRepositoryEditor(), getProject()) ; // 1 button
+//		
+//		//TargetsButton targetsButton = 
+//		new TargetsButton(gridPanel.getPanel(), getRepositoryEditor(), getProject() );  // 1 button
+//		
+//		new RefreshButton(gridPanel.getPanel(), getRepositoryEditor());  // 1 button // v 2.0.7
+//	
+//		gridPanel.addFiller(24); // 1 filler
+//		
+//		GenerateButton generateButton = new GenerateButton(gridPanel.getPanel()); // 1 button
+//		generateButton.addSelectionListener(new SelectionListener() 
+//    	{
+//            public void widgetSelected(SelectionEvent arg0)
+//            {
+//            	if ( confirmBulkGeneration() )
+//        		{
+//        	    	Shell shell = Util.cursorWait();
+//        	    	launchBulkGeneration();
+//        			Util.cursorArrow(shell);
+//        		}                
+//            }
+//            public void widgetDefaultSelected(SelectionEvent arg0)
+//            {
+//            }
+//        });
+//		
+//	}
 	
-		gridPanel.addFiller(24); // 1 filler
-		
-		GenerateButton generateButton = new GenerateButton(gridPanel.getPanel()); // 1 button
-		generateButton.addSelectionListener(new SelectionListener() 
-    	{
-            public void widgetSelected(SelectionEvent arg0)
-            {
-            	if ( confirmBulkGeneration() )
-        		{
-        	    	Shell shell = Util.cursorWait();
-        	    	launchBulkGeneration();
-        			Util.cursorArrow(shell);
-        		}                
-            }
-            public void widgetDefaultSelected(SelectionEvent arg0)
-            {
-            }
-        });
-		
-	}
-	
-	//----------------------------------------------------------------------------------------------
-	private void createRightPartLine2(GridPanel gridPanel, int firstFillerSize) {
-		
-		log("createRightPartLine2..");
-		//--- First filler
-		gridPanel.addFiller(firstFillerSize);
-		
-    	//--- Label
-		Label label = new Label(gridPanel.getPanel(), SWT.NULL);
-    	//label = new Label(group1, SWT.BORDER );
-    	label.setText("Templates bundle : ");
-    	label.setSize(100, 20); // width, height
-    	
-		log("create BundleComboBox...");
-    	new BundleComboBox(gridPanel.getPanel(), 0, getRepositoryEditor() );
-		log("BundleComboBox created.");
-	}
+//	//----------------------------------------------------------------------------------------------
+//	private void createRightPartLine2(GridPanel gridPanel, int firstFillerSize) {
+//		
+//		log("createRightPartLine2..");
+//		//--- First filler
+//		gridPanel.addFiller(firstFillerSize);
+//		
+//    	//--- Label
+//		Label label = new Label(gridPanel.getPanel(), SWT.NULL);
+//    	//label = new Label(group1, SWT.BORDER );
+//    	label.setText("Templates bundle : ");
+//    	label.setSize(100, 20); // width, height
+//    	
+//		log("create BundleComboBox...");
+//    	new BundleComboBox(gridPanel.getPanel(), 0, getRepositoryEditor() );
+//		log("BundleComboBox created.");
+//	}
 	
 	//----------------------------------------------------------------------------------------------
 	/* (non-Javadoc)
@@ -441,7 +460,7 @@ import org.telosys.tools.repository.model.RepositoryModel;
 		return table;
 	}
 	//----------------------------------------------------------------------------------------------
-	private Table createTargetsTable(Composite composite)
+	private Table createRightPartTableTargets(Composite composite)
 	{
 		log(this, "createTableTargetsList(..)..." );
 		
@@ -520,8 +539,8 @@ import org.telosys.tools.repository.model.RepositoryModel;
 	{
 		log("refreshTargetsTable");
 
-		//--- Re-populate the SWT table
-		//populateTargetsTable();
+//		//--- Re-populate the SWT table
+		_comboBundles.refresh();
 		populateTargetsTable(targetslist);
 	}
 

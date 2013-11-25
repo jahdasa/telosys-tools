@@ -11,24 +11,84 @@ import org.telosys.tools.eclipse.plugin.editors.dbrep.RepositoryEditor;
 
 public class RefreshButton {
 
-	private final static int  BUTTON_HEIGHT =  26 ;
-	private final static int  BUTTON_WIDTH  =  74 ; // 80 ;
+	public final static int  BUTTON_HEIGHT =  26 ;
+	public final static int  BUTTON_WIDTH  =  90 ; // 80 ;
 	
 	private final Button           _button ;
 	private final RepositoryEditor _editor ;
 	
+	/**
+	 * Creates a "Refresh" button in the given Composite with a "GridData" LayoutData
+	 * @param parent
+	 * @param editor
+	 */
 	public RefreshButton(Composite parent, RepositoryEditor editor) {
+		super();
+		_editor = editor ; // v 2.0.7
+		_button = new Button(parent, SWT.NONE);
+		
+		GridData gridData = new GridData (BUTTON_WIDTH, BUTTON_HEIGHT) ;
+		// no effect
+		//gridData.grabExcessVerticalSpace = false ; // default is false
+		//gridData.minimumHeight = 2 ;
+		//gridData.verticalIndent= 0 ;
+//		gridData.verticalAlignment   = SWT.BEGINNING ;
+//		gridData.horizontalAlignment = SWT.BEGINNING ;
+		gridData.verticalAlignment   = GridData.BEGINNING ;
+		gridData.horizontalAlignment = GridData.BEGINNING ;
+		init(gridData);
+	}
+	
+	/**
+	 * Creates a "Refresh" button in the given Composite with a specific LayoutData
+	 * @param parent
+	 * @param layoutData
+	 * @param editor
+	 */
+	public RefreshButton(Composite parent, Object layoutData, RepositoryEditor editor) {
 		super();
 
 		_editor = editor ; // v 2.0.7
 		
 		_button = new Button(parent, SWT.NONE);
+		
+		/***
 		_button.setText("Refresh");
 		_button.setToolTipText("Reload targets from file");
 
 		_button.setImage( PluginImages.getImage(PluginImages.REFRESH ) );
 		
-		_button.setLayoutData ( new GridData (BUTTON_WIDTH, BUTTON_HEIGHT) );
+		GridData gridData = new GridData (BUTTON_WIDTH, BUTTON_HEIGHT) ;
+		// no effect
+		//gridData.grabExcessVerticalSpace = false ; // default is false
+		//gridData.minimumHeight = 2 ;
+		//gridData.verticalIndent= 0 ;
+		gridData.verticalAlignment = SWT.BEGINNING ;
+		gridData.horizontalAlignment = SWT.BEGINNING ;
+		_button.setLayoutData ( gridData );
+		
+		_button.addSelectionListener(new SelectionListener()  // v 2.0.7
+		{
+	        public void widgetSelected(SelectionEvent arg0)
+	        {
+	        	//--- Reload the targets list
+	        	_editor.refreshAllTargetsTablesFromConfigFile();
+	        }
+	        public void widgetDefaultSelected(SelectionEvent arg0)
+	        {
+	        }
+	    });
+		***/
+		init(layoutData);
+	}
+	
+	private void init(Object layoutData) {
+		_button.setText("Refresh");
+		_button.setToolTipText("Reload bundles and templates from the filesystem");
+
+		_button.setImage( PluginImages.getImage(PluginImages.REFRESH ) );
+		
+		_button.setLayoutData ( layoutData );
 		
 		_button.addSelectionListener(new SelectionListener()  // v 2.0.7
 		{
