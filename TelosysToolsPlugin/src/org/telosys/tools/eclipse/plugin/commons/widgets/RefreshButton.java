@@ -52,33 +52,6 @@ public class RefreshButton {
 		
 		_button = new Button(parent, SWT.NONE);
 		
-		/***
-		_button.setText("Refresh");
-		_button.setToolTipText("Reload targets from file");
-
-		_button.setImage( PluginImages.getImage(PluginImages.REFRESH ) );
-		
-		GridData gridData = new GridData (BUTTON_WIDTH, BUTTON_HEIGHT) ;
-		// no effect
-		//gridData.grabExcessVerticalSpace = false ; // default is false
-		//gridData.minimumHeight = 2 ;
-		//gridData.verticalIndent= 0 ;
-		gridData.verticalAlignment = SWT.BEGINNING ;
-		gridData.horizontalAlignment = SWT.BEGINNING ;
-		_button.setLayoutData ( gridData );
-		
-		_button.addSelectionListener(new SelectionListener()  // v 2.0.7
-		{
-	        public void widgetSelected(SelectionEvent arg0)
-	        {
-	        	//--- Reload the targets list
-	        	_editor.refreshAllTargetsTablesFromConfigFile();
-	        }
-	        public void widgetDefaultSelected(SelectionEvent arg0)
-	        {
-	        }
-	    });
-		***/
 		init(layoutData);
 	}
 	

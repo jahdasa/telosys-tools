@@ -36,11 +36,11 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.commons.javatypes.JavaTypes;
 import org.telosys.tools.commons.javatypes.JavaTypesManager;
-import org.telosys.tools.commons.jdbctypes.MetadataUtil;
 import org.telosys.tools.eclipse.plugin.commons.MsgBox;
 import org.telosys.tools.eclipse.plugin.commons.PluginImages;
 import org.telosys.tools.eclipse.plugin.commons.Util;
 import org.telosys.tools.eclipse.plugin.commons.listeners.OpenTemplateFileInEditor;
+import org.telosys.tools.eclipse.plugin.commons.widgets.BundleComboBox;
 import org.telosys.tools.eclipse.plugin.commons.widgets.GenerateButton;
 import org.telosys.tools.eclipse.plugin.commons.widgets.GridPanel;
 import org.telosys.tools.eclipse.plugin.commons.widgets.RefreshButton;
@@ -108,7 +108,7 @@ import org.telosys.tools.repository.model.RepositoryModel;
 	private Table  _tableSpecificTargets = null ;
 	
 	private SelectDeselectButtons _buttonsSelectDeselect = null ;
-	
+	private BundleComboBox  _comboBundles = null ;
 	private Button _buttonGenerate = null ;
 
 	private final List<TargetDefinition> initialTargetsList ; // v 2.0.7
@@ -532,43 +532,12 @@ import org.telosys.tools.repository.model.RepositoryModel;
 		Composite tabContent = createTabFolderContainer(tabFolder);
 		
 		
-//	    Label label = null ;
-
-//	    //---------- Standard Targets
-//
-//	    //----- Label 1
-//	    label = new Label(tabContent, SWT.NULL );
-//	    label.setText("Standard targets ");
-//	    
-//	    //----- Table 1 
-//	    GridData gd1 = new GridData (GridData.FILL_HORIZONTAL);
-//	    gd1.minimumHeight = 90 ; // 80 ;
-//	    gd1.heightHint    = 90 ; // 80 ;
-//	    gd1.minimumWidth  = 500 ;
-//	    //gd1.grabExcessVerticalSpace = true ;
-//	    _tableStandardTargets = createTableStandardTargets(tabContent); 
-//	    _tableStandardTargets.setLayoutData (gd1);
-
-	    //---------- Specific Targets
-
-//	    //----- Label 2
-//	    label = new Label(tabContent, SWT.NULL );
-//	    label.setText("Specific targets ");
-
-	    //---------- Buttons
-//	    Composite buttonsPanel = createButtonsPanel(tabContent);
-//	    Point buttonsPanelSize = buttonsPanel.getSize();
+	    //----- Buttons
 	    createButtonsPanel(tabContent);
 	    
-		//----- Table 2 
-//	    GridData gd2 = new GridData (GridData.FILL_HORIZONTAL);
-//	    gd2.minimumHeight = 400 ; //300 ;
-//	    gd2.minimumWidth  = 500 ;
-//	    gd2.heightHint    = 400 ; // 200 ;
+		//----- Targets Table 
 		_tableSpecificTargets = createTableGenerationTargets( tabContent );
-//		_tableSpecificTargets.setLayoutData (gd2);
 		
-//		_tableSpecificTargets.setLayoutData ( createStandardTableGridData() );
 		GridData gridData = createStandardTableGridData() ;
 		int heightCorrection = 40 ; // NOT OK WITH PANEL SIZE : buttonsPanelSize.y ; // y = height 
 		gridData.heightHint    = gridData.heightHint    - heightCorrection ;
@@ -580,36 +549,26 @@ import org.telosys.tools.repository.model.RepositoryModel;
 		_buttonsSelectDeselect.setTable(_tableSpecificTargets);
 		
 		//populateTableGenerationTargets(_tableSpecificTargets);		
-		populateTableGenerationTargets(_tableSpecificTargets, initialTargetsList); // v 2.0.7 		
+		//populateTableGenerationTargets(_tableSpecificTargets, initialTargetsList); // v 2.0.7 		
+		_comboBundles.refresh(); 
 		
 	}
 	//----------------------------------------------------------------------------------------------
 	private Composite createButtonsPanel(Composite composite) 
 	{		
-		GridPanel gridPanel = new GridPanel(composite, 7); // 7 columns
+		GridPanel gridPanel = new GridPanel(composite, 8); // 8 columns
 		
 		_buttonsSelectDeselect = new SelectDeselectButtons( gridPanel.getPanel() ) ; // 2 buttons
 
-		gridPanel.addFiller(200); // 1 filler
+		gridPanel.addFiller(50); // 1 filler
+		
+		new RefreshButton(gridPanel.getPanel(), getRepositoryEditor() );  // 1 button // v 2.0.7
+
+		_comboBundles = new BundleComboBox(gridPanel.getPanel(), getRepositoryEditor() ); 
 		
 		new TargetsButton(gridPanel.getPanel(), this.getRepositoryEditor(), getProject() );  // 1 button
 			
-//		RefreshButton refreshButton = new RefreshButton(gridPanel.getPanel());  // 1 button
-//		refreshButton.addSelectionListener(new SelectionListener() 
-//    	{
-//            public void widgetSelected(SelectionEvent arg0)
-//            {
-//            	//--- Reload the targets list
-//            	RepositoryEditor editor = getRepositoryEditor();
-//            	editor.refreshAllTargetsTablesFromConfigFile();
-//            }
-//            public void widgetDefaultSelected(SelectionEvent arg0)
-//            {
-//            }
-//        });
-		new RefreshButton(gridPanel.getPanel(), getRepositoryEditor() );  // 1 button // v 2.0.7
-
-		gridPanel.addFiller(200); // 1 filler
+		gridPanel.addFiller(50); // 1 filler
 		
 		GenerateButton generateButton = new GenerateButton(gridPanel.getPanel()); // 1 button
 		generateButton.addSelectionListener( new SelectionListener() 
@@ -636,6 +595,7 @@ import org.telosys.tools.repository.model.RepositoryModel;
 	protected void refreshTargetsTable(List<TargetDefinition> targetslist)	
 	{
 		log("refreshTargetsTable");
+		_comboBundles.refresh();
 		//--- Re-populate the SWT table
 		//populateTableGenerationTargets(_tableSpecificTargets);
 		populateTableGenerationTargets(_tableSpecificTargets, targetslist);
