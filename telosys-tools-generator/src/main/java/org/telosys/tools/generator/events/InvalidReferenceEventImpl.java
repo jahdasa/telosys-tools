@@ -43,7 +43,7 @@ public class InvalidReferenceEventImpl implements InvalidReferenceEventHandler {
 	public Object invalidGetMethod(Context context, String reference,
 			Object object, String property, Info info) {
 		if ( "$const.NULL".equals(reference) ) return null ;
-		throw new GeneratorContextException( errorMsg(info) + reference + " : get '" + property + "'");
+		throw new GeneratorContextException( errorMsg(info) + reference + " : get '" + property + "'", info);
 	}
 
 	/**
@@ -53,7 +53,7 @@ public class InvalidReferenceEventImpl implements InvalidReferenceEventHandler {
 	 */
 	public boolean invalidSetMethod(Context context, String leftreference,
 			String rightreference, Info info) {
-		throw new GeneratorContextException( errorMsg(info) + " : set '" + leftreference + "' - '" + rightreference + "'");
+		throw new GeneratorContextException( errorMsg(info) + " : set '" + leftreference + "' - '" + rightreference + "'", info);
 	}
 
 	/**
@@ -62,7 +62,7 @@ public class InvalidReferenceEventImpl implements InvalidReferenceEventHandler {
 	 */
 	public Object invalidMethod(Context context, String reference, Object object,
 			String method, Info info) {
-		throw new GeneratorContextException( errorMsg(info) + reference + " : method '" + method + "'");
+		throw new GeneratorContextException( errorMsg(info) + reference + " : method '" + method + "'", info );
 	}
 	
 	private String errorMsg(Info info) {
