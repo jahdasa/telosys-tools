@@ -33,20 +33,26 @@ import org.telosys.tools.repository.model.RepositoryModel;
  */
 public class GenerationTaskWithProgress implements IRunnableWithProgress 
 {
-	private final LinkedList<String>        _entities ;
+	private final static String ENTITY_NONE = "(no entity)" ;
+	private final static String NO_TEMPLATE = "(no template)" ;
+	
+	private final LinkedList<String>           _entities ;
 	private final LinkedList<TargetDefinition> _genericTargets ;
 	private final RepositoryModel      _repositoryModel ;
 	private final IGeneratorConfig     _generatorConfig ;
 	private final IProject             _project ;
 	private final TelosysToolsLogger   _logger ;
 
-	private int   _result = 0 ;
+	//private String _currentEntityName = ENTITY_NONE ;
+	private Target _currentTarget = null ;
+	
+	private int    _result = 0 ;
 	
 	//--------------------------------------------------------------------------------------------------
 	/**
 	 * Constructor
 	 * @param entities
-	 * @param genericTargets
+	 * @param targets
 	 * @param repositoryModel
 	 * @param generatorConfig
 	 * @param project
@@ -55,7 +61,7 @@ public class GenerationTaskWithProgress implements IRunnableWithProgress
 	 */
 	public GenerationTaskWithProgress(
 			LinkedList<String> entities, 
-			LinkedList<TargetDefinition> genericTargets,
+			LinkedList<TargetDefinition> targets,
 			RepositoryModel repositoryModel, 
 			IGeneratorConfig generatorConfig, 
 			IProject project,
@@ -65,7 +71,7 @@ public class GenerationTaskWithProgress implements IRunnableWithProgress
 		super();
 		
 		_entities = entities ;
-		_genericTargets = genericTargets ;
+		_genericTargets = targets ;
 		_repositoryModel = repositoryModel ;
 		_generatorConfig = generatorConfig ;
 		_project  = project ;
@@ -92,18 +98,17 @@ public class GenerationTaskWithProgress implements IRunnableWithProgress
 		//--- Build the list of "ONCE" targets ( NEW in version 2.0.3 / Feb 2013 )
 		List<TargetDefinition> onceTargets   = new LinkedList<TargetDefinition>() ; 
 		List<TargetDefinition> entityTargets = new LinkedList<TargetDefinition>() ; 
-		for ( TargetDefinition genericTarget : _genericTargets ) {
-			if ( genericTarget.isOnce() ) {
-				onceTargets.add(genericTarget);
+		for ( TargetDefinition targetDefinition : _genericTargets ) {
+			if ( targetDefinition.isOnce() ) {
+				onceTargets.add(targetDefinition);
 			}
 			else {
-				entityTargets.add(genericTarget);
+				entityTargets.add(targetDefinition);
 			}
 		}
 		
 		_result = 0 ;
 		//--- Number of generations expected
-		//int totalWorkTasks = _entities.size() * _genericTargets.size() ;
 		int totalWorkTasks = ( _entities.size() * entityTargets.size() ) + onceTargets.size() ;
 		
 		//--- Build the selected entities list ( NEW in version 2.0.3 / Feb 2013 )
@@ -124,27 +129,22 @@ public class GenerationTaskWithProgress implements IRunnableWithProgress
 			
 		//--- For each entity
 		for ( String entityName : _entities ) {
+			
 			_logger.log(this, "run : entity " + entityName );
 			Entity entity = _repositoryModel.getEntityByName(entityName);
 			if ( entity != null )
 			{
 				//--- For each "entity target" 
-				//for ( GenericTarget genericTarget : _genericTargets ) {
-				for ( TargetDefinition genericTarget : entityTargets ) {
+				for ( TargetDefinition targetDefinition : entityTargets ) {
 					
 					//--- Get a specialized target for the current entity
-//					Target target = new Target( genericTarget, entity.getName(), 
-//							entity.getBeanJavaClass(), _generatorConfig.getProjectVariables() );
-					Target target = new Target( genericTarget, entity.getName(), 
+					Target target = new Target( targetDefinition, entity.getName(), 
 							entity.getBeanJavaClass(), projectVariables );
 					
 					generateTarget(progressMonitor, target, selectedEntities); 
 					
 				}
-//				//--- One TARGET done
-//				// Notifies that a given number of work unit of the main task has been completed. 
-//				// Note that this amount represents an installment, as opposed to a cumulative amount of work done to date.
-//				progressMonitor.worked(1); // One unit done (not cumulative)
+				//--- One TARGET done
 			}
 			else
 			{
@@ -155,9 +155,8 @@ public class GenerationTaskWithProgress implements IRunnableWithProgress
 		} // end of "For each entity"
 		
 		//--- Finally, generate the "ONCE" targets ( NEW in version 2.0.3 / Feb 2013 )
-		for ( TargetDefinition genericTarget : onceTargets ) {
-			//Target target = new Target( genericTarget, "", "", _generatorConfig.getProjectVariables() );
-			Target target = new Target( genericTarget, "", "", projectVariables );
+		for ( TargetDefinition targetDefinition : onceTargets ) {
+			Target target = new Target( targetDefinition, "", "", projectVariables );
 			generateTarget(progressMonitor, target, selectedEntities); 
 		}
 		
@@ -176,6 +175,8 @@ public class GenerationTaskWithProgress implements IRunnableWithProgress
 	{
 
 		_logger.log(this, "Generate TARGET : entity name '" + target.getEntityName() + "' - target file '" + target.getFile() + "' ");
+		
+		_currentTarget = target ;
 		
 		progressMonitor.subTask("Entity '" + target.getEntityName() + "' : target file '" + target.getFile() + "' ");
 		
@@ -214,6 +215,35 @@ public class GenerationTaskWithProgress implements IRunnableWithProgress
 		// Note that this amount represents an installment, as opposed to a cumulative amount of work done to date.
 		progressMonitor.worked(1); // One unit done (not cumulative)
 
+	}
+	
+	//--------------------------------------------------------------------------------------------------
+	/**
+	 * Returns the name of the entity currently under generation 
+	 * @return
+	 */
+	public String getCurrentEntityName() {
+		if ( _currentTarget == null ) return ENTITY_NONE ;
+		String entityName = _currentTarget.getEntityName() ;
+		if ( entityName == null ) {
+			return ENTITY_NONE ;
+		}
+		else if ( entityName.trim().length() == 0 ) {
+			return ENTITY_NONE ;
+		}
+		else {
+			return entityName ;
+		}
+	}
+	
+	//--------------------------------------------------------------------------------------------------
+	/**
+	 * Returns the name of the template currently in use for generation 
+	 * @return
+	 */
+	public String getCurrentTemplateName() {
+		if ( _currentTarget == null ) return NO_TEMPLATE ;
+		return _currentTarget.getTemplate() ;
 	}
 	
 	//--------------------------------------------------------------------------------------------------

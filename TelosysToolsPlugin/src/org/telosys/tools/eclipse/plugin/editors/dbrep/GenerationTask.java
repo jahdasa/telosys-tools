@@ -95,8 +95,8 @@ public class GenerationTask {
 			MsgBox.info("Normal end of generation\n\n" + generationTask.getResult() + " file(s) generated.");
 			
 		} catch (InvocationTargetException invocationTargetException) {
-			//MsgBox.error("Error during generation", e.getCause() );
-			showGenerationError(invocationTargetException); // v 2.0.7
+			showGenerationError(invocationTargetException, 
+					generationTask.getCurrentTemplateName(), generationTask.getCurrentEntityName() ); // v 2.0.7
 		} catch (InterruptedException e) {
 			MsgBox.info("Generation interrupted");
 		}
@@ -113,64 +113,68 @@ public class GenerationTask {
 	 * @param invocationTargetException
 	 * @since 2.0.7
 	 */
-	private void showGenerationError(InvocationTargetException invocationTargetException) {
+	private void showGenerationError(InvocationTargetException invocationTargetException, String templateName, String entityName) {
 		Throwable cause = invocationTargetException.getCause();
 		if ( cause instanceof GeneratorException ) {
 			GeneratorException generatorException = (GeneratorException) cause ;
 			Throwable generatorExceptionCause = generatorException.getCause() ;
 			
 			if ( generatorExceptionCause instanceof DirectiveException ) {
-				//--- DIRECTIVE ERROR
+				//--- DIRECTIVE ERROR ( Telosys Tools exception )
+				// eg : #using ( "varNotDefined" )
 				DirectiveException directiveException = (DirectiveException) generatorExceptionCause ;
-				String msg = "Directive error ( #" + directiveException.getDirectiveName() + " ) \n\n" 
-					+ directiveException.getMessage() 
-					+ "\n\n" 
-					+ "Template : " + directiveException.getTemplateName() 
-					+ " ( line " + directiveException.getLineNumber() + " )" ;  
-				MsgBox.error( msg );
+				String msg1 = buildErrorMessageHeader( directiveException.getTemplateName(), 
+						directiveException.getLineNumber(), entityName);
+				
+				String msg2 = "Directive  #" + directiveException.getDirectiveName() + " \n\n" 
+					+ directiveException.getMessage() ;
+
+				MsgBox.error( "Directive error", msg1 + msg2 );
 			}
 			else if ( generatorExceptionCause instanceof ParseErrorException ) {
-				//--- TEMPLATE PARSING ERROR
+				//--- TEMPLATE PARSING ERROR ( Velocity exception )
+				// eg : #set(zzz)
 				ParseErrorException parseErrorException = (ParseErrorException) generatorExceptionCause ;
-				String msg = "Template parsing error \n\n" 
-					+ parseErrorException.getMessage() 
-					+ "\n\n" 
-					+ "Template : " + parseErrorException.getTemplateName() 
-					+ " ( line " + parseErrorException.getLineNumber() + " )" 
-					+ "\n\n" 
-					+ "Invalid syntax : \n" + parseErrorException.getInvalidSyntax()  
+				String msg1 = buildErrorMessageHeader( parseErrorException.getTemplateName(), 
+						parseErrorException.getLineNumber(), entityName);
+				String msg2 = parseErrorException.getMessage() 
+//					+ "\n\n" 
+//					+ "Invalid syntax : \n" + parseErrorException.getInvalidSyntax()  // Always null
 					;
-				MsgBox.error( msg );
+				MsgBox.error( "Template parsing error", msg1 + msg2 );
 			}
 			else if ( generatorExceptionCause instanceof MethodInvocationException ) {
-				//--- METHOD INVOCATION
+				//--- METHOD INVOCATION ( Velocity exception )
+				// eg : $fn.isNotVoid("") : collection argument expected 
 				MethodInvocationException methodInvocationException = (MethodInvocationException) generatorExceptionCause ;
-				String msg = "Method invocation error \n\n" 
-					+ methodInvocationException.getMessage() 
-					+ "\n\n" 
-					+ "Template : " + methodInvocationException.getTemplateName() 
-					+ " ( line " + methodInvocationException.getLineNumber() + " )" 
+				String msg1 = buildErrorMessageHeader( methodInvocationException.getTemplateName(), 
+						methodInvocationException.getLineNumber(), entityName);
+				String msg2 =  methodInvocationException.getMessage() 
 					+ "\n\n" 
 					+ "Method name : \n" + methodInvocationException.getMethodName()
 					+ "Reference name : \n" + methodInvocationException.getReferenceName()
 					;
-				MsgBox.error( msg );
+				MsgBox.error( "Method invocation error", msg1 + msg2 );
 			}			
 			else if ( generatorExceptionCause instanceof ResourceNotFoundException ) {
-				//--- RESOURCE NOT FOUND
+				//--- RESOURCE NOT FOUND ( Velocity exception )
 				ResourceNotFoundException resourceNotFoundException = (ResourceNotFoundException) generatorExceptionCause ;
-				String msg = "Resource not found \n\n" 
-					+ resourceNotFoundException.getMessage() 
-					;
-				MsgBox.error( msg );
+				String msg1 = buildErrorMessageHeader( templateName, 0, entityName);
+				String msg2 = resourceNotFoundException.getMessage(); 
+				MsgBox.error( "Resource not found", msg1 + msg2 );
 			}			
 			else if ( generatorExceptionCause instanceof GeneratorContextException ) {
-				//--- CONTEXT ERROR
+				//--- CONTEXT ERROR ( Telosys Tools exception )
+				// Reflection error encapsulation
+				// eg : $entity.tototo / $entity.getTTTTTTTTT() / $entity.name.toAAAAA()
+				// or errors due to invalid model 
 				GeneratorContextException generatorContextException = (GeneratorContextException) generatorExceptionCause ;
-				String msg = "Context error \n\n" 
-					+ generatorContextException.getMessage() 
-					;
-				MsgBox.error( msg );
+				// generatorContextException.getTemplateName() not always know the template => use templateName arg
+				String msg1 = buildErrorMessageHeader( templateName,  // keep templateName here
+						generatorContextException.getLineNumber(), entityName); 
+				String msg2 = generatorContextException.getMessage() ;
+				MsgBox.error( "Context error", msg1 + msg2 );
+				
 			}
 			else {
 				MsgBox.error("Error during generation", cause );
@@ -182,4 +186,14 @@ public class GenerationTask {
 		}
 		
 	}
+	
+	private String buildErrorMessageHeader(String template, int line, String entity ) {
+		String lineMsg = "" ;
+		if ( line > 0 ) {
+			lineMsg = "  ( line " + line + " )" ;
+		}
+		return "Template \"" + template + "\"" + lineMsg + "  -  Entity : \"" 
+				+ entity + "\" \n\n" ;
+	}
+	
 }
