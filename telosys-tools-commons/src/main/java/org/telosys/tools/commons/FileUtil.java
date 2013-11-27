@@ -157,12 +157,12 @@ public class FileUtil {
 	 * @throws Exception
 	 */
 	public static void copyFolder( File source, File destination, boolean overwrite ) throws Exception {
-		System.out.println("Copy " + source + " --> " + destination);
+		//System.out.println("Copy " + source + " --> " + destination);
 	 	if ( source.isDirectory() ) {
 	 		 
     		//--- If the destination directory doesn't exist create it
     		if ( ! destination.exists() ) {
-    			System.out.println(" - MkDir " + destination + " ...");
+    			//System.out.println(" - MkDir " + destination + " ...");
     			destination.mkdir();
     		}
  
@@ -182,7 +182,7 @@ public class FileUtil {
     		}
     		else {
     			//--- Copy file to file
-    			System.out.println(" - Copy to file " + destination + " ...");
+    			//System.out.println(" - Copy to file " + destination + " ...");
         		try {
     				InputStream  inputStream  = new FileInputStream(source);
     				OutputStream outputStream = new FileOutputStream(destination);
