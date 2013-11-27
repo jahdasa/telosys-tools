@@ -73,18 +73,18 @@ public class Target
 	}
 	/**
 	 * Constructor
-	 * @param genericTarget  the initial generic target as defined in the targets configuration file
+	 * @param targetDefinition  the initial target as defined in the targets configuration file
 	 * @param entityName  the name of the entity (as defined in the repository model)
 	 * @param entityJavaClassName 
 	 * @param variables  the project's specific variables to be applied 
 	 */
-	public Target( TargetDefinition genericTarget, String entityName, String entityJavaClassName, Variable[] variables ) 
+	public Target( TargetDefinition targetDefinition, String entityName, String entityJavaClassName, Variable[] variables ) 
 	{
 		super();
 		
 		//--- Generic target informations
-		this.targetName = genericTarget.getName();
-		this.template = genericTarget.getTemplate();
+		this.targetName = targetDefinition.getName();
+		this.template = targetDefinition.getTemplate();
 		
 		//--- Specialization for the given entity
 		this.entityName = entityName ;
@@ -96,10 +96,10 @@ public class Target
 		if ( variables != null ) {
 			variablesManager = new VariablesManager( variables );
 		}
-		this.file   = replaceVariables( genericTarget.getFile(),   entityJavaClassName, variablesManager );
+		this.file   = replaceVariables( targetDefinition.getFile(),   entityJavaClassName, variablesManager );
 		
 		variablesManager.transformPackageVariablesToDirPath(); // for each variable ${XXXX_PKG} : replace '.' by '/' 
-		this.folder = replaceVariables( genericTarget.getFolder(), entityJavaClassName, variablesManager );
+		this.folder = replaceVariables( targetDefinition.getFolder(), entityJavaClassName, variablesManager );
 	}
 
 	/**
@@ -306,19 +306,52 @@ public class Target
 	@VelocityNoDoc
 	public String getOutputFileNameInFileSystem(String projectLocation)
 	{
-		String s = getOutputFileNameInProject();
+//		String s = getOutputFileNameInProject();
+//		if ( projectLocation != null )
+//		{
+//			if ( projectLocation.endsWith("/") || projectLocation.endsWith("\\") )
+//			{
+//				return projectLocation + s ;
+//			}
+//			else
+//			{
+//				return projectLocation + "/" + s ;
+//			}
+//		}
+//		return "/" + s ;
+		String fileInProject = getOutputFileNameInProject() ;
+		return buildFullPath(projectLocation, fileInProject ) ;
+	}
+	
+	/**
+	 * Returns the absolute full path of the folder in the file system <br>
+	 * where to generate the target (using the given project location)
+	 * ie : "C:/tmp/project/src/org/demo"
+	 * @param projectLocation the project location ( ie "C:/tmp/project" )
+	 * @return
+	 * @since 2.0.7
+	 */
+	@VelocityNoDoc
+	public String getOutputFolderInFileSystem(String projectLocation)
+	{
+		String folderInProject = getFolder() ;
+		return buildFullPath(projectLocation, folderInProject ) ;
+	}
+
+	private String buildFullPath(String projectLocation, String fileOrFolder)
+	{
 		if ( projectLocation != null )
 		{
 			if ( projectLocation.endsWith("/") || projectLocation.endsWith("\\") )
 			{
-				return projectLocation + s ;
+				return projectLocation + fileOrFolder ;
 			}
 			else
 			{
-				return projectLocation + "/" + s ;
+				return projectLocation + "/" + fileOrFolder ;
 			}
 		}
-		return "/" + s ;
+		return "/" + fileOrFolder ;
 	}
 	
 }
