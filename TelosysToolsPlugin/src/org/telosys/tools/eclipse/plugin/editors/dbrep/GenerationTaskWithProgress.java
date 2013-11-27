@@ -28,7 +28,7 @@ import org.telosys.tools.repository.model.RepositoryModel;
  * Eclipse runnable task with a progress bar 
  * for code generation 
  *  
- * @author L. Guerin
+ * @author Laurent Guerin
  *
  */
 public class GenerationTaskWithProgress implements IRunnableWithProgress 
@@ -111,8 +111,7 @@ public class GenerationTaskWithProgress implements IRunnableWithProgress
 		//--- Number of generations expected
 		int totalWorkTasks = ( _entities.size() * entityTargets.size() ) + onceTargets.size() ;
 		
-		//--- Build the selected entities list ( NEW in version 2.0.3 / Feb 2013 )
-		// New [2013-02-04]
+		//--- Build the selected entities list 
 		List<JavaBeanClass> selectedEntities;
 		try {
 			selectedEntities = RepositoryModelUtil.buildJavaBeanClasses(_entities, 

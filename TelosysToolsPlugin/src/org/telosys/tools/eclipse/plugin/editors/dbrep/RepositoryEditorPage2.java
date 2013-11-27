@@ -9,7 +9,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -50,6 +50,7 @@ import org.telosys.tools.repository.model.RepositoryModel;
 	private Table  _tableTargets = null ;
 	
 	private BundleComboBox  _comboBundles = null ;
+	private Button          _checkboxStaticResources = null ;
 	
 	private final List<TargetDefinition> initialTargetsList ; // v 2.0.7
 	
@@ -190,7 +191,7 @@ import org.telosys.tools.repository.model.RepositoryModel;
 		Composite panelTopRight = new Composite(formBody, SWT.NONE );
 		
 		//--- Panel layout
-		GridLayout gridLayout = new GridLayout(3, false) ; // 3 columns
+		GridLayout gridLayout = new GridLayout(5, false) ; // 5 columns
 		gridLayout.marginTop = 0;
 		gridLayout.marginBottom = 0;
 		gridLayout.verticalSpacing = 0 ;
@@ -208,20 +209,24 @@ import org.telosys.tools.repository.model.RepositoryModel;
 		panelGridData.verticalIndent = 0 ;
 		panelTopRight.setLayoutData(panelGridData);
 		
-		//--- Button "Refresh"
+		//--- (1) Button "Refresh"
 		new RefreshButton(panelTopRight, getRepositoryEditor());  // 1 button // v 2.0.7
 
-		//--- Filler 
-		int fillerWidth = RIGHT_PART_WIDTH - GenerateButton.BUTTON_WIDTH - RefreshButton.BUTTON_WIDTH ;
-		Label labelFiller = new Label(panelTopRight, SWT.NONE);
-		labelFiller.setText("");
-		GridData fillerGridData = new GridData();
-		fillerGridData.horizontalAlignment = GridData.FILL ; // All the cell width
-		fillerGridData.verticalIndent = 0 ;
-		fillerGridData.widthHint = fillerWidth ; // Filler SIZE
-		labelFiller.setLayoutData( fillerGridData );
+		//--- (2) Filler 
+		//int fillerWidth = RIGHT_PART_WIDTH - GenerateButton.BUTTON_WIDTH - RefreshButton.BUTTON_WIDTH ;
+		int fillerWidth = 70 ;
+		createFillerInGridLayout(panelTopRight, fillerWidth);
+
+		//--- (3) Check box  
+		_checkboxStaticResources = new Button(panelTopRight, SWT.CHECK) ;
+		_checkboxStaticResources.setText("Copy static resources");
+		_checkboxStaticResources.setToolTipText("Generation also copy bundle resources \ninto the project (must be done once)");
+		// if ( _checkboxStaticResources.getSelection() )  
 		
-		//--- Button "Generate"
+		//--- (4) Filler 
+		createFillerInGridLayout(panelTopRight, fillerWidth);
+		
+		//--- (5) Button "Generate"
 		GenerateButton generateButton = new GenerateButton(panelTopRight); // 1 button
 		generateButton.addSelectionListener(new SelectionListener() 
     	{
@@ -240,6 +245,17 @@ import org.telosys.tools.repository.model.RepositoryModel;
         });
 	}
 	
+	//----------------------------------------------------------------------------------------------
+	private Label createFillerInGridLayout(Composite composite, int fillerWidth) {
+		Label labelFiller = new Label(composite, SWT.NONE);
+		labelFiller.setText("");
+		GridData fillerGridData = new GridData();
+		fillerGridData.horizontalAlignment = GridData.FILL ; // All the cell width
+		fillerGridData.verticalIndent = 0 ;
+		fillerGridData.widthHint = fillerWidth ; // Filler SIZE
+		labelFiller.setLayoutData( fillerGridData );
+		return labelFiller ;
+	}
 	//----------------------------------------------------------------------------------------------
 	/**
 	 * Create the cell (2:1) : Buttons "Select all/Unselect all" + Table of ENTITIES
