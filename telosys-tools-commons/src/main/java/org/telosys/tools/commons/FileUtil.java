@@ -149,4 +149,48 @@ public class FileUtil {
 		}
 	}
     
+	/**
+	 * Copy the source folder to the destination folder with all its content (recursively)
+	 * @param source
+	 * @param destination
+	 * @param overwrite
+	 * @throws Exception
+	 */
+	public static void copyFolder( File source, File destination, boolean overwrite ) throws Exception {
+		System.out.println("Copy " + source + " --> " + destination);
+	 	if ( source.isDirectory() ) {
+	 		 
+    		//--- If the destination directory doesn't exist create it
+    		if ( ! destination.exists() ) {
+    			System.out.println(" - MkDir " + destination + " ...");
+    			destination.mkdir();
+    		}
+ 
+    		//--- Get all the directory content
+    		for (String file : source.list() ) {
+    		   File srcFile = new File(source, file);
+    		   File destFile = new File(destination, file);
+    		   //--- recursive copy
+    		   copyFolder(srcFile,destFile, overwrite);
+    		}
+ 
+    	} else {
+    		//--- Source is a file
+    		if ( destination.exists() && ( overwrite == false ) ) {
+    			//--- Do not overwrite !
+    			return ;
+    		}
+    		else {
+    			//--- Copy file to file
+    			System.out.println(" - Copy to file " + destination + " ...");
+        		try {
+    				InputStream  inputStream  = new FileInputStream(source);
+    				OutputStream outputStream = new FileOutputStream(destination);
+    				copyAndClose(inputStream, outputStream);
+    			} catch (FileNotFoundException e) {
+    				throw new Exception("File not found", e);
+    			}
+    		}
+    	}
+	}
 }
