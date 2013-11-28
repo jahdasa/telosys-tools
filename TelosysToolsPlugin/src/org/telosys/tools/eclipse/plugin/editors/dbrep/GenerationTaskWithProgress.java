@@ -23,7 +23,7 @@ import org.telosys.tools.generator.context.Target;
 import org.telosys.tools.generator.target.TargetDefinition;
 import org.telosys.tools.repository.model.Entity;
 import org.telosys.tools.repository.model.RepositoryModel;
-import org.temp.ResourcesManager;
+import org.temp.CopyManager;
 
 /**
  * Eclipse runnable task with a progress bar 
@@ -180,14 +180,27 @@ public class GenerationTaskWithProgress implements IRunnableWithProgress
 	private void copyResourcesIfAny( List<TargetDefinition> resourcesTargetsDefinitions ) throws InvocationTargetException {
 		if ( resourcesTargetsDefinitions != null ) {
 			_logger.log(this, "run : copy resources " );
-			ResourcesManager resourcesManager = new ResourcesManager(_generatorConfig, _logger);
+//			ResourcesManager resourcesManager = new ResourcesManager(_generatorConfig, _logger);
+//			try {
+//				resourcesManager.copyResourcesInProject(resourcesTargetsDefinitions, true) ;
+//			} catch (GeneratorException e) {
+//				// if the "run" method must propagate a checked exception, 
+//				// it should wrap it inside an InvocationTargetException; 
+//				throw new InvocationTargetException(e);
+//			}
+			
+			// TODO *************
+/**
+			_generatorConfig.getProjectConfiguration();
+			CopyManager resourcesManager = new CopyManager(_project, _generatorConfig, _logger);
 			try {
-				resourcesManager.copyResourcesInProject(resourcesTargetsDefinitions, true) ;
+				resourcesManager.copyResourcesInProject(resourcesTargetsDefinitions) ;
 			} catch (GeneratorException e) {
 				// if the "run" method must propagate a checked exception, 
 				// it should wrap it inside an InvocationTargetException; 
 				throw new InvocationTargetException(e);
 			}
+***/
 		}
 		else {
 			_logger.log(this, "run : no resources to be copied" );
@@ -207,7 +220,8 @@ public class GenerationTaskWithProgress implements IRunnableWithProgress
 		//--- Possible multiple generated targets for one main target (with embedded generator)
 		LinkedList<Target> generatedTargets = new LinkedList<Target>();
 		try {
-			Generator generator = new Generator(target, _generatorConfig, _logger);
+			//Generator generator = new Generator(target, _generatorConfig, _logger);
+			Generator generator = new Generator(target, _generatorConfig, _repositoryModel, _logger); // v 2.0.7
 			generator.setSelectedEntitiesInContext(selectedEntities); // New [2013-02-04]
 			generator.generateTarget(target, _repositoryModel, generatedTargets);						
 			

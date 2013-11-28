@@ -118,7 +118,8 @@ public class WizardGeneratorProvider {
 		//--- Create the GENERATOR 
 		PluginLogger.log("getGenerator() : try to create a new Generator instance... " );
 		//Generator generator = new Generator(sTemplateFile, generatorConfig, logger);
-		Generator generator = new Generator(target, generatorConfig, logger); // [LGU] 2012-11-30
+		//Generator generator = new Generator(target, generatorConfig, logger); // [LGU] 2012-11-30
+		Generator generator = new Generator(target, generatorConfig, null, logger); // v 2.0.7
 		PluginLogger.log("getGenerator() : Generator instance created. " );
 
 		return generator ;
