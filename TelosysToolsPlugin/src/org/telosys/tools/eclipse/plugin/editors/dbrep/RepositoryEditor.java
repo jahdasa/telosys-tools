@@ -1,6 +1,7 @@
 package org.telosys.tools.eclipse.plugin.editors.dbrep;
 
 import java.io.File;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -8,7 +9,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
@@ -142,16 +142,18 @@ public class RepositoryEditor extends FormEditor
 	protected void addPages() {
 		PluginLogger.log(this, "addPages()..." );
 
-		//--- Get the initial list of targets/templates
-		List<TargetDefinition> targetsList = null ;
-		ProjectConfig projectConfig = getProjectConfig();
-		if ( projectConfig != null )
-		{
-			targetsList = projectConfig.getTemplates(null); // NB : the list can be null 
-		}
+//		//--- Get the initial list of targets/templates
+//		List<TargetDefinition> targetsList = null ;
+//		ProjectConfig projectConfig = getProjectConfig();
+//		if ( projectConfig != null )
+//		{
+//			targetsList = projectConfig.getTemplates(null); // NB : the list can be null 
+//		}
 
-		_page1 = new RepositoryEditorPage1(this, "RepositoryEditorPage1", PAGE_1_TITLE, targetsList);
-		_page2 = new RepositoryEditorPage2(this, "RepositoryEditorPage2", PAGE_2_TITLE, targetsList);
+		//_page1 = new RepositoryEditorPage1(this, "RepositoryEditorPage1", PAGE_1_TITLE, targetsList);
+		_page1 = new RepositoryEditorPage1(this, "RepositoryEditorPage1", PAGE_1_TITLE );
+		//_page2 = new RepositoryEditorPage2(this, "RepositoryEditorPage2", PAGE_2_TITLE, targetsList);
+		_page2 = new RepositoryEditorPage2(this, "RepositoryEditorPage2", PAGE_2_TITLE );
 		
 		IFormPage page3 = new RepositoryEditorPage3(this, "RepositoryEditorPage3", " Links between entities ");
 		IFormPage page4 = new RepositoryEditorPage4(this, "RepositoryEditorPage4", " Project configuration ");
@@ -290,15 +292,22 @@ public class RepositoryEditor extends FormEditor
 			//--- Reload from file
 			//projectConfig.refreshTemplates() ;
 			List<TargetDefinition> targetsList = projectConfig.getTemplates(_currentBundle);
-			//--- Refresh all the lists in the editor pages 
-			_page1.refreshTargetsTable(targetsList);
-			_page2.refreshTargetsTable(targetsList);
 			
-			// TODO : 
-//_page2.refreshBundleName(bundleName) ;		
-//			TableColumn c =_tableTargets.getColumn(1);
-//			c.setText(string)
-
+			//--- Build 2 lists of targets : templates targets and resources targets 
+			List<TargetDefinition> templatesTargets = new LinkedList<TargetDefinition>() ;
+			List<TargetDefinition> resourcesTargets = new LinkedList<TargetDefinition>() ;
+			for ( TargetDefinition t : targetsList ) {
+				if ( t.isResource() ) {
+					resourcesTargets.add(t) ;
+				}
+				else {
+					templatesTargets.add(t);
+				}
+			}
+			
+			//--- Refresh all the lists in the editor pages 
+			_page1.refreshTargetsTable(templatesTargets);
+			_page2.refreshTargetsTable(templatesTargets, resourcesTargets);
 		}
 	}
 	

@@ -23,6 +23,7 @@ import org.telosys.tools.generator.context.Target;
 import org.telosys.tools.generator.target.TargetDefinition;
 import org.telosys.tools.repository.model.Entity;
 import org.telosys.tools.repository.model.RepositoryModel;
+import org.temp.ResourcesManager;
 
 /**
  * Eclipse runnable task with a progress bar 
@@ -36,8 +37,9 @@ public class GenerationTaskWithProgress implements IRunnableWithProgress
 	private final static String ENTITY_NONE = "(no entity)" ;
 	private final static String NO_TEMPLATE = "(no template)" ;
 	
-	private final LinkedList<String>           _entities ;
-	private final LinkedList<TargetDefinition> _genericTargets ;
+	private final LinkedList<String>            _selectedEntities ;
+	private final LinkedList<TargetDefinition>  _selectedTargets ;
+	private final List<TargetDefinition>        _resourcesTargets ;
 	private final RepositoryModel      _repositoryModel ;
 	private final IGeneratorConfig     _generatorConfig ;
 	private final IProject             _project ;
@@ -51,8 +53,9 @@ public class GenerationTaskWithProgress implements IRunnableWithProgress
 	//--------------------------------------------------------------------------------------------------
 	/**
 	 * Constructor
-	 * @param entities
-	 * @param targets
+	 * @param selectedEntities
+	 * @param selectedTargets
+	 * @param resourcesTargets
 	 * @param repositoryModel
 	 * @param generatorConfig
 	 * @param project
@@ -60,31 +63,34 @@ public class GenerationTaskWithProgress implements IRunnableWithProgress
 	 * @throws TelosysPluginException
 	 */
 	public GenerationTaskWithProgress(
-			LinkedList<String> entities, 
-			LinkedList<TargetDefinition> targets,
-			RepositoryModel repositoryModel, 
-			IGeneratorConfig generatorConfig, 
-			IProject project,
-			TelosysToolsLogger logger
+			LinkedList<String>           selectedEntities, 
+			LinkedList<TargetDefinition> selectedTargets,
+			List<TargetDefinition>       resourcesTargets,
+			RepositoryModel              repositoryModel, 
+			IGeneratorConfig             generatorConfig, 
+			IProject                     project,
+			TelosysToolsLogger           logger
 			) throws TelosysPluginException
 	{
 		super();
 		
-		_entities = entities ;
-		_genericTargets = targets ;
-		_repositoryModel = repositoryModel ;
-		_generatorConfig = generatorConfig ;
+		_selectedEntities = selectedEntities ;
+		_selectedTargets  = selectedTargets ;
+		_resourcesTargets = resourcesTargets ; // can be null
+		_repositoryModel  = repositoryModel ;
+		_generatorConfig  = generatorConfig ;
 		_project  = project ;
-		_logger = logger ;
+		_logger   = logger ;
 		
-		if ( _entities == null ) throw new TelosysPluginException("_entities is null ");
-		if ( _genericTargets == null ) throw new TelosysPluginException("_genericTargets is null ");
-		if ( _repositoryModel == null ) throw new TelosysPluginException("_repositoryModel is null ");
-		if ( _generatorConfig == null ) throw new TelosysPluginException("_generatorConfig is null ");
-		if ( _project == null ) throw new TelosysPluginException("_project is null ");
-		if ( _logger == null ) throw new TelosysPluginException("_logger is null ");
+		if ( _selectedEntities == null ) throw new TelosysPluginException("_selectedEntities is null ");
+		if ( _selectedTargets  == null ) throw new TelosysPluginException("_selectedTargets is null ");
+		if ( _repositoryModel  == null ) throw new TelosysPluginException("_repositoryModel is null ");
+		if ( _generatorConfig  == null ) throw new TelosysPluginException("_generatorConfig is null ");
+		if ( _project == null )  throw new TelosysPluginException("_project is null ");
+		if ( _logger  == null )  throw new TelosysPluginException("_logger is null ");
 		
 		_logger.log(this, "Task created");
+		
 	}
 	
 	//--------------------------------------------------------------------------------------------------
@@ -98,7 +104,7 @@ public class GenerationTaskWithProgress implements IRunnableWithProgress
 		//--- Build the list of "ONCE" targets ( NEW in version 2.0.3 / Feb 2013 )
 		List<TargetDefinition> onceTargets   = new LinkedList<TargetDefinition>() ; 
 		List<TargetDefinition> entityTargets = new LinkedList<TargetDefinition>() ; 
-		for ( TargetDefinition targetDefinition : _genericTargets ) {
+		for ( TargetDefinition targetDefinition : _selectedTargets ) {
 			if ( targetDefinition.isOnce() ) {
 				onceTargets.add(targetDefinition);
 			}
@@ -109,12 +115,12 @@ public class GenerationTaskWithProgress implements IRunnableWithProgress
 		
 		_result = 0 ;
 		//--- Number of generations expected
-		int totalWorkTasks = ( _entities.size() * entityTargets.size() ) + onceTargets.size() ;
+		int totalWorkTasks = ( _selectedEntities.size() * entityTargets.size() ) + onceTargets.size() ;
 		
 		//--- Build the selected entities list 
 		List<JavaBeanClass> selectedEntities;
 		try {
-			selectedEntities = RepositoryModelUtil.buildJavaBeanClasses(_entities, 
+			selectedEntities = RepositoryModelUtil.buildJavaBeanClasses(_selectedEntities, 
 														_repositoryModel, _generatorConfig.getProjectConfiguration() );
 		} catch (GeneratorException e1) {
 			MsgBox.error("Cannot build selected entities ", e1);
@@ -125,9 +131,12 @@ public class GenerationTaskWithProgress implements IRunnableWithProgress
 		
 		// count = total number of work units into which the main task is been subdivided
 		progressMonitor.beginTask("Bulk generation in progress", totalWorkTasks ); 
-			
+		
+		//--- Copy the given resources (or do nothing if null)
+		copyResourcesIfAny(_resourcesTargets);
+		
 		//--- For each entity
-		for ( String entityName : _entities ) {
+		for ( String entityName : _selectedEntities ) {
 			
 			_logger.log(this, "run : entity " + entityName );
 			Entity entity = _repositoryModel.getEntityByName(entityName);
@@ -167,7 +176,23 @@ public class GenerationTaskWithProgress implements IRunnableWithProgress
 			throw new InterruptedException("The bulk generation was cancelled");
 		}
 	}
-	
+	//--------------------------------------------------------------------------------------------------
+	private void copyResourcesIfAny( List<TargetDefinition> resourcesTargetsDefinitions ) throws InvocationTargetException {
+		if ( resourcesTargetsDefinitions != null ) {
+			_logger.log(this, "run : copy resources " );
+			ResourcesManager resourcesManager = new ResourcesManager(_generatorConfig, _logger);
+			try {
+				resourcesManager.copyResourcesInProject(resourcesTargetsDefinitions, true) ;
+			} catch (GeneratorException e) {
+				// if the "run" method must propagate a checked exception, 
+				// it should wrap it inside an InvocationTargetException; 
+				throw new InvocationTargetException(e);
+			}
+		}
+		else {
+			_logger.log(this, "run : no resources to be copied" );
+		}
+	}
 	//--------------------------------------------------------------------------------------------------
 	private void generateTarget(IProgressMonitor progressMonitor, Target target, List<JavaBeanClass> selectedEntities) 
 					throws InvocationTargetException, InterruptedException 

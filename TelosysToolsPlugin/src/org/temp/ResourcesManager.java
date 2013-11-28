@@ -1,38 +1,96 @@
 package org.temp;
 
 import java.io.File;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.telosys.tools.commons.FileUtil;
 import org.telosys.tools.commons.StrUtil;
+import org.telosys.tools.commons.TelosysToolsLogger;
+import org.telosys.tools.commons.Variable;
 import org.telosys.tools.generator.GeneratorException;
 import org.telosys.tools.generator.config.IGeneratorConfig;
 import org.telosys.tools.generator.context.Target;
+import org.telosys.tools.generator.target.TargetDefinition;
 
 public class ResourcesManager {
 
-	private final IGeneratorConfig generatorConfig ;
+	private final IGeneratorConfig   generatorConfig ;
+	private final TelosysToolsLogger _logger;
 	
-	public ResourcesManager(IGeneratorConfig generatorConfig) {
+	//----------------------------------------------------------------------------------------------------
+	public ResourcesManager(IGeneratorConfig generatorConfig, TelosysToolsLogger logger) {
 		super();
 		this.generatorConfig = generatorConfig;
+		this._logger = logger ;
+		log("ResourcesManager created.");
 	}
-
-	public void copyResources( List<Target> resources ) {
-		
-		for ( Target target : resources ) {
-//			target.getFile();
-//			target.getFolder()
+	
+	//----------------------------------------------------------------------------------------------------
+	private void log(String s) {
+		if (_logger != null) {
+			_logger.log(s);
 		}
 	}
 
+	//----------------------------------------------------------------------------------------------------
 	/**
-	 * Copy the given static resource (file or folder) in the project destination file or folder 
-	 * @param target
+	 * @param targetsDefinitions
+	 * @param overwrite
 	 * @throws GeneratorException
 	 */
-	public void copyResourceInProject( Target target, boolean overwrite ) throws GeneratorException {
+	public void copyResourcesInProject( List<TargetDefinition> targetsDefinitions, boolean overwrite ) throws GeneratorException {
+		log("ResourcesManager:copyResourcesInProject()... " );
+		//--- Build targets from targets definitions 
+		List<Target> resourcesTargets = getResourcesTargets( targetsDefinitions ) ;
+		//--- Copy the targets 
+		copyResourcesTargetsInProject( resourcesTargets, overwrite );
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/**
+	 * @param targetsDefinitions
+	 * @return
+	 */
+	private List<Target> getResourcesTargets(List<TargetDefinition> targetsDefinitions ) {
+		log("ResourcesManager:getResourcesTargets()... " );
+		Variable[] projectVariables = this.generatorConfig.getProjectConfiguration().getVariables() ;
+		LinkedList<Target> targets = new LinkedList<Target>();
+		if ( targetsDefinitions != null ) {
+			for ( TargetDefinition targetDefinition : targetsDefinitions ) {
+				Target target = new Target ( targetDefinition, "", "", projectVariables );
+				targets.add(target);
+			}
+		}
+		log("ResourcesManager:getResourcesTargets() : return " + targets.size() + " target(s)");
+		return targets ;
+	}
+	
+	//----------------------------------------------------------------------------------------------------
+	/**
+	 * Copy the given static resources in the project destination file or folder 
+	 * @param targets the list of resource targets 
+	 * @param overwrite
+	 * @throws GeneratorException
+	 */
+	private void copyResourcesTargetsInProject( List<Target> targets, boolean overwrite ) throws GeneratorException {
+		log("ResourcesManager:copyResourcesTargetsInProject()... " );
+		//--- For each target 
+		for ( Target target : targets ) {
+			copyResourceTargetInProject( target, overwrite );
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	/**
+	 * Copy the given static resource (file or folder) in the project destination file or folder 
+	 * @param target the resource target
+	 * @throws GeneratorException
+	 */
+	private void copyResourceTargetInProject( Target target, boolean overwrite ) throws GeneratorException {
 		
+		log("ResourcesManager:copyResourceTargetInProject() : " + target );
+
 		//--- Original resource : file or folder to be copied
 		String templatesFolder = generatorConfig.getTemplatesFolderFullPath();
 		String resourcesFolder = FileUtil.buildFilePath(templatesFolder, "resources" );
@@ -70,36 +128,55 @@ public class ResourcesManager {
 		
 	}
 	
-	public boolean copyFileToFile( String originalFile, String destinationFile, boolean overwrite ) throws GeneratorException {
+	//----------------------------------------------------------------------------------------------------
+	/**
+	 * Copy a resource file to its destination file
+	 * @param originalFile
+	 * @param destinationFile
+	 * @param overwrite
+	 * @return
+	 * @throws GeneratorException
+	 */
+	private boolean copyFileToFile( String originalFile, String destinationFile, boolean overwrite ) throws GeneratorException {
+
+		log("ResourcesManager:copyFileToFile() : overwrite = " + overwrite );
+		log(" from : " + originalFile );
+		log("   to : " + destinationFile );
 
 		boolean copied = false ;
 		File destFile = new File(destinationFile) ;
-		if ( destFile.exists() ) {
-			if ( overwrite ) {
-				try {
-					FileUtil.copy(originalFile, destinationFile);
-				} catch (Exception e) {
-					throw new GeneratorException("Cannot copy '" + originalFile + "' to '" + destinationFile + "'", e );
-				}
-				copied = true ;
+		if ( ( destFile.exists() == false ) || ( destFile.exists() && overwrite ) ) {
+			try {
+				FileUtil.copy(originalFile, destinationFile, true);
+			} catch (Exception e) {
+				throw new GeneratorException("Cannot copy '" + originalFile + "' to '" + destinationFile + "'", e );
 			}
+			copied = true ;
 		}
+		log(" copied ? " + copied );
 		return copied ;
 	}
 
-	public void buildListOfFiles ( final File folder, List<File> files )  {
-		for (final File fileEntry : folder.listFiles()) {
-	        if (fileEntry.isDirectory()) {
-	        	buildListOfFiles(fileEntry, files);
-	        } else {
-	        	files.add(fileEntry);
-	        }
-	    }	
-	}
+//	public void buildListOfFiles ( final File folder, List<File> files )  {
+//		for (final File fileEntry : folder.listFiles()) {
+//	        if (fileEntry.isDirectory()) {
+//	        	buildListOfFiles(fileEntry, files);
+//	        } else {
+//	        	files.add(fileEntry);
+//	        }
+//	    }	
+//	}
 	
-	public void copyFolderToFolder( String sourceFolderName, String destinationFolderName, boolean overwrite ) throws GeneratorException {
+	//----------------------------------------------------------------------------------------------------
+	/**
+	 * Copy a resource folder to its destination folder (including the content recursively)
+	 * @param sourceFolderName
+	 * @param destinationFolderName
+	 * @param overwrite
+	 * @throws GeneratorException
+	 */
+	private void copyFolderToFolder( String sourceFolderName, String destinationFolderName, boolean overwrite ) throws GeneratorException {
 
-		//boolean copied = false ;
 		File sourceFolder = new File(sourceFolderName) ;
 		if ( sourceFolder.exists() ) {
 			File destinationFolder = new File(destinationFolderName) ;

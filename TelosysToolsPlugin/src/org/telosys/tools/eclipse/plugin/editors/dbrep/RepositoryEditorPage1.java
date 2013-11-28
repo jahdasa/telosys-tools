@@ -111,18 +111,19 @@ import org.telosys.tools.repository.model.RepositoryModel;
 	private BundleComboBox  _comboBundles = null ;
 	private Button _buttonGenerate = null ;
 
-	private final List<TargetDefinition> initialTargetsList ; // v 2.0.7
+	//private final List<TargetDefinition> initialTargetsList ; // v 2.0.7
 	
 	/**
 	 * @param editor
 	 * @param id
 	 * @param title 
 	 */
-	public RepositoryEditorPage1(FormEditor editor, String id, String title, List<TargetDefinition> targetsList) {
+	//public RepositoryEditorPage1(FormEditor editor, String id, String title, List<TargetDefinition> targetsList) {
+	public RepositoryEditorPage1(FormEditor editor, String id, String title ) {
 		super(editor, id, title);
 		//super(editor, id, null); // ERROR if title is null
 		log(this, "constructor(.., '"+id+"', '"+ title +"')..." );
-		this.initialTargetsList = targetsList ;
+		//this.initialTargetsList = targetsList ;
 	}
 
 	protected boolean isPopulateInProgress()
@@ -1110,7 +1111,7 @@ import org.telosys.tools.repository.model.RepositoryModel;
 		
 		//--- Run the generation task
     	GenerationTask generationTask = new GenerationTask( getRepositoryEditor() );
-    	return generationTask.generateTargets(entities, selectedTargets);
+    	return generationTask.generateTargets(entities, selectedTargets, null); // no resources to copy
     }
 
 }

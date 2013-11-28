@@ -424,7 +424,7 @@ public class PropertiesPage extends PropertyPage {
 			URL databaseConfigURL = PluginResources.getResourceURL(DATABASES_DBCFG);
 			if ( databaseConfigURL != null ) {
 				try {
-					FileUtil.copy(databaseConfigURL, destinationAbsolutePath);
+					FileUtil.copy(databaseConfigURL, destinationAbsolutePath, false);
 					EclipseProjUtil.refreshResource(project, destinationInProject);
 					sb.append(". file '" + destinationInProject + "' copied");
 				} catch (Exception e) {

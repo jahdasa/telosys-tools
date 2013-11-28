@@ -2,6 +2,7 @@ package org.telosys.tools.eclipse.plugin.editors.dbrep;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.velocity.exception.MethodInvocationException;
 import org.apache.velocity.exception.ParseErrorException;
@@ -30,6 +31,7 @@ public class GenerationTask {
 	private final IProject            project;
 	private final TelosysToolsLogger  telosysToolsLogger;
 	
+	//-------------------------------------------------------------------------------------------------------------
 	/**
 	 * Constructor
 	 * @param editor
@@ -38,10 +40,6 @@ public class GenerationTask {
 	{
     	//--- Prepare the generation environment 	
     	telosysToolsLogger = ( editor.getLogger() != null ? editor.getLogger() : new ConsoleLogger() ) ;
-//    	if ( null == telosysToolsLogger )
-//    	{
-//    		telosysToolsLogger = new ConsoleLogger();
-//    	}
     	
     	String currentBundelName = editor.getCurrentBundleName();
     	
@@ -69,12 +67,22 @@ public class GenerationTask {
     	telosysToolsLogger.log("GenerationTask environment ready");
 	}
 	
-	public int generateTargets(LinkedList<String> entities, LinkedList<TargetDefinition> genericTargets)
+	//-------------------------------------------------------------------------------------------------------------
+	/**
+	 * Generates the targets with the given selected entities, selected targets and copy resources if any 
+	 * @param selectedEntities the selected entities
+	 * @param selectedTargets the selected targets/templates
+	 * @param resourcesTargets the resources to be copied (or null if none)
+	 * @return
+	 */
+	public int generateTargets(LinkedList<String> selectedEntities, LinkedList<TargetDefinition> selectedTargets, 
+			List<TargetDefinition> resourcesTargets )
 	{
 		//--- Create the generation task (with progress monitor)
 		GenerationTaskWithProgress generationTask;
 		try {
-			generationTask = new GenerationTaskWithProgress(entities, genericTargets, 
+			generationTask = new GenerationTaskWithProgress(selectedEntities, selectedTargets, 
+					resourcesTargets, // v 2.0.7
 					repositoryModel, generatorConfig, project, telosysToolsLogger);
 			
 		} catch (TelosysPluginException e1) {
@@ -108,6 +116,7 @@ public class GenerationTask {
 		
 	}
 	
+	//-------------------------------------------------------------------------------------------------------------
 	/**
 	 * Specific message depending on the type of exception
 	 * @param invocationTargetException
@@ -187,6 +196,7 @@ public class GenerationTask {
 		
 	}
 	
+	//-------------------------------------------------------------------------------------------------------------
 	private String buildErrorMessageHeader(String template, int line, String entity ) {
 		String lineMsg = "" ;
 		if ( line > 0 ) {
@@ -195,5 +205,4 @@ public class GenerationTask {
 		return "Template \"" + template + "\"" + lineMsg + "  -  Entity : \"" 
 				+ entity + "\" \n\n" ;
 	}
-	
 }

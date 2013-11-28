@@ -32,6 +32,8 @@ import org.telosys.tools.eclipse.plugin.commons.widgets.GridPanel;
 import org.telosys.tools.eclipse.plugin.commons.widgets.RefreshButton;
 import org.telosys.tools.eclipse.plugin.commons.widgets.SelectDeselectButtons;
 import org.telosys.tools.eclipse.plugin.commons.widgets.TargetsButton;
+import org.telosys.tools.eclipse.plugin.config.ProjectConfig;
+import org.telosys.tools.generator.config.IGeneratorConfig;
 import org.telosys.tools.generator.target.TargetDefinition;
 import org.telosys.tools.repository.model.Entity;
 import org.telosys.tools.repository.model.RepositoryModel;
@@ -52,7 +54,8 @@ import org.telosys.tools.repository.model.RepositoryModel;
 	private BundleComboBox  _comboBundles = null ;
 	private Button          _checkboxStaticResources = null ;
 	
-	private final List<TargetDefinition> initialTargetsList ; // v 2.0.7
+	//private final List<TargetDefinition> initialTargetsList ; // v 2.0.7
+	private List<TargetDefinition> _resourcesTargets = null ; // v 2.0.7
 	
 	/**
 	 * Constructor
@@ -60,12 +63,13 @@ import org.telosys.tools.repository.model.RepositoryModel;
 	 * @param id
 	 * @param title
 	 */
-	public RepositoryEditorPage2(FormEditor editor, String id, String title, List<TargetDefinition> initialTargetsList ) {
+	//public RepositoryEditorPage2(FormEditor editor, String id, String title, List<TargetDefinition> initialTargetsList ) {
+	public RepositoryEditorPage2(FormEditor editor, String id, String title ) {
 		super(editor, id, title);
 		//super(editor, id, null); // ERROR if title is null
 		
 		log(this, "constructor(.., '"+id+"', '"+ title +"')..." );
-		this.initialTargetsList = initialTargetsList ;
+		//this.initialTargetsList = initialTargetsList ;
 	}
 
 	/* (non-Javadoc)
@@ -550,13 +554,19 @@ import org.telosys.tools.repository.model.RepositoryModel;
 	 * Refresh the targets table from the current configuration supposed to be up to date 
 	 */
 	//protected void refreshTargetsTable()
-	protected void refreshTargetsTable(List<TargetDefinition> targetslist)	// v 2.0.7
+	protected void refreshTargetsTable(List<TargetDefinition> targetslist, List<TargetDefinition> resourcesTargets )	// v 2.0.7
 	
 	{
-		log("refreshTargetsTable");
+		log("refreshTargetsTable : " + targetslist.size() + " targets / " 
+				+ (resourcesTargets != null ? resourcesTargets.size() + " resources" : "no resource" ));
 
-//		//--- Re-populate the SWT table
+		//--- Keep the list of bundle static resource for copy during generation
+		_resourcesTargets = resourcesTargets ;
+		
+		//--- Refresh the bundles list in the combobox
 		_comboBundles.refresh();
+		
+		//--- Re-populate the SWT table
 		populateTargetsTable(targetslist);
 	}
 
@@ -698,7 +708,13 @@ import org.telosys.tools.repository.model.RepositoryModel;
     	
     	GenerationTask generationTask = new GenerationTask( getRepositoryEditor() );
     	
-    	return generationTask.generateTargets(selectedEntities, selectedTargets);
+    	//--- Copy static bundle resources if checkbox is selected
+    	List<TargetDefinition> resourcesTargets = null ;
+    	if ( this._checkboxStaticResources.getSelection() ) {
+    		resourcesTargets = _resourcesTargets ;
+    	}
+    	
+    	return generationTask.generateTargets(selectedEntities, selectedTargets, resourcesTargets );
     }
     
 }
