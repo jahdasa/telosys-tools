@@ -32,10 +32,10 @@ public class TargetDefinition
 	
 	private final String  _sFolder ;
 
-	private final String  _sTemplate ;
+	private final String  _sTemplate ; // or resource ( since v 2.0.7 )
 
-	private final String   _sOnce ;
-	private final boolean  _bOnce ;
+	private final String  _sType ; // "1", "R", "*" or ""
+	//private final boolean  _bOnce ;
 
 	//-----------------------------------------------------------------------
 	/**
@@ -44,28 +44,28 @@ public class TargetDefinition
 	 * @param file the file to be generated ( ie "${BEANNAME}Data.java" )
 	 * @param folder the folder where to generate the file ( ie "src/org/demo/screen/${BEANNAME_LC}" )
 	 * @param template the template to use ( ie "vo_screen_data.vm" )
-	 * @param once "ONCE" indicator : "1" for "ONCE", else standard entity target (can be VOID if none)
+	 * @param type the template type : "1" for "ONCE", "R" for "resource", else standard entity target (can be VOID if none)
 	 */
-	public TargetDefinition(String name, String file, String folder, String template, String once ) 
+	public TargetDefinition(String name, String file, String folder, String template, String type ) 
 	{
 		super();
 		_sName = name;
 		_sFile = file;
 		_sFolder = folder;
 		_sTemplate = template;
-		_sOnce = once ;
-		_bOnce = getOnceFlag(once) ;
+		_sType = ( type != null ? type.trim() : "" ) ;
+		//_bOnce = getOnceFlag(type) ;
 	}
 	
-	private boolean getOnceFlag(String sOnce) 
-	{
-		if ( sOnce != null ) {
-			if ( sOnce.trim().equals("1") ) {
-				return true ;
-			}
-		}
-		return false ;
-	}
+//	private boolean getOnceFlag(String sOnce) 
+//	{
+//		if ( sOnce != null ) {
+//			if ( sOnce.trim().equals("1") ) {
+//				return true ;
+//			}
+//		}
+//		return false ;
+//	}
 
 	//-----------------------------------------------------------------------
 	/**
@@ -121,20 +121,32 @@ public class TargetDefinition
 		return _sTemplate ;
 	}	
 	
+	//-----------------------------------------------------------------------
 	/**
 	 * Returns true if the target is for just "once" generation (not linked to an entity)
 	 * @return
 	 */
 	public boolean isOnce()
 	{
-		return _bOnce ;
+		return "1".equals(_sType) ;
 	}
+
+	//-----------------------------------------------------------------------
+	/**
+	 * Returns true if the target is for a resource file or a resource folder (not linked to an entity)
+	 * @return
+	 */
+	public boolean isResource()
+	{
+		return "R".equals(_sType) ;
+	}
+
 	//-----------------------------------------------------------------------
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString()
 	{
-		return _sName + " : '" + _sFile  + "' in '" + _sFolder + "' ( " + _sTemplate + " " + _sOnce + " )" ;
+		return _sName + " : '" + _sFile  + "' in '" + _sFolder + "' ( " + _sTemplate + " " + _sType + " )" ;
 	}
 }

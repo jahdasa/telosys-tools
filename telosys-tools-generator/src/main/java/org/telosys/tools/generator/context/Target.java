@@ -354,4 +354,14 @@ public class Target
 		return "/" + fileOrFolder ;
 	}
 	
+	@VelocityNoDoc
+	@Override
+	public String toString() {
+		return "Target [targetName=" + targetName + ", file=" + file
+				+ ", folder=" + folder + ", template=" + template
+				+ ", entityName=" + entityName + ", templateOnly="
+				+ templateOnly + "]";
+	}
+	
+	
 }
