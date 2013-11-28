@@ -31,6 +31,15 @@ public class FileUtil {
 	
     private static final int BUFFER_SIZE = 4*1024 ; // 4 kb   
     
+    //----------------------------------------------------------------------------------------------------
+    /**
+     * Build a file path with the given directory path and the given file name.<br>
+     * The starting/ending separators "/" and "\" are managed in order to buil a correct path.
+     *  
+     * @param dir  the directory path( eg "x:/aaa/bb" or "x:/aa/bb/" )
+     * @param file the file name ( eg "foo.txt" or "/foo.txt" ) 
+     * @return
+     */
     public static String buildFilePath(String dir, String file) {
     	String s1 = dir ;
     	if ( dir.endsWith("/") || dir.endsWith("\\") )
@@ -47,30 +56,36 @@ public class FileUtil {
 		return s1 + "/" + s2 ;
 	}
     
-    //----------------------------------------------------------------------------
+    //----------------------------------------------------------------------------------------------------
     /**
-     * Copy a file into another one
-     * @param sInputFileName
-     * @param sOutputFileName
+     * Copies a file into another one 
+     * @param inputFileName
+     * @param outputFileName
+     * @param createFolder if true creates the destination folder if necessary
      * @throws Exception
      */
-    public static void copy(String sInputFileName, String sOutputFileName) throws Exception
+    public static void copy(String inputFileName, String outputFileName, boolean createFolder) throws Exception
     {
         //--- Open input file
 		FileInputStream fis = null;
         try
         {
-            fis = new FileInputStream(sInputFileName);
+            fis = new FileInputStream(inputFileName);
         } catch (FileNotFoundException ex)
         {
             throw new Exception("copy : cannot open input file.", ex);
         }
         
+        //--- Create output file folder is non existent 
+        if ( createFolder ) {
+        	createFolderIfNecessary(outputFileName);
+        }
+    	
         //--- Open output file
 		FileOutputStream fos = null;
         try
         {
-            fos = new FileOutputStream(sOutputFileName);
+            fos = new FileOutputStream(outputFileName);
         } catch (FileNotFoundException ex)
         {
             throw new Exception("copy : cannot open output file.", ex);
@@ -80,36 +95,65 @@ public class FileUtil {
         copyAndClose( fis, fos);
     }
 
+    //----------------------------------------------------------------------------------------------------
     /**
-     * Copy input URL to destination file
-     * @param inputURL
-     * @param sOutputFileName
+     * Copies input URL to destination file 
+     * @param  inputFileURL
+     * @param  outputFileName
+     * @param  createFolder if true creates the destination folder if necessary
      * @throws Exception
      */
-    public static void copy(URL inputURL, String sOutputFileName) throws Exception
+    public static void copy(URL inputFileURL, String outputFileName, boolean createFolder) throws Exception
     {
         //--- Open input stream
     	InputStream is = null ;
 		try {
-			is = inputURL.openStream();
+			is = inputFileURL.openStream();
 		} catch (IOException e) {
-            throw new Exception("copy : cannot open input URL " + inputURL.toString(), e);
+            throw new Exception("copy : cannot open input URL " + inputFileURL.toString(), e);
 		}
         
-        //--- Open output stream
+        //--- Create output file folder is non existent 
+        if ( createFolder ) {
+        	createFolderIfNecessary(outputFileName);
+        }		
+
+    	//--- Open output stream
 		FileOutputStream fos = null;
         try
         {
-            fos = new FileOutputStream(sOutputFileName);
+            fos = new FileOutputStream(outputFileName);
         } catch (FileNotFoundException ex)
         {
-            throw new Exception("copy : cannot open output file " + sOutputFileName, ex);
+            throw new Exception("copy : cannot open output file " + outputFileName, ex);
         }
         
         //--- Copy and close
         copyAndClose( is, fos);
     }
     
+    //----------------------------------------------------------------------------------------------------
+    /**
+     * Creates the parent folder for the given file if it doesn't exist
+     * @param fullFileName
+     */
+    private static void createFolderIfNecessary( String fullFileName ) {
+    	File file = new File(fullFileName) ;
+    	File parent = file.getParentFile() ;
+    	if ( parent != null ) {
+    		if ( parent.exists() == false ) {
+    			// Creates the directory, including any necessary but nonexistent parent directories.
+    			parent.mkdirs() ; 
+    		}
+    	}
+    }
+    //----------------------------------------------------------------------------------------------------
+    /**
+     * Copy the content of the given InputStream to the given OutputStream, then close all streams.
+     * @param is
+     * @param os
+     * @throws Exception
+     */
     private static void copyAndClose(InputStream is, OutputStream os) throws Exception
     {
         //--- Copy and close
@@ -133,6 +177,12 @@ public class FileUtil {
 		}
     }
     
+    //----------------------------------------------------------------------------------------------------
+	/**
+	 * Search the given file (or folder) using the ClassPath
+	 * @param fileName file name or folder name
+	 * @return
+	 */
 	public static File getFileByClassPath(String fileName) {
 		URL url = FileUtil.class.getResource(fileName);
 		if ( url != null ) {
@@ -149,12 +199,14 @@ public class FileUtil {
 		}
 	}
     
+    //----------------------------------------------------------------------------------------------------
 	/**
 	 * Copy the source folder to the destination folder with all its content (recursively)
 	 * @param source
 	 * @param destination
 	 * @param overwrite
 	 * @throws Exception
+	 * @since 2.0.7
 	 */
 	public static void copyFolder( File source, File destination, boolean overwrite ) throws Exception {
 		//System.out.println("Copy " + source + " --> " + destination);

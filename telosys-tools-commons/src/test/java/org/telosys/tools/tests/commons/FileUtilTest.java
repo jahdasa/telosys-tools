@@ -11,6 +11,35 @@ public class FileUtilTest extends TestCase {
 
 	public void testFileCopy() throws IOException, Exception {
 		
+		String fileName = "/testfilecopy/origin/file1.txt" ;
+		System.out.println("Searching file '" + fileName + "' by classpath..." );
+		File file = FileUtil.getFileByClassPath(fileName);
+		if ( file.exists() ) {
+			System.out.println("File found : " + file);
+			System.out.println(" . getAbsolutePath()  : " + file.getAbsolutePath() );
+			System.out.println(" . getCanonicalPath() : " + file.getCanonicalPath() );
+			System.out.println(" . getName()          : " + file.getName() );
+			System.out.println(" . getPath()          : " + file.getPath() );
+			System.out.println(" . getParent()        : " + file.getParent() );
+		}
+		else {
+			System.out.println("File not found " );
+		}
+		assertTrue ( file.exists()) ;
+		
+		// Original file
+		String originalFullFileName = file.getAbsolutePath();
+		System.out.println("Original file    : " + originalFullFileName );
+
+		// Destination file in inexistent folder 
+		String destFullFileName = FileUtil.buildFilePath(file.getParentFile().getParent()+"/newfolder", "newfile1.txt");
+		System.out.println("Destination file : " + destFullFileName );
+		
+		FileUtil.copy(originalFullFileName, destFullFileName, true);
+	}
+	
+	public void testFolderCopy() throws IOException, Exception {
+		
 		String folderName = "/testfilecopy" ;
 		System.out.println("Searching folder '" + folderName + "' by classpath..." );
 		File folder = FileUtil.getFileByClassPath(folderName);
