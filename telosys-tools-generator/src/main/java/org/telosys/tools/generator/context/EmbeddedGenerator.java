@@ -160,7 +160,9 @@ public class EmbeddedGenerator {
 		
 		Target target = new Target( genericTarget, entity.getName(), entity.getBeanJavaClass(), projectConfiguration.getVariables() );
 		
-		Generator generator = new Generator(target, generatorConfig, logger);
+		//Generator generator = new Generator(target, generatorConfig, logger);
+		Generator generator = new Generator(target, generatorConfig, repositoryModel, logger); // v 2.0.7
+		
 		generator.generateTarget(target, repositoryModel, this.generatedTargets);
 		
 	}

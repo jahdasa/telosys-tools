@@ -70,6 +70,7 @@ public class VariableNames {
 		GENERATOR_OBJECTS_LIST.add( ContextName.GENERATOR ); 
 		GENERATOR_OBJECTS_LIST.add( ContextName.LOADER );
 		GENERATOR_OBJECTS_LIST.add( ContextName.PROJECT );
+		GENERATOR_OBJECTS_LIST.add( ContextName.MODEL ); // ver 2.0.7
 		GENERATOR_OBJECTS_LIST.add( ContextName.TODAY );
 
 		//--- Current Entity/Target objects

@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
@@ -43,6 +44,7 @@ import org.telosys.tools.generator.context.Java;
 import org.telosys.tools.generator.context.JavaBeanClass;
 import org.telosys.tools.generator.context.JavaClass;
 import org.telosys.tools.generator.context.Loader;
+import org.telosys.tools.generator.context.Model;
 import org.telosys.tools.generator.context.ProjectConfiguration;
 import org.telosys.tools.generator.context.Target;
 import org.telosys.tools.generator.context.Today;
@@ -77,6 +79,8 @@ public class Generator {
 	public final static boolean CREATE_DIR = true ;
 	public final static boolean DO_NOT_CREATE_DIR = false ;
 	
+	//private final RepositoryModel     _repositoryModel ; // v 2.0.7
+	private final List<JavaBeanClass> _allEntities ; // v 2.0.7
 	
 	private final VelocityEngine     _velocityEngine ;
 
@@ -95,7 +99,8 @@ public class Generator {
 	 * @param logger 
 	 * @throws GeneratorException
 	 */
-	public Generator( Target target, IGeneratorConfig generatorConfig, TelosysToolsLogger logger) throws GeneratorException 
+	public Generator( Target target, IGeneratorConfig generatorConfig, 
+						RepositoryModel repositoryModel, TelosysToolsLogger logger) throws GeneratorException 
 	{
 		_logger = logger;
 		
@@ -114,6 +119,15 @@ public class Generator {
 		}
 		
 		_generatorConfig = generatorConfig ;
+		
+		//_repositoryModel = repositoryModel ;
+		// Build the list of all the entities defined in the repository  
+		if ( repositoryModel != null ) {
+			_allEntities = RepositoryModelUtil.buildAllJavaBeanClasses(repositoryModel,	_generatorConfig.getProjectConfiguration() );
+		}
+		else {
+			_allEntities = new LinkedList<JavaBeanClass>();
+		}
 		
 		//------------------------------------------------------------------
 		// Workaround for Velocity error in OSGi environment
@@ -268,6 +282,9 @@ public class Generator {
 		_velocityContext.put(ContextName.CONST,         new Const()); // Constants (static values)
 		_velocityContext.put(ContextName.FN,            new Fn());    // Utility function
 		_velocityContext.put(ContextName.JAVA,          new Java());  // Java utility function
+		
+		_velocityContext.put(ContextName.MODEL,         new Model(_allEntities) );  // The "model" object (v 2.0.7)
+		
 		_velocityContext.put(ContextName.CLASS, null);
 		
 		ProjectConfiguration projectConfiguration = generatorConfig.getProjectConfiguration();

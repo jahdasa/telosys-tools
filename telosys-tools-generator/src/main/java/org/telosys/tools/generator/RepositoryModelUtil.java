@@ -88,4 +88,30 @@ public class RepositoryModelUtil {
 		}
 		return javaBeanClasses ;
 	}	
+
+	/**
+	 * Build a list of JavaBeanClass for all entities defined in the model 
+	 * 
+	 * @param repositoryModel
+	 * @param projectConfiguration
+	 * @return
+	 * @throws GeneratorException
+	 * @since 2.0.7
+	 */
+	public static List<JavaBeanClass> buildAllJavaBeanClasses( RepositoryModel repositoryModel, 
+			ProjectConfiguration projectConfiguration ) throws GeneratorException 
+	{
+		List<JavaBeanClass> javaBeanClasses = new LinkedList<JavaBeanClass>();
+		//--- Get the names of all the entities defined in the model 
+		String[] names = repositoryModel.getEntitiesNames();
+		for ( String entityName : names ) {
+			//--- Build an "entity BeanClass" for each
+			JavaBeanClass entityBeanClass = buildJavaBeanClass( 
+					entityName, 
+					repositoryModel, 
+					projectConfiguration );
+			javaBeanClasses.add(entityBeanClass);
+		}
+		return javaBeanClasses ;
+	}
 }
