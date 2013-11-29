@@ -1092,7 +1092,7 @@ import org.telosys.tools.repository.model.RepositoryModel;
     	}
     }
     
-    private int generateSelectedTargets() 
+    private void generateSelectedTargets() 
     {
     	log ("generateSelectedTargets()...");
     	
@@ -1111,7 +1111,8 @@ import org.telosys.tools.repository.model.RepositoryModel;
 		
 		//--- Run the generation task
     	GenerationTask generationTask = new GenerationTask( getRepositoryEditor() );
-    	return generationTask.generateTargets(entities, selectedTargets, null); // no resources to copy
+    	//return generationTask.generateTargets(entities, selectedTargets, null); // no resources to copy
+    	generationTask.generateTargets(entities, selectedTargets, null); // no resources to copy
     }
 
 }

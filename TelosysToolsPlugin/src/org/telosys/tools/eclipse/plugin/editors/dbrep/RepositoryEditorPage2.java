@@ -626,9 +626,28 @@ import org.telosys.tools.repository.model.RepositoryModel;
     private boolean confirmBulkGeneration()
     {
 		log(this, "confirmBulkGeneration()");
-		String sMsg = "This bulk generation will overwrite existing files if they exist." 
-			+ "\n\n" + "Launch generation ?";
-		return MsgBox.confirm(" Confirm generation", sMsg) ;
+    	int numberOfSelectedTargets = 0 ;
+    	for ( TableItem item : _tableTargets.getItems() ) {
+    		if ( item.getChecked() ) {
+    			numberOfSelectedTargets++ ;
+    		}
+    	}
+		if ( numberOfSelectedTargets > 0 ) {
+			String sMsg = "This bulk generation will overwrite existing files if they exist." 
+				+ "\n\n" + numberOfSelectedTargets + " target(s) selected."
+				+ "\n\n" + "Launch generation ?";
+			return MsgBox.confirm(" Confirm generation", sMsg) ;
+		}
+		else {
+			//--- Nothing to generate
+			if ( _checkboxStaticResources.getSelection() ) {
+				return true ; // Copy the resources 
+			}
+			else {
+				MsgBox.info("Noting to generate, nothing to copy.");
+				return false ; // Nothing to do
+			}
+		}
     }
     
     //private LinkedList<TargetDefinition> getSelectedTargets(ProjectConfig projectConfig)
@@ -679,7 +698,7 @@ import org.telosys.tools.repository.model.RepositoryModel;
     	return selectedEntities ;
     }
     
-    private int launchBulkGeneration()
+    private void launchBulkGeneration()
     {
     	log("launchBulkGeneration()...");
     	
@@ -708,13 +727,14 @@ import org.telosys.tools.repository.model.RepositoryModel;
     	
     	GenerationTask generationTask = new GenerationTask( getRepositoryEditor() );
     	
-    	//--- Copy static bundle resources if checkbox is selected
+    	//--- Set static bundle resources to be copied if check-box is selected
     	List<TargetDefinition> resourcesTargets = null ;
     	if ( this._checkboxStaticResources.getSelection() ) {
     		resourcesTargets = _resourcesTargets ;
     	}
     	
-    	return generationTask.generateTargets(selectedEntities, selectedTargets, resourcesTargets );
+    	//return generationTask.generateTargets(selectedEntities, selectedTargets, resourcesTargets );
+    	generationTask.generateTargets(selectedEntities, selectedTargets, resourcesTargets );
     }
     
 }

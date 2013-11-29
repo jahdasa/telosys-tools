@@ -26,6 +26,7 @@ import org.telosys.tools.repository.model.RepositoryModel;
 
 public class GenerationTask {
 
+	private final RepositoryEditor    editor ;
 	private final RepositoryModel     repositoryModel ;
 	private final IGeneratorConfig    generatorConfig ;
 	private final IProject            project;
@@ -38,6 +39,8 @@ public class GenerationTask {
 	 */
 	public GenerationTask(RepositoryEditor editor)
 	{
+		this.editor = editor ;
+		
     	//--- Prepare the generation environment 	
     	telosysToolsLogger = ( editor.getLogger() != null ? editor.getLogger() : new ConsoleLogger() ) ;
     	
@@ -75,19 +78,22 @@ public class GenerationTask {
 	 * @param resourcesTargets the resources to be copied (or null if none)
 	 * @return
 	 */
-	public int generateTargets(LinkedList<String> selectedEntities, LinkedList<TargetDefinition> selectedTargets, 
+	public GenerationTaskResult generateTargets(LinkedList<String> selectedEntities, LinkedList<TargetDefinition> selectedTargets, 
 			List<TargetDefinition> resourcesTargets )
 	{
 		//--- Create the generation task (with progress monitor)
 		GenerationTaskWithProgress generationTask;
 		try {
-			generationTask = new GenerationTaskWithProgress(selectedEntities, selectedTargets, 
+			generationTask = new GenerationTaskWithProgress(
+					editor, // v 2.0.7
+					selectedEntities, selectedTargets, 
 					resourcesTargets, // v 2.0.7
-					repositoryModel, generatorConfig, project, telosysToolsLogger);
+					// repositoryModel, generatorConfig, project, telosysToolsLogger); 
+					generatorConfig, telosysToolsLogger); // v 2.0.7
 			
 		} catch (TelosysPluginException e1) {
     		MsgBox.error("Cannot create GenerationTaskWithProgress instance", e1);
-    		return 0 ;
+    		return new GenerationTaskResult() ;
 		}
 		
 		//--- De-activate "Build Automatically"  ( ver 2.0.7 )
@@ -100,7 +106,10 @@ public class GenerationTask {
 			progressMonitorDialog.run(false, false, generationTask);
 			telosysToolsLogger.log("End of generation task."  );
 			
-			MsgBox.info("Normal end of generation\n\n" + generationTask.getResult() + " file(s) generated.");
+			GenerationTaskResult result = generationTask.getResult() ;
+			MsgBox.info("Normal end of generation." 
+					+ "\n\n" + result.getNumberOfResourcesCopied() + " resources(s) copied."
+					+ "\n\n" + result.getNumberOfFilesGenerated() + " file(s) generated.");
 			
 		} catch (InvocationTargetException invocationTargetException) {
 			showGenerationError(invocationTargetException, 

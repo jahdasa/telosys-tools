@@ -13,13 +13,13 @@ import org.telosys.tools.generator.config.IGeneratorConfig;
 import org.telosys.tools.generator.context.Target;
 import org.telosys.tools.generator.target.TargetDefinition;
 
-public class ResourcesManager {
+public class ResourcesManager_OLD {
 
 	private final IGeneratorConfig   generatorConfig ;
 	private final TelosysToolsLogger _logger;
 	
 	//----------------------------------------------------------------------------------------------------
-	public ResourcesManager(IGeneratorConfig generatorConfig, TelosysToolsLogger logger) {
+	public ResourcesManager_OLD(IGeneratorConfig generatorConfig, TelosysToolsLogger logger) {
 		super();
 		this.generatorConfig = generatorConfig;
 		this._logger = logger ;
