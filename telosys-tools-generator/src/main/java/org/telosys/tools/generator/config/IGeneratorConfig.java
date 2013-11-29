@@ -25,19 +25,29 @@ import org.telosys.tools.generator.context.ProjectConfiguration;
  */
 public interface IGeneratorConfig {
 
-//	public String getVOPackage() ;
-	
     /**
-     * Returns the full path directory where the project is located
+     * Returns the full path directory where the current project is located
+     * ( e.g. : "X:/dir/workspace/myproject" ) <br>
      * @return
      */
     public String getProjectLocation();
 
 	/**
-	 * Returns the full path where the generator's templates are located
+     * Returns the "full path" templates folder defined in the project properties <br>
+     * or null if not defined.<br>
+     * ( e.g. : "X:/dir/workspace/myproject/TelosysTools/templates" ) <br>
+     * If a current bundle is defined it is added at the end of the path <br>
+     * ( e.g. : "X:/dir/workspace/myproject/TelosysTools/templates/mybundle" )
 	 * @return
 	 */
 	public String getTemplatesFolderFullPath();
+	
+	/**
+	 * Returns the bundle name for the current generation
+	 * @return
+	 * @since 2.0.7
+	 */
+	public String getBundleName();
 	
 //	/**
 //	 * Returns the specific variables to be put in the context

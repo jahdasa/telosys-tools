@@ -104,7 +104,14 @@ public class GeneratorConfig implements IGeneratorConfig
 //	{
 //		return _projectVariables ;
 //	}
-
+	
+	/* (non-Javadoc)
+	 * @see org.telosys.tools.generator.config.IGeneratorConfig#getBundleName()
+	 */
+	public String getBundleName() {
+		return _sBundleName ;
+	}
+	
 	//---------------------------------------------------------------------
 	// Project Configuration for Generator context
 	//---------------------------------------------------------------------
@@ -153,12 +160,15 @@ public class GeneratorConfig implements IGeneratorConfig
 	}
     
 	
-    /**
-     * Returns the "full path" templates folder defined in the project properties or null if not defined.<br>
-     * e.g. : "C:/dir/workspace/project/TelosysTools/templates" <br>
-     * If a current bundle is defined it is added at the end of the path <br>
-     * ( eg : "C:/dir/workspace/project/TelosysTools/templates/mybundle" )
-     * @return
+//    /**
+//     * Returns the "full path" templates folder defined in the project properties or null if not defined.<br>
+//     * e.g. : "C:/dir/workspace/project/TelosysTools/templates" <br>
+//     * If a current bundle is defined it is added at the end of the path <br>
+//     * ( eg : "C:/dir/workspace/project/TelosysTools/templates/mybundle" )
+//     * @return
+//     */
+    /* (non-Javadoc)
+     * @see org.telosys.tools.generator.config.IGeneratorConfig#getTemplatesFolderFullPath()
      */
     public String getTemplatesFolderFullPath()
 	{
