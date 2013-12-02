@@ -35,7 +35,6 @@ import org.apache.velocity.exception.MethodInvocationException;
 import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.telosys.tools.commons.TelosysToolsLogger;
-import org.telosys.tools.commons.Variable;
 import org.telosys.tools.generator.config.IGeneratorConfig;
 import org.telosys.tools.generator.context.Const;
 import org.telosys.tools.generator.context.EmbeddedGenerator;
@@ -54,6 +53,7 @@ import org.telosys.tools.generator.directive.DirectiveException;
 import org.telosys.tools.generator.directive.ErrorDirective;
 import org.telosys.tools.generator.directive.UsingDirective;
 import org.telosys.tools.generator.events.GeneratorEvents;
+import org.telosys.tools.generator.variables.Variable;
 import org.telosys.tools.repository.model.RepositoryModel;
 
 /**
@@ -297,7 +297,7 @@ public class Generator {
 		_velocityContext.put(ContextName.PROJECT, projectConfiguration);
 		
 		//--- Get the project variables and put them in the context	
-		Variable[] projectVariables = projectConfiguration.getVariables();
+		Variable[] projectVariables = projectConfiguration.getAllVariables();
 		log("initContext() : Project variables count = " + ( projectVariables != null ? projectVariables.length : 0 ) );
 
 		//--- Set the project variables in the context ( if any )

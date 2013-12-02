@@ -15,10 +15,13 @@
  */
 package org.telosys.tools.generator.context;
 
-import org.telosys.tools.commons.Variable;
+import java.util.Properties;
+
 import org.telosys.tools.generator.ContextName;
 import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityObject;
+import org.telosys.tools.generator.variables.Variable;
+import org.telosys.tools.generator.variables.VariablesUtil;
 
 
 /**
@@ -42,21 +45,35 @@ public class ProjectConfiguration
 	
 	private final String packageForBean ;
 
-	private final Variable[] projectVariables ;
+	private final Variable[] specificVariables ;
+	private final Variable[] allVariables ;
 	
     //---------------------------------------------------------------------------
 
+//	public ProjectConfiguration( 
+//			String templatesFolderFullPath,
+//			String packageForBean, 
+//			Variable[] projectVariables ) 
+//	{
+//		super();
+//		this.templatesFolderFullPath = templatesFolderFullPath ;
+//		
+//		this.packageForBean = packageForBean;
+//		
+//		this.projectVariables = projectVariables;
+//	}
 	public ProjectConfiguration( 
 			String templatesFolderFullPath,
 			String packageForBean, 
-			Variable[] projectVariables ) 
+			Properties projectProperties ) 
 	{
 		super();
 		this.templatesFolderFullPath = templatesFolderFullPath ;
 		
 		this.packageForBean = packageForBean;
 		
-		this.projectVariables = projectVariables;
+		this.specificVariables = VariablesUtil.getVariablesFromProperties(projectProperties);
+		this.allVariables      = VariablesUtil.getAllVariablesFromProperties(projectProperties);
 	}
 
 	//--------------------------------------------------------------------------------------------------------------
@@ -90,18 +107,40 @@ public class ProjectConfiguration
 	//--------------------------------------------------------------------------------------------------------------
 	@VelocityMethod (
 		text = { 
+				"Returns the specific variables defined for the current project",
+				"( the specific variables defined for the project and the standard variables )"},
+		example = {
+				"#foreach( $var in $project.specificVariables )",
+				"  $var.name = $var.value",
+				"#end"
+			},
+		since = "2.0.7"
+	)
+    public Variable[] getSpecificVariables()
+    {
+    	if ( specificVariables != null ) {
+            return specificVariables ;
+    	}
+    	else {
+    		return VOID_VARIABLES ;
+    	}
+    }
+	//--------------------------------------------------------------------------------------------------------------
+	@VelocityMethod (
+		text = { 
 				"Returns all the variables available for the current project",
 				"( the specific variables defined for the project and the standard variables )"},
 		example = {
-				"#foreach( $var in $project.variables )",
+				"#foreach( $var in $project.allVariables )",
 				"  $var.name = $var.value",
 				"#end"
-			}
+			},
+		since = "2.0.7"
 	)
-    public Variable[] getVariables()
+    public Variable[] getAllVariables()
     {
-    	if ( projectVariables != null ) {
-            return projectVariables ;
+    	if ( allVariables != null ) {
+            return allVariables ;
     	}
     	else {
     		return VOID_VARIABLES ;

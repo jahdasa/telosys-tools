@@ -20,8 +20,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.telosys.tools.commons.Variable;
 import org.telosys.tools.generator.ContextName;
+import org.telosys.tools.generator.variables.Variable;
 
 /**
  * Reserved variable names

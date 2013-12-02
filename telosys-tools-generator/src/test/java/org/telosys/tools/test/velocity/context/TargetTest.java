@@ -2,9 +2,9 @@ package org.telosys.tools.test.velocity.context;
 
 import junit.framework.TestCase;
 
-import org.telosys.tools.commons.Variable;
 import org.telosys.tools.generator.context.Target;
 import org.telosys.tools.generator.target.TargetDefinition;
+import org.telosys.tools.generator.variables.Variable;
 
 public class TargetTest extends TestCase {
 

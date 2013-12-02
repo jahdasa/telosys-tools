@@ -136,7 +136,7 @@ public class GeneratorRunner {
 
 			TargetDefinition genericTarget = new TargetDefinition("Dynamic target", outputFile, outputFolder, templateFileName, "");
 			
-			Target target = new Target( genericTarget, entity.getName(), entity.getBeanJavaClass(), projectConfiguration.getVariables() );
+			Target target = new Target( genericTarget, entity.getName(), entity.getBeanJavaClass(), projectConfiguration.getAllVariables() );
 			
 			//----------------------------------------------------------------
 			// 2) Launch the generation 

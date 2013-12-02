@@ -158,7 +158,7 @@ public class EmbeddedGenerator {
 		
 		TargetDefinition genericTarget = new TargetDefinition("Dynamic target", outputFile, outputFolder, templateFile, "");
 		
-		Target target = new Target( genericTarget, entity.getName(), entity.getBeanJavaClass(), projectConfiguration.getVariables() );
+		Target target = new Target( genericTarget, entity.getName(), entity.getBeanJavaClass(), projectConfiguration.getAllVariables() );
 		
 		//Generator generator = new Generator(target, generatorConfig, logger);
 		Generator generator = new Generator(target, generatorConfig, repositoryModel, logger); // v 2.0.7

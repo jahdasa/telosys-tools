@@ -16,14 +16,14 @@
 package org.telosys.tools.generator.context;
 
 import org.telosys.tools.commons.StrUtil;
-import org.telosys.tools.commons.Variable;
-import org.telosys.tools.commons.VariablesManager;
 import org.telosys.tools.commons.config.ConfigDefaults;
 import org.telosys.tools.generator.ContextName;
 import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityNoDoc;
 import org.telosys.tools.generator.context.doc.VelocityObject;
 import org.telosys.tools.generator.target.TargetDefinition;
+import org.telosys.tools.generator.variables.Variable;
+import org.telosys.tools.generator.variables.VariablesManager;
 
 /**
  * The generation target file <br>  

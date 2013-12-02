@@ -15,16 +15,14 @@
  */
 package org.telosys.tools.generator.config;
 
-import java.util.Hashtable;
-import java.util.LinkedList;
 import java.util.Properties;
 
 import org.telosys.tools.commons.FileUtil;
 import org.telosys.tools.commons.StrUtil;
-import org.telosys.tools.commons.Variable;
-import org.telosys.tools.commons.VariablesUtil;
 import org.telosys.tools.generator.ContextName;
 import org.telosys.tools.generator.context.ProjectConfiguration;
+import org.telosys.tools.generator.variables.Variable;
+import org.telosys.tools.generator.variables.VariablesUtil;
 
 /**
  * Generator configuration implementation 
@@ -44,7 +42,9 @@ public class GeneratorConfig implements IGeneratorConfig
 
 	private final String     _sBundleName ;
 
-	private final Variable[] _projectVariables ;
+	//private final Variable[] _projectVariables ;
+	private final Properties           _projectProperties ;  // v 2.0.7
+	private final ProjectConfiguration _projectConfiguration ;  // v 2.0.7
 	
 	/**
 	 * @param sProjectLocation project location (project folder)
@@ -65,6 +65,7 @@ public class GeneratorConfig implements IGeneratorConfig
     	//--- Bundle name to use (can be null or void)
     	_sBundleName = bundleName ; // v 2.0.7
     	
+/***
     	//--- All variables : specific project variables + folders 
     	Hashtable<String, String> allVariables = new Hashtable<String, String>();
     	
@@ -94,7 +95,15 @@ public class GeneratorConfig implements IGeneratorConfig
     	Variable[] allVariablesArray = variablesList.toArray( new Variable[0] );
     	
     	_projectVariables = allVariablesArray ;
+***/
     	
+    	//_projectVariables = VariablesUtil.getAllVariablesFromProperties(prop);  // v 2.0.7
+    	_projectProperties = prop ; // v 2.0.7
+    	
+    	_projectConfiguration = new ProjectConfiguration( 
+				getTemplatesFolderFullPath(),
+				_sEntityClassPackage, 
+				_projectProperties ); // v 2.0.7
 	}
 
 //	//---------------------------------------------------------------------
@@ -117,13 +126,15 @@ public class GeneratorConfig implements IGeneratorConfig
 	//---------------------------------------------------------------------
 	public ProjectConfiguration getProjectConfiguration() 
 	{
-		ProjectConfiguration projectConfiguration = new ProjectConfiguration( 
-				//_sSourceFolder, _sWebContentFolder, 
-				getTemplatesFolderFullPath(),
-				_sEntityClassPackage, 
-				_projectVariables );
+//		ProjectConfiguration projectConfiguration = new ProjectConfiguration( 
+//				//_sSourceFolder, _sWebContentFolder, 
+//				getTemplatesFolderFullPath(),
+//				_sEntityClassPackage, 
+//				_projectVariables );
+//		
+//		return projectConfiguration;
 		
-		return projectConfiguration;
+		return _projectConfiguration ;
 	}
 
 	//---------------------------------------------------------------------
