@@ -65,6 +65,14 @@ public class BundleResourcesManager {
 		}
 	}
     //----------------------------------------------------------------------------------------------------
+	/**
+	 * Returns the IFolder instance for the given subfolder name located in the given folder<br>
+	 * Throws an exception if it doesn't exist.
+	 * @param folder
+	 * @param subfolder the name of the subfolder  
+	 * @return
+	 * @throws Exception
+	 */
 	private IFolder getSubFolder( IFolder folder, String subfolder ) throws Exception {
 		
 //		IResource resource = folder.findMember(subfolder);
@@ -83,6 +91,11 @@ public class BundleResourcesManager {
 		}
 	}
 	//----------------------------------------------------------------------------------------------------
+	/**
+	 * Returns the IFolder instance where the static resources are located<br>
+	 * @return
+	 * @throws Exception
+	 */
 	private IFolder getResourcesFolder() throws Exception {
 		String projectTemplatesFolder = _projectConfig.getTemplatesFolder() ;
 		IFolder templatesFolder = _eclipseProject.getFolder( projectTemplatesFolder ) ;
@@ -123,8 +136,8 @@ public class BundleResourcesManager {
 	
 	//----------------------------------------------------------------------------------------------------
 	/**
-	 * Copy all the given targets definitions
-	 * @param targetsDefinitions
+	 * Copy all the given resources targets definitions
+	 * @param targetsDefinitions list of the resources targets definition
 	 * @throws Exception
 	 */
 	public int copyResourcesInProject( List<TargetDefinition> targetsDefinitions ) throws Exception {
@@ -135,7 +148,7 @@ public class BundleResourcesManager {
 		
 		//--- Resources folder in the Eclipse workspace/project
 		IFolder resourcesFolder = getResourcesFolder() ;
-		//--- Build targets from targets definitions 
+		//--- Build the real resources targets from the targets definitions 
 		List<Target> resourcesTargets = getResourcesTargets( targetsDefinitions ) ;
 		//--- For each target 
 		for ( Target target : resourcesTargets ) {
@@ -149,9 +162,15 @@ public class BundleResourcesManager {
 
     //----------------------------------------------------------------------------------------------------
 	/**
-	 * Copy the given target definition in the project ( it can be a single file or a folder )
+	 * Copy the given target in the project ( it can be a single file or a folder )
 	 * @param resourcesFolder
 	 * @param target
+	 * @throws Exception
+	 */
+	/**
+	 * @param resourcesFolder
+	 * @param target
+	 * @return
 	 * @throws Exception
 	 */
 	private int copyResourceTargetInProject( IFolder resourcesFolder, Target target ) throws Exception {
@@ -166,26 +185,33 @@ public class BundleResourcesManager {
 		
 		if ( originalResource.getType() == IResource.FILE  ) { //--- Resource is a FILE 
 			
+			IFile originalResourceFile = (IFile) originalResource ;
 			//--- Destination 
 			String targetFileName = target.getFile() ;
+			String targetFilePathInProject = null ;
 			if ( StrUtil.nullOrVoid(targetFileName) ) {
 				//--- No target file name : use the "resource file name" to build the path
 //				String targetFolderPath = target.getOutputFileNameInProject() ;
 //				String targetFilePath = FileUtil.buildFilePath(targetFolderPath, resourceName ); 
-				String targetFilePathInProject = FileUtil.buildFilePath(target.getFolder(), resourceName ); 
-				count = count + copyFileToFile(originalResource, targetFilePathInProject );
+				targetFilePathInProject = FileUtil.buildFilePath(target.getFolder(), resourceName ); 
 			}
 			else {
 				//--- The target file name is defined : use the target path
-				String targetFilePathInProject = target.getOutputFileNameInProject();
-				count = count + copyFileToFile(originalResource, targetFilePathInProject );
+				targetFilePathInProject = target.getOutputFileNameInProject();
 			}
+			//--- Copy the single resource file in the target's destination file
+			count = count + copyFileToFile(originalResourceFile, targetFilePathInProject );
 		}
 		else if ( originalResource.getType() == IResource.FOLDER ) { //--- Resource is a FOLDER 
+
+			IFolder originalResourceFolder = (IFolder) originalResource ;
 			//--- Always use the DESTINATION FOLDER
-			// TODO
-//			String targetFolderPath = target.getOutputFolderInFileSystem( generatorConfig.getProjectLocation() );
-//			copyFolderToFolder(originalFileOrFolderPath, targetFolderPath, overwrite);
+			String targetFolderPathInProject = target.getFolder() ; 
+			if ( StrUtil.nullOrVoid(targetFolderPathInProject) ) {
+				targetFolderPathInProject = "";
+			}
+			//--- Copy the resource folder in the target's destination folder
+			count = count + copyFolderToFolder(originalResourceFolder, targetFolderPathInProject );
 		}
 		else {
 			throw new GeneratorException("Resource '" + resourceName + "' is not a file or folder" );
@@ -194,7 +220,7 @@ public class BundleResourcesManager {
 	}
 	
 	//----------------------------------------------------------------------------------------------------
-	private int copyFileToFile( IResource resource, String destinationFileInProject ) throws Exception {
+	private int copyFileToFile( IFile resource, String destinationFileInProject ) throws Exception {
 
 		log("copyFileToFile(..,..)") ;
 		log(" from : " + resource.getFullPath() );
@@ -276,4 +302,50 @@ public class BundleResourcesManager {
 		return copyCount ;
 	}
 	
+	//----------------------------------------------------------------------------------------------------
+	private int copyFolderToFolder( IFolder resourceFolder, String destinationFolderInProject ) throws Exception {
+
+		log("copyFolderToFolder(..,..)") ;
+		log(" from : " + resourceFolder.getFullPath() );
+		log("   to : " + destinationFolderInProject );
+
+		int count = 0 ;
+		IFolder destFolder = _eclipseProject.getFolder(destinationFolderInProject);
+		if ( destFolder.exists() ) {
+			log ( " folder '" + destFolder.getName() + "' exists ") ;
+			//--- Check it's a folder
+			if ( destFolder.getType() != IResource.FOLDER ) {
+				throw new GeneratorException("Cannot copy resource. Destination '" + destFolder.getName() + "' is not a folder." );
+			}
+		}
+		else {
+			log ( " folder '" + destFolder.getName() + "' doesn't exist => creation") ;
+			//--- Create it (even if void, to build the same structure as the original folder)
+			destFolder.create(true, // force - a flag controlling how to deal with resources that are not in sync with the local file system
+					true, // local - a flag controlling whether or not the folder will be local after the creation
+					null); // monitor - a progress monitor, or null if progress reporting is not desired
+			log ( " folder '" + destFolder.getName() + "' created.") ;
+		}
+		
+		IResource[] folderMembers = resourceFolder.members();
+		
+		//--- Copy each member of the folder
+		for ( IResource r : folderMembers ) {
+			if (r instanceof IFile) {
+				log ( " - member : " + r.getName() + " (IFile) ") ;
+				// Build destination file
+				String destFile = FileUtil.buildFilePath(destinationFolderInProject, r.getName() );
+				// Copy from file to file
+				count = count + copyFileToFile((IFile) r, destFile);
+			}
+			else if (r instanceof IFolder) {
+				log ( " - member : " + r.getName() + " (IFolder) ") ;
+				// Build destination sub-folder
+				String destSubFolder = FileUtil.buildFilePath(destinationFolderInProject, r.getName() );
+				// Copy recursively
+				count = count + copyFolderToFolder((IFolder) r, destSubFolder) ;
+			}
+		}
+		return count ;
+	}
 }
