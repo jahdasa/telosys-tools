@@ -29,8 +29,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.telosys.tools.commons.FileUtil;
 import org.telosys.tools.commons.StrUtil;
-import org.telosys.tools.commons.Variable;
-import org.telosys.tools.commons.VariablesUtil;
 import org.telosys.tools.eclipse.plugin.MyPlugin;
 import org.telosys.tools.eclipse.plugin.commons.EclipseProjUtil;
 import org.telosys.tools.eclipse.plugin.commons.MsgBox;
@@ -44,6 +42,8 @@ import org.telosys.tools.generator.ContextName;
 import org.telosys.tools.generator.GeneratorVersion;
 import org.telosys.tools.generator.config.GeneratorConfigConst;
 import org.telosys.tools.generator.context.VariableNames;
+import org.telosys.tools.generator.variables.Variable;
+import org.telosys.tools.generator.variables.VariablesUtil;
 
 /**
  * Project properties configuration page ( one configuration file for each project )
@@ -1258,7 +1258,7 @@ public class PropertiesPage extends PropertyPage {
 
 		
 		//--- Tab "Variables"
-		Variable[] items = projectConfig.getProjectVariables();
+		Variable[] items = projectConfig.getSpecificVariables();
 		if ( items != null )
 		{
 			_variablesTable.initItems(items);

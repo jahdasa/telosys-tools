@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.temp ;
+package org.telosys.tools.eclipse.plugin.commons ;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -29,14 +29,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.telosys.tools.commons.FileUtil;
 import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.commons.TelosysToolsLogger;
-import org.telosys.tools.commons.Variable;
-import org.telosys.tools.eclipse.plugin.commons.EclipseWksUtil;
-import org.telosys.tools.eclipse.plugin.commons.MsgBox;
 import org.telosys.tools.eclipse.plugin.commons.dialogbox.OverwriteDialogBox;
 import org.telosys.tools.eclipse.plugin.config.ProjectConfig;
 import org.telosys.tools.generator.GeneratorException;
 import org.telosys.tools.generator.context.Target;
 import org.telosys.tools.generator.target.TargetDefinition;
+import org.telosys.tools.generator.variables.Variable;
 
 
 public class BundleResourcesManager {
@@ -106,12 +104,11 @@ public class BundleResourcesManager {
 	private List<Target> getResourcesTargets(List<TargetDefinition> targetsDefinitions ) {
 		log("getResourcesTargets()... " );
 		
-		// TODO : invalid variables
-		Variable[] projectVariables = _projectConfig.getProjectVariables();
-		log(" variables : " );
-		for ( Variable v : projectVariables ) {
-			log(" . " + v.getName() + " = " + v.getValue()  );
-		}
+		Variable[] projectVariables = _projectConfig.getAllVariables();
+//		log(" variables : " );
+//		for ( Variable v : projectVariables ) {
+//			log(" . " + v.getName() + " = " + v.getValue()  );
+//		}
 		LinkedList<Target> targets = new LinkedList<Target>();
 		if ( targetsDefinitions != null ) {
 			for ( TargetDefinition targetDefinition : targetsDefinitions ) {

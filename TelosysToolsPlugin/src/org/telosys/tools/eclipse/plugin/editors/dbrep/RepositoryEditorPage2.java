@@ -32,8 +32,6 @@ import org.telosys.tools.eclipse.plugin.commons.widgets.GridPanel;
 import org.telosys.tools.eclipse.plugin.commons.widgets.RefreshButton;
 import org.telosys.tools.eclipse.plugin.commons.widgets.SelectDeselectButtons;
 import org.telosys.tools.eclipse.plugin.commons.widgets.TargetsButton;
-import org.telosys.tools.eclipse.plugin.config.ProjectConfig;
-import org.telosys.tools.generator.config.IGeneratorConfig;
 import org.telosys.tools.generator.target.TargetDefinition;
 import org.telosys.tools.repository.model.Entity;
 import org.telosys.tools.repository.model.RepositoryModel;

@@ -9,8 +9,6 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
 import org.telosys.tools.commons.FileUtil;
-import org.telosys.tools.commons.Variable;
-import org.telosys.tools.commons.VariablesUtil;
 import org.telosys.tools.eclipse.plugin.MyPlugin;
 import org.telosys.tools.eclipse.plugin.commons.MsgBox;
 import org.telosys.tools.generator.ContextName;
@@ -18,6 +16,8 @@ import org.telosys.tools.generator.GeneratorException;
 import org.telosys.tools.generator.config.GeneratorConfigConst;
 import org.telosys.tools.generator.target.TargetDefinition;
 import org.telosys.tools.generator.target.TargetsFile;
+import org.telosys.tools.generator.variables.Variable;
+import org.telosys.tools.generator.variables.VariablesUtil;
 
 /**
  * Telosys Tools project configuration <br>
@@ -47,9 +47,7 @@ public class ProjectConfig
 	private String _sLibrariesFolder    = "TelosysTools/lib" ; 
 	
 	//----------------------------------------------------------------------------------------
-	// [22-Jan-2012] Removed	
 	//--- Packages 	
-	//private String _sEntitiesPackage = "org.demo.bean" ;
 	private String _ENTITY_PKG = "org.demo.bean" ;
 	private String _ROOT_PKG   = "org.demo" ;
 
@@ -62,15 +60,6 @@ public class ProjectConfig
 	private String _TMP      =  "tmp" ;
 	
 	//----------------------------------------------------------------------------------------
-	//--- Classes names
-	// [22-Jan-2012] Removing classes names
-//	private String _sClassNameVOList      = ConfigDefaults.DEFAULT_LIST_CLASS_NAME ;
-//	
-//	private String _sClassNameDAO         = ConfigDefaults.DEFAULT_DAO_CLASS_NAME ;
-//	
-//	private String _sClassNameXmlMapper   = ConfigDefaults.DEFAULT_XML_MAPPER_CLASS_NAME ;
-
-	//----------------------------------------------------------------------------------------
 	//--- Masks
 	private String _sScreenDataClassMask = "*Data" ;
 	
@@ -79,7 +68,9 @@ public class ProjectConfig
 	//----------------------------------------------------------------------------------------
 	//--- Project Variables
 	//private VariableItem[] _projectVariables = null ;
-	private Variable[] _projectVariables = null ;
+	private final Variable[] _specificVariables  ;
+
+	private final Variable[] _allVariables ; // v 2.0.7
 	
 	//----------------------------------------------------------------------------------------
 // Removed in v 2.0.7
@@ -118,7 +109,7 @@ public class ProjectConfig
     	if ( project == null)
     	{
     		MsgBox.error("ProjectConfig constructor : project is null");
-    		return ; // Keep the original default values 
+    		//return ; // Keep the original default values 
     	}
     	_sPluginConfigFile = sPluginConfigFile ;
     		
@@ -147,35 +138,37 @@ public class ProjectConfig
     		MsgBox.error("ProjectConfig constructor : workspace location is null");
     	}
     	
-    	if ( prop == null)
-    	{
-    		return ; // Keep the original default values 
+    	if ( prop != null)
+    	{    	
+	    	// Init with the given properties, use original values as default values
+	    	_sRepositoriesFolder = prop.getProperty(GeneratorConfigConst.REPOS_FOLDER, _sRepositoriesFolder);
+	    	_sTemplatesFolder = prop.getProperty(GeneratorConfigConst.TEMPLATES_FOLDER, _sTemplatesFolder);
+	    	_sDownloadsFolder = prop.getProperty(GeneratorConfigConst.DOWNLOADS_FOLDER, _sDownloadsFolder);
+	    	_sLibrariesFolder = prop.getProperty(GeneratorConfigConst.LIBRARIES_FOLDER, _sLibrariesFolder);
+	    	
+	    	//--- Packages 
+	    	//_sEntitiesPackage = prop.getProperty(GeneratorConfigConst.ENTITIES_PACKAGE, _sEntitiesPackage);
+	    	_ROOT_PKG   = prop.getProperty(ContextName.ROOT_PKG,   _ROOT_PKG);
+	    	_ENTITY_PKG = prop.getProperty(ContextName.ENTITY_PKG, _ENTITY_PKG);
+	
+	    	//--- Folders  
+	    	_SRC      =  prop.getProperty(ContextName.SRC,      _SRC);
+	    	_RES      =  prop.getProperty(ContextName.RES,      _RES);
+	    	_WEB      =  prop.getProperty(ContextName.WEB,      _WEB);
+	    	_TEST_SRC =  prop.getProperty(ContextName.TEST_SRC, _TEST_SRC);
+	    	_TEST_RES =  prop.getProperty(ContextName.TEST_RES, _TEST_RES);
+	    	_DOC      =  prop.getProperty(ContextName.DOC,      _DOC);
+	    	_TMP      =  prop.getProperty(ContextName.TMP,      _TMP);
+	    	
+	    	//--- Project user defined variables
+	    	//_projectVariables = initProjectVariables( prop ); // Can be null
+	    	_specificVariables = VariablesUtil.getVariablesFromProperties( prop );
+	    	_allVariables      = VariablesUtil.getAllVariablesFromProperties(prop); // v 2.0.7
     	}
-    	
-    	// Init with the given properties, use original values as default values
-    	_sRepositoriesFolder = prop.getProperty(GeneratorConfigConst.REPOS_FOLDER, _sRepositoriesFolder);
-    	_sTemplatesFolder = prop.getProperty(GeneratorConfigConst.TEMPLATES_FOLDER, _sTemplatesFolder);
-    	_sDownloadsFolder = prop.getProperty(GeneratorConfigConst.DOWNLOADS_FOLDER, _sDownloadsFolder);
-    	_sLibrariesFolder = prop.getProperty(GeneratorConfigConst.LIBRARIES_FOLDER, _sLibrariesFolder);
-    	
-    	//--- Packages 
-    	//_sEntitiesPackage = prop.getProperty(GeneratorConfigConst.ENTITIES_PACKAGE, _sEntitiesPackage);
-    	_ROOT_PKG   = prop.getProperty(ContextName.ROOT_PKG,   _ROOT_PKG);
-    	_ENTITY_PKG = prop.getProperty(ContextName.ENTITY_PKG, _ENTITY_PKG);
-
-    	//--- Folders  
-    	_SRC      =  prop.getProperty(ContextName.SRC,      _SRC);
-    	_RES      =  prop.getProperty(ContextName.RES,      _RES);
-    	_WEB      =  prop.getProperty(ContextName.WEB,      _WEB);
-    	_TEST_SRC =  prop.getProperty(ContextName.TEST_SRC, _TEST_SRC);
-    	_TEST_RES =  prop.getProperty(ContextName.TEST_RES, _TEST_RES);
-    	_DOC      =  prop.getProperty(ContextName.DOC,      _DOC);
-    	_TMP      =  prop.getProperty(ContextName.TMP,      _TMP);
-    	
-    	//--- Project user defined variables
-    	//_projectVariables = initProjectVariables( prop ); // Can be null
-    	_projectVariables = VariablesUtil.getVariablesFromProperties( prop );
-    	
+    	else {
+    		_specificVariables = new Variable[0] ;
+    		_allVariables = new Variable[0] ;
+    	}
     	// Removed in v 2.0.7
     	//_templates = loadTemplates();
     }
@@ -213,6 +206,7 @@ public class ProjectConfig
     	return _TMP;
 	}
     
+	//------------------------------------------------------------------------------------------------------
     /**
      * Returns the templates folder in the Eclipse project <br>
      * ( ie 'TelosysTools/templates' )
@@ -222,6 +216,7 @@ public class ProjectConfig
     	return _sTemplatesFolder;
 	}
 
+	//------------------------------------------------------------------------------------------------------
     /**
      * Returns the download folder in the Eclipse project <br>
      * ( ie 'TelosysTools/downloads' )
@@ -231,6 +226,7 @@ public class ProjectConfig
     	return _sDownloadsFolder;
     }
     
+	//------------------------------------------------------------------------------------------------------
     /**
      * Returns the libraries folder in the Eclipse project <br>
      * ( ie 'TelosysTools/lib' )
@@ -240,6 +236,7 @@ public class ProjectConfig
     	return _sLibrariesFolder ;
     }
     
+	//------------------------------------------------------------------------------------------------------
     /**
      * Returns the plugin templates directory ( default templates directory ) 
      * @return
@@ -249,6 +246,7 @@ public class ProjectConfig
     	return MyPlugin.getTemplatesDirectory();
 	}
     
+	//------------------------------------------------------------------------------------------------------
     /**
      * Returns the "Project Full Path" by adding the given subpath at the end of the project location
      * @param sSubPath the "sub path" to add
@@ -274,6 +272,7 @@ public class ProjectConfig
     	}
 	}
     
+	//------------------------------------------------------------------------------------------------------
     /**
      * Returns the "full path" templates folder (never null)<br>
      * e.g. : "C:/dir/workspace/project/folder"
@@ -304,16 +303,19 @@ public class ProjectConfig
     	}
 	}
     
+	//------------------------------------------------------------------------------------------------------
     public String getRepositoriesFolder()
 	{
     	return _sRepositoriesFolder ;
 	}
     
+	//------------------------------------------------------------------------------------------------------
     public String getProjectName()
 	{
     	return _sProjectName ;
 	}
     
+	//------------------------------------------------------------------------------------------------------
     /**
      * Returns the OS file system project location
      * @return
@@ -323,22 +325,12 @@ public class ProjectConfig
     	return _sProjectLocation ;
 	}
     
+	//------------------------------------------------------------------------------------------------------
     public String getWorkspaceFolder()
 	{
     	return _sWorkspaceLocation ;
 	}
 
-    
-//    //==============================================================================
-//    // Directories  
-//    //==============================================================================
-//	public String getTemplatesDirectory()
-//	{
-//		return _sTemplatesDirectory ;
-//	}
-	
-    
-    
     //==============================================================================
     // Packages 
     //==============================================================================
@@ -347,12 +339,12 @@ public class ProjectConfig
 	 * ie "org.demo.bean"
 	 * @return 
 	 */
-	//public String getPackageForJavaBeans() 
 	public String getEntityPackage() 
 	{
 		return _ENTITY_PKG ;
 	}
 	
+	//------------------------------------------------------------------------------------------------------
 	/**
 	 * Returns the root package  
 	 * ie "org.demo"
@@ -363,122 +355,8 @@ public class ProjectConfig
 		return _ROOT_PKG ;
 	}
 	
-//	/**
-//	 * ie "org.demo.vo.list"
-//	 * @return
-//	 */
-//	public String getPackageForVOList() 
-//	{
-//		return _sPackageVOList ;
-//	}
-	
-//	/**
-//	 * ie "org.demo.vo.xml"
-//	 * @return
-//	 */
-//	public String getPackageForXmlMapper() 
-//	{
-//		return _sPackageXmlMapper ;
-//	}
-	
-//	/**
-//	 * ie "org.demo.vo.dao"
-//	 * @return
-//	 */
-//	public String getPackageForDAO() 
-//	{
-//		return _sPackageDAO ;
-//	}
-	
-//	/**
-//	 * ie "org.demo.screen"
-//	 * @return
-//	 */
-//	public String getPackageForScreenData() 
-//	{
-//		return _sPackageScreenData ;
-//	}
-	
-//	/**
-//	 * ie "org.demo.screen"
-//	 * @return
-//	 */
-//	public String getPackageForScreenManager() 
-//	{
-//		return _sPackageScreenManager ;
-//	}
-	
-//	public String getPackageForScreenProcedures() 
-//	{
-//		return _sPackageScreenProcedures ;
-//	}
-//	/**
-//	 * ie "org.demo.screen"
-//	 * @return
-//	 */
-//	public String getPackageForScreenTriggers() 
-//	{
-//		return _sPackageScreenTriggers ;
-//	}
-	
-//	//==============================================================================
-//    // Classes names  
-//    //==============================================================================
-//	/**
-//	 * @return the trimed parameter or null
-//	 */
-//	public String getClassNameForXmlMapper()
-//	{
-//		return trim( _sClassNameXmlMapper ) ;
-//	}
-//	
-//	/**
-//	 * @param sDefault
-//	 * @return the trimed parameter or the default value if not set
-//	 */
-//	public String getClassNameForXmlMapper( String sDefault )
-//	{
-//		return paramOrDefault( this.getClassNameForXmlMapper(), sDefault );
-//	}
-//	
-//	//------------------------------------------------------------------------------
-//	/**
-//	 * @return the trimed parameter or null
-//	 */
-//	public String getClassNameForDAO()
-//	{
-//		return trim( _sClassNameDAO ) ;
-//	}
-//	
-//	/**
-//	 * @param sDefault
-//	 * @return the trimed parameter or the default value if not set
-//	 */
-//	public String getClassNameForDAO( String sDefault )
-//	{
-//		return paramOrDefault( this.getClassNameForDAO(), sDefault );
-//	}
-//	
-//	//------------------------------------------------------------------------------
-//	/**
-//	 * @return the trimed parameter or null
-//	 */
-//	public String getClassNameForVOList()
-//	{
-//		return trim( _sClassNameVOList ) ;
-//	}
-//	
-//	/**
-//	 * @param sDefault
-//	 * @return the trimed parameter or the default value if not set
-//	 */
-//	public String getClassNameForVOList( String sDefault )
-//	{
-//		return paramOrDefault( this.getClassNameForVOList(), sDefault );
-//	}
-	
 	//==============================================================================
-    // Masks  
+    // Masks  ( used by WIZARDS )
     //==============================================================================
 	public String getScreenDataClassMask() 
 	{
@@ -513,6 +391,7 @@ public class ProjectConfig
     	//_templates = loadTemplates();
 	}
 
+	//------------------------------------------------------------------------------------------------------
     /**
      * Returns the list of targets defined in "templates.cfg" or null if none
      * @return
@@ -523,6 +402,7 @@ public class ProjectConfig
     	return loadTemplates(bundleName) ; // v 2.0.7
 	}
 
+	//------------------------------------------------------------------------------------------------------
 	private List<TargetDefinition> loadTemplates(String bundleName)
 	{
 		// Initial templates folder 
@@ -554,13 +434,24 @@ public class ProjectConfig
 		}
 	}	
 
+	//------------------------------------------------------------------------------------------------------
 	/**
-	 * Returns all the defined project variables  
+	 * Returns the specific variables defined for the project  
 	 * @return array of variables, or null if none
 	 */
-	public Variable[] getProjectVariables()
+	public Variable[] getSpecificVariables()
 	{
-		return _projectVariables ;
+		return _specificVariables ;
 	}	
 
+	/**
+	 * Returns all the variables defined for the project <br>
+	 * (standard variables + specific variables )
+	 * @return
+	 */
+	public Variable[] getAllVariables()
+	{
+		return _allVariables ;
+	}	
+	
 }
