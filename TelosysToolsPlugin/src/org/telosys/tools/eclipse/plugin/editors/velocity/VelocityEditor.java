@@ -8,7 +8,7 @@ import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.TextOperationAction;
 import org.telosys.tools.eclipse.plugin.ContextualHelp;
-import org.telosys.tools.eclipse.plugin.editors.velocity.contentassist.ContentAssistMessages;
+import org.telosys.tools.eclipse.plugin.editors.velocity.contentassist.ContentAssistConfiguration;
 
 public class VelocityEditor extends TextEditor {
 
@@ -38,7 +38,7 @@ public class VelocityEditor extends TextEditor {
 	@Override
 	protected void createActions() {
 		super.createActions();
-		ResourceBundle bundle = ContentAssistMessages.getResourceBundle();
+		ResourceBundle bundle = ContentAssistConfiguration.getDocumentationResourceBundle();
 		
 		// Content assist action
 		IAction action = new TextOperationAction(bundle, "ContentAssistProposal.", this, ISourceViewer.CONTENTASSIST_PROPOSALS); //$NON-NLS-1$

@@ -3,9 +3,11 @@ package org.telosys.tools.eclipse.plugin.editors.velocity.contentassist;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
-public class ContentAssistMessages {
-	private static final String BUNDLE_NAME= "org.telosys.tools.eclipse.plugin.editors.velocity.contentassist.ContentAssistMessages"; //$NON-NLS-1$
-    private static final ResourceBundle RESOURCE_BUNDLE= ResourceBundle.getBundle(BUNDLE_NAME);
+public class ContentAssistConfiguration {
+	private static final String DOC_BUNDLE_NAME= "org.telosys.tools.eclipse.plugin.editors.velocity.contentassist.ContentAssistMessages"; //$NON-NLS-1$
+    private static final ResourceBundle RESOURCE_BUNDLE_DOC= ResourceBundle.getBundle(DOC_BUNDLE_NAME);
+	private static final String CONF_BUNDLE_NAME= "org.telosys.tools.eclipse.plugin.editors.velocity.contentassist.VelocityEditorConfiguration"; //$NON-NLS-1$
+    private static final ResourceBundle RESOURCE_BUNDLE_CONF = ResourceBundle.getBundle(CONF_BUNDLE_NAME);
     
     // Standard Velocity directives
     public static final String DIRECTIVE_SET_DOC      = "directive.set.doc";
@@ -25,7 +27,10 @@ public class ContentAssistMessages {
     public static final String DIRECTIVE_ERROR_DOC       = "directive.error.doc";
     public static final String DIRECTIVE_USING_DOC       = "directive.using.doc";
     
-    private ContentAssistMessages() {
+    // Customizable bean variable name (ex : $entityFound must have the same completion than $entity)
+    public static final String  CONF_BEAN_VARIABLES_CUSTOMIZABLE = "velocity.editor.beanVariableSuffixable";
+    
+    private ContentAssistConfiguration() {
         // no instance
     }
 
@@ -36,9 +41,24 @@ public class ContentAssistMessages {
      * @param key the resource key
      * @return the string
      */ 
-    public static String getString(String key) {
+    public static String getMessage(String key) {
         try {
-            return RESOURCE_BUNDLE.getString(key);
+            return RESOURCE_BUNDLE_DOC.getString(key);
+        } catch (Exception e) {
+            return '!' + key + '!';
+        }
+    }
+    
+    /**
+     * Returns the resource string associated with the given key in the resource bundle. If there isn't 
+     * any value under the given key, the key is returned.
+     *
+     * @param key the resource key
+     * @return the string
+     */ 
+    public static String getConfigurationValue(String key) {
+        try {
+            return RESOURCE_BUNDLE_CONF.getString(key);
         } catch (Exception e) {
             return '!' + key + '!';
         }
@@ -49,8 +69,17 @@ public class ContentAssistMessages {
      * 
      * @return the resource bundle
      */
-    public static ResourceBundle getResourceBundle() {
-        return RESOURCE_BUNDLE;
+    public static ResourceBundle getDocumentationResourceBundle() {
+        return RESOURCE_BUNDLE_DOC;
+    }
+    
+    /**
+     * Returns the resource bundle managed by the receiver.
+     * 
+     * @return the resource bundle
+     */
+    public static ResourceBundle getConfigurationResourceBundle() {
+        return RESOURCE_BUNDLE_CONF;
     }
     
     /**
@@ -62,8 +91,8 @@ public class ContentAssistMessages {
      * @param arg the message argument
      * @return the string
      */ 
-    public static String getFormattedString(String key, Object arg) {
-        return getFormattedString(key, new Object[] { arg });
+    public static String getFormattedMessage(String key, Object arg) {
+        return getFormattedMessage(key, new Object[] { arg });
     }
     
     /**
@@ -75,7 +104,7 @@ public class ContentAssistMessages {
      * @param args the message arguments
      * @return the string
      */ 
-    public static String getFormattedString(String key, Object[] args) {
-        return MessageFormat.format(getString(key), args);  
+    public static String getFormattedMessage(String key, Object[] args) {
+        return MessageFormat.format(getMessage(key), args);  
     }   
 }

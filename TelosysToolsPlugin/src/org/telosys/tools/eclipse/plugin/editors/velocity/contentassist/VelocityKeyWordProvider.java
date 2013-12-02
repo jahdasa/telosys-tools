@@ -3,6 +3,7 @@ package org.telosys.tools.eclipse.plugin.editors.velocity.contentassist;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.telosys.tools.eclipse.plugin.editors.velocity.model.VelocityKeyWord;
 import org.telosys.tools.eclipse.plugin.editors.velocity.model.VelocityKeyWords;
 
@@ -53,8 +54,28 @@ public class VelocityKeyWordProvider {
 		ArrayList<VelocityKeyWord> wordBuffer = new ArrayList<VelocityKeyWord>();
 		
 		// provide attributs and method of a variable generator
-		wordBuffer.addAll(this.filterSuggestions(this.contextObjectInfo.getBeanInfo(variableName), filter));
-		
+		List<VelocityKeyWord> completions = this.filterSuggestions(this.contextObjectInfo.getBeanInfo(variableName), filter);
+		if (completions.isEmpty()) {
+			// Some variables must match a pattern to have completions. This feature allows you to avail 
+			// the completion for custom variables. For a predefine list of pattern, if the variable start by this pattern
+			// the completion provide a methods list.
+			// For ex : There is the $target varibale wich have methods completion. If, there a variable with the
+			// name $targetCustom, this variable will have the completion too.
+			String customzableVariableNames = ContentAssistConfiguration.getConfigurationValue(
+															ContentAssistConfiguration.CONF_BEAN_VARIABLES_CUSTOMIZABLE);
+			
+			String[] allowedPrefixes = customzableVariableNames.split(";");
+			for (int i = 0; i < allowedPrefixes.length; i++) {
+				if(variableName.startsWith(allowedPrefixes[i])) {
+					completions = this.filterSuggestions(this.contextObjectInfo.getBeanInfo(allowedPrefixes[i]), filter);
+					wordBuffer.addAll(completions);
+					break;
+				}
+			}
+		} else {
+			wordBuffer.addAll(completions);
+		}
+
 		return wordBuffer;
 	}
 	
