@@ -43,6 +43,9 @@ public class PluginImages {
 	public static final String CHECKED_ON     = "CHECKED_ON" ; // v 2.0
 	public static final String CHECKED_OFF    = "CHECKED_OFF" ; // v 2.0
 
+	public static final String FILE1    = "FILE1" ; // v 2.0.7
+	public static final String FILES    = "FILES" ; // v 2.0.7
+
 	// Images for Velocity Templates Editor  ( v 2.0.5 )
 	public static final String VELOCITY_BEAN_GENERATOR = "VELOCITY_BEAN_GENERATOR";
 	public static final String VELOCITY_BEAN_METHOD = "VELOCITY_BEAN_METHOD";
@@ -104,6 +107,9 @@ public class PluginImages {
 		registerImage(SWITCH_BUNDLE, Const.SWITCH_BUNDLE );
 		registerImage(CHECKED_OFF,   Const.CHECKED_OFF );
 		registerImage(CHECKED_ON,    Const.CHECKED_ON );
+
+		registerImage(FILE1,    Const.FILE1 );
+		registerImage(FILES,    Const.FILES );
 		
 		// Velocity Templates Editor ( v 2.0.5 )
 		registerImage(VELOCITY_BEAN_GENERATOR,   Const.VELOCITY_BEAN_GENERATOR_IMAGE );

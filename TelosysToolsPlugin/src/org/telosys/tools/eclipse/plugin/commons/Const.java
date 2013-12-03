@@ -32,6 +32,9 @@ public class Const {
 	public static final String CHECKED_ON  = "checkbox_on_16pix.png" ; 
 	public static final String CHECKED_OFF = "checkbox_off_16pix.png" ; 
 	
+	public static final String FILE1 = "file1_16pix.png" ; // v 2.0.7
+	public static final String FILES = "files_16pix.png" ; // v 2.0.7
+	
     // Icones for Velocity Templates Editor ( v 2.0.5 )
 	public static final String VELOCITY_DIRECTIVE_IMAGE        = "velocity_directive.png";
     public static final String VELOCITY_PREDEF_VARIABLE_IMAGE  = "velocity_predef_variable.png";

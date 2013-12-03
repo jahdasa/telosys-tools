@@ -13,6 +13,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -29,6 +30,7 @@ import org.telosys.tools.eclipse.plugin.commons.listeners.OpenTemplateFileInEdit
 import org.telosys.tools.eclipse.plugin.commons.widgets.BundleComboBox;
 import org.telosys.tools.eclipse.plugin.commons.widgets.GenerateButton;
 import org.telosys.tools.eclipse.plugin.commons.widgets.GridPanel;
+import org.telosys.tools.eclipse.plugin.commons.widgets.ListenerForTableToolTip;
 import org.telosys.tools.eclipse.plugin.commons.widgets.RefreshButton;
 import org.telosys.tools.eclipse.plugin.commons.widgets.SelectDeselectButtons;
 import org.telosys.tools.eclipse.plugin.commons.widgets.TargetsButton;
@@ -356,7 +358,8 @@ import org.telosys.tools.repository.model.RepositoryModel;
 		SelectDeselectButtons buttons2 = new SelectDeselectButtons( gridPanel.getPanel() ) ; // 2 buttons
 				
 		//--- First filler
-		gridPanel.addFiller(14);
+		//gridPanel.addFiller(14);
+		gridPanel.addFiller(78); // After reducing the Edit templates.cfg button
 		
 //    	//--- Label
 //		Label label = new Label(gridPanel.getPanel(), SWT.NULL);
@@ -509,6 +512,14 @@ import org.telosys.tools.repository.model.RepositoryModel;
 		col.setText("");
 		col.setWidth(20);
 
+		//--- Add "fake tool tip" ( since v 2.0.7 )
+		table.setToolTipText(""); // Disable the native tooltip
+		Listener tableListener = new ListenerForTableToolTip(table) ;
+		table.addListener(SWT.Dispose, tableListener);
+		table.addListener(SWT.KeyDown, tableListener);
+		table.addListener(SWT.MouseMove, tableListener);
+		table.addListener(SWT.MouseHover, tableListener);
+		
 		return table;
 	}
 	
@@ -602,7 +613,12 @@ import org.telosys.tools.repository.model.RepositoryModel;
 				tableItem.setText(0, targetDef.getName()) ;
 				//tableItem.getImageIndent();
                 //tableItem.setImage(0,  null );
-				
+				if ( targetDef.isOnce() ) {
+					tableItem.setImage( PluginImages.getImage(PluginImages.FILE1 ) );
+				} else {
+					tableItem.setImage( PluginImages.getImage(PluginImages.FILES ) );
+				}
+
                 //--- Col 1
 				tableItem.setText(1, targetDef.getTemplate()) ;
 				

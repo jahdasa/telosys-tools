@@ -27,12 +27,13 @@ public class TargetsButton {
 		_project = project ;
 		
 		_button = new Button(parent, SWT.NONE);
-		_button.setText("Configure");
-		_button.setToolTipText("Edit templates.cfg file");
+		//_button.setText("Configure");
+		_button.setToolTipText("Edit templates and resources\ndefined in 'templates.cfg' file");
 
 		_button.setImage( PluginImages.getImage(PluginImages.TARGETS ) );
 		
-		_button.setLayoutData ( new GridData (BUTTON_WIDTH, BUTTON_HEIGHT) );
+		//_button.setLayoutData ( new GridData (BUTTON_WIDTH, BUTTON_HEIGHT) );
+		_button.setLayoutData ( new GridData (26, 26) );
 		
 		_button.addSelectionListener( new SelectionListener() 
 	    	{
