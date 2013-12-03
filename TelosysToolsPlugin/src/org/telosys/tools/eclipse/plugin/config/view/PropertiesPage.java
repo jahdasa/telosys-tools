@@ -671,7 +671,7 @@ public class PropertiesPage extends PropertyPage {
 		//------------------------------------------------------------------------------------
 		//--- Label  ( SPAN 2 )
 		Label label = new Label(tabContent, SWT.NONE);
-		label.setText("Download templates and resources from GitHub");
+		label.setText("Download bundles from GitHub (templates and resources)");
 		label.setLayoutData(getColSpan(2));
 		
 		//------------------------------------------------------------------------------------
@@ -696,8 +696,8 @@ public class PropertiesPage extends PropertyPage {
 		label.setText("");
 		
 		Button b = new Button(tabContent, SWT.PUSH);
-		b.setText("Get available files");
-		b.setToolTipText(" Get available files \n from GitHub site ");
+		b.setText("Get available bundles");
+		b.setToolTipText(" Get available bundles \n from GitHub site ");
 		b.addSelectionListener(new SelectionListener() 
     	{
             public void widgetSelected(SelectionEvent arg0)
@@ -713,7 +713,7 @@ public class PropertiesPage extends PropertyPage {
 		//------------------------------------------------------------------------------------
 		//--- Label + List of Repositories 
 		label = new Label(tabContent, SWT.NONE);
-		label.setText("GitHub files : ");	
+		label.setText("GitHub bundles : ");	
 		label.setLayoutData(getCellGridData1());
 		
 //		_tableGitHubRepositories = createGitHubRepositiriesTable(tabContent, 400);
@@ -759,8 +759,8 @@ public class PropertiesPage extends PropertyPage {
 		composite1.setLayout(gdComposite);
 
 			b = new Button(composite1, SWT.PUSH);
-			b.setText("Download selected file(s)");
-			b.setToolTipText(" Download selected files \n from GitHub site ");
+			b.setText("Download selected bundles(s)");
+			b.setToolTipText(" Download selected bundle(s) \n from GitHub site ");
 			b.addSelectionListener(new SelectionListener() 
 	    	{
 	            public void widgetSelected(SelectionEvent arg0)
@@ -781,7 +781,7 @@ public class PropertiesPage extends PropertyPage {
 			);
 	
 			_checkBoxUnzipDownload = new Button(composite1, SWT.CHECK);
-			_checkBoxUnzipDownload.setText("Unzip downloaded file(s)");
+			_checkBoxUnzipDownload.setText("Install downloaded bundle(s)");
 			_checkBoxUnzipDownload.setSelection(true);
 		
 		
@@ -857,6 +857,10 @@ public class PropertiesPage extends PropertyPage {
 			MsgBox.error("Selection is null !");
 			return 0 ;
 		}
+		String sTemplatesFolder = getTemplatesFolder();
+		if ( null == sDownloadFolder ) {
+			return 0 ;
+		}
 	
 		//--- Run the generation task via the progress monitor 
 		DownloadTaskWithProgress task = null ;
@@ -867,6 +871,7 @@ public class PropertiesPage extends PropertyPage {
 					sDownloadFolder, 
 					sGitHubUrlPattern, 
 					bUnzip, // Unzip or not the downloaded file
+					sTemplatesFolder, // ie "TelosysTools/templates"
 					_tLogger );
 		} catch (TelosysPluginException e) {
     		MsgBox.error("Cannot create DownloadTaskWithProgress instance", e);
@@ -910,6 +915,21 @@ public class PropertiesPage extends PropertyPage {
 		}
 		else {
 			MsgBox.warning("Download folder '" + sFolder + "' does not exist !");
+			return null ;
+		}
+	}
+	
+	private String getTemplatesFolder() {
+		String sFolder = _tTemplatesFolder.getText().trim();
+		if ( sFolder.length() == 0  ) {
+			MsgBox.warning("Templates folder is not defined");
+			return null ;
+		}
+		if ( EclipseProjUtil.folderExists(getCurrentProject(), sFolder) ) {
+			return sFolder ;
+		}
+		else {
+			MsgBox.warning("Templates folder '" + sFolder + "' does not exist !");
 			return null ;
 		}
 	}

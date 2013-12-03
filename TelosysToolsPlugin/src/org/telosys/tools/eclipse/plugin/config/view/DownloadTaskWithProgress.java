@@ -29,9 +29,10 @@ public class DownloadTaskWithProgress implements IRunnableWithProgress
 	private final String    user ;
 	private final String[]  repoNames ;
 	private final String    sDownloadFolder ;
+	private final String    sBundlesFolder ;
 	private final String    sGitHubUrlPattern ;
 	private final Text      loggerTextArea ;
-	private final boolean   bUnzip ;
+	private final boolean   bInstall ;
 	
 	private int   _result = 0 ;
 	
@@ -41,7 +42,8 @@ public class DownloadTaskWithProgress implements IRunnableWithProgress
 			String[] repoNames, 
 			String   sDownloadFolder, 
 			String   sGitHubUrlPattern,
-			boolean  bUnzip,
+			boolean  bInstall,
+			String   sBundlesFolder, 
 			Text     loggerTextArea 
 			) throws TelosysPluginException
 	{
@@ -52,7 +54,8 @@ public class DownloadTaskWithProgress implements IRunnableWithProgress
 		this.repoNames = repoNames ;
 		this.sDownloadFolder = sDownloadFolder ;
 		this.sGitHubUrlPattern = sGitHubUrlPattern ;
-		this.bUnzip = bUnzip ;
+		this.bInstall = bInstall ;
+		this.sBundlesFolder = sBundlesFolder ;
 
 		this.loggerTextArea = loggerTextArea ;
 	}
@@ -68,54 +71,56 @@ public class DownloadTaskWithProgress implements IRunnableWithProgress
 			
 			// count = total number of work units into which the main task is been subdivided
 			int totalWorkTasks = repoNames.length ;
-			if ( bUnzip ) {
+			if ( bInstall ) {
 				totalWorkTasks = repoNames.length * 2;
 			}			
 			progressMonitor.beginTask("Download in progress", totalWorkTasks + 1); 
 			progressMonitor.worked(1);
 
 			loggerTextArea.setText("");
-			for ( String repoName : repoNames ) {
-				String sFileURL = buildFileURL(repoName, sGitHubUrlPattern);
+			for ( String githubRepoName : repoNames ) {
+				String sFileURL = buildFileURL(githubRepoName, sGitHubUrlPattern);
 				if ( sFileURL != null ) {
-					String sDestinationFile = buildDestinationFileName(repoName, this.sDownloadFolder);
+					String sZipFileName = buildDestinationFileName(githubRepoName, this.sDownloadFolder);
 					count++;
 					
-					progressMonitor.subTask("Download #" + count + " '" + repoName + "'");
+					progressMonitor.subTask("Download #" + count + " '" + githubRepoName + "'");
 					
-					loggerTextArea.append("-> Download #" + count + " '" + repoName + "' ... \n");
+					loggerTextArea.append("-> Download #" + count + " '" + githubRepoName + "' ... \n");
 					loggerTextArea.append("  " + sFileURL + "\n");
-					loggerTextArea.append("  " + sDestinationFile + "\n");
+					loggerTextArea.append("  " + sZipFileName + "\n");
 					long r = 0;
 					try {
 						
 						//--- Download the file
-						r = HttpDownloader.download(sFileURL, sDestinationFile);
+						r = HttpDownloader.download(sFileURL, sZipFileName);
 						loggerTextArea.append("  done (" + r + " bytes).\n");
-						//File file = new File(sDestinationFile);
-						EclipseWksUtil.refresh( new File(sDestinationFile) );
+						EclipseWksUtil.refresh( new File(sZipFileName) );
 						//--- One TARGET done
 						// Notifies that a given number of work unit of the main task has been completed. 
 						// Note that this amount represents an installment, as opposed to a cumulative amount of work done to date.
 						progressMonitor.worked(1); // One unit done (not cumulative)
 						
 						//--- Unzip the downloaded file
-						if ( bUnzip ) {
-							String filesystemFolder = buildDestinationFolder(this.sDownloadFolder) ;
-							loggerTextArea.append("-> Unzip " + sDestinationFile + "\n");
-							loggerTextArea.append("   in folder " + filesystemFolder + "\n");
-							progressMonitor.subTask("Unzip #" + count + " '" + repoName + "'");
-							try {
-								ZipUtil.unzip(sDestinationFile, filesystemFolder, true ) ;
-							} catch (Exception e) {
-								String msg = "Cannot unzip file \n" 
-									+ sDestinationFile + "\n\n"
-									+ ( e.getCause() != null ? e.getCause().getMessage() : "") ;
-								//MsgBox.error(msg );
-								loggerTextArea.append("ERROR \n");
-								loggerTextArea.append(msg);
-							}
-							EclipseWksUtil.refresh(new File(filesystemFolder));
+						if ( bInstall ) {
+//							String filesystemFolder = buildDestinationFolder(this.sDownloadFolder) ;
+//							loggerTextArea.append("-> Installing " + sZipFileName + "\n");
+//							loggerTextArea.append("    in folder " + filesystemFolder + "\n");
+//							progressMonitor.subTask("Unzip #" + count + " '" + githubRepoName + "'");
+//							try {
+//								// ZipUtil.unzip(sDestinationFile, filesystemFolder, true ) ;
+//								installBundle( sZipFileName, githubRepoName );
+//							} catch (Exception e) {
+//								String msg = "Cannot unzip file \n" 
+//									+ sZipFileName + "\n\n"
+//									+ ( e.getCause() != null ? e.getCause().getMessage() : "") ;
+//								//MsgBox.error(msg );
+//								loggerTextArea.append("ERROR \n");
+//								loggerTextArea.append(msg);
+//							}
+//							EclipseWksUtil.refresh(new File(filesystemFolder));
+
+							installBundle( sZipFileName, githubRepoName );
 							progressMonitor.worked(1); // One unit done (not cumulative)
 						}
 					}
@@ -147,6 +152,47 @@ public class DownloadTaskWithProgress implements IRunnableWithProgress
 	}
 	
 	//--------------------------------------------------------------------------------------------------
+	private boolean installBundle( String zipFileName, String githubRepositoryName ) {
+		// Destination folder in project : "TelosysTools/templates/bundle-name"
+		String bundleFolderInProject = FileUtil.buildFilePath(this.sBundlesFolder, githubRepositoryName);
+		String filesystemFolder = buildDestinationFolder(bundleFolderInProject) ;
+		
+		if ( alreadyInstalled( filesystemFolder, githubRepositoryName, bundleFolderInProject ) ) {
+			return false ;
+		}
+		else {
+			loggerTextArea.append("-> Install '" + zipFileName + "'v\n");
+			loggerTextArea.append("   in '" + bundleFolderInProject + "' \n");
+			try {
+				ZipUtil.unzip(zipFileName, filesystemFolder, true ) ;
+			} catch (Exception e) {
+				String msg = "Cannot unzip file \n" 
+					+ zipFileName + "\n\n"
+					+ ( e.getCause() != null ? e.getCause().getMessage() : "") ;
+				//MsgBox.error(msg );
+				loggerTextArea.append("ERROR \n");
+				loggerTextArea.append(msg);
+				return false ;
+			}
+			EclipseWksUtil.refresh(new File(filesystemFolder));
+			return true ;
+		}
+	}
+	
+	//--------------------------------------------------------------------------------------------------
+	private boolean alreadyInstalled( String fileName, String githubRepositoryName, String bundleFolderInProject ) {
+		File file = new File(fileName) ;
+		if ( file.exists() ) {
+			MsgBox.warning(
+					"Bundle '" + githubRepositoryName + "' is already installed. \n\n"
+					+ "( see '" + bundleFolderInProject + "' )");
+			return true ;
+		}
+		else {
+			return false ;
+		}
+	}
+	//--------------------------------------------------------------------------------------------------
 	private String buildFileURL( String repoName, String sGitHubURLPattern ) {
 		
 		String repo = repoName.trim();
@@ -166,15 +212,16 @@ public class DownloadTaskWithProgress implements IRunnableWithProgress
 	//--------------------------------------------------------------------------------------------------
 	/**
 	 * Build the filesystem full path for the given Eclipse project folder
-	 * @param sDownloadFolder
+	 * @param sFolderInEclipseProject
 	 * @return
 	 */
-	private String buildDestinationFolder(String sDownloadFolder) {
+	private String buildDestinationFolder(String sFolderInEclipseProject) {
 		// folder path in Operating System 
 		String projectDir = EclipseProjUtil.getProjectDir(this.project);
-		String fullPath = FileUtil.buildFilePath(projectDir, sDownloadFolder);
+		String fullPath = FileUtil.buildFilePath(projectDir, sFolderInEclipseProject);
 		return fullPath;
 	}
+	
 	//--------------------------------------------------------------------------------------------------
 	/**
 	 * Build the filesystem full path for the given repository name and destination folder

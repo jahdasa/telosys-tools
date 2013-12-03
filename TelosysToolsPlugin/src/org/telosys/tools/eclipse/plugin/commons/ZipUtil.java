@@ -9,14 +9,15 @@ import java.util.zip.ZipInputStream;
 
 public class ZipUtil {
 
+	//---------------------------------------------------------------------------------------------
 	/**
-	 * Unzip the given ZIP file in the output folder
+	 * Unzip the given ZIP file in the output folder, without the root folder part 
 	 * @param zipFile
 	 * @param outputFolder
 	 * @param createFolder
 	 */
 	public static void unzip(final String zipFile, final String outputFolder,
-			final boolean createFolder) {
+			final boolean createFolder) throws Exception {
 
 		log("UnZip file '" + zipFile + "'");
 		log("        in '" + outputFolder + "'");
@@ -28,8 +29,7 @@ public class ZipUtil {
 				if (createFolder) {
 					folder.mkdir();
 				} else {
-					throw new RuntimeException("Folder '" + outputFolder
-							+ "' doesn't exist ");
+					throw new Exception("Cannot create folder '" + outputFolder + "'");
 				}
 			}
 
@@ -39,14 +39,27 @@ public class ZipUtil {
 			ZipEntry zipEntry = zis.getNextEntry();
 			while (zipEntry != null) {
 
-				File destFile = new File(outputFolder + File.separator + zipEntry.getName() );
-				log(" . entry : " + zipEntry.getName() );
-				log("      to : " + destFile.getAbsolutePath() );
-				if ( zipEntry.isDirectory() ) {
-					destFile.mkdirs(); // create directory (including parents)
+				final String zipEntryName = zipEntry.getName();
+				log(" . unzip entry '" + zipEntryName + "'");
+
+				// cut the root folder ( remove "basic-templates-TT207-master" ) 
+				String entryDestination = cutEntryName( zipEntryName ) ;
+				if ( entryDestination.length() > 0 ) {
+					//--- Install this entry
+					// build the destination file name
+					File destinationFile = new File(outputFolder + File.separator + entryDestination );
+					// unzip ( file or directory )
+					log("   install : " + zipEntryName );
+					log("        in : " + destinationFile.getAbsolutePath() );
+					if ( zipEntry.isDirectory() ) {
+						destinationFile.mkdirs(); // create directory (including parents)
+					}
+					else {
+						unzipEntry(zis, destinationFile); // extract to file
+					}
 				}
 				else {
-					unzipEntry(zis, destFile); // extract to file
+					log("   root entry => do not extract");
 				}
 				
 				zipEntry = zis.getNextEntry();
@@ -58,10 +71,46 @@ public class ZipUtil {
 			log("Done");
 
 		} catch (IOException ex) {
-			throw new RuntimeException("UnZip Error (IOException)", ex);
+			log("IOException : " + ex.getMessage() );
+			throw new Exception("UnZip Error (IOException)", ex);
+		} catch (Throwable t) {
+			log("Unexpected Exception : " + t.getMessage() );
+			throw new Exception("UnZip Error (IOException)", t);
 		}
 	}
 	
+	//---------------------------------------------------------------------------------------------
+	private static int getFirstSeparator(final String entryName) {
+		
+		for ( int i = 0 ; i < entryName.length() ; i++ ) {
+			char c = entryName.charAt(i);
+			if ( c == '/' || c == '\\' ) {
+				return i ;
+			}
+		}
+		return -1 ; // Not found
+	}
+	//---------------------------------------------------------------------------------------------
+	public static String cutEntryName(final String entryName) {
+		
+        final int pos = getFirstSeparator(entryName) ;
+        if ( pos < 0 ) {
+        	// separator not found => nothing after
+            return "" ;
+        }
+        else {
+        	// separator found => cut before
+            return entryName.substring(pos + 1);
+        }
+	}
+	
+	//---------------------------------------------------------------------------------------------
+	/**
+	 * Unzip the given entry (a single file stored in the zip file)
+	 * @param zis entry input stream
+	 * @param newFile the new file to be created
+	 * @throws IOException
+	 */
 	private static void unzipEntry(ZipInputStream zis, File newFile) throws IOException {
 
 		// create non existent parent folders (to avoid FileNotFoundException) ???
@@ -75,7 +124,39 @@ public class ZipUtil {
 		}
 		fos.close();
 	}
-	
+
+//	//---------------------------------------------------------------------------------------------
+//	/**
+//	 * Return the substring located AFTER the first occurrence of the given separator. <br>
+//	 * . substringAfter("abcd",   "b")   : "cd"  <br>
+//	 * . substringAfter("aaa/bb", "/") : "bb"  <br>
+//	 * 
+//	 * @param str
+//	 * @param separator
+//	 * @return
+//	 */
+//	public static String substringAfter(final String str, final String separator) {
+//        if ( str == null ) {
+//            return null;
+//        }
+//        if ( str.length() == 0 ) {
+//            return str;
+//        }
+//        if (separator == null) {
+//        	// no separator => nothing before
+//            return "";
+//        }
+//        final int pos = str.indexOf(separator); 
+//        if (pos < 0 ) {
+//        	// separator not found => nothing before
+//            return "";
+//        }
+//        else {
+//        	// separator found => cut before
+//            return str.substring(pos + separator.length());
+//        }
+//    }
+	//---------------------------------------------------------------------------------------------
 	private static void log(String msg) {
 		System.out.println(msg);
 	}
