@@ -1,4 +1,4 @@
-package org.telosys.tools.eclipse.plugin.commons.widgets;
+package org.telosys.tools.eclipse.plugin.commons.listeners;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
