@@ -20,15 +20,22 @@ public class ListenerForTableToolTip implements Listener {
 
 	private Shell tip = null;
 
-	private Label label = null;
+	//private Label label = null;
 
 	private TableItem currentTableItem = null;
 
+	//---------------------------------------------------------------------------------------------
 	public ListenerForTableToolTip(Table table) {
 		super();
 		this.table = table;
 	}
+	
+	//---------------------------------------------------------------------------------------------
+	private void log(String msg) {
+		//System.out.println("["+this.getClass().getSimpleName()+"] : " + msg);
+	}
 
+	//---------------------------------------------------------------------------------------------
 	/***
 	@Override
 	public void handleEvent(Event event) {
@@ -75,96 +82,130 @@ public class ListenerForTableToolTip implements Listener {
 	}
 	***/
 	
+	//---------------------------------------------------------------------------------------------
 	@Override
 	public void handleEvent(Event event) {
 
 		TableItem tableItem = getTableItem(event);
-		//System.out.println("ListenerForTableToolTip" + );
-
+		
+//		String itemText = "(no item)" ;
+//		if ( tableItem != null ) {
+//			itemText = tableItem.getText() ;
+//		}		
+//		switch (event.type) {
+//		case SWT.Dispose:
+//		//case SWT.KeyDown:
+//		case SWT.MouseMove: 
+//		case SWT.MouseHover: 
+//			log("handleEvent " + event.type + " : item '" + itemText + "' " 
+//					+ ( tableItem != currentTableItem ? "different" : "same item")  );
+//		}
+		
 		switch (event.type) {
 
-		case SWT.Dispose:
-		case SWT.KeyDown:
+		case SWT.Dispose: // When the user closes the windows -> dispose / table widget  
+		//case SWT.KeyDown: // Keyboard  event
 			disposeToolTip();
 			break;
 
-		case SWT.MouseMove: 
-//			if ( tableItem != currentTableItem ) {
-//				// Not on the same item
-//				disposeToolTip(); 
-//			}
-			disposeToolTip(); 
+		case SWT.MouseMove: // Each time the mouse move over the table (even without table item)
+			if ( tableItem != currentTableItem ) {
+				// Not on the same item
+				disposeToolTip(); 
+			}
 			break;
 
-		case SWT.MouseHover: 
-//			if ( tableItem != currentTableItem ) {
-//				// Not on the same item
-//				showToolTip(event);
-//			}
-			showToolTip(event);
+		case SWT.MouseHover: // When the mouse is over a 'table item' and stay a little time on it
+			if ( tableItem != null ) {
+				if ( tableItem != currentTableItem ) {
+					// Not on the same item
+					showToolTip(tableItem);
+				}
+				else if ( tip == null ) {
+					// not yet shown
+					showToolTip(tableItem);
+				}
+			}
 			break;
 		}
 		currentTableItem = tableItem ;
 	}
 	
+	//---------------------------------------------------------------------------------------------
+	/**
+	 * Returns the TableItem for the current mouse position <br>
+	 * or null if the mouse is not on a TableItem
+	 * @param event
+	 * @return
+	 */
 	private TableItem getTableItem(Event event) {
 		return table.getItem(new Point(event.x, event.y));
 	}
 	
-	private void showToolTip(Event event) {
+	//---------------------------------------------------------------------------------------------
+	/**
+	 * Shows the ToolTip for the given TableItem
+	 * @param tableItem
+	 */
+	private void showToolTip(TableItem tableItem) {
+		log("showToolTip()");
+
+		if ( tableItem == null ) {
+			return ;
+		}
+		
+		if (tip != null && !tip.isDisposed()) {
+			tip.dispose();
+		}
+		
+		//--- Info to be displayed
+		String info = "( no target information )" ;
+		Object data = tableItem.getData();
+		if ( data != null ) {
+			if ( data instanceof TargetDefinition ) {
+				TargetDefinition targetDefinition = (TargetDefinition) data ;
+				info = 
+					targetDefinition.getFolder() +
+					"   |   " +
+					targetDefinition.getFile() ;
+			}
+		}
+
+		//--- Tool-tip colors
 		final Shell shell = table.getShell();
 		final Display display = shell.getDisplay();
-		TableItem item = table.getItem(new Point(event.x, event.y));
-		if (item != null) {
-			if (tip != null && !tip.isDisposed())
-				tip.dispose();
-			
-			//--- Info to be displayed
-			String info = "( no target info )" ;
-			Object data = item.getData();
-			if ( data != null ) {
-				if ( data instanceof TargetDefinition ) {
-					TargetDefinition targetDefinition = (TargetDefinition) data ;
-					info = 
-						targetDefinition.getFolder() +
-						" / " +
-						targetDefinition.getFile() ;
-				}
-			}
+		Color foregroundColor = display.getSystemColor(SWT.COLOR_INFO_FOREGROUND) ;
+		Color backgroundColor = display.getSystemColor(SWT.COLOR_INFO_BACKGROUND) ;
+		
+		//--- Tool-tip creation
+		tip = new Shell(shell, SWT.ON_TOP | SWT.TOOL);
+		FillLayout fillLayout = new FillLayout();
+		fillLayout.marginWidth = 8; // left/right
+		fillLayout.marginHeight = 3; // top/bottom
+		tip.setLayout(fillLayout);
+		tip.setForeground(foregroundColor);
+		tip.setBackground(backgroundColor);
+		
+		Label label = new Label(tip, SWT.NONE);
+		label.setForeground(foregroundColor);
+		label.setBackground(backgroundColor);		
+		label.setText(info);
 
-			//--- Tooltip creation
-			Color foregroundColor = display.getSystemColor(SWT.COLOR_INFO_FOREGROUND) ;
-			Color backgroundColor = display.getSystemColor(SWT.COLOR_INFO_BACKGROUND) ;
-			
-			tip = new Shell(shell, SWT.ON_TOP | SWT.TOOL);
-			FillLayout fillLayout = new FillLayout();
-			fillLayout.marginWidth = 8; // left/right
-			fillLayout.marginHeight = 3; // top/bottom
-			tip.setLayout(fillLayout);
-			tip.setForeground(foregroundColor);
-			tip.setBackground(backgroundColor);
-			
-			label = new Label(tip, SWT.NONE);
-			label.setForeground(foregroundColor);
-			label.setBackground(backgroundColor);
-//			label.setData("_TABLEITEM", item);
-			label.setText(info);
-//			label.addListener(SWT.MouseExit, labelListener);
-//			label.addListener(SWT.MouseDown, labelListener);
-			Point size = tip.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			Rectangle rect = item.getBounds(0);
-			Point pt = table.toDisplay(rect.x, rect.y);
-			tip.setBounds(pt.x+20, pt.y+12, size.x, size.y);
-			tip.setVisible(true);
-			
-		}
+		//--- Tool-tip position
+		Point size = tip.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		Rectangle rect = tableItem.getBounds(0);
+		Point pt = table.toDisplay(rect.x, rect.y);
+		tip.setBounds(pt.x+20, pt.y+12, size.x, size.y);
+		tip.setVisible(true);
 	}
 	
+	//---------------------------------------------------------------------------------------------
 	private void disposeToolTip() {
+		log("disposeToolTip()");
 		if ( tip != null ) {
 			tip.dispose();
 		}
 		tip = null;
-		label = null;
+		//label = null;
 	}
 }
