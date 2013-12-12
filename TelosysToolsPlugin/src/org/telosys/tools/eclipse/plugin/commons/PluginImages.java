@@ -45,6 +45,9 @@ public class PluginImages {
 
 	public static final String FILE1    = "FILE1" ; // v 2.0.7
 	public static final String FILES    = "FILES" ; // v 2.0.7
+	
+	public static final String TELOSYS_FOLDER  = "TELOSYS_FOLDER" ; // v 2.0.7 (folder decorator)
+
 
 	// Images for Velocity Templates Editor  ( v 2.0.5 )
 	public static final String VELOCITY_BEAN_GENERATOR = "VELOCITY_BEAN_GENERATOR";
@@ -119,6 +122,8 @@ public class PluginImages {
 		registerImage(VELOCITY_PREDEF_VARIABLE,  Const.VELOCITY_PREDEF_VARIABLE_IMAGE);
 		registerImage(VELOCITY_PREDEFNAMES,      Const.VELOCITY_PREDEFNAMES_IMAGE);
 		
+		registerImage(TELOSYS_FOLDER, Const.TELOSYS_FOLDER ) ;
+
 	}
 
     //------------------------------------------------------------------------------------------------

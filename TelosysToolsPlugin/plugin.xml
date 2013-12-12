@@ -126,4 +126,18 @@
       </editor>            
    </extension>
    
+   <!-- DECORATORS -->
+   <extension point="org.eclipse.ui.decorators">
+	  <decorator id="org.telosys.tools.eclipse.plugin.decorator.folderdecorator" 
+			label="Decorator for Telosys Tools folder" 
+			state="true" 
+			class="org.telosys.tools.eclipse.plugin.decorator.FolderDecorator"  
+			objectClass="org.eclipse.core.resources.IFolder" 
+			adaptable="true">
+			<description>
+				Decorator for folder used by Telosys Tools generator plug-in
+			</description>
+		</decorator>
+   </extension>
+   
 </plugin>
