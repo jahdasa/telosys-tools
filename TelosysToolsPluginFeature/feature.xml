@@ -2,7 +2,7 @@
 <feature
       id="org.telosys.tools.eclipse.feature"
       label="Telosys Tools"
-      version="2.0.7"
+      version="2.1.0"
       provider-name="Telosys Project - OW2"
       plugin="org.telosys.tools.eclipse.plugin">
 
@@ -35,14 +35,14 @@ http://www.eclipse.org/legal/epl-v10.html
          id="org.telosys.tools.eclipse.plugin"
          download-size="0"
          install-size="0"
-         version="2.0.7"
+         version="2.1.0"
          unpack="false"/>
 
    <plugin
          id="org.telosys.tools.eclipse.plugin.help"
          download-size="0"
          install-size="0"
-         version="2.0.7"
+         version="2.1.0"
          unpack="false"/>
 
 </feature>
