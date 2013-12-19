@@ -76,6 +76,15 @@ public class JavaBeanClassLink {
 	}
 
 	//-------------------------------------------------------------------------------------
+	protected Link getLink() {
+		return this._link ;
+	}
+	//-------------------------------------------------------------------------------------
+	protected Entity getTargetEntity() {
+		return this._targetEntity ;
+	}
+	
+	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
 		text={	
 			"Returns the link's type with n trailing blanks "
@@ -521,7 +530,7 @@ public class JavaBeanClassLink {
 			""
 			}
 	)
-	public String getTargetEntity() {
+	public String getTargetEntityType() {
 		return _link.getTargetEntityJavaType();
 	}
 

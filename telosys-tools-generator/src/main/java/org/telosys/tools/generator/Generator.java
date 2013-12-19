@@ -42,6 +42,7 @@ import org.telosys.tools.generator.context.Fn;
 import org.telosys.tools.generator.context.Java;
 import org.telosys.tools.generator.context.JavaBeanClass;
 import org.telosys.tools.generator.context.JavaClass;
+import org.telosys.tools.generator.context.Jpa;
 import org.telosys.tools.generator.context.Loader;
 import org.telosys.tools.generator.context.Model;
 import org.telosys.tools.generator.context.ProjectConfiguration;
@@ -281,7 +282,8 @@ public class Generator {
 		_velocityContext.put(ContextName.TODAY,         new Today()); // Current date and time 
 		_velocityContext.put(ContextName.CONST,         new Const()); // Constants (static values)
 		_velocityContext.put(ContextName.FN,            new Fn());    // Utility function
-		_velocityContext.put(ContextName.JAVA,          new Java());  // Java utility function
+		_velocityContext.put(ContextName.JAVA,          new Java());  // Java utility functions
+		_velocityContext.put(ContextName.JPA,           new Jpa());   // JPA utility functions
 		
 		_velocityContext.put(ContextName.MODEL,         new Model(_allEntities) );  // The "model" object (v 2.0.7)
 		

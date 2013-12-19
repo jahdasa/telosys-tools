@@ -67,6 +67,7 @@ public class VariableNames {
 		GENERATOR_OBJECTS_LIST.add( ContextName.CONST ); 
 		GENERATOR_OBJECTS_LIST.add( ContextName.FN );
 		GENERATOR_OBJECTS_LIST.add( ContextName.JAVA ); // ver 2.0.7
+		GENERATOR_OBJECTS_LIST.add( ContextName.JPA ); // ver 2.0.7
 		GENERATOR_OBJECTS_LIST.add( ContextName.GENERATOR ); 
 		GENERATOR_OBJECTS_LIST.add( ContextName.LOADER );
 		GENERATOR_OBJECTS_LIST.add( ContextName.PROJECT );

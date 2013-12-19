@@ -15,6 +15,7 @@
  */
 package org.telosys.tools.generator.context;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.telosys.tools.commons.XmlUtil;
@@ -310,6 +311,23 @@ public class Fn {
 		}
 	}
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+			text={	
+				"Combines 2 lists ( add the second list to the first one ) "
+				},
+			example={ 
+				"#set ( $list3 = $fn.concat( $list1, $list2 )  "
+				},
+			parameters = { 	"list1 : List of objects", "list2 : List of objects"  },
+			since = "2.0.7"
+				)
+	public List<?> concat(List<?> list1, List<?> list2)  {
+		List<Object> finalList = new LinkedList<Object>();
+		finalList.addAll(list1);
+		finalList.addAll(list2);
+		return finalList ;
+	}
 	//-------------------------------------------------------------------------------------
 		
 }
