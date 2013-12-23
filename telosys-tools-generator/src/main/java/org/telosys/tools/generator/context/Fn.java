@@ -314,15 +314,17 @@ public class Fn {
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
 			text={	
-				"Combines 2 lists ( add the second list to the first one ) "
+				"Concatenates 2 lists ( add all the elements of the second list at the end of the first one ) ",
+				"The 2 given lists remain unchanged. The result is stored in a new list."
 				},
 			example={ 
-				"#set ( $list3 = $fn.concat( $list1, $list2 )  "
+				"#set ( $list3 = $fn.concatLists( $list1, $list2 )  "
 				},
-			parameters = { 	"list1 : List of objects", "list2 : List of objects"  },
+			parameters = { 	"list1 : List of objects", 
+							"list2 : List of objects to be added at the end of list1"  },
 			since = "2.0.7"
 				)
-	public List<?> concat(List<?> list1, List<?> list2)  {
+	public List<?> concatLists(List<?> list1, List<?> list2)  {
 		List<Object> finalList = new LinkedList<Object>();
 		finalList.addAll(list1);
 		finalList.addAll(list2);

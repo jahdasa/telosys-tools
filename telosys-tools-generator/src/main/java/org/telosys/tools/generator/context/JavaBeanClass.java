@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.telosys.tools.commons.StrUtil;
-import org.telosys.tools.commons.TelosysToolsException;
 import org.telosys.tools.generator.ContextName;
 import org.telosys.tools.generator.GeneratorContextException;
 import org.telosys.tools.generator.GeneratorUtil;
@@ -34,7 +33,6 @@ import org.telosys.tools.generator.context.tools.AnnotationsBuilder;
 import org.telosys.tools.repository.model.Column;
 import org.telosys.tools.repository.model.Entity;
 import org.telosys.tools.repository.model.ForeignKey;
-import org.telosys.tools.repository.model.ForeignKeyColumn;
 import org.telosys.tools.repository.model.Link;
 import org.telosys.tools.repository.model.RepositoryModel;
 
@@ -630,18 +628,18 @@ public class JavaBeanClass extends JavaClass
 	}
 
 	//-------------------------------------------------------------------------------------
-	@VelocityMethod ( text= { 
-			"Returns the database table mapped with this entity",
-			"DEPRECATED : use 'databaseTable' instead "
-		},
-		example="$entity.sqlTable",
-		deprecated=true
-	)
-	@Deprecated
-	public String getSqlTable() 
-	{
-		return _sDatabaseTable ;
-	}
+//	@VelocityMethod ( text= { 
+//			"Returns the database table mapped with this entity",
+//			"DEPRECATED : use 'databaseTable' instead "
+//		},
+//		example="$entity.sqlTable",
+//		deprecated=true
+//	)
+//	@Deprecated
+//	public String getSqlTable() 
+//	{
+//		return _sDatabaseTable ;
+//	}
 	
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod ( text= { 
@@ -798,62 +796,62 @@ public class JavaBeanClass extends JavaClass
 		return _sSqlNonKeyColumns ;
 	}
 
-    /**
-     * Returns the Java line instruction for the toString() method
-     * @return
-     */
-	//-------------------------------------------------------------------------------------
-	@VelocityMethod ( text= { 
-			"Returns the Java line instruction for the toString() method",
-			"DEPRECATED : use 'toStringMethodCodeLines()' instead "
-		},
-		example="$entity.toStringInstruction",
-		deprecated=true
-	)
-	@Deprecated
-    public String getToStringInstruction()
-    {
-    	if ( _attributes != null )
-    	{
-    		int n = _attributes.size();
-    		if ( n > 1 )
-    		{
-                StringBuffer sb = new StringBuffer();
-            	for ( int i = 0 ; i < n ; i++ )        		
-            	{
-            		JavaBeanClassAttribute attribute = (JavaBeanClassAttribute) _attributes.get(i);
-                    if ( i > 0 ) // if it's not the first one
-                    {
-                        sb.append( " + \"|\" + " ) ;
-                    }        		
-                    sb.append( attribute.getName() ) ;
-            	}
-            	return sb.toString(); // example : 'aaa + "|" + bbb + "|" + ccc'
-    		}
-    		else 
-    		{
-    			// Single attribute => no automatic conversion to String
-    			JavaBeanClassAttribute attribute = (JavaBeanClassAttribute) _attributes.get(0);
-    			String sFullType = attribute.getFullType();
-    			if ( sFullType != null ) {
-    				if ( sFullType.startsWith("java.") ) {
-    					//--- Java object
-    					if ( sFullType.equals("java.lang.String") ) {
-        					return attribute.getName() ;
-    					}
-    					else {
-        					return attribute.getName() + ".toString()";
-    					}
-    				}
-    				else {
-    					//--- Primitive type
-    					return "\"\" + " + attribute.getName() ;
-    				}
-    			}
-    		}
-    	}
-    	return "\"Class " + getName() + " (no attributes) \"" ;
-    }
+//    /**
+//     * Returns the Java line instruction for the toString() method
+//     * @return
+//     */
+//	//-------------------------------------------------------------------------------------
+//	@VelocityMethod ( text= { 
+//			"Returns the Java line instruction for the toString() method",
+//			"DEPRECATED : use 'toStringMethodCodeLines()' instead "
+//		},
+//		example="$entity.toStringInstruction",
+//		deprecated=true
+//	)
+//	@Deprecated
+//    public String getToStringInstruction()
+//    {
+//    	if ( _attributes != null )
+//    	{
+//    		int n = _attributes.size();
+//    		if ( n > 1 )
+//    		{
+//                StringBuffer sb = new StringBuffer();
+//            	for ( int i = 0 ; i < n ; i++ )        		
+//            	{
+//            		JavaBeanClassAttribute attribute = (JavaBeanClassAttribute) _attributes.get(i);
+//                    if ( i > 0 ) // if it's not the first one
+//                    {
+//                        sb.append( " + \"|\" + " ) ;
+//                    }        		
+//                    sb.append( attribute.getName() ) ;
+//            	}
+//            	return sb.toString(); // example : 'aaa + "|" + bbb + "|" + ccc'
+//    		}
+//    		else 
+//    		{
+//    			// Single attribute => no automatic conversion to String
+//    			JavaBeanClassAttribute attribute = (JavaBeanClassAttribute) _attributes.get(0);
+//    			String sFullType = attribute.getFullType();
+//    			if ( sFullType != null ) {
+//    				if ( sFullType.startsWith("java.") ) {
+//    					//--- Java object
+//    					if ( sFullType.equals("java.lang.String") ) {
+//        					return attribute.getName() ;
+//    					}
+//    					else {
+//        					return attribute.getName() + ".toString()";
+//    					}
+//    				}
+//    				else {
+//    					//--- Primitive type
+//    					return "\"\" + " + attribute.getName() ;
+//    				}
+//    			}
+//    		}
+//    	}
+//    	return "\"Class " + getName() + " (no attributes) \"" ;
+//    }
 
     private boolean typeUsedInToString( String sType )
     {
