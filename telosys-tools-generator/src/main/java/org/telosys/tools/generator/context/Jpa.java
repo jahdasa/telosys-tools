@@ -15,13 +15,16 @@
  */
 package org.telosys.tools.generator.context;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.generator.ContextName;
 import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityObject;
+import org.telosys.tools.generator.context.doc.VelocityReturnType;
 import org.telosys.tools.generator.context.tools.AnnotationsBuilder;
+import org.telosys.tools.generator.context.tools.AnnotationsForJPA;
 import org.telosys.tools.repository.model.Entity;
 import org.telosys.tools.repository.model.InverseJoinColumns;
 import org.telosys.tools.repository.model.JoinColumn;
@@ -46,6 +49,105 @@ public class Jpa {
 	private final static int ONE_TO_MANY  = 3 ;
 	private final static int MANY_TO_MANY = 4 ;
 	
+	private final static List<String> VOID_STRINGS_LIST = new LinkedList<String>();
+
+	
+	//-------------------------------------------------------------------------------------
+	// JPA IMPORTS
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( 
+		text= { 
+			"Returns a list of all the Java classes required by the current entity for JPA",
+			"( this version always returns 'javax.persistence.*' )"
+		},
+		parameters = {
+			"entity : the entity "
+		},
+		example={	
+			"#foreach( $import in $jpa.imports($entity) )",
+			"import $import;",
+			"#end" 
+		},
+		since = "2.0.7"
+	)
+	@VelocityReturnType("List of 'String'")
+	public List<String> imports(JavaBeanClass entity) 
+	{
+		JavaBeanClassImports _importsJpa = getImports(entity) ;
+		if ( _importsJpa != null )
+		{
+			return _importsJpa.getList() ;
+		}
+		return VOID_STRINGS_LIST ;
+	}
+	
+	private JavaBeanClassImports getImports(JavaBeanClass entity) {
+		JavaBeanClassImports jpaImports = new JavaBeanClassImports();
+
+		jpaImports.declareType("javax.persistence.*");
+		
+		/*
+		jpaImports.declareType("javax.persistence.Entity");
+		jpaImports.declareType("javax.persistence.Table");
+		jpaImports.declareType("javax.persistence.Id");
+		
+		jpaImports.declareType("javax.persistence.UniqueConstraint");
+		jpaImports.declareType("javax.persistence.EmbeddedId");
+		jpaImports.declareType("javax.persistence.Embeddable");
+		jpaImports.declareType("javax.persistence.AttributeOverride");
+		jpaImports.declareType("javax.persistence.AttributeOverrides");
+
+		jpaImports.declareType("javax.persistence.OneToOne");
+		jpaImports.declareType("javax.persistence.ManyToMany");
+		jpaImports.declareType("javax.persistence.ManyToOne");
+		jpaImports.declareType("javax.persistence.OneToMany");
+
+		jpaImports.declareType("javax.persistence.GeneratedValue");
+		jpaImports.declareType("javax.persistence.GenerationType");
+		jpaImports.declareType("javax.persistence.SequenceGenerator");
+		jpaImports.declareType("javax.persistence.TableGenerator");
+		*/
+		return jpaImports ;
+	}
+	//-------------------------------------------------------------------------------------
+	// ENTITY JPA ANNOTATIONS
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( 
+		text= { 
+			"Returns a multiline String containing all the Java JPA annotations required for the current entity",
+			"with the given left marging before each line"
+		},
+		parameters = {
+			"leftMargin : the left margin (number of blanks)",
+			"entity : the entity to be annotated"
+		},
+		example={	
+			"$jpa.entityAnnotations(4, $entity)"
+		},
+		since = "2.0.7"
+	)
+	public String entityAnnotations(int iLeftMargin, JavaBeanClass entity)
+    {
+		AnnotationsBuilder b = new AnnotationsBuilder(iLeftMargin);
+		
+		b.addLine("@Entity");
+		
+		String s = "@Table(name=\"" + entity.getDatabaseTable() + "\"" ;
+		if ( ! StrUtil.nullOrVoid( entity.getDatabaseSchema() ) ) {
+			s = s + ", schema=\"" + entity.getDatabaseSchema() + "\"" ; 
+		}
+		if ( ! StrUtil.nullOrVoid( entity.getDatabaseCatalog() ) ) {
+			s = s + ", catalog=\"" + entity.getDatabaseCatalog() + "\"" ; 
+		}
+		s = s + " )" ;
+
+		b.addLine(s);
+		
+		return b.getAnnotations();
+    }
+	
+	//-------------------------------------------------------------------------------------
+	// LINK JPA ANNOTATIONS
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
 		text={	
@@ -504,4 +606,77 @@ public class Jpa {
 		}
 		return false ;
 	}
+	
+	//-------------------------------------------------------------------------------------------------------------
+	// J.P.A. ANNOTATIONS FOR FIELDS
+	//-------------------------------------------------------------------------------------------------------------
+//	/**
+//	 * Returns the JPA annotations without left margin 
+//	 * Usage : $jpa.fieldAnnotations() 
+//	 * @return
+//	 */
+//	@VelocityMethod(
+//			text={	
+//				"Returns the JPA annotations for the attribute (without left margin)"
+//				}
+//			)
+//	public String fieldAnnotations(JavaBeanClassAttribute attribute)
+//    {
+//		return fieldAnnotations(0, attribute);
+//    }
+//
+//	/**
+//	 * Returns the JPA annotations for EmbeddedID without left margin 
+//	 * Usage : $x.jpaAnnotationsEmbeddedID() 
+//	 * @return
+//	 */
+//	@VelocityMethod(
+//		text={	
+//			"Returns the JPA annotations for EmbeddedID (without left margin)"
+//			}
+//		)
+//	public String embeddedIdAnnotations(JavaBeanClassAttribute attribute)
+//    {
+//		return embeddedIdAnnotations(0, attribute);
+//    }
+	
+	@VelocityMethod(
+		text={	
+			"Returns the JPA annotations for the given field (with a left margin)"
+			},
+		example={ 
+			"$jpa.fieldAnnotations( 4, $field )" },
+		parameters = { 
+			"leftMargin : the left margin (number of blanks) ",
+			"field : the field to be annotated "
+			},
+		since = "2.0.7"
+	)
+	public String fieldAnnotations(int iLeftMargin, JavaBeanClassAttribute attribute )
+    {
+		AnnotationsForJPA annotationsJPA = new AnnotationsForJPA(attribute);
+		return annotationsJPA.getJpaAnnotations(iLeftMargin, AnnotationsForJPA.EMBEDDED_ID_FALSE );
+    }
+
+	//-------------------------------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the JPA annotations for an 'embedded id' (with a left margin)",
+			"( there's no '@Id' for an embedded id )"
+			},
+		example={ 
+			"$jpa.embeddedIdAnnotations( 4, $field )" },
+		parameters = { 
+			"leftMargin : the left margin (number of blanks) ",
+			"field : the field to be annotated "
+			},
+		since = "2.0.7"
+		)
+	public String embeddedIdAnnotations(int iLeftMargin, JavaBeanClassAttribute attribute )
+    {
+		AnnotationsForJPA annotationsJPA = new AnnotationsForJPA(attribute);
+		return annotationsJPA.getJpaAnnotations(iLeftMargin, AnnotationsForJPA.EMBEDDED_ID_TRUE );
+    }
+	//-------------------------------------------------------------------------------------------------------------
+	
 }

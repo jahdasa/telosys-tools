@@ -1711,95 +1711,95 @@ public class JavaBeanClassAttribute
 		return this.getType() + " " + _sName + s ; // + " ( " + _sGetter + "/" + _sSetter + " ) ";
 	}
 
-	//-------------------------------------------------------------------------------------------------------------
-	// ANNOTATIONS : J.P.A.
-	//-------------------------------------------------------------------------------------------------------------
-	/**
-	 * Returns the JPA annotations without left margin
-	 * Usage : $x.jpaAnnotations 
-	 * @return
-	 */
-	@VelocityMethod(
-			text={	
-				"Returns the JPA annotations for the attribute (without left margin)"
-				}
-			)
-	public String getJpaAnnotations()
-    {
-		return jpaAnnotations(0);
-    }
-	
-	/**
-	 * Returns the JPA annotations without left margin 
-	 * Usage : $x.jpaAnnotations() 
-	 * @return
-	 */
-	@VelocityMethod(
-			text={	
-				"Returns the JPA annotations for the attribute (without left margin)"
-				}
-			)
-	public String jpaAnnotations()
-    {
-		return jpaAnnotations(0);
-    }
-
-	/**
-	 * Returns the JPA annotations for EmbeddedID without left margin 
-	 * Usage : $x.jpaAnnotationsEmbeddedID() 
-	 * @return
-	 */
-	@VelocityMethod(
-		text={	
-			"Returns the JPA annotations for EmbeddedID (without left margin)"
-			}
-		)
-	public String jpaAnnotationsEmbeddedID()
-    {
-		return jpaAnnotationsEmbeddedID(0);
-    }
-	
-	/**
-	 * Returns the JPA annotations with the given left margin 
-	 * Usage : $x.jpaAnnotations(4) 
-	 * @param iLeftMargin
-	 * @return
-	 */
-	@VelocityMethod(
-	text={	
-		"Returns the JPA annotations for the attribute (with a left margin)"
-		},
-	parameters = "leftMargin : the left margin (number of blanks) "
-	)
-	public String jpaAnnotations(int iLeftMargin )
-    {
-		if ( _annotationsJPA != null ) {
-			return _annotationsJPA.getJpaAnnotations(iLeftMargin, AnnotationsForJPA.EMBEDDED_ID_FALSE );
-		}
-		return "// Generator error : JPA extension is null"  ;
-    }
-
-	/**
-	 * Returns the JPA annotations with the given left margin for an "Embedded ID" <br>
-	 * No "@Id" for an embedded id
-	 * 
-	 * Usage : $x.jpaAnnotationsEmbeddedID(4) 
-	 * @param iLeftMargin
-	 * @return
-	 */
-	@VelocityMethod(
-			text={	
-				"Returns the JPA annotations for an 'embedded id' (with a left margin)"
-				},
-			parameters = "leftMargin : the left margin (number of blanks) "
-			)
-	public String jpaAnnotationsEmbeddedID(int iLeftMargin )
-    {
-		if ( _annotationsJPA != null ) {
-			return _annotationsJPA.getJpaAnnotations(iLeftMargin, AnnotationsForJPA.EMBEDDED_ID_TRUE );
-		}
-		return "// Generator error : JPA extension is null"  ;
-    }
+//	//-------------------------------------------------------------------------------------------------------------
+//	// ANNOTATIONS : J.P.A.
+//	//-------------------------------------------------------------------------------------------------------------
+//	/**
+//	 * Returns the JPA annotations without left margin
+//	 * Usage : $x.jpaAnnotations 
+//	 * @return
+//	 */
+//	@VelocityMethod(
+//			text={	
+//				"Returns the JPA annotations for the attribute (without left margin)"
+//				}
+//			)
+//	public String getJpaAnnotations()
+//    {
+//		return jpaAnnotations(0);
+//    }
+//	
+//	/**
+//	 * Returns the JPA annotations without left margin 
+//	 * Usage : $x.jpaAnnotations() 
+//	 * @return
+//	 */
+//	@VelocityMethod(
+//			text={	
+//				"Returns the JPA annotations for the attribute (without left margin)"
+//				}
+//			)
+//	public String jpaAnnotations()
+//    {
+//		return jpaAnnotations(0);
+//    }
+//
+//	/**
+//	 * Returns the JPA annotations for EmbeddedID without left margin 
+//	 * Usage : $x.jpaAnnotationsEmbeddedID() 
+//	 * @return
+//	 */
+//	@VelocityMethod(
+//		text={	
+//			"Returns the JPA annotations for EmbeddedID (without left margin)"
+//			}
+//		)
+//	public String jpaAnnotationsEmbeddedID()
+//    {
+//		return jpaAnnotationsEmbeddedID(0);
+//    }
+//	
+//	/**
+//	 * Returns the JPA annotations with the given left margin 
+//	 * Usage : $x.jpaAnnotations(4) 
+//	 * @param iLeftMargin
+//	 * @return
+//	 */
+//	@VelocityMethod(
+//	text={	
+//		"Returns the JPA annotations for the attribute (with a left margin)"
+//		},
+//	parameters = "leftMargin : the left margin (number of blanks) "
+//	)
+//	public String jpaAnnotations(int iLeftMargin )
+//    {
+//		if ( _annotationsJPA != null ) {
+//			return _annotationsJPA.getJpaAnnotations(iLeftMargin, AnnotationsForJPA.EMBEDDED_ID_FALSE );
+//		}
+//		return "// Generator error : JPA extension is null"  ;
+//    }
+//
+//	/**
+//	 * Returns the JPA annotations with the given left margin for an "Embedded ID" <br>
+//	 * No "@Id" for an embedded id
+//	 * 
+//	 * Usage : $x.jpaAnnotationsEmbeddedID(4) 
+//	 * @param iLeftMargin
+//	 * @return
+//	 */
+//	@VelocityMethod(
+//			text={	
+//				"Returns the JPA annotations for an 'embedded id' (with a left margin)"
+//				},
+//			parameters = "leftMargin : the left margin (number of blanks) "
+//			)
+//	public String jpaAnnotationsEmbeddedID(int iLeftMargin )
+//    {
+//		if ( _annotationsJPA != null ) {
+//			return _annotationsJPA.getJpaAnnotations(iLeftMargin, AnnotationsForJPA.EMBEDDED_ID_TRUE );
+//		}
+//		return "// Generator error : JPA extension is null"  ;
+//    }
 	
 	//-------------------------------------------------------------------------------------------------------------
 	// ANNOTATIONS : BEAN VALIDATION (JSR303)

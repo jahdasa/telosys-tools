@@ -16,12 +16,9 @@
 package org.telosys.tools.generator.context;
 
 import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
-import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.generator.ContextName;
 import org.telosys.tools.generator.GeneratorContextException;
 import org.telosys.tools.generator.GeneratorUtil;
@@ -29,7 +26,6 @@ import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityNoDoc;
 import org.telosys.tools.generator.context.doc.VelocityObject;
 import org.telosys.tools.generator.context.doc.VelocityReturnType;
-import org.telosys.tools.generator.context.tools.AnnotationsBuilder;
 import org.telosys.tools.repository.model.Column;
 import org.telosys.tools.repository.model.Entity;
 import org.telosys.tools.repository.model.ForeignKey;
@@ -69,7 +65,7 @@ public class JavaBeanClass extends JavaClass
 	private final static List<JavaBeanClassForeignKey> VOID_FOREIGN_KEYS_LIST  = new LinkedList<JavaBeanClassForeignKey>();
 
 	private final static List<String>                 VOID_STRINGS_LIST    = new LinkedList<String>();
-	private final static Set<String>                  VOID_STRINGS_SET     = new LinkedHashSet<String>();
+	//private final static Set<String>                  VOID_STRINGS_SET     = new LinkedHashSet<String>();
 	
 	private final static List<JavaBeanClassLink>      VOID_LINKS_LIST    = new LinkedList<JavaBeanClassLink>();
 	
@@ -97,7 +93,7 @@ public class JavaBeanClass extends JavaClass
 	private LinkedList<JavaBeanClassAttribute> _textAttributes     = null ; // Special "long text" attributes for this class
 
 	//--- JPA specific
-	private Set<String>                   _importsJpa = null ; // The imports JPA for this class ( list of "java.xx.Class" )
+//	private Set<String>                   _importsJpa = null ; // The imports JPA for this class ( list of "java.xx.Class" )
 	private LinkedList<JavaBeanClassLink> _links  = null ; // The links for this class ( ALL ATTRIBUTES )
 	private Entity                        _entite = null;
 	
@@ -142,7 +138,7 @@ public class JavaBeanClass extends JavaClass
 			//ajouter import specifique
 			JavaBeanClassImports jbci = new JavaBeanClassImports();
 			jbci.declareType(jcl.getJavaTypeFull());
-			this.addImportsJpa(jbci);
+//			this.addImportsJpa(jbci);
 			this.addLink(jcl);
 		}
 		
@@ -159,7 +155,7 @@ public class JavaBeanClass extends JavaClass
 		this.endOfDefinition();
 		
 		// import JPA resolution
-		this.processJpaSpecificImport();
+		//this.processJpaSpecificImport();
 	}
 	
 	//-----------------------------------------------------------------------------------------------
@@ -209,62 +205,62 @@ public class JavaBeanClass extends JavaClass
 		_links.add(jcl);
 	}
 
-	//-------------------------------------------------------------------------------------
-	@VelocityMethod ( text= { 
-			"Returns a multiline String containing all the Java JPA annotations required for the current entity",
-			"without left marging before each line"
-		},
-		example={	
-			"$entity.jpaAnnotations"
-		}
-	)
-	public String getJpaAnnotations()
-    {
-		return jpaAnnotations(0);
-    }
+//	//-------------------------------------------------------------------------------------
+//	@VelocityMethod ( text= { 
+//			"Returns a multiline String containing all the Java JPA annotations required for the current entity",
+//			"without left marging before each line"
+//		},
+//		example={	
+//			"$entity.jpaAnnotations"
+//		}
+//	)
+//	public String getJpaAnnotations()
+//    {
+//		return jpaAnnotations(0);
+//    }
 	
-	//-------------------------------------------------------------------------------------
-	/**
-	 * Returns the JPA annotations without left margin 
-	 * Usage : $x.jpaAnnotations() 
-	 * @return
-	 */
-	@VelocityNoDoc
-	public String jpaAnnotations()
-    {
-		return jpaAnnotations(0);
-    }
-	
-	//-------------------------------------------------------------------------------------
-	@VelocityMethod ( text= { 
-			"Returns a multiline String containing all the Java JPA annotations required for the current entity",
-			"with the given left marging before each line"
-		},
-		parameters = "leftMargin : number of blanks for the left margin",
-		example={	
-			"$entity.jpaAnnotations(4)"
-		}
-	)
-	public String jpaAnnotations(int iLeftMargin)
-    {
-		AnnotationsBuilder b = new AnnotationsBuilder(iLeftMargin);
-		
-		b.addLine("@Entity");
-		
-		String s = "@Table(name=\"" + _sDatabaseTable + "\"" ;
-		if ( ! StrUtil.nullOrVoid( _sDatabaseSchema ) ) {
-			s = s + ", schema=\"" + _sDatabaseSchema + "\"" ; 
-		}
-		if ( ! StrUtil.nullOrVoid( _sDatabaseCatalog ) ) {
-			s = s + ", catalog=\"" + _sDatabaseCatalog + "\"" ; 
-		}
-		s = s + " )" ;
-
-		b.addLine(s);
-		
-		return b.getAnnotations();
-    }
-	
+//	//-------------------------------------------------------------------------------------
+//	/**
+//	 * Returns the JPA annotations without left margin 
+//	 * Usage : $x.jpaAnnotations() 
+//	 * @return
+//	 */
+//	@VelocityNoDoc
+//	public String jpaAnnotations()
+//    {
+//		return jpaAnnotations(0);
+//    }
+//	
+//	//-------------------------------------------------------------------------------------
+//	@VelocityMethod ( text= { 
+//			"Returns a multiline String containing all the Java JPA annotations required for the current entity",
+//			"with the given left marging before each line"
+//		},
+//		parameters = "leftMargin : number of blanks for the left margin",
+//		example={	
+//			"$entity.jpaAnnotations(4)"
+//		}
+//	)
+//	public String jpaAnnotations(int iLeftMargin)
+//    {
+//		AnnotationsBuilder b = new AnnotationsBuilder(iLeftMargin);
+//		
+//		b.addLine("@Entity");
+//		
+//		String s = "@Table(name=\"" + _sDatabaseTable + "\"" ;
+//		if ( ! StrUtil.nullOrVoid( _sDatabaseSchema ) ) {
+//			s = s + ", schema=\"" + _sDatabaseSchema + "\"" ; 
+//		}
+//		if ( ! StrUtil.nullOrVoid( _sDatabaseCatalog ) ) {
+//			s = s + ", catalog=\"" + _sDatabaseCatalog + "\"" ; 
+//		}
+//		s = s + " )" ;
+//
+//		b.addLine(s);
+//		
+//		return b.getAnnotations();
+//    }
+//	
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod ( text= { 
 			"Returns a list of all the Java imports required for all the fields of the current entity",
@@ -303,25 +299,25 @@ public class JavaBeanClass extends JavaClass
 		return _importsForKeyFields ;
 	}
 	
-	//-------------------------------------------------------------------------------------
-	@VelocityMethod ( text= { 
-			"Returns a list of all the Java JPA imports required by the current entity"
-		},
-		example={	
-			"#foreach( $import in $entity.importsJpa )",
-			"import $import;",
-			"#end" 
-		}
-	)
-	@VelocityReturnType("List of 'String'")
-	public Set<String> getImportsJpa() 
-	{
-		if ( _importsJpa != null )
-		{
-			return _importsJpa ;
-		}
-		return VOID_STRINGS_SET ;
-	}
+//	//-------------------------------------------------------------------------------------
+//	@VelocityMethod ( text= { 
+//			"Returns a list of all the Java JPA imports required by the current entity"
+//		},
+//		example={	
+//			"#foreach( $import in $entity.importsJpa )",
+//			"import $import;",
+//			"#end" 
+//		}
+//	)
+//	@VelocityReturnType("List of 'String'")
+//	public Set<String> getImportsJpa() 
+//	{
+//		if ( _importsJpa != null )
+//		{
+//			return _importsJpa ;
+//		}
+//		return VOID_STRINGS_SET ;
+//	}
 
 	//-------------------------------------------------------------------------------------
 	/**
@@ -718,7 +714,7 @@ public class JavaBeanClass extends JavaClass
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod ( text= { 
 			"Returns the database type of the table mapped with this entity <br>",
-			"Type retruned by the database meta-data ( 'TABLE', 'VIEW', ... ) "
+			"Type returned by the database meta-data ( 'TABLE', 'VIEW', ... ) "
 		},
 		example="$entity.databaseType",
 		since="2.0.7"
@@ -1208,22 +1204,22 @@ public class JavaBeanClass extends JavaClass
 		_importsForKeyFields.addAll( imports.getList() );
 	}    
 
-	/**
-	 * Init the Jpa imports list
-	 * @param imports
-	 */
-    private void addImportsJpa(JavaBeanClassImports imports) 
-	{
-		if ( imports != null )
-		{
-			// Reset ALL => create a new list
-			if (_importsJpa == null) {
-				_importsJpa = new LinkedHashSet<String>();
-			}
-			
-			_importsJpa.addAll( imports.getList() );
-		}
-	}
+//	/**
+//	 * Init the Jpa imports list
+//	 * @param imports
+//	 */
+//    private void addImportsJpa(JavaBeanClassImports imports) 
+//	{
+//		if ( imports != null )
+//		{
+//			// Reset ALL => create a new list
+//			if (_importsJpa == null) {
+//				_importsJpa = new LinkedHashSet<String>();
+//			}
+//			
+//			_importsJpa.addAll( imports.getList() );
+//		}
+//	}
     
 	private LinkedList<JavaBeanClassAttribute> buildAttributesList ( boolean bKeyAttribute ) 
 	{
@@ -1298,39 +1294,39 @@ public class JavaBeanClass extends JavaClass
 		}
 	}
 
-	/**
-	 * This method process the jpa specific imports <br>
-	 */
-	private void processJpaSpecificImport() {
-		JavaBeanClassImports jpaImports = new JavaBeanClassImports();
-
-		// TODO a afiner
-		jpaImports.declareType("javax.persistence.*");
-		
-		this.addImportsJpa(jpaImports);
-		
-		/*
-		jpaImports.declareType("javax.persistence.Entity");
-		jpaImports.declareType("javax.persistence.Table");
-		jpaImports.declareType("javax.persistence.Id");
-		
-		jpaImports.declareType("javax.persistence.UniqueConstraint");
-		jpaImports.declareType("javax.persistence.EmbeddedId");
-		jpaImports.declareType("javax.persistence.Embeddable");
-		jpaImports.declareType("javax.persistence.AttributeOverride");
-		jpaImports.declareType("javax.persistence.AttributeOverrides");
-
-		jpaImports.declareType("javax.persistence.OneToOne");
-		jpaImports.declareType("javax.persistence.ManyToMany");
-		jpaImports.declareType("javax.persistence.ManyToOne");
-		jpaImports.declareType("javax.persistence.OneToMany");
-
-		jpaImports.declareType("javax.persistence.GeneratedValue");
-		jpaImports.declareType("javax.persistence.GenerationType");
-		jpaImports.declareType("javax.persistence.SequenceGenerator");
-		jpaImports.declareType("javax.persistence.TableGenerator");
-		*/
-	}
+//	/**
+//	 * This method process the jpa specific imports <br>
+//	 */
+//	private void processJpaSpecificImport() {
+//		JavaBeanClassImports jpaImports = new JavaBeanClassImports();
+//
+//		// TODO a afiner
+//		jpaImports.declareType("javax.persistence.*");
+//		
+//		this.addImportsJpa(jpaImports);
+//		
+//		/*
+//		jpaImports.declareType("javax.persistence.Entity");
+//		jpaImports.declareType("javax.persistence.Table");
+//		jpaImports.declareType("javax.persistence.Id");
+//		
+//		jpaImports.declareType("javax.persistence.UniqueConstraint");
+//		jpaImports.declareType("javax.persistence.EmbeddedId");
+//		jpaImports.declareType("javax.persistence.Embeddable");
+//		jpaImports.declareType("javax.persistence.AttributeOverride");
+//		jpaImports.declareType("javax.persistence.AttributeOverrides");
+//
+//		jpaImports.declareType("javax.persistence.OneToOne");
+//		jpaImports.declareType("javax.persistence.ManyToMany");
+//		jpaImports.declareType("javax.persistence.ManyToOne");
+//		jpaImports.declareType("javax.persistence.OneToMany");
+//
+//		jpaImports.declareType("javax.persistence.GeneratedValue");
+//		jpaImports.declareType("javax.persistence.GenerationType");
+//		jpaImports.declareType("javax.persistence.SequenceGenerator");
+//		jpaImports.declareType("javax.persistence.TableGenerator");
+//		*/
+//	}
 
 	private String buildDbColumnsList ( boolean bKeyAttribute ) 
 	{
