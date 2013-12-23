@@ -106,6 +106,25 @@ Returns a string containing a list of fields (type and name) separated by a comm
 </TD>
 </TR>
 <TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.concatLists(List list1, List list2) : List<?></B> </CODE>
+<p class="doc">
+Concatenates 2 lists ( add all the elements of the second list at the end of the first one ) <br>
+The 2 given lists remain unchanged. The result is stored in a new list.<br>
+<br>
+<b>Parameters : </b><br>
+&nbsp;&nbsp;&nbsp;<b>list1</b> : List of objects<br>
+&nbsp;&nbsp;&nbsp;<b>list2</b> : List of objects to be added at the end of list1<br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;#set ( $list3 = $fn.concatLists( $list1, $list2 )  <br>
+</code>
+<br>
+<b>Since : </b>2.0.7<br>
+</p>
+</TD>
+</TR>
+<TR>
 <TD class="doc" ><CODE class="simpledesc"> <B>.escapeXml(String s) : String</B> </CODE>
 <p class="doc">
 Returns the XML string for the given string<br>
@@ -154,15 +173,6 @@ Returns TRUE if the given List/Array is NOT VOID<br>
 </code>
 <br>
 <b>Since : </b>2.0.7<br>
-</p>
-</TD>
-</TR>
-<TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.isVariableDefined(String ?) : boolean</B> </CODE>
-<p class="doc">
-<br>
-<b>Parameters : </b><br>
-&nbsp;&nbsp;&nbsp;<b>?</b> : <br>
 </p>
 </TD>
 </TR>

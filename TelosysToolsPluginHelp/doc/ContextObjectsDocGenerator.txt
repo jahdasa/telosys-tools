@@ -1,0 +1,23 @@
+
+1) Generate the HTML files
+
+  In project "telosys-generator"
+  Delete "/target/doc/"
+  Class "DocGenerator" --> Run As Java Application
+  HTML files are generated in "/target/doc/"
+  Refresh / Eclipse --> "F5"
+
+
+2) Copy generated HTML files 
+
+  ANT --> build_copy_doc.xml
+  
+  
+3) Update files referencing the generated files 
+
+ . templates-objects.html
+ . TelosysToolsHelpTOC.xml
+ . TelosysToolsHelpCONTEXTS.xml
+ 
+
+ 

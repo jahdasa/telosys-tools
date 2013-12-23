@@ -82,6 +82,20 @@ Returns the Java 'JSR-303 Bean Validation' annotations <br>
 </TD>
 </TR>
 <TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.booleanFalseValue : String</B> </CODE>
+<p class="doc">
+Returns the value to use for a boolean when is FALSE (eg to be stored in a database) <br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.booleanTrueValue : String</B> </CODE>
+<p class="doc">
+Returns the value to use for a boolean when is TRUE (eg to be stored in a database) <br>
+</p>
+</TD>
+</TR>
+<TR>
 <TD class="doc" ><CODE class="simpledesc"> <B>.databaseDefaultValue : String</B> </CODE>
 <p class="doc">
 Returns the database default value for the attribute (or a void string if none)<br>
@@ -108,6 +122,16 @@ Returns the database size for the attribute<br>
 <p class="doc">
 Returns the database native type for the attribute<br>
 For example : INTEGER, VARCHAR, etc...<br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.databaseTypeWithSize : String</B> </CODE>
+<p class="doc">
+Returns the database native type for the attribute with the size if it makes sens<br>
+For example : INTEGER, VARCHAR(24), NUMBER, CHAR(3), etc...<br>
+<br>
+<b>Since : </b>2.0.7<br>
 </p>
 </TD>
 </TR>
@@ -186,7 +210,15 @@ e.g : 'auto', 'identity', 'sequence', 'table' <br>
 <TD class="doc" ><CODE class="simpledesc"> <B>.getter : String</B> </CODE>
 <p class="doc">
 Returns the getter for the attribute<br>
-e.g : 'getFoo' for 'foo' <br>
+e.g : 'getFoo' for 'foo' (or 'isFoo' for a boolean primitive type)<br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.getterWithGetPrefix : String</B> </CODE>
+<p class="doc">
+Returns the getter for the attribute with always a 'get' prefix<br>
+even for a boolean<br>
 </p>
 </TD>
 </TR>
@@ -527,43 +559,10 @@ Returns the JDBC type of the attribute (the type code)<br>
 </TD>
 </TR>
 <TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.jpaAnnotations : String</B> </CODE>
+<TD class="doc" ><CODE class="simpledesc"> <B>.jdbcTypeName : String</B> </CODE>
 <p class="doc">
-Returns the JPA annotations for the attribute (without left margin)<br>
-</p>
-</TD>
-</TR>
-<TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.jpaAnnotations() : String</B> </CODE>
-<p class="doc">
-Returns the JPA annotations for the attribute (without left margin)<br>
-</p>
-</TD>
-</TR>
-<TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.jpaAnnotations(int leftMargin) : String</B> </CODE>
-<p class="doc">
-Returns the JPA annotations for the attribute (with a left margin)<br>
-<br>
-<b>Parameters : </b><br>
-&nbsp;&nbsp;&nbsp;<b>leftMargin</b> : the left margin (number of blanks)<br>
-</p>
-</TD>
-</TR>
-<TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.jpaAnnotationsEmbeddedID() : String</B> </CODE>
-<p class="doc">
-Returns the JPA annotations for EmbeddedID (without left margin)<br>
-</p>
-</TD>
-</TR>
-<TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.jpaAnnotationsEmbeddedID(int leftMargin) : String</B> </CODE>
-<p class="doc">
-Returns the JPA annotations for an 'embedded id' (with a left margin)<br>
-<br>
-<b>Parameters : </b><br>
-&nbsp;&nbsp;&nbsp;<b>leftMargin</b> : the left margin (number of blanks)<br>
+Returns the JDBC type name ('CHAR', 'VARCHAR', 'NUMERIC', ... )<br><br>
+The 'java.sql.Types' constant name for the current JDBC type code<br>
 </p>
 </TD>
 </TR>
@@ -610,92 +609,9 @@ Returns the name of the attribute <br>
 </TD>
 </TR>
 <TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.needsQueryGetterParams : boolean</B> </CODE>
-<p class="doc">
-<b>Deprecated.</b><br>
-<br>
-Returns TRUE if the 'QueryContext getter' needs parameters <br>
-</p>
-</TD>
-</TR>
-<TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.needsQuerySetterParams : boolean</B> </CODE>
-<p class="doc">
-<b>Deprecated.</b><br>
-<br>
-Returns TRUE if the 'QueryContext setter' needs parameters <br>
-</p>
-</TD>
-</TR>
-<TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.needsXmlConversion : boolean</B> </CODE>
-<p class="doc">
-<b>Deprecated.</b><br>
-<br>
-Returns TRUE if the attribute needs a conversion to be stored as an XML attribute value <br>
-</p>
-</TD>
-</TR>
-<TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.needsXmlConversionParams : boolean</B> </CODE>
-<p class="doc">
-<b>Deprecated.</b><br>
-<br>
-Returns TRUE if the attribute needs a conversion to be stored as an XML attribute value <br>
-</p>
-</TD>
-</TR>
-<TR>
 <TD class="doc" ><CODE class="simpledesc"> <B>.pattern : String</B> </CODE>
 <p class="doc">
 Returns the Reg Exp pattern defined for the attribute (if any, else returns void) <br>
-</p>
-</TD>
-</TR>
-<TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.queryGetter : String</B> </CODE>
-<p class="doc">
-<b>Deprecated.</b><br>
-<br>
-Returns the 'QueryContext getter' method name to use to get a query result<br>
- eg 'getResultLongObject', 'getResultBooleanFromInt', 'getResultTimeAsDate', etc ) <br>
-</p>
-</TD>
-</TR>
-<TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.queryGetterParams : String</B> </CODE>
-<p class="doc">
-<b>Deprecated.</b><br>
-<br>
-Returns 'QueryContext getter' optional parameters ( the true value for booleans ) <br>
-</p>
-</TD>
-</TR>
-<TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.querySetter : String</B> </CODE>
-<p class="doc">
-<b>Deprecated.</b><br>
-<br>
-Returns the 'QueryContext setter' method name to use to set a query result<br>
- eg 'setParamBooleanAsInt', 'setParamBlob', 'setParamBigDecimal', etc ) <br>
-</p>
-</TD>
-</TR>
-<TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.querySetterParams : String</B> </CODE>
-<p class="doc">
-<b>Deprecated.</b><br>
-<br>
-Returns 'QueryContext setter' optional parameters ( the true/false values for booleans ) <br>
-</p>
-</TD>
-</TR>
-<TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.reqParamGetter : String</B> </CODE>
-<p class="doc">
-<b>Deprecated.</b><br>
-<br>
-Returns the getter to retrieve a parameter held by a ScreenRequest or a ServiceRequest <br>
 </p>
 </TD>
 </TR>
@@ -775,17 +691,10 @@ Typically for JPA '@TableGenerator/valueColumnName'  <br>
 <TR>
 <TD class="doc" ><CODE class="simpledesc"> <B>.type : String</B> </CODE>
 <p class="doc">
-Returns the 'short type' for the attribute without package and without blank<br>
-Examples for Java : 'int', 'BigDecimal', 'Date' <br>
-</p>
-</TD>
-</TR>
-<TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.typeIsUsableInXml : boolean</B> </CODE>
-<p class="doc">
-<b>Deprecated.</b><br>
-<br>
-Returns TRUE if usable in XML <br>
+Returns the recommended type for the attribute<br>
+usually the simple type ( 'int', 'BigDecimal', 'Date' ) <br>
+sometimes the full type ( if the simple type is considered as ambiguous )<br>
+Examples for Java : 'int', 'BigDecimal', 'Date', 'java.util.Date', 'java.sql.Date' <br>
 </p>
 </TD>
 </TR>
@@ -795,25 +704,6 @@ Returns TRUE if usable in XML <br>
 Returns the Java wrapper type corresponding to the attribute's primitive type<br>
 Examples : 'Float' for 'float', 'Integer' for 'int', 'Boolean' for 'boolean', ... <br>
 If the attribute's type is retuned as is if it's not a primitive type<br>
-</p>
-</TD>
-</TR>
-<TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.xmlConversionParams : String</B> </CODE>
-<p class="doc">
-<b>Deprecated.</b><br>
-<br>
-Returns the additional parameters required for the XML String conversion if any <br>
-</p>
-</TD>
-</TR>
-<TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.xmlGetter : String</B> </CODE>
-<p class="doc">
-<b>Deprecated.</b><br>
-<br>
-Returns the specific XML getter  <br>
-Exampe : getBooleanObject, getLongObject, getBigInteger, etc...<br>
 </p>
 </TD>
 </TR>

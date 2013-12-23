@@ -108,6 +108,34 @@ Returns the database catalog of the table mapped with this entity<br>
 </TD>
 </TR>
 <TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.databaseForeignKeys : List of 'foreign keys' objects</B> </CODE>
+<p class="doc">
+Returns all the database foreign keys defined for this entity<br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;$entity.databaseForeignKeys<br>
+</code>
+<br>
+<b>Since : </b>2.0.7<br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.databaseForeignKeysCount : int</B> </CODE>
+<p class="doc">
+Returns the number of database foreign keys defined for this entity<br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;$entity.databaseForeignKeysCount<br>
+</code>
+<br>
+<b>Since : </b>2.0.7<br>
+</p>
+</TD>
+</TR>
+<TR>
 <TD class="doc" ><CODE class="simpledesc"> <B>.databaseSchema : String</B> </CODE>
 <p class="doc">
 Returns the database schema of the table mapped with this entity<br>
@@ -128,6 +156,21 @@ Returns the database table mapped with this entity<br>
 <code>
 &nbsp;&nbsp;&nbsp;$entity.databaseTable<br>
 </code>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.databaseType : String</B> </CODE>
+<p class="doc">
+Returns the database type of the table mapped with this entity <br><br>
+Type returned by the database meta-data ( 'TABLE', 'VIEW', ... ) <br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;$entity.databaseType<br>
+</code>
+<br>
+<b>Since : </b>2.0.7<br>
 </p>
 </TD>
 </TR>
@@ -257,45 +300,30 @@ Returns a list of all the Java imports required for the KEY fields of the curren
 </TD>
 </TR>
 <TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.importsJpa : List of 'String'</B> </CODE>
+<TD class="doc" ><CODE class="simpledesc"> <B>.isTableType() : boolean</B> </CODE>
 <p class="doc">
-Returns a list of all the Java JPA imports required by the current entity<br>
+Returns TRUE if the database type is 'TABLE' <br>
 <br>
 <b>Example : </b><br>
 <code>
-&nbsp;&nbsp;&nbsp;#foreach( $import in $entity.importsJpa )<br>
-&nbsp;&nbsp;&nbsp;import $import;<br>
-&nbsp;&nbsp;&nbsp;#end<br>
+&nbsp;&nbsp;&nbsp;$entity.isTableType()<br>
 </code>
+<br>
+<b>Since : </b>2.0.7<br>
 </p>
 </TD>
 </TR>
 <TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.jpaAnnotations : String</B> </CODE>
+<TD class="doc" ><CODE class="simpledesc"> <B>.isViewType() : boolean</B> </CODE>
 <p class="doc">
-Returns a multiline String containing all the Java JPA annotations required for the current entity<br>
-without left marging before each line<br>
+Returns TRUE if the database type is 'VIEW' <br>
 <br>
 <b>Example : </b><br>
 <code>
-&nbsp;&nbsp;&nbsp;$entity.jpaAnnotations<br>
+&nbsp;&nbsp;&nbsp;$entity.isViewType()<br>
 </code>
-</p>
-</TD>
-</TR>
-<TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.jpaAnnotations(int leftMargin) : String</B> </CODE>
-<p class="doc">
-Returns a multiline String containing all the Java JPA annotations required for the current entity<br>
-with the given left marging before each line<br>
 <br>
-<b>Parameters : </b><br>
-&nbsp;&nbsp;&nbsp;<b>leftMargin</b> : number of blanks for the left margin<br>
-<br>
-<b>Example : </b><br>
-<code>
-&nbsp;&nbsp;&nbsp;$entity.jpaAnnotations(4)<br>
-</code>
+<b>Since : </b>2.0.7<br>
 </p>
 </TD>
 </TR>
@@ -451,21 +479,6 @@ i.e. : '"code", "type"' <br>
 </TD>
 </TR>
 <TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.sqlTable : String</B> </CODE>
-<p class="doc">
-<b>Deprecated.</b><br>
-<br>
-Returns the database table mapped with this entity<br>
-DEPRECATED : use 'databaseTable' instead <br>
-<br>
-<b>Example : </b><br>
-<code>
-&nbsp;&nbsp;&nbsp;$entity.sqlTable<br>
-</code>
-</p>
-</TD>
-</TR>
-<TR>
 <TD class="doc" ><CODE class="simpledesc"> <B>.superClass : String</B> </CODE>
 <p class="doc">
 Returns the super class for the entity's class (or void if none)<br>
@@ -495,15 +508,6 @@ Returns the attributes tagged as 'long text' for this entity<br>
 <TR>
 <TD class="doc" ><CODE class="simpledesc"> <B>.toStringInstruction : String</B> </CODE>
 <p class="doc">
-<b>Deprecated.</b><br>
-<br>
-Returns the Java line instruction for the toString() method<br>
-DEPRECATED : use 'toStringMethodCodeLines()' instead <br>
-<br>
-<b>Example : </b><br>
-<code>
-&nbsp;&nbsp;&nbsp;$entity.toStringInstruction<br>
-</code>
 </p>
 </TD>
 </TR>

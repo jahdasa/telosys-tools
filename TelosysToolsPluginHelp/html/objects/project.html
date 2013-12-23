@@ -49,6 +49,23 @@ Current project configuration parameters ( variables, folders, ... )<br>
   <TD>Attributes and methods</TD>			
 </TR>		
 <TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.allVariables : Variable[]</B> </CODE>
+<p class="doc">
+Returns all the variables available for the current project<br>
+( the specific variables defined for the project and the standard variables )<br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;#foreach( $var in $project.allVariables )<br>
+&nbsp;&nbsp;&nbsp;  $var.name = $var.value<br>
+&nbsp;&nbsp;&nbsp;#end<br>
+</code>
+<br>
+<b>Since : </b>2.0.7<br>
+</p>
+</TD>
+</TR>
+<TR>
 <TD class="doc" ><CODE class="simpledesc"> <B>.packageForBean : String</B> </CODE>
 <p class="doc">
 Returns the package for the Java Bean classes<br>
@@ -62,6 +79,23 @@ Returns the package for the Java Bean classes<br>
 </TD>
 </TR>
 <TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.specificVariables : Variable[]</B> </CODE>
+<p class="doc">
+Returns the specific variables defined for the current project<br>
+( the specific variables defined for the project and the standard variables )<br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;#foreach( $var in $project.specificVariables )<br>
+&nbsp;&nbsp;&nbsp;  $var.name = $var.value<br>
+&nbsp;&nbsp;&nbsp;#end<br>
+</code>
+<br>
+<b>Since : </b>2.0.7<br>
+</p>
+</TD>
+</TR>
+<TR>
 <TD class="doc" ><CODE class="simpledesc"> <B>.templatesFolderFullPath : String</B> </CODE>
 <p class="doc">
 Returns the templates folder (the full path)<br>
@@ -70,21 +104,6 @@ Returns the templates folder (the full path)<br>
 <b>Example : </b><br>
 <code>
 &nbsp;&nbsp;&nbsp;$project.templatesFolderFullPath<br>
-</code>
-</p>
-</TD>
-</TR>
-<TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.variables : Variable[]</B> </CODE>
-<p class="doc">
-Returns all the variables available for the current project<br>
-( the specific variables defined for the project and the standard variables )<br>
-<br>
-<b>Example : </b><br>
-<code>
-&nbsp;&nbsp;&nbsp;#foreach( $var in $project.variables )<br>
-&nbsp;&nbsp;&nbsp;  $var.name = $var.value<br>
-&nbsp;&nbsp;&nbsp;#end<br>
 </code>
 </p>
 </TD>
