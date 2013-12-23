@@ -303,6 +303,36 @@ public class BundleResourcesManager {
 	}
 	
 	//----------------------------------------------------------------------------------------------------
+	/**
+	 * Returns the Eclipse IContainer corresponding to the given destination in the current project
+	 * @param destinationFolderInProject
+	 * @return the IContainer ( IFolder or IProject )
+	 * @throws Exception
+	 */
+	private IContainer getDestinationContainer( String destinationFolderInProject ) throws Exception {
+				
+		if ( StrUtil.nullOrVoid(destinationFolderInProject) ) {
+			return _eclipseProject ; // "" = "project root" => The container is the project itself
+		}
+		else if ( destinationFolderInProject.trim().equals("/") ) {
+			return _eclipseProject ; // "/" = "project root" => The container is the project itself
+		}
+		else if ( destinationFolderInProject.trim().equals(".") ) {
+			return _eclipseProject ; // "." = "current project" => The container is the project itself
+		}
+		else {
+			// Return the folder in the project ( existing or non existing folder )
+			return _eclipseProject.getFolder(destinationFolderInProject);
+		}
+	}
+	//----------------------------------------------------------------------------------------------------
+	/**
+	 * Recursive method copying the given "resource folder" in the given "destination folder"
+	 * @param resourceFolder folder containing the resources to be copied
+	 * @param destinationFolderInProject the location where to copy the resources
+	 * @return
+	 * @throws Exception
+	 */
 	private int copyFolderToFolder( IFolder resourceFolder, String destinationFolderInProject ) throws Exception {
 
 		log("copyFolderToFolder(..,..)") ;
@@ -310,21 +340,31 @@ public class BundleResourcesManager {
 		log("   to : " + destinationFolderInProject );
 
 		int count = 0 ;
-		IFolder destFolder = _eclipseProject.getFolder(destinationFolderInProject);
-		if ( destFolder.exists() ) {
-			log ( " folder '" + destFolder.getName() + "' exists ") ;
-			//--- Check it's a folder
-			if ( destFolder.getType() != IResource.FOLDER ) {
-				throw new GeneratorException("Cannot copy resource. Destination '" + destFolder.getName() + "' is not a folder." );
+		//IFolder destFolder = _eclipseProject.getFolder(destinationFolderInProject); // Throws IllegalArgumentException if ( "" or "/" )
+		IContainer destContainer = getDestinationContainer(destinationFolderInProject);
+		int containerType = destContainer.getType() ;
+		if ( destContainer.exists() ) {
+			log ( " folder or project '" + destContainer.getName() + "' exists ") ;
+			//--- Check it's a folder or a project
+			if ( containerType != IResource.FOLDER && containerType != IResource.PROJECT ) {
+				throw new GeneratorException("Cannot copy resource. Destination '" + destContainer.getName() 
+						+ "' is not a folder nor a project" );
 			}
 		}
 		else {
-			log ( " folder '" + destFolder.getName() + "' doesn't exist => creation") ;
-			//--- Create it (even if void, to build the same structure as the original folder)
-			destFolder.create(true, // force - a flag controlling how to deal with resources that are not in sync with the local file system
-					true, // local - a flag controlling whether or not the folder will be local after the creation
-					null); // monitor - a progress monitor, or null if progress reporting is not desired
-			log ( " folder '" + destFolder.getName() + "' created.") ;
+			if ( containerType == IResource.FOLDER ) {
+				log ( " container '" + destContainer.getName() + "' doesn't exist => cast to folder for creation...") ;
+				IFolder destFolder = (IFolder) destContainer ;
+				log ( " folder '" + destFolder.getName() + "' => creation") ;
+				//--- Create it (even if void, to build the same structure as the original folder)
+				destFolder.create(true, // force - a flag controlling how to deal with resources that are not in sync with the local file system
+						true, // local - a flag controlling whether or not the folder will be local after the creation
+						null); // monitor - a progress monitor, or null if progress reporting is not desired
+				log ( " folder '" + destFolder.getName() + "' created.") ;
+			} else {
+				throw new GeneratorException("Cannot create destination '" + destContainer.getName() 
+						+ "' (not a folder)" );
+			}
 		}
 		
 		IResource[] folderMembers = resourceFolder.members();

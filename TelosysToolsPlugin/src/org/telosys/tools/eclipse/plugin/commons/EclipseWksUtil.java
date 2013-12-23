@@ -227,15 +227,22 @@ public class EclipseWksUtil {
 	public static IFolder toIFolder(File file)
 	{
 		log("toIFolder( File ) : file = " + file.getAbsolutePath() );
+		String sAbsolutePath = file.getAbsolutePath();
+		IPath path = new Path( sAbsolutePath );
+//		IFile iFile = root.getFileForLocation(path);
+//		IFolder iFolder = root.getFolder(path);
+		
+		return toIFolder(path);
+	}
+	//----------------------------------------------------------------------------------
+	public static IFolder toIFolder(IPath path)
+	{
+		log("toIFolder( IPath ) : path = " + path );
 		
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
 		if ( root != null )
 		{
-			String sAbsolutePath = file.getAbsolutePath();
-			IPath path = new Path( sAbsolutePath );
-//			IFile iFile = root.getFileForLocation(path);
-//			IFolder iFolder = root.getFolder(path);
 			/*
 			 * IWorkspaceRoot - getContainerForLocation(path)
 			 * Returns a handle to the workspace root, project or folder which is mapped to the given path 
@@ -267,7 +274,7 @@ public class EclipseWksUtil {
 			}
 			else
 			{
-				MsgBox.error("toIFolder(file) : getContainerForLocation('" + sAbsolutePath + "') return NULL" );
+				MsgBox.error("toIFolder(file) : root.getContainerForLocation('" + path + "') return NULL" );
 				return null ;
 			}
 		}
