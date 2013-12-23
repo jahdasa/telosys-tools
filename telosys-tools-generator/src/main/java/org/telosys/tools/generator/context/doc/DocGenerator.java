@@ -33,13 +33,13 @@ public class DocGenerator {
 		String userDir =  System.getProperty("user.dir") ;
 		System.out.println( "USER DIR : " + userDir );
 		// USER DIR is "X:\xxx\xxx\workspace\project"
-		String destDir = userDir + "/target/doc/" ;
+		String destDir = userDir + "/target/doc/html/objects/" ;
 		System.out.println( "DEST DIR : " + destDir );
 		File fileDir = new File(destDir);
 		if ( ! fileDir.exists() )
 		{
 		    System.out.println("Creating directory : " + destDir);
-		    if( fileDir.mkdir() ){    
+		    if( fileDir.mkdirs() ){    
 		    	System.out.println("Created");  
 		    }
 		    else {
@@ -52,17 +52,21 @@ public class DocGenerator {
 		Map<String,ClassInfo> classesInfo = docBuilder.getVelocityClassesInfo() ;
 
 		Set<String> names = classesInfo.keySet();
+		System.out.println("ClassInfo names (size=" + names.size() + ") : " );
+		for ( String name : names ) {
+			System.out.println(" . " + name );
+		}
 		
 		List<String>sortedNames = sortList(names);
 		
 		DocGeneratorHTML htmlGenerator = new DocGeneratorHTML();
 		
-		System.out.println("Sorted context names : " );
+		System.out.println("Sorted context names (size=" + sortedNames.size() + ") : " );
 		for ( String name : sortedNames ) {
 			ClassInfo classInfo = classesInfo.get(name);
 					//+ classInfo.getJavaClassName() + " " + classInfo.getMethodsCount() + " methods");
 			String fileName = destDir + classInfo.getContextName() + ".html" ;
-			System.out.println(" . " + classInfo.getContextName() + " --> " + fileName );
+			System.out.println(" . " + name + " (" + classInfo.getContextName() + ") --> " + fileName );
 			htmlGenerator.generateDocFile(classInfo, fileName);
 		}
 	}
