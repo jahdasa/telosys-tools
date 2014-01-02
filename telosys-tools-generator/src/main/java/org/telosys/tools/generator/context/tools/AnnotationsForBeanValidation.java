@@ -20,7 +20,7 @@ import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.generator.context.JavaBeanClassAttribute;
 
 /**
- * Attribute (field) annotations for "Bean Validation"  ( JSR 303 strict or not )
+ * Attribute (field) annotations for "Bean Validation"  ( JSR 303 strict )
  * 
  * @author Laurent GUERIN
  *
@@ -41,17 +41,16 @@ public class AnnotationsForBeanValidation
 	/**
 	 * Returns the validation annotations
 	 * @param iLeftMargin
-	 * @param sFlagJSR303 : "JSR303" for only JSR 303 annotations ( JSR 303 strict )
 	 * @return
 	 */
-	public String getValidationAnnotations( int iLeftMargin, String sFlagJSR303 )
+	public String getValidationAnnotations( int iLeftMargin )
 	{
-		boolean bJSR303strict = false ;
-		if ( sFlagJSR303 != null ) {
-			if ( sFlagJSR303.equalsIgnoreCase("JSR303") ) {
-				bJSR303strict = true ;
-			}
-		}
+//		boolean bJSR303strict = false ;
+//		if ( sFlagJSR303 != null ) {
+//			if ( sFlagJSR303.equalsIgnoreCase("JSR303") ) {
+//				bJSR303strict = true ;
+//			}
+//		}
 		
 		//--- Reset everything at each call 
 		AnnotationsBuilder annotations = new AnnotationsBuilder(iLeftMargin);
@@ -76,18 +75,17 @@ public class AnnotationsForBeanValidation
 		{
 			annotationSize(annotations);
 			annotationPattern(annotations);
-			if ( ! bJSR303strict )
-			{
-				if ( _attribute.isNotEmpty() ) 
-				{
-					annotations.addLine("@NotEmpty" );
-				}
-				if ( _attribute.isNotBlank() ) 
-				{
-					annotations.addLine("@NotBlank" );
-				}
-			}
-			
+//			if ( ! bJSR303strict )
+//			{
+//				if ( _attribute.isNotEmpty() ) 
+//				{
+//					annotations.addLine("@NotEmpty" );
+//				}
+//				if ( _attribute.isNotBlank() ) 
+//				{
+//					annotations.addLine("@NotBlank" );
+//				}
+//			}			
 		}
 		else if ( JavaTypeUtil.isCategoryNumber( sJavaFullType ) )
 		{
@@ -111,29 +109,68 @@ public class AnnotationsForBeanValidation
 		return annotations.getAnnotations() ;
 	}
 	
+	private boolean hasSizeConstraint()
+	{
+		if ( ! StrUtil.nullOrVoid ( _attribute.getMinLength() ) ) return true ;
+		if ( ! StrUtil.nullOrVoid ( _attribute.getMaxLength() ) ) return true ;
+		if ( _attribute.isNotEmpty() ) return true ;
+		return false ;
+	}
+	private String minSize()
+	{
+		if ( ! StrUtil.nullOrVoid ( _attribute.getMinLength() ) ) {
+			return _attribute.getMinLength().trim() ;
+		}
+		if ( _attribute.isNotEmpty() ) {
+			return "1" ; // min=1
+		}
+		return null ;
+	}
+	private String maxSize()
+	{
+		if ( ! StrUtil.nullOrVoid ( _attribute.getMaxLength() ) ) {
+			return _attribute.getMaxLength().trim() ;
+		}
+		return null ;
+	}
+	
 	private void annotationSize(AnnotationsBuilder annotations)
 	{
-		String min = null ;
-		String max = null ;
-		if ( ! StrUtil.nullOrVoid ( _attribute.getMaxLength() ) )
-		{
-			max = _attribute.getMaxLength().trim() ;
-			if ( ! StrUtil.nullOrVoid ( _attribute.getMinLength() ) )
-			{
-				min = _attribute.getMinLength().trim() ;
-				annotations.addLine("@Size( min = " + min + ", max = " + max + " )");
+//		String min = null ;
+//		String max = null ;
+//		if ( ! StrUtil.nullOrVoid ( _attribute.getMaxLength() ) )
+//		{
+//			max = _attribute.getMaxLength().trim() ;
+//			if ( ! StrUtil.nullOrVoid ( _attribute.getMinLength() ) )
+//			{
+//				min = _attribute.getMinLength().trim() ;
+//				annotations.addLine("@Size( min = " + min + ", max = " + max + " )");
+//			}
+//			else
+//			{
+//				annotations.addLine("@Size( max = " + max + " )");
+//			}
+//		}
+//		else
+//		{
+//			if ( ! StrUtil.nullOrVoid ( _attribute.getMinLength() ) )
+//			{
+//				min = _attribute.getMinLength().trim() ;
+//				annotations.addLine("@Size( min = " + min + " )");
+//			}
+//		}
+		
+		if ( hasSizeConstraint() ) {
+			String minSize = minSize();
+			String maxSize = maxSize();
+			if ( minSize != null && maxSize != null ) {
+				annotations.addLine( "@Size( min = " + minSize + ", max = " + maxSize + " )");
 			}
-			else
-			{
-				annotations.addLine("@Size( max = " + max + " )");
+			else if ( minSize != null ) {
+				annotations.addLine( "@Size( min = " + minSize + " )");
 			}
-		}
-		else
-		{
-			if ( ! StrUtil.nullOrVoid ( _attribute.getMinLength() ) )
-			{
-				min = _attribute.getMinLength().trim() ;
-				annotations.addLine("@Size( min = " + min + " )");
+			else if ( maxSize != null ) {
+				annotations.addLine( "@Size( max = " + maxSize + " )");
 			}
 		}
 	}

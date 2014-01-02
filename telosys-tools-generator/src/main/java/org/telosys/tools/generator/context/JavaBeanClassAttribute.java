@@ -15,8 +15,6 @@
  */
 package org.telosys.tools.generator.context;
 
-import java.sql.Types;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.telosys.tools.commons.DatabaseUtil;
@@ -29,8 +27,6 @@ import org.telosys.tools.generator.ContextName;
 import org.telosys.tools.generator.GeneratorUtil;
 import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityObject;
-import org.telosys.tools.generator.context.tools.AnnotationsForBeanValidation;
-import org.telosys.tools.generator.context.tools.AnnotationsForJPA;
 import org.telosys.tools.repository.model.Column;
 import org.telosys.tools.repository.persistence.util.RepositoryConst;
 
@@ -146,10 +142,10 @@ public class JavaBeanClassAttribute
 	private String  _sTableGeneratorValueColumnName = null ;
 	private String  _sTableGeneratorPkColumnValue   = null ;
 
-	//--- Annotations : Bean Validation JSR303 -------------------------------------------------
-	private AnnotationsForBeanValidation _annotationsBeanValidation = null ;
-	
-	private AnnotationsForJPA            _annotationsJPA = null ;
+//	//--- Annotations : Bean Validation JSR303 -------------------------------------------------
+//	private AnnotationsForBeanValidation _annotationsBeanValidation = null ;
+//	
+//	private AnnotationsForJPA            _annotationsJPA = null ;
 	
 	//-----------------------------------------------------------------------------------------------
 	/**
@@ -277,11 +273,11 @@ public class JavaBeanClassAttribute
 			_iSequenceGeneratorAllocationSize = column.getSequenceGenerator().getAllocationSize();
 		}
 		
-		//--- EXTENSION for Bean Validation Annotations 
-		_annotationsBeanValidation = new AnnotationsForBeanValidation(this);
-
-		//--- EXTENSION for JPA Annotations 
-		_annotationsJPA = new AnnotationsForJPA(this);
+//		//--- EXTENSION for Bean Validation Annotations 
+//		_annotationsBeanValidation = new AnnotationsForBeanValidation(this);
+//
+//		//--- EXTENSION for JPA Annotations 
+//		_annotationsJPA = new AnnotationsForJPA(this);
 
 		//--- EXTENSION for JPA Annotations  with embedded id (no @Id)
 		//_annotationsJPAEmbeddedID = new AnnotationsForJPAEmbeddedID(this);
@@ -833,24 +829,24 @@ public class JavaBeanClassAttribute
     }
     
 	//----------------------------------------------------------------------
-    /**
-     * Returns the java type starting by an Upper Case <br>
-     * eg : returns "Double" for "double"/"Double", "Int" for "int", ...
-     * @return 
-     */
-	@VelocityMethod(
-	text={	
-		"Returns the java type starting by an Upper Case",
-		"Examples : 'Double' for 'double'/'Double', 'Int' for 'int', ..."
-		}
-	)
-    public String javaTypeStartingByUC()
-    {
-    	//return firstCharUC(_sType);
-    	//return firstCharUC( this.getType() );
-    	return StrUtil.firstCharUC( this.getType() );
-    }
-    
+//    /**
+//     * Returns the java type starting by an Upper Case <br>
+//     * eg : returns "Double" for "double"/"Double", "Int" for "int", ...
+//     * @return 
+//     */
+//	@VelocityMethod(
+//	text={	
+//		"Returns the java type starting by an Upper Case",
+//		"Examples : 'Double' for 'double'/'Double', 'Int' for 'int', ..."
+//		}
+//	)
+//    public String javaTypeStartingByUC()
+//    {
+//    	//return firstCharUC(_sType);
+//    	//return firstCharUC( this.getType() );
+//    	return StrUtil.firstCharUC( this.getType() );
+//    }
+//    
 //    /**
 //     * Returns the "QueryContext setter" method name to use to set a query parameter <br>
 //     * Examples : setParamString, setParamByte, setParamBooleanAsInt, etc..
@@ -1801,49 +1797,49 @@ public class JavaBeanClassAttribute
 //		return "// Generator error : JPA extension is null"  ;
 //    }
 	
-	//-------------------------------------------------------------------------------------------------------------
-	// ANNOTATIONS : BEAN VALIDATION (JSR303)
-	//-------------------------------------------------------------------------------------------------------------
-	private final static String ERR_BEAN_VALIDATION_EXTENSION = "// Generator error : bean validation extension is null" ;
-	/**
-	 * Returns the Bean Validation annotations ( JSR303 and Hibernate additional annotations ) 
-	 * @param iLeftMargin
-	 * @return
-	 */
-	@VelocityMethod(
-		text={	
-			"Returns the Java 'Bean Validation' annotations",
-			"( JSR303 and Hibernate additional annotations ) "
-			},
-		parameters = "leftMargin : the left margin (number of blanks) "
-	)
-	public String beanValidationAnnotations(int iLeftMargin )
-    {
-		if ( _annotationsBeanValidation != null ) {
-			return _annotationsBeanValidation.getValidationAnnotations(iLeftMargin, "");
-		}
-		return ERR_BEAN_VALIDATION_EXTENSION ;
-    }
+//	//-------------------------------------------------------------------------------------------------------------
+//	// ANNOTATIONS : BEAN VALIDATION (JSR303)
+//	//-------------------------------------------------------------------------------------------------------------
+//	private final static String ERR_BEAN_VALIDATION_EXTENSION = "// Generator error : bean validation extension is null" ;
+//	/**
+//	 * Returns the Bean Validation annotations ( JSR303 and Hibernate additional annotations ) 
+//	 * @param iLeftMargin
+//	 * @return
+//	 */
+//	@VelocityMethod(
+//		text={	
+//			"Returns the Java 'Bean Validation' annotations",
+//			"( JSR303 and Hibernate additional annotations ) "
+//			},
+//		parameters = "leftMargin : the left margin (number of blanks) "
+//	)
+//	public String beanValidationAnnotations(int iLeftMargin )
+//    {
+//		if ( _annotationsBeanValidation != null ) {
+//			return _annotationsBeanValidation.getValidationAnnotations(iLeftMargin, "");
+//		}
+//		return ERR_BEAN_VALIDATION_EXTENSION ;
+//    }
 	
-	/**
-	 * Returns the JSR303 Bean Validation annotations ( only JSR303 annotations, without Hibernate annotations ) 
-	 * @param iLeftMargin
-	 * @return
-	 */
-	@VelocityMethod(
-		text={	
-			"Returns the Java 'JSR-303 Bean Validation' annotations ",
-			"( only JSR-303 annotations, without Hibernate additional annotations ) "
-			},
-		parameters = "leftMargin : the left margin (number of blanks) "
-	)
-	public String beanValidationAnnotationsJSR303(int iLeftMargin)
-    {
-		if ( _annotationsBeanValidation != null ) {
-			return _annotationsBeanValidation.getValidationAnnotations(iLeftMargin, "JSR303");
-		}
-		return ERR_BEAN_VALIDATION_EXTENSION ;
-    }
+//	/**
+//	 * Returns the JSR303 Bean Validation annotations ( only JSR303 annotations, without Hibernate annotations ) 
+//	 * @param iLeftMargin
+//	 * @return
+//	 */
+//	@VelocityMethod(
+//		text={	
+//			"Returns the Java 'JSR-303 Bean Validation' annotations ",
+//			"( only JSR-303 annotations, without Hibernate additional annotations ) "
+//			},
+//		parameters = "leftMargin : the left margin (number of blanks) "
+//	)
+//	public String beanValidationAnnotationsJSR303(int iLeftMargin)
+//    {
+//		if ( _annotationsBeanValidation != null ) {
+//			return _annotationsBeanValidation.getValidationAnnotations(iLeftMargin, "JSR303");
+//		}
+//		return ERR_BEAN_VALIDATION_EXTENSION ;
+//    }
 	
 	
 	// -------------------------------------------------------------------------------------------------------------
@@ -1940,21 +1936,21 @@ public class JavaBeanClassAttribute
 		return s != null ? s : "" ;
 	}
 	
-	private String addQuotes ( String s ) {
-		if ( s == null ) return null ;
-		if ( s.length() == 0 )
-		{
-			return "\"\"";
-		}
-		else
-		{
-			if ( s.charAt(0) != '"' && s.charAt(s.length()-1) != '"' )
-			{
-				return "\"" + s + "\"" ;
-			}
-			return s ;
-		}
-	}
+//	private String addQuotes ( String s ) {
+//		if ( s == null ) return null ;
+//		if ( s.length() == 0 )
+//		{
+//			return "\"\"";
+//		}
+//		else
+//		{
+//			if ( s.charAt(0) != '"' && s.charAt(s.length()-1) != '"' )
+//			{
+//				return "\"" + s + "\"" ;
+//			}
+//			return s ;
+//		}
+//	}
 
 	//------------------------------------------------------------------------------------------
 	@VelocityMethod(

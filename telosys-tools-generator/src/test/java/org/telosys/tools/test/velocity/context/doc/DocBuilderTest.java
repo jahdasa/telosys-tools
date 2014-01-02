@@ -5,6 +5,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.telosys.tools.generator.ContextName;
+import org.telosys.tools.generator.context.BeanValidation;
 import org.telosys.tools.generator.context.Const;
 import org.telosys.tools.generator.context.Fn;
 import org.telosys.tools.generator.context.Java;
@@ -89,6 +90,16 @@ public class DocBuilderTest  extends TestCase {
 
 		assertTrue ( "Jpa".equals( classInfo.getJavaClassName() ) );
 		assertTrue ( ContextName.JPA.equals( classInfo.getContextName() ) );
+		//assertTrue ( classInfo.getMethodsCount() == 0 );
+	}
+
+	public void testClassBeanValidation() {
+		DocBuilder docBuilder = new DocBuilder();
+		ClassInfo classInfo = docBuilder.getClassInfo(BeanValidation.class);
+		print(classInfo);
+
+		assertTrue ( "BeanValidation".equals( classInfo.getJavaClassName() ) );
+		assertTrue ( ContextName.BEAN_VALIDATION.equals( classInfo.getContextName() ) );
 		//assertTrue ( classInfo.getMethodsCount() == 0 );
 	}
 

@@ -18,6 +18,7 @@ package org.telosys.tools.generator.context;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.commons.XmlUtil;
 import org.telosys.tools.generator.ContextName;
 import org.telosys.tools.generator.context.doc.VelocityMethod;
@@ -331,5 +332,42 @@ public class Fn {
 		return finalList ;
 	}
 	//-------------------------------------------------------------------------------------
-		
+	@VelocityMethod(text={	
+			"Converts  all of the characters in the given string to upper case"
+			},
+			parameters = { "s : the string to be converted" },
+			since = "2.0.7"
+			)
+	public String toUpperCase(String s) {
+		if ( s != null ) {
+			return s.toUpperCase();
+		}
+		return "";
+	}
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(text={	
+			"Converts  all of the characters in the given string to lower case"
+			},
+			parameters = { "s : the string to be converted" },
+			since = "2.0.7"
+			)
+	public String toLowerCase(String s) {
+		if ( s != null ) {
+			return s.toLowerCase();
+		}
+		return "";
+	}
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(text={	
+			"Converts the first character to upper case"
+			},
+			parameters = { "s : the string to be converted" },
+			since = "2.0.7"
+			)
+	public String firstCharToUpperCase(String s) {
+		if ( s != null ) {
+			return StrUtil.firstCharUC( s );
+		}
+		return "";
+	}
 }

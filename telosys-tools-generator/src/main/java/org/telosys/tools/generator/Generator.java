@@ -36,6 +36,7 @@ import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.telosys.tools.commons.TelosysToolsLogger;
 import org.telosys.tools.generator.config.IGeneratorConfig;
+import org.telosys.tools.generator.context.BeanValidation;
 import org.telosys.tools.generator.context.Const;
 import org.telosys.tools.generator.context.EmbeddedGenerator;
 import org.telosys.tools.generator.context.Fn;
@@ -278,12 +279,13 @@ public class Generator {
 		_velocityContext.put(ContextName.RBRACE,  "}"  ); // right brace
 		
 		//--- Set the standard Velocity variables in the context
-		_velocityContext.put(ContextName.GENERATOR,     new EmbeddedGenerator());  // Limited generator without generation capability 
-		_velocityContext.put(ContextName.TODAY,         new Today()); // Current date and time 
-		_velocityContext.put(ContextName.CONST,         new Const()); // Constants (static values)
-		_velocityContext.put(ContextName.FN,            new Fn());    // Utility function
-		_velocityContext.put(ContextName.JAVA,          new Java());  // Java utility functions
-		_velocityContext.put(ContextName.JPA,           new Jpa());   // JPA utility functions
+		_velocityContext.put(ContextName.GENERATOR,       new EmbeddedGenerator());  // Limited generator without generation capability 
+		_velocityContext.put(ContextName.TODAY,           new Today()); // Current date and time 
+		_velocityContext.put(ContextName.CONST,           new Const()); // Constants (static values)
+		_velocityContext.put(ContextName.FN,              new Fn());    // Utility function
+		_velocityContext.put(ContextName.JAVA,            new Java());  // Java utility functions
+		_velocityContext.put(ContextName.JPA,             new Jpa());   // JPA utility functions
+		_velocityContext.put(ContextName.BEAN_VALIDATION, new BeanValidation()); // Bean Validation utility functions
 		
 		_velocityContext.put(ContextName.MODEL,         new Model(_allEntities) );  // The "model" object (v 2.0.7)
 		

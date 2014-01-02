@@ -23,6 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.telosys.tools.generator.context.BeanValidation;
 import org.telosys.tools.generator.context.Const;
 import org.telosys.tools.generator.context.EmbeddedGenerator;
 import org.telosys.tools.generator.context.Fn;
@@ -215,6 +216,7 @@ public class DocBuilder {
 		Fn.class,
 		Java.class, // ver 2.0.7
 		Jpa.class, // ver 2.0.7
+		BeanValidation.class, // ver 2.0.7
 		JavaBeanClass.class,
 		JavaBeanClassAttribute.class,
 		JavaBeanClassForeignKey.class, // ver 2.0.7
