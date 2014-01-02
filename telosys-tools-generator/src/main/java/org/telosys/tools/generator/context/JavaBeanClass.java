@@ -69,10 +69,10 @@ public class JavaBeanClass extends JavaClass
 	
 	private final static List<JavaBeanClassLink>      VOID_LINKS_LIST    = new LinkedList<JavaBeanClassLink>();
 	
-	// The imports for all fields of this class ( list of "java.xx.Class" )
-	private List<String>                       _importsForAllFields = VOID_STRINGS_LIST ; 
-	// The imports required when using only the "key fields" of this class ( list of "java.xx.Class" )
-	private List<String>                       _importsForKeyFields = VOID_STRINGS_LIST ; 
+//	// The imports for all fields of this class ( list of "java.xx.Class" )
+//	private List<String>                       _importsForAllFields = VOID_STRINGS_LIST ; 
+//	// The imports required when using only the "key fields" of this class ( list of "java.xx.Class" )
+//	private List<String>                       _importsForKeyFields = VOID_STRINGS_LIST ; 
 	
 	private LinkedList<JavaBeanClassAttribute> _attributes  = null ; // The attributes for this class ( ALL ATTRIBUTES )
 	
@@ -261,43 +261,43 @@ public class JavaBeanClass extends JavaClass
 //		return b.getAnnotations();
 //    }
 //	
-	//-------------------------------------------------------------------------------------
-	@VelocityMethod ( text= { 
-			"Returns a list of all the Java imports required for all the fields of the current entity",
-			"For example, 'java.util.Date' if the entity uses Date objects, etc..."
-		},
-		example={	
-			"#foreach( $import in $entity.imports )",
-			"import $import;",
-			"#end" 
-		}
-	)
-	@VelocityReturnType("List of 'String'")
-	public List<String> getImports() 
-	{
-//		if ( _importsForAllFields != null )
-//		{
-//			return _importsForAllFields ;
+//	//-------------------------------------------------------------------------------------
+//	@VelocityMethod ( text= { 
+//			"Returns a list of all the Java imports required for all the fields of the current entity",
+//			"For example, 'java.util.Date' if the entity uses Date objects, etc..."
+//		},
+//		example={	
+//			"#foreach( $import in $entity.imports )",
+//			"import $import;",
+//			"#end" 
 //		}
-//		return VOID_STRINGS_LIST ;
-		return _importsForAllFields ;
-	}
+//	)
+//	@VelocityReturnType("List of 'String'")
+//	public List<String> getImports() 
+//	{
+////		if ( _importsForAllFields != null )
+////		{
+////			return _importsForAllFields ;
+////		}
+////		return VOID_STRINGS_LIST ;
+//		return _importsForAllFields ;
+//	}
 	
-	//-------------------------------------------------------------------------------------
-	@VelocityMethod ( text= { 
-			"Returns a list of all the Java imports required for the KEY fields of the current entity"
-		},
-		example={	
-			"#foreach( $import in $entity.importsForKeyFields )",
-			"import $import;",
-			"#end" 
-		}
-	)
-	@VelocityReturnType("List of 'String'")
-	public List<String> getImportsForKeyFields() 
-	{
-		return _importsForKeyFields ;
-	}
+//	//-------------------------------------------------------------------------------------
+//	@VelocityMethod ( text= { 
+//			"Returns a list of all the Java imports required for the KEY fields of the current entity"
+//		},
+//		example={	
+//			"#foreach( $import in $entity.importsForKeyFields )",
+//			"import $import;",
+//			"#end" 
+//		}
+//	)
+//	@VelocityReturnType("List of 'String'")
+//	public List<String> getImportsForKeyFields() 
+//	{
+//		return _importsForKeyFields ;
+//	}
 	
 //	//-------------------------------------------------------------------------------------
 //	@VelocityMethod ( text= { 
@@ -1182,27 +1182,27 @@ public class JavaBeanClass extends JavaClass
 		_attributes.add(attribute);
 	}
 	
-	/**
-	 * Initialize the imports required for all fields 
-	 * @param imports
-	 */
-    private void setImportsForAllFields(JavaBeanClassImports imports) 
-	{
-		// Reset ALL => create a new list
-		_importsForAllFields = new LinkedList<String>();
-		_importsForAllFields.addAll( imports.getList() );
-	}
+//	/**
+//	 * Initialize the imports required for all fields 
+//	 * @param imports
+//	 */
+//    private void setImportsForAllFields(JavaBeanClassImports imports) 
+//	{
+//		// Reset ALL => create a new list
+//		_importsForAllFields = new LinkedList<String>();
+//		_importsForAllFields.addAll( imports.getList() );
+//	}
     
-    /**
-	 * Initialize the imports required for the key fields of the class 
-     * @param imports
-     */
-    private void setImportsForKeyFields(JavaBeanClassImports imports) 
-	{
-		// Reset ALL => create a new list
-		_importsForKeyFields = new LinkedList<String>();
-		_importsForKeyFields.addAll( imports.getList() );
-	}    
+//    /**
+//	 * Initialize the imports required for the key fields of the class 
+//     * @param imports
+//     */
+//    private void setImportsForKeyFields(JavaBeanClassImports imports) 
+//	{
+//		// Reset ALL => create a new list
+//		_importsForKeyFields = new LinkedList<String>();
+//		_importsForKeyFields.addAll( imports.getList() );
+//	}    
 
 //	/**
 //	 * Init the Jpa imports list
@@ -1261,24 +1261,24 @@ public class JavaBeanClass extends JavaClass
 		
 		//--- Define the imports required for all the fields of this class 
 		JavaBeanClassImports javaImportsForAllFields = new JavaBeanClassImports();
-		JavaBeanClassImports javaImportsForKeyFields = new JavaBeanClassImports();
+		//JavaBeanClassImports javaImportsForKeyFields = new JavaBeanClassImports();
 		
 		for ( JavaBeanClassAttribute attribute : _attributes ) {
 			javaImportsForAllFields.declareType( attribute.getFullType() ); // register the type to import if necessary
-			if ( attribute.isKeyElement() ) {
-				javaImportsForKeyFields.declareType( attribute.getFullType() );
-			}
+//			if ( attribute.isKeyElement() ) {
+//				javaImportsForKeyFields.declareType( attribute.getFullType() );
+//			}
 		}
 		
 		//--- Extract potential collided types ( and retrieve the list of collided full types )
 		LinkedList<String> collidedTypes = javaImportsForAllFields.extractDuplicatedShortNames();
-		javaImportsForKeyFields.extractDuplicatedShortNames();
+//		javaImportsForKeyFields.extractDuplicatedShortNames();
 
-		//--- Set imports list for the current class
-		this.setImportsForAllFields(javaImportsForAllFields);
-		this.setImportsForKeyFields(javaImportsForKeyFields);
+//		//--- Set imports list for the current class
+//		this.setImportsForAllFields(javaImportsForAllFields);
+//		this.setImportsForKeyFields(javaImportsForKeyFields);
 		
-		//--- If there's collided types => Chech each attribute type 
+		//--- If there's collided types => Check each attribute type 
 		if ( collidedTypes != null )
 		{
 			//--- Some collided types have been extracted from imports 
