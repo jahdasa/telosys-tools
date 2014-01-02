@@ -15,6 +15,7 @@
  */
 package org.telosys.tools.generator.context;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.telosys.tools.generator.ContextName;
@@ -33,6 +34,8 @@ import org.telosys.tools.generator.context.tools.LinesBuilder;
  )
 //-------------------------------------------------------------------------------------
 public class Java {
+
+	private final static List<String> VOID_STRINGS_LIST = new LinkedList<String>();
 
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
@@ -231,4 +234,74 @@ public class Java {
 		return lb.toString();
 	}
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+			text={	
+				"Returns the list of Java classes to be imported for the given attributes",
+				""
+				},
+			example={ 
+				"#foreach( $import in $java.imports($entity.attributes) )",
+				"import $import;",
+				"#end)" },
+			parameters = {
+				"attributes : list of attributes" },
+			since = "2.0.7"
+				)
+	public List<String> imports( List<JavaBeanClassAttribute> attributesList ) {
+		if ( attributesList != null ) {
+			JavaBeanClassImports imports = new JavaBeanClassImports();
+			for ( JavaBeanClassAttribute attribute : attributesList ) {
+				// register the type to be imported if necessary
+				imports.declareType( attribute.getFullType() ); 
+			}
+			List<String> resultList = imports.getList();
+			java.util.Collections.sort(resultList);
+			return resultList ;
+		}
+		return VOID_STRINGS_LIST ;
+	}
+	
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+			text={	
+				"Returns the list of Java classes to be imported for the given entity",
+				"The imports are determined using all the entity attributes  ",
+				"and all the 'OneToMany' any 'ManyToMany' links found in the entity"
+				},
+			example={ 
+				"#foreach( $import in $java.imports($entity) )",
+				"import $import;",
+				"#end)" },
+			parameters = {
+				"entity : entity to be used " },
+			since = "2.0.7"
+				)
+	public List<String> imports( JavaBeanClass entity ) {
+		if ( entity != null ) {
+			JavaBeanClassImports imports = new JavaBeanClassImports();
+			//--- All the attributes
+			for ( JavaBeanClassAttribute attribute : entity.getAttributes() ) {
+				// register the type to be imported if necessary
+				imports.declareType( attribute.getFullType() ); 
+			}
+			//--- All the links 
+			for ( JavaBeanClassLink link : entity.getLinks() ) {
+				if ( link.isCardinalityOneToMany() || link.isCardinalityManyToMany() ) {
+					// "java.util.List", "java.util.Set", ... 
+					imports.declareType( link.getJavaTypeFull() ); 
+				}
+				else {
+					// ManyToOne or OneToOne => bean ( "Book", "Person", ... )
+					// Supposed to be in the same package
+				}
+			}
+			//--- Resulting list of imports
+			List<String> resultList = imports.getList();
+			java.util.Collections.sort(resultList);
+			return resultList ;
+		}
+		return VOID_STRINGS_LIST ;
+	}
+	
 }

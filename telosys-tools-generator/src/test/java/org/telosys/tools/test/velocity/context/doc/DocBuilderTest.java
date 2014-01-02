@@ -80,7 +80,7 @@ public class DocBuilderTest  extends TestCase {
 
 		assertTrue ( "Java".equals( classInfo.getJavaClassName() ) );
 		assertTrue ( ContextName.JAVA.equals( classInfo.getContextName() ) );
-		assertTrue ( classInfo.getMethodsCount() == 4 );
+		assertTrue ( classInfo.getMethodsCount() >= 4 );
 	}
 
 	public void testClassJpa() {
