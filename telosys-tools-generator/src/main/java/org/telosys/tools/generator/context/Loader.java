@@ -83,7 +83,7 @@ public class Loader {
 	//--------------------------------------------------------------------------------------------------------------
 	@VelocityMethod(
 		text={	
-			"Returns the folder where the classes are searched by the loader"
+			"Returns the full file path of the folder where the specific classes are searched by the loader"
 			},
 		since="2.0.5"
 	)
@@ -96,35 +96,92 @@ public class Loader {
 	//--------------------------------------------------------------------------------------------------------------
 	@VelocityMethod (
 		text = {
-				"Loads the given java class, creates an instance and put it in the Velocity context",
-				"The Java 'class' file must be located in the 'templates/classes' folder of the project",
-				"NB : The Java class must have a default constructor (in order to be created by 'javaClass.newInstance()'"
+				"Loads the given java class and return it (no instance created).",
+				"It can be a standard Java class (class of the JDK) or a specific class.",
+				"The specific classes must be located in the 'classes' folder of the templates",
 		},
 		parameters = {
-				"variableNameInContext : the name of the instance in the Velocity context", 
-				"javaClassName : the Java class to be loaded "
+				"javaClassName : the name of the Java class to be loaded "
 		},
 		example = {
 				"## load the class and put an instance in the context",
-				"$loader.loadJavaClass(\"tools\", \"MyClass\")",
-				"## use the instance ",
-				"$tools.myMethod()"
-			}
+				"#set( $Math = $loader.loadClass(\"java.lang.Math\") ",
+				"## use the static methods of this class ",
+				"$Math.random()"
+			},
+		since="2.1.0"
 		
 	)
-	public void loadJavaClass(String nameInContext, String javaClassName ) throws GeneratorException
+	public Class<?> loadClass( String javaClassName ) throws GeneratorException
 	{
+		Class<?> javaClass = loadJavaClassFromFile( javaClassName ) ;
+		
+//		if ( javaClass != null ) {
+//			//--- Put the class in the Velocity context
+//			velocityContext.put(nameInContext, javaClass);
+//		}
+		
+		return javaClass ;
+	}
+	
+	//--------------------------------------------------------------------------------------------------------------
+	@VelocityMethod (
+		text = {
+				"Loads the given java class, creates a new instance and return it",
+				"It can be a standard Java class (class of the JDK) or a specific class.",
+				"The specific classes must be located in the 'classes' folder of the templates",
+				"NB : The Java class must have a default constructor (in order to be created by 'javaClass.newInstance()'"
+		},
+		parameters = {
+				"javaClassName : the name of the Java class to be loaded and used to create the instance"
+		},
+		example = {
+				"## create an instance of StringBuilder and put it in the context with #set",
+				"#set( $strBuilder = $loader.newInstance('java.lang.StringBuilder') )",
+				"## use the instance ",
+				"$strBuilder.append('aa')",
+				"",
+				"## create new instance of a specific class",
+				"#set( $tool = $loader.newInstance('MyTool') )"
+		},
+		since="2.1.0"
+		
+	)
+	public Object newInstance(String javaClassName ) throws GeneratorException
+	{
+		Class<?> javaClass = loadJavaClassFromFile( javaClassName ) ;
+		
+		//--- New instance
+		Object instance = null ;
+		try {
+			instance = javaClass.newInstance() ;
+		} catch (InstantiationException e) {
+			throw new GeneratorException("Cannot create instance for " + javaClassName + " (InstantiationException)", e);
+		} catch (IllegalAccessException e) {
+			throw new GeneratorException("Cannot create instance for " + javaClassName + " (IllegalAccessException)", e);
+		}
+//			//--- Put the new instance in the Velocity context
+//			if ( instance != null ) {
+//				velocityContext.put(nameInContext, instance);
+//			}
+		return instance ;
+	}
+	
+	//--------------------------------------------------------------------------------------------------------------
+	private Class<?> loadJavaClassFromFile( String javaClassName ) throws GeneratorException
+	{
+		ClassLoader currentClassLoader = this.getClass().getClassLoader();
 		File file = getClassesFolderAsFile();
 		
 		Class<?> javaClass = null ;
 		
 		try {
 		    // Convert File to URL
-		    URL url = file.toURL();          //  "file:/c:/templatesFolder/"
-		    URL[] urls = new URL[]{url};
+		    URL url = file.toURI().toURL();    //  "file:/c:/templatesFolder/"
+		    URL[] urls = new URL[]{url}; // the URLs from which to load classes and resources
 
-		    // Create a new class loader with the directory
-		    ClassLoader classLoader = new URLClassLoader(urls);
+		    // Create a new class loader with the given directory and the current class loader as parent class loader
+		    ClassLoader classLoader = new URLClassLoader(urls, currentClassLoader );
 
 		    // Load the class ( should be located in "file:/c:/templatesFolder/" )
 		    javaClass = classLoader.loadClass(javaClassName);
@@ -134,20 +191,7 @@ public class Loader {
 			throw new GeneratorException("Cannot load class " + javaClassName + " (ClassNotFoundException)", e);
 		}
 		
-		Object instance = null ;
-		if ( javaClass != null ) {
-			try {
-				instance = javaClass.newInstance() ;
-			} catch (InstantiationException e) {
-				throw new GeneratorException("Cannot create instance for " + javaClassName + " (InstantiationException)", e);
-			} catch (IllegalAccessException e) {
-				throw new GeneratorException("Cannot create instance for " + javaClassName + " (IllegalAccessException)", e);
-			}
-		}
-		
-		if ( instance != null ) {
-			velocityContext.put(nameInContext, instance);
-		}
+		return javaClass ;
 	}
 	
 }
