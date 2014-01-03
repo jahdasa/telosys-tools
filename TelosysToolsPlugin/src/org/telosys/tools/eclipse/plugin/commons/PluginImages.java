@@ -145,17 +145,34 @@ public class PluginImages {
 	 */
 	public static Image getImage(String sImgKey) 
 	{
-		//return $imageRegistry.get(sImgKey);
-		ImageDescriptor imgDesc = getImageDescriptor(sImgKey) ;
-		if ( imgDesc != null )
-		{
-			return imgDesc.createImage();
-		}
-		else
-		{
-			MsgBox.error("Cannot get image descriptor for key '" + sImgKey + "'");
-			return null ;
-		}
+		/*
+		 * There are two ways to get an Image from an ImageDescriptor. 
+		 * The method createImage will always return a new Image which must be disposed by the caller. 
+		 * Alternatively, createResource() returns a shared Image. When the caller is done with an image obtained 
+		 * from createResource, they must call destroyResource() rather than disposing the Image directly. 
+		 * The result of createResource() can be safely cast to an Image.
+		 */
+//		PluginLogger.log("--- GET IMAGE --- " + sImgKey );
+		// The image is created by the registry if necessary 
+		Image image = $imageRegistry.get(sImgKey);
+		
+//		if ( image == null ) {
+//			//--- Image  not yet defined => creation 
+//			ImageDescriptor imgDesc = getImageDescriptor(sImgKey) ;
+//			if ( imgDesc != null )
+//			{
+//				PluginLogger.log("--- CREATE IMAGE --- " + sImgKey );
+//				image = imgDesc.createImage();
+//				// Keep the image for next time
+//				$imageRegistry.put(sImgKey, image);
+//			}
+//			else
+//			{
+//				MsgBox.error("Cannot get image descriptor for key '" + sImgKey + "'");
+//				image = null ;
+//			}
+//		}
+		return image ;
 	}
 
 }

@@ -10,29 +10,40 @@ import org.telosys.tools.eclipse.plugin.commons.PluginImages;
 public class FolderDecorator extends LabelProvider implements ILabelDecorator  {
 
 	@Override
-	public Image decorateImage(Image image, Object res) {
-		Image telosysFolderImage = PluginImages.getImage(PluginImages.TELOSYS_FOLDER);
-		if (res instanceof Folder) {
+	public Image decorateImage(Image image, Object element) {
+		/*
+		 * image   : the input image to decorate, or null if the element has no image
+		 *           Here never null ( 1rts time contains the standard "folder" image
+		 * element : the element whose image is being decorated
+		 */
+		//Image telosysFolderImage = PluginImages.getImage(PluginImages.TELOSYS_FOLDER);
+		if (element instanceof Folder) {
+
+			Folder folder = (Folder) element;
 
 			// Apply decorator for "TelosysTools" (ignore case) or any "telosys*tools"
-			Folder folder = (Folder) res;
 			final String folderNameLowerCase = folder.getName().toLowerCase() ;
 			if ( "telosystools".equalsIgnoreCase( folderNameLowerCase )  ) {
-				return telosysFolderImage ;
+				return getTelosysToolsFolderImage() ;
 			}
 			else {
 				if ( folderNameLowerCase.startsWith("telosys") 
 						&& folderNameLowerCase.endsWith("tools") ) {
-					return telosysFolderImage ;
+					return getTelosysToolsFolderImage() ;
 				}
 			}
 		}
-		return null;
+		return null; // null means "no decoration is to be applied"
+	}
+	
+	public Image getTelosysToolsFolderImage() {
+		return PluginImages.getImage(PluginImages.TELOSYS_FOLDER);
+		
 	}
 	
 	@Override
-	public String decorateText(String arg0, Object arg1) {
-	// NOTHING
-	return null;
+	public String decorateText(String text, Object element) {
+		// NOTHING TO DECORATE
+		return null;
 	}
 }
