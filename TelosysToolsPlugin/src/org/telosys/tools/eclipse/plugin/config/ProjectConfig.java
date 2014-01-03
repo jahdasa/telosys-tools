@@ -41,7 +41,7 @@ public class ProjectConfig
 
 	private String _sWorkspaceLocation  = null ;
 	
-	private String _sRepositoriesFolder = "TelosysTools/repos" ; 
+	private String _sRepositoriesFolder = "TelosysTools" ; 
 	private String _sTemplatesFolder    = "TelosysTools/templates" ; 
 	private String _sDownloadsFolder    = "TelosysTools/downloads" ; 
 	private String _sLibrariesFolder    = "TelosysTools/lib" ; 
