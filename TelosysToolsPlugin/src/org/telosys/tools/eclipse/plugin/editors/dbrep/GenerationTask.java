@@ -22,12 +22,11 @@ import org.telosys.tools.generator.config.GeneratorConfigManager;
 import org.telosys.tools.generator.config.IGeneratorConfig;
 import org.telosys.tools.generator.directive.DirectiveException;
 import org.telosys.tools.generator.target.TargetDefinition;
-import org.telosys.tools.repository.model.RepositoryModel;
 
 public class GenerationTask {
 
 	private final RepositoryEditor    editor ;
-	private final RepositoryModel     repositoryModel ;
+//	private final RepositoryModel     repositoryModel ;
 	private final IGeneratorConfig    generatorConfig ;
 	private final IProject            project;
 	private final TelosysToolsLogger  telosysToolsLogger;
@@ -48,7 +47,7 @@ public class GenerationTask {
     	
     	telosysToolsLogger.log("GenerationTask initialization");
     	
-    	repositoryModel = editor.getDatabaseRepository();
+//    	repositoryModel = editor.getDatabaseRepository();
 
 		ProjectConfig projectConfig = editor.getProjectConfig();
 		

@@ -1,7 +1,5 @@
 package org.telosys.tools.eclipse.plugin.editors.dbrep;
 
-import java.sql.Types;
-
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;

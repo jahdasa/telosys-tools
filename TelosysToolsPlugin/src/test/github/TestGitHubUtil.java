@@ -1,7 +1,6 @@
 package test.github;
 
 import java.util.List;
-import java.util.Properties;
 
 import org.telosys.tools.eclipse.plugin.commons.github.GitHubAPI;
 import org.telosys.tools.eclipse.plugin.commons.github.GitHubRepository;

@@ -858,7 +858,7 @@ public class PropertiesPage extends PropertyPage {
 			return 0 ;
 		}
 		String sTemplatesFolder = getTemplatesFolder();
-		if ( null == sDownloadFolder ) {
+		if ( null == sTemplatesFolder ) {
 			return 0 ;
 		}
 	

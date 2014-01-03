@@ -3,7 +3,6 @@ package org.telosys.tools.eclipse.plugin.editors.velocity.contentassist;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.telosys.tools.eclipse.plugin.editors.velocity.model.VelocityKeyWord;
 import org.telosys.tools.eclipse.plugin.editors.velocity.model.VelocityKeyWords;
 

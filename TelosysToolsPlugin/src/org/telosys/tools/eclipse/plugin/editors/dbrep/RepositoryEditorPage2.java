@@ -44,7 +44,7 @@ import org.telosys.tools.repository.model.RepositoryModel;
  */
 /* package */ class RepositoryEditorPage2 extends RepositoryEditorPage {
 
-	private final static int RIGHT_PART_WIDTH = 484 ;
+//	private final static int RIGHT_PART_WIDTH = 484 ;
 	private final static int TABLE_HEIGHT = 380 ;
 	
 	private Table  _tableEntities = null ;
