@@ -18,7 +18,6 @@ package org.telosys.tools.generator.context;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.telosys.tools.commons.JavaClassUtil;
 import org.telosys.tools.commons.JavaTypeUtil;
 
 /**
@@ -51,12 +50,13 @@ public class JavaBeanClassImports {
 	{
 		if ( type != null )
 		{
-			for ( String s2 : _list ) {
-				if ( s2.equals(type))
-				{
-					return true ; // Found = declared
-				}
-			}
+//			for ( String s2 : _list ) {
+//				if ( s2.equals(type))
+//				{
+//					return true ; // Found = declared
+//				}
+//			}
+			return _list.contains(type);
 		}
 		return false ;
 	}
@@ -78,64 +78,64 @@ public class JavaBeanClassImports {
 		_list.add(type);
 	}
 	
-	private int shortNameCount(String shortName)
-	{
-		int count = 0 ;
-		String end = "." + shortName ;
-		for ( String s : _list ) {
-			if ( s.endsWith(end))
-			{
-				count++ ;
-			}
-		}
-		return count ;
-	}
+//	private int shortNameCount(String shortName)
+//	{
+//		int count = 0 ;
+//		String end = "." + shortName ;
+//		for ( String s : _list ) {
+//			if ( s.endsWith(end))
+//			{
+//				count++ ;
+//			}
+//		}
+//		return count ;
+//	}
 	
-	private void registerCollidedTypes(String shortName, LinkedList<String> listExtracted )
-	{
-		String end = "." + shortName ;
-		//--- store the types to extract 
-		for ( String sFullType : _list ) {
-			if ( sFullType.endsWith(end))
-			{
-				listExtracted.add(sFullType);
-			}
-		}
-	}
+//	private void registerCollidedTypes(String shortName, LinkedList<String> listExtracted )
+//	{
+//		String end = "." + shortName ;
+//		//--- store the types to extract 
+//		for ( String sFullType : _list ) {
+//			if ( sFullType.endsWith(end))
+//			{
+//				listExtracted.add(sFullType);
+//			}
+//		}
+//	}
 	
-	/**
-	 * Extract the duplicated short names from the imports list to avoid imports collision
-	 * eg : "import java.util.Date;" collides with "import java.sql.Date;"
-	 * @return list of all the collided full types (those types are already extracted from imports),<br>
-	 * or null if nothing has been extracted
-	 */
-	public LinkedList<String> extractDuplicatedShortNames()
-	{
-		LinkedList<String> collidedTypes = null ;
-
-		//--- Build the list of types to extract
-		for ( String s : _list ) {
-			String shortName = JavaClassUtil.shortName(s);
-			
-			// if more than one occurrence of this short name in the imports 
-			// ( eg  2 occurrences : "java.util.Date" and "java.sql.Date" for the "Date" short name)
-			if ( shortNameCount(shortName) > 1 ) 
-			{
-				if ( collidedTypes == null )
-				{
-					collidedTypes = new LinkedList<String>() ;
-				}
-				registerCollidedTypes(shortName, collidedTypes );
-			}
-		}
-		
-		//--- Remove all the types to extract (if any)
-		if ( collidedTypes != null )
-		{
-			_list.removeAll(collidedTypes);
-		}
-		
-		//--- Return the list of types extracted
-		return collidedTypes ;
-	}
+//	/**
+//	 * Extract the duplicated short names from the imports list to avoid imports collision
+//	 * eg : "import java.util.Date;" collides with "import java.sql.Date;"
+//	 * @return list of all the collided full types (those types are already extracted from imports),<br>
+//	 * or null if nothing has been extracted
+//	 */
+//	public LinkedList<String> extractDuplicatedShortNames()
+//	{
+//		LinkedList<String> collidedTypes = null ;
+//
+//		//--- Build the list of types to extract
+//		for ( String s : _list ) {
+//			String shortName = JavaClassUtil.shortName(s);
+//			
+//			// if more than one occurrence of this short name in the imports 
+//			// ( eg  2 occurrences : "java.util.Date" and "java.sql.Date" for the "Date" short name)
+//			if ( shortNameCount(shortName) > 1 ) 
+//			{
+//				if ( collidedTypes == null )
+//				{
+//					collidedTypes = new LinkedList<String>() ;
+//				}
+//				registerCollidedTypes(shortName, collidedTypes );
+//			}
+//		}
+//		
+//		//--- Remove all the types to extract (if any)
+//		if ( collidedTypes != null )
+//		{
+//			_list.removeAll(collidedTypes);
+//		}
+//		
+//		//--- Return the list of types extracted
+//		return collidedTypes ;
+//	}
 }

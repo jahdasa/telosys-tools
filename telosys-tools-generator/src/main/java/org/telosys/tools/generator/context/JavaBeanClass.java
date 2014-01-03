@@ -26,6 +26,7 @@ import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityNoDoc;
 import org.telosys.tools.generator.context.doc.VelocityObject;
 import org.telosys.tools.generator.context.doc.VelocityReturnType;
+import org.telosys.tools.generator.context.tools.AmbiguousTypesDetector;
 import org.telosys.tools.repository.model.Column;
 import org.telosys.tools.repository.model.Entity;
 import org.telosys.tools.repository.model.ForeignKey;
@@ -135,10 +136,10 @@ public class JavaBeanClass extends JavaClass
 			Entity entityCible = model.getEntityByName(link.getTargetTableName());
 			JavaBeanClassLink jcl = new JavaBeanClassLink(link, this._entite , entityCible );
 			
-			//ajouter import specifique
-			JavaBeanClassImports jbci = new JavaBeanClassImports();
-			jbci.declareType(jcl.getJavaTypeFull());
-//			this.addImportsJpa(jbci);
+//			//ajouter import specifique
+//			JavaBeanClassImports jbci = new JavaBeanClassImports();
+//			jbci.declareType(jcl.getJavaTypeFull());
+////			this.addImportsJpa(jbci);
 			this.addLink(jcl);
 		}
 		
@@ -152,7 +153,8 @@ public class JavaBeanClass extends JavaClass
 		}
 		
 		// import resolution
-		this.endOfDefinition();
+		//this.endOfDefinition();
+		endOfAttributesDefinition();
 		
 		// import JPA resolution
 		//this.processJpaSpecificImport();
@@ -193,7 +195,8 @@ public class JavaBeanClass extends JavaClass
 			{
 				addAttribute(attribute);
 			}
-			endOfDefinition(); // close the class definition (prepares imports list)
+			//endOfDefinition(); // close the class definition (prepares imports list)
+			endOfAttributesDefinition();
 		}		
 	}
 	//-----------------------------------------------------------------------------------------------
@@ -1240,8 +1243,9 @@ public class JavaBeanClass extends JavaClass
 		return attributesList ;
 	}
 
+	//-----------------------------------------------------------------------------------------------
 	/**
-	 * This method close the definition of the class (when all the attributes have been added) <br>
+	 * This method closes the definition of the class (when all the attributes have been added) <br>
 	 * 
 	 * It build the "KEY" and "NON KEY" attributes 
 	 * 
@@ -1249,7 +1253,7 @@ public class JavaBeanClass extends JavaClass
 	 * and managed the imports list and attributes declarations types to avoid imports error
 	 *  
 	 */
-	private void endOfDefinition() 
+	private void endOfAttributesDefinition() // v 2.1.0
 	{
 		if ( _attributes == null ) return ;
 		
@@ -1258,41 +1262,73 @@ public class JavaBeanClass extends JavaClass
 		
 		//--- Build the list of the "NON KEY" attributes
 		_nonKeyAttributes = buildAttributesList ( false ); 
-		
-		//--- Define the imports required for all the fields of this class 
-		JavaBeanClassImports javaImportsForAllFields = new JavaBeanClassImports();
-		//JavaBeanClassImports javaImportsForKeyFields = new JavaBeanClassImports();
-		
-		for ( JavaBeanClassAttribute attribute : _attributes ) {
-			javaImportsForAllFields.declareType( attribute.getFullType() ); // register the type to import if necessary
-//			if ( attribute.isKeyElement() ) {
-//				javaImportsForKeyFields.declareType( attribute.getFullType() );
-//			}
-		}
-		
-		//--- Extract potential collided types ( and retrieve the list of collided full types )
-		LinkedList<String> collidedTypes = javaImportsForAllFields.extractDuplicatedShortNames();
-//		javaImportsForKeyFields.extractDuplicatedShortNames();
 
-//		//--- Set imports list for the current class
-//		this.setImportsForAllFields(javaImportsForAllFields);
-//		this.setImportsForKeyFields(javaImportsForKeyFields);
-		
-		//--- If there's collided types => Check each attribute type 
-		if ( collidedTypes != null )
-		{
-			//--- Some collided types have been extracted from imports 
-			for ( JavaBeanClassAttribute attr : _attributes ) {
-				String sFullType = attr.getFullType();
-				if ( collidedTypes.contains( sFullType ) ) // if this attribute is impacted
-				{
-					//--- force this attributes to use its "full type" for variable declaration
-					//attr.forceType ( sFullType );
-					attr.useFullType() ; // v 2.0.7
-				}
+		//--- Duplicated short types detection
+		AmbiguousTypesDetector duplicatedTypesDetector = new AmbiguousTypesDetector(_attributes);
+		List<String> ambiguousTypes = duplicatedTypesDetector.getAmbiguousTypes();
+		for ( JavaBeanClassAttribute attribute : _attributes ) {
+			//--- Is this attribute's type ambiguous ?
+			if ( ambiguousTypes.contains( attribute.getFullType() ) ) {
+				//--- Yes => force this attribute to use its "full type" for variable declaration
+				attribute.useFullType() ; // v 2.0.7
 			}
 		}
 	}
+	
+//	//-----------------------------------------------------------------------------------------------
+//	/**
+//	 * This method close the definition of the class (when all the attributes have been added) <br>
+//	 * 
+//	 * It build the "KEY" and "NON KEY" attributes 
+//	 * 
+//	 * It determines if there is import types collision ( eg "java.util.Date" with "java.sql.Date" ) <br>
+//	 * and managed the imports list and attributes declarations types to avoid imports error
+//	 *  
+//	 */
+//	private void endOfDefinition() 
+//	{
+//		if ( _attributes == null ) return ;
+//		
+//		//--- Build the list of the "KEY" attributes
+//		_keyAttributes = buildAttributesList ( true );
+//		
+//		//--- Build the list of the "NON KEY" attributes
+//		_nonKeyAttributes = buildAttributesList ( false ); 
+//		
+//		//--- Define the imports required for all the fields of this class 
+//		JavaBeanClassImports javaImportsForAllFields = new JavaBeanClassImports();
+//		//JavaBeanClassImports javaImportsForKeyFields = new JavaBeanClassImports();
+//		
+//		for ( JavaBeanClassAttribute attribute : _attributes ) {
+//			javaImportsForAllFields.declareType( attribute.getFullType() ); // register the type to import if necessary
+////			if ( attribute.isKeyElement() ) {
+////				javaImportsForKeyFields.declareType( attribute.getFullType() );
+////			}
+//		}
+//		
+//		//--- Extract potential collided types ( and retrieve the list of collided full types )
+//		LinkedList<String> collidedTypes = javaImportsForAllFields.extractDuplicatedShortNames();
+////		javaImportsForKeyFields.extractDuplicatedShortNames();
+//
+////		//--- Set imports list for the current class
+////		this.setImportsForAllFields(javaImportsForAllFields);
+////		this.setImportsForKeyFields(javaImportsForKeyFields);
+//		
+//		//--- If there's collided types => Check each attribute type 
+//		if ( collidedTypes != null )
+//		{
+//			//--- Some collided types have been extracted from imports 
+//			for ( JavaBeanClassAttribute attr : _attributes ) {
+//				String sFullType = attr.getFullType();
+//				if ( collidedTypes.contains( sFullType ) ) // if this attribute is impacted
+//				{
+//					//--- force this attributes to use its "full type" for variable declaration
+//					//attr.forceType ( sFullType );
+//					attr.useFullType() ; // v 2.0.7
+//				}
+//			}
+//		}
+//	}
 
 //	/**
 //	 * This method process the jpa specific imports <br>
