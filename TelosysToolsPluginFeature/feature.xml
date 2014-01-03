@@ -7,7 +7,7 @@
       plugin="org.telosys.tools.eclipse.plugin">
 
    <description url="http://www.telosys.org">
-      Telosys tools for code generation 
+      Telosys Tools - Version 2.1.0.b
 Lightweight model manager
 Code generator
 Velocity templates editor
@@ -28,7 +28,7 @@ http://www.eclipse.org/legal/epl-v10.html
    </license>
 
    <url>
-      <discovery label="Telosys web site" url="http://www.telosys.org/eclipse"/>
+      <discovery label="Telosys plugin update site" url="http://www.telosys.org/eclipse"/>
    </url>
 
    <plugin
