@@ -60,28 +60,6 @@ Each attribute is retrieved from the entity class <br>
   <TD>Attributes and methods</TD>			
 </TR>		
 <TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.beanValidationAnnotations(int leftMargin) : String</B> </CODE>
-<p class="doc">
-Returns the Java 'Bean Validation' annotations<br>
-( JSR303 and Hibernate additional annotations ) <br>
-<br>
-<b>Parameters : </b><br>
-&nbsp;&nbsp;&nbsp;<b>leftMargin</b> : the left margin (number of blanks)<br>
-</p>
-</TD>
-</TR>
-<TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.beanValidationAnnotationsJSR303(int leftMargin) : String</B> </CODE>
-<p class="doc">
-Returns the Java 'JSR-303 Bean Validation' annotations <br>
-( only JSR-303 annotations, without Hibernate additional annotations ) <br>
-<br>
-<b>Parameters : </b><br>
-&nbsp;&nbsp;&nbsp;<b>leftMargin</b> : the left margin (number of blanks)<br>
-</p>
-</TD>
-</TR>
-<TR>
 <TD class="doc" ><CODE class="simpledesc"> <B>.booleanFalseValue : String</B> </CODE>
 <p class="doc">
 Returns the value to use for a boolean when is FALSE (eg to be stored in a database) <br>
@@ -533,14 +511,6 @@ Useful for JPA, to avoid double mapping ( FK field and owning side link )<br>
 <br>
 <b>Parameters : </b><br>
 &nbsp;&nbsp;&nbsp;<b>links</b> : list of links where to search the attribute<br>
-</p>
-</TD>
-</TR>
-<TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.javaTypeStartingByUC() : String</B> </CODE>
-<p class="doc">
-Returns the java type starting by an Upper Case<br>
-Examples : 'Double' for 'double'/'Double', 'Int' for 'int', ...<br>
 </p>
 </TD>
 </TR>

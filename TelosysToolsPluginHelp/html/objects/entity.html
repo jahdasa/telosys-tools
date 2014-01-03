@@ -271,35 +271,6 @@ Returns TRUE if this entity has at least one attribute tagged as 'long text'<br>
 </TD>
 </TR>
 <TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.imports : List of 'String'</B> </CODE>
-<p class="doc">
-Returns a list of all the Java imports required for all the fields of the current entity<br>
-For example, 'java.util.Date' if the entity uses Date objects, etc...<br>
-<br>
-<b>Example : </b><br>
-<code>
-&nbsp;&nbsp;&nbsp;#foreach( $import in $entity.imports )<br>
-&nbsp;&nbsp;&nbsp;import $import;<br>
-&nbsp;&nbsp;&nbsp;#end<br>
-</code>
-</p>
-</TD>
-</TR>
-<TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.importsForKeyFields : List of 'String'</B> </CODE>
-<p class="doc">
-Returns a list of all the Java imports required for the KEY fields of the current entity<br>
-<br>
-<b>Example : </b><br>
-<code>
-&nbsp;&nbsp;&nbsp;#foreach( $import in $entity.importsForKeyFields )<br>
-&nbsp;&nbsp;&nbsp;import $import;<br>
-&nbsp;&nbsp;&nbsp;#end<br>
-</code>
-</p>
-</TD>
-</TR>
-<TR>
 <TD class="doc" ><CODE class="simpledesc"> <B>.isTableType() : boolean</B> </CODE>
 <p class="doc">
 Returns TRUE if the database type is 'TABLE' <br>

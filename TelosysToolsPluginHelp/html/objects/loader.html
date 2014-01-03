@@ -54,30 +54,57 @@ Allows users to create their own classes and to use them in the templates<br>
 <TR>
 <TD class="doc" ><CODE class="simpledesc"> <B>.classesFolder : String</B> </CODE>
 <p class="doc">
-Returns the folder where the classes are searched by the loader<br>
+Returns the full file path of the folder where the specific classes are searched by the loader<br>
 <br>
 <b>Since : </b>2.0.5<br>
 </p>
 </TD>
 </TR>
 <TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.loadJavaClass(String variableNameInContext, String javaClassName) : void</B> </CODE>
+<TD class="doc" ><CODE class="simpledesc"> <B>.loadClass(String javaClassName) : Class<?></B> </CODE>
 <p class="doc">
-Loads the given java class, creates an instance and put it in the Velocity context<br>
-The Java 'class' file must be located in the 'templates/classes' folder of the project<br>
-NB : The Java class must have a default constructor (in order to be created by 'javaClass.newInstance()'<br>
+Loads the given java class and return it (no instance created).<br>
+It can be a standard Java class (class of the JDK) or a specific class.<br>
+The specific classes must be located in the 'classes' folder of the templates<br>
 <br>
 <b>Parameters : </b><br>
-&nbsp;&nbsp;&nbsp;<b>variableNameInContext</b> : the name of the instance in the Velocity context<br>
-&nbsp;&nbsp;&nbsp;<b>javaClassName</b> : the Java class to be loaded<br>
+&nbsp;&nbsp;&nbsp;<b>javaClassName</b> : the name of the Java class to be loaded<br>
 <br>
 <b>Example : </b><br>
 <code>
 &nbsp;&nbsp;&nbsp;## load the class and put an instance in the context<br>
-&nbsp;&nbsp;&nbsp;$loader.loadJavaClass("tools", "MyClass")<br>
-&nbsp;&nbsp;&nbsp;## use the instance <br>
-&nbsp;&nbsp;&nbsp;$tools.myMethod()<br>
+&nbsp;&nbsp;&nbsp;#set( $Math = $loader.loadClass("java.lang.Math") <br>
+&nbsp;&nbsp;&nbsp;## use the static methods of this class <br>
+&nbsp;&nbsp;&nbsp;$Math.random()<br>
 </code>
+<br>
+<b>Since : </b>2.1.0<br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.newInstance(String javaClassName) : Object</B> </CODE>
+<p class="doc">
+Loads the given java class, creates a new instance and return it<br>
+It can be a standard Java class (class of the JDK) or a specific class.<br>
+The specific classes must be located in the 'classes' folder of the templates<br>
+NB : The Java class must have a default constructor (in order to be created by 'javaClass.newInstance()'<br>
+<br>
+<b>Parameters : </b><br>
+&nbsp;&nbsp;&nbsp;<b>javaClassName</b> : the name of the Java class to be loaded and used to create the instance<br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;## create an instance of StringBuilder and put it in the context with #set<br>
+&nbsp;&nbsp;&nbsp;#set( $strBuilder = $loader.newInstance('java.lang.StringBuilder') )<br>
+&nbsp;&nbsp;&nbsp;## use the instance <br>
+&nbsp;&nbsp;&nbsp;$strBuilder.append('aa')<br>
+&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;## create new instance of a specific class<br>
+&nbsp;&nbsp;&nbsp;#set( $tool = $loader.newInstance('MyTool') )<br>
+</code>
+<br>
+<b>Since : </b>2.1.0<br>
 </p>
 </TD>
 </TR>

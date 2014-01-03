@@ -128,6 +128,47 @@ Spaces are used for code indentation<br>
 </p>
 </TD>
 </TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.imports(JavaBeanClass entity) : List<String></B> </CODE>
+<p class="doc">
+Returns the list of Java classes to be imported for the given entity<br>
+The imports are determined using all the entity attributes  <br>
+and all the 'OneToMany' any 'ManyToMany' links found in the entity<br>
+<br>
+<b>Parameters : </b><br>
+&nbsp;&nbsp;&nbsp;<b>entity</b> : entity to be used<br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;#foreach( $import in $java.imports($entity) )<br>
+&nbsp;&nbsp;&nbsp;import $import;<br>
+&nbsp;&nbsp;&nbsp;#end)<br>
+</code>
+<br>
+<b>Since : </b>2.0.7<br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.imports(List attributes) : List<String></B> </CODE>
+<p class="doc">
+Returns the list of Java classes to be imported for the given attributes<br>
+<br>
+<br>
+<b>Parameters : </b><br>
+&nbsp;&nbsp;&nbsp;<b>attributes</b> : list of attributes<br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;#foreach( $import in $java.imports($entity.attributes) )<br>
+&nbsp;&nbsp;&nbsp;import $import;<br>
+&nbsp;&nbsp;&nbsp;#end)<br>
+</code>
+<br>
+<b>Since : </b>2.0.7<br>
+</p>
+</TD>
+</TR>
 </table>
 </body>
 </html>
