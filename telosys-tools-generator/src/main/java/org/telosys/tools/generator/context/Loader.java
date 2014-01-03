@@ -27,7 +27,7 @@ import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityObject;
 
 /**
- * Special class used as a specific class loader <br>
+ * Special class used as a specific class loader <br> 
  * Used to load a specific Java Class tool in the Velocity Context
  * 
  * @author Laurent GUERIN
@@ -50,12 +50,12 @@ public class Loader {
 	private final static String CLASSES = "classes" ;
 	
 	private final ProjectConfiguration  projectConfig ;
-	private final VelocityContext       velocityContext ;
+//	private final VelocityContext       velocityContext ;
 	
 	public Loader(ProjectConfiguration projectConfig, VelocityContext velocityContext) {
 		super();
 		this.projectConfig   = projectConfig;
-		this.velocityContext = velocityContext;
+//		this.velocityContext = velocityContext;
 	}
 
 	//--------------------------------------------------------------------------------------------------------------
@@ -98,7 +98,7 @@ public class Loader {
 		text = {
 				"Loads the given java class and return it (no instance created).",
 				"It can be a standard Java class (class of the JDK) or a specific class.",
-				"The specific classes must be located in the 'classes' folder of the templates",
+				"The specific classes must be located in the 'classes' folder of the templates"
 		},
 		parameters = {
 				"javaClassName : the name of the Java class to be loaded "
