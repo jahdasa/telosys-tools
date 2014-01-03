@@ -80,7 +80,7 @@ public class DialogBoxForString extends DialogBox
 
 		//--- Create the widgets
 		_cbLongText = new Button(group, SWT.CHECK);
-		_cbLongText.setText("Long text (needs to be transported in a separated XML tag)");
+		_cbLongText.setText("Long text (e.g. text requiring a textarea)");
 		
 //		//--- Init with value 
 //		_cbLongText.setSelection( _value.isLongText() );
