@@ -18,14 +18,14 @@ public class ContextInfoTest  extends TestCase {
 		System.out.println("-----");
 	}
 	
-	private void print(ClassInfo classInfo) {
-		if ( classInfo != null ) {
-			System.out.println("ClassInfo : " + classInfo.getContextName() );
-		}
-		else {
-			System.out.println("null");
-		}
-	}
+//	private void print(ClassInfo classInfo) {
+//		if ( classInfo != null ) {
+//			System.out.println("ClassInfo : " + classInfo.getContextName() );
+//		}
+//		else {
+//			System.out.println("null");
+//		}
+//	}
 	
 	public void testVariableNames() {
 		ContextInfo contextInfo = new ContextInfo();

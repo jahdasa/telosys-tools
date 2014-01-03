@@ -21,8 +21,6 @@ import org.telosys.tools.commons.FileUtil;
 import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.generator.ContextName;
 import org.telosys.tools.generator.context.ProjectConfiguration;
-import org.telosys.tools.generator.variables.Variable;
-import org.telosys.tools.generator.variables.VariablesUtil;
 
 /**
  * Generator configuration implementation 

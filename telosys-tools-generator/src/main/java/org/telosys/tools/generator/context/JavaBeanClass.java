@@ -64,7 +64,7 @@ public class JavaBeanClass extends JavaClass
 	private final static List<JavaBeanClassAttribute>  VOID_ATTRIBUTES_LIST    = new LinkedList<JavaBeanClassAttribute>();
 	private final static List<JavaBeanClassForeignKey> VOID_FOREIGN_KEYS_LIST  = new LinkedList<JavaBeanClassForeignKey>();
 
-	private final static List<String>                 VOID_STRINGS_LIST    = new LinkedList<String>();
+//	private final static List<String>                 VOID_STRINGS_LIST    = new LinkedList<String>();
 	//private final static Set<String>                  VOID_STRINGS_SET     = new LinkedHashSet<String>();
 	
 	private final static List<JavaBeanClassLink>      VOID_LINKS_LIST    = new LinkedList<JavaBeanClassLink>();
