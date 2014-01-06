@@ -53,21 +53,35 @@ public class JdbcTypesManager {
 		types.add( Types.NUMERIC,       "NUMERIC",       "java.math.BigDecimal"); // 2
 		types.add( Types.DECIMAL,       "DECIMAL",       "java.math.BigDecimal"); // 3
 		
-		types.add( Types.BIT,           "BIT",           "java.lang.Boolean",  "boolean"); // -7
-		types.add( Types.BOOLEAN,       "BOOLEAN",       "java.lang.Boolean",  "boolean"); // 16
+//		types.add( Types.BIT,           "BIT",           "java.lang.Boolean",  "boolean"); // -7
+//		types.add( Types.BOOLEAN,       "BOOLEAN",       "java.lang.Boolean",  "boolean"); // 16
+//		
+//		types.add( Types.TINYINT,       "TINYINT",       "java.lang.Byte",     "byte");  // -6
+//		types.add( Types.SMALLINT,      "SMALLINT",      "java.lang.Short",    "short"); // 5
+//		types.add( Types.INTEGER,       "INTEGER",       "java.lang.Integer",  "int");   // 4
+//		types.add( Types.BIGINT,        "BIGINT",        "java.lang.Long",     "long");  // -5
+//		
+//		types.add( Types.REAL,          "REAL",          "java.lang.Float",    "float");   // 7
+//		types.add( Types.FLOAT,         "FLOAT",         "java.lang.Double",   "double");  // 6
+//		types.add( Types.DOUBLE,        "DOUBLE",        "java.lang.Double",   "double");  // 8
+
+//--- Ver 2.1.0 (always use Wrappers )
+		types.add( Types.BIT,           "BIT",           "java.lang.Boolean" ); // -7
+		types.add( Types.BOOLEAN,       "BOOLEAN",       "java.lang.Boolean" ); // 16
 		
-		types.add( Types.TINYINT,       "TINYINT",       "java.lang.Byte",     "byte");  // -6
-		types.add( Types.SMALLINT,      "SMALLINT",      "java.lang.Short",    "short"); // 5
-		types.add( Types.INTEGER,       "INTEGER",       "java.lang.Integer",  "int");   // 4
-		types.add( Types.BIGINT,        "BIGINT",        "java.lang.Long",     "long");  // -5
+		types.add( Types.TINYINT,       "TINYINT",       "java.lang.Byte"    );  // -6
+		types.add( Types.SMALLINT,      "SMALLINT",      "java.lang.Short"   ); // 5
+		types.add( Types.INTEGER,       "INTEGER",       "java.lang.Integer" );   // 4
+		types.add( Types.BIGINT,        "BIGINT",        "java.lang.Long"    );  // -5
 		
-		types.add( Types.REAL,          "REAL",          "java.lang.Float",    "float");   // 7
-		types.add( Types.FLOAT,         "FLOAT",         "java.lang.Double",   "double");  // 6
-		types.add( Types.DOUBLE,        "DOUBLE",        "java.lang.Double",   "double");  // 8
+		types.add( Types.REAL,          "REAL",          "java.lang.Float"   );   // 7
+		types.add( Types.FLOAT,         "FLOAT",         "java.lang.Double"  );  // 6
+		types.add( Types.DOUBLE,        "DOUBLE",        "java.lang.Double"  );  // 8
 	
 		types.add( Types.BINARY,        "BINARY",        "byte[]");  // -2
 		types.add( Types.VARBINARY,     "VARBINARY",     "byte[]");  // -3
 		types.add( Types.LONGVARBINARY, "LONGVARBINARY", "byte[]");  // -4
+//--- Ver 2.1.0 (always use Wrappers )
 
 		types.add( Types.DATE,          "DATE",          "java.sql.Date");       // forced to "java.util.Date" by rule
 		types.add( Types.TIME,          "TIME",          "java.sql.Time");       // forced to "java.util.Date" by rule
