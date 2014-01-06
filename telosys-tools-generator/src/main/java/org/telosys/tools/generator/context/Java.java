@@ -303,5 +303,165 @@ public class Java {
 		}
 		return VOID_STRINGS_LIST ;
 	}
+
+	//-------------------------------------------------------------------------------------
+	// toString METHOD GENERATION
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+			text={	
+				"Returns a string containing all the code for a Java 'toString' method",
+				"Generates a 'toString' method with the primary key attribute or the embedded key ",
+				"and the given list of 'non key' attributes if their type is usable in a 'toString' method",
+				"(excluded types are 'array', 'Clob', 'Blob', and 'Long Text String') "
+				},
+			example={ 
+				"$java.toStringMethod( entity, nonKeyAttributes, embeddedIdName, indentSpaces )" },
+			parameters = { 
+				"entity : the entity to be used",
+				"nonKeyAttributes : list of attributes that are not in the Primary Key",
+				"embeddedIdName : variable name for the embedded id (used only if the entity has a composite primary key) " },
+			since = "2.0.7"
+				)
+		public String toStringMethod( JavaBeanClass entity, List<JavaBeanClassAttribute> nonKeyAttributes, String embeddedIdName ) {
+			
+			return toStringMethod( entity , nonKeyAttributes, embeddedIdName, new LinesBuilder() ); 
+		}
+		
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns a string containing all the code for a Java 'toString' method",
+			"Generates a 'toString' method with the primary key attribute or the embedded key ",
+			"and the given list of 'non key' attributes if their type is usable in a 'toString' method",
+			"(excluded types are 'array', 'Clob', 'Blob', and 'Long Text String') "
+			},
+		example={ 
+			"$java.toStringMethod( entity, nonKeyAttributes, embeddedIdName, indentSpaces )" },
+		parameters = { 
+			"entity : the entity to be used",
+			"nonKeyAttributes : list of attributes that are not in the Primary Key",
+			"embeddedIdName : variable name for the embedded id (used only if the entity has a composite primary key) ",
+			"indentSpaces : number of spaces to be used for each indentation level"},
+		since = "2.0.7"
+			)
+	public String toStringMethod( JavaBeanClass entity, List<JavaBeanClassAttribute> nonKeyAttributes, String embeddedIdName, int indentSpaces ) {
+		
+		return toStringMethod( entity , nonKeyAttributes, embeddedIdName, new LinesBuilder(indentSpaces) ); 
+	}
 	
+	//-------------------------------------------------------------------------------------
+	private String toStringMethod( JavaBeanClass entity, List<JavaBeanClassAttribute> nonKeyAttributes, String embeddedIdName, LinesBuilder lb ) {
+
+		int indent = 1 ;
+		lb.append(indent, "public String toString() { ");
+		
+		indent++;
+		lb.append(indent, "StringBuffer sb = new StringBuffer(); ");
+		
+		int count = 0 ;
+		lb.append(indent, "sb.append(\"[\"); ");
+		//--- PRIMARY KEY attributes ( composite key or not )
+		if ( entity.hasCompositePrimaryKey() && ( embeddedIdName != null ) ) {
+			// Embedded id 
+			//count = count + toStringForEmbeddedId( leftMargin, sb, embeddedIdName );
+			count = count + toStringForEmbeddedId( embeddedIdName, lb, indent );
+		}
+		else {
+			// No embedded id ( or no name for it )
+			List<JavaBeanClassAttribute> keyAttributes = entity.getKeyAttributes() ;
+			//count = count + toStringForAttributes( leftMargin, sb, _keyAttributes );
+			count = count + toStringForAttributes( keyAttributes, lb, indent );
+		}
+
+//		if ( count > 0 ) {
+//			lb.append(indent, "sb.append(\"|\"); ");
+//		}
+		lb.append(indent, "sb.append(\"]:\"); ");
+		
+		//--- NON KEY attributes ( all the attributes that are not in the Primary Key )
+		if ( nonKeyAttributes != null ) {
+			//count = count + toStringForAttributes( leftMargin, sb, specificNonKeyAttributes );
+			count = count + toStringForAttributes( nonKeyAttributes, lb, indent );
+		}
+				
+		lb.append(indent, "return sb.toString(); ");
+		
+		indent--;
+		lb.append(indent, "} ");
+
+		return lb.toString();
+	}
+	
+    /**
+     * Uses the given attributes except if their type is not usable   
+     * @param attributes
+     * @param lb
+     * @param indent
+     * @return
+     */
+    private int toStringForAttributes( List<JavaBeanClassAttribute> attributes, LinesBuilder lb, int indent  )
+    {    	
+    	if ( null == attributes ) return 0 ;
+    	int count = 0 ;
+    	for ( JavaBeanClassAttribute attribute : attributes ) {
+    		if ( usableInToString( attribute ) ) {
+                if ( count > 0 ) // if it's not the first one
+                {
+        			//sb.append(leftMargin); sb.append("sb.append( \"|\" ); \n");
+        			lb.append(indent, "sb.append(\"|\");" );
+                }        		
+    			//sb.append(leftMargin); sb.append("sb.append(" + attribute.getName() + "); \n" );
+    			lb.append(indent, "sb.append(" + attribute.getName() + ");" );
+    			count++ ;
+    		}
+    		else {
+    			String sLongText = attribute.isLongText() ? " Long Text" : "" ; 
+    			lb.append(indent, "// attribute '" + attribute.getName() 
+    					+ "' not usable (type = " + attribute.getType() + sLongText + ")");
+    		}
+    	}
+    	return count ;
+    }
+    
+    /**
+     * Just use the embedded primary with its own 'toString'
+     * @param embeddedIdName
+     * @param lb
+     * @param indent
+     * @return
+     */
+    private int toStringForEmbeddedId( String embeddedIdName, LinesBuilder lb, int indent  )
+    {
+//		sb.append(leftMargin); sb.append("if ( " + embeddedIdName + " != null ) {  \n");
+//		sb.append(leftMargin); sb.append("    sb.append(" + embeddedIdName + ".toString());  \n");
+//		sb.append(leftMargin); sb.append("}  \n");
+//		sb.append(leftMargin); sb.append("else {  \n");
+//		sb.append(leftMargin); sb.append("    sb.append( \"(null-key)\" );  \n");
+//		sb.append(leftMargin); sb.append("}  \n");
+		lb.append(indent, "if ( " + embeddedIdName + " != null ) {  ");
+		lb.append(indent, "    sb.append(" + embeddedIdName + ".toString());  ");
+		lb.append(indent, "}  ");
+		lb.append(indent, "else {  ");
+		lb.append(indent, "    sb.append( \"(null-key)\" ); ");
+		lb.append(indent, "}  ");
+		return 1 ;
+    }
+
+    /**
+     * Returns true if the given type is usable in a 'toString' method
+     * @param sType
+     * @return
+     */
+    private boolean usableInToString( JavaBeanClassAttribute attribute )
+    {
+    	if ( attribute.isArrayType() ) return false ;
+    	if ( attribute.isLongText() ) return false ;
+    	
+    	String sType = attribute.getType();
+    	if ( null == sType ) return false ;
+    	String s = sType.trim() ;
+    	if ( s.endsWith("Blob") ) return false ; 
+    	if ( s.endsWith("Clob") ) return false ; 
+    	return true ;
+    }
 }

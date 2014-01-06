@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.telosys.tools.generator.ContextName;
 import org.telosys.tools.generator.GeneratorContextException;
-import org.telosys.tools.generator.GeneratorUtil;
 import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityNoDoc;
 import org.telosys.tools.generator.context.doc.VelocityObject;
@@ -96,7 +95,7 @@ public class JavaBeanClass extends JavaClass
 	//--- JPA specific
 //	private Set<String>                   _importsJpa = null ; // The imports JPA for this class ( list of "java.xx.Class" )
 	private LinkedList<JavaBeanClassLink> _links  = null ; // The links for this class ( ALL ATTRIBUTES )
-	private Entity                        _entite = null;
+//	private Entity                        _entite = null;
 	
 	//-----------------------------------------------------------------------------------------------
 	/**
@@ -111,7 +110,7 @@ public class JavaBeanClass extends JavaClass
 	{
 		super(entity.getBeanJavaClass(), sPackage);
 		
-		this._entite = entity;
+//		this._entite = entity;
 		this._sDatabaseTable   = entity.getName();
 		this._sDatabaseCatalog = entity.getCatalog();
 		this._sDatabaseSchema  = entity.getSchema();
@@ -134,7 +133,8 @@ public class JavaBeanClass extends JavaClass
 		for ( Link link : entityLinks ) {
 			// On va trouver le bean correspondant a ce lien dans le model
 			Entity entityCible = model.getEntityByName(link.getTargetTableName());
-			JavaBeanClassLink jcl = new JavaBeanClassLink(link, this._entite , entityCible );
+//			JavaBeanClassLink jcl = new JavaBeanClassLink(link, this._entite , entityCible );
+			JavaBeanClassLink jcl = new JavaBeanClassLink(link, entity , entityCible );
 			
 //			//ajouter import specifique
 //			JavaBeanClassImports jbci = new JavaBeanClassImports();
@@ -852,144 +852,144 @@ public class JavaBeanClass extends JavaClass
 //    	return "\"Class " + getName() + " (no attributes) \"" ;
 //    }
 
-    private boolean typeUsedInToString( String sType )
-    {
-    	if ( null == sType ) return false ;
-    	String s = sType.trim() ;
-    	if ( s.endsWith("]") ) return false ; // Array
-    	if ( s.endsWith("Blob") ) return false ; 
-    	if ( s.endsWith("Clob") ) return false ; 
-    	return true ;
-    }
-	//-------------------------------------------------------------------------------------
-	@VelocityMethod ( text= { 
-			"Returns a multiline String containing all the Java instructions for the 'toString' method",
-			"Argument : number of spaces for the left margin ",
-			""
-		},
-		example={	
-			"$entity.toStringMethodCodeLines(4)"
-		},
-		parameters = "leftMargin : number of blanks for the left margin"
-	)
-    public String toStringMethodCodeLines( int iLeftMargin )
-    {
-    	return toStringMethodCodeLinesWithKey( iLeftMargin, null );
-    }
+//    private boolean typeUsedInToString( String sType )
+//    {
+//    	if ( null == sType ) return false ;
+//    	String s = sType.trim() ;
+//    	if ( s.endsWith("]") ) return false ; // Array
+//    	if ( s.endsWith("Blob") ) return false ; 
+//    	if ( s.endsWith("Clob") ) return false ; 
+//    	return true ;
+//    }
+//	//-------------------------------------------------------------------------------------
+//	@VelocityMethod ( text= { 
+//			"Returns a multiline String containing all the Java instructions for the 'toString' method",
+//			"Argument : number of spaces for the left margin ",
+//			""
+//		},
+//		example={	
+//			"$entity.toStringMethodCodeLines(4)"
+//		},
+//		parameters = "leftMargin : number of blanks for the left margin"
+//	)
+//    public String toStringMethodCodeLines( int iLeftMargin )
+//    {
+//    	return toStringMethodCodeLinesWithKey( iLeftMargin, null );
+//    }
     
-	//-------------------------------------------------------------------------------------
-	@VelocityMethod (
-		text= { 
-			"Returns a multiline String containing all the Java instructions for the 'toString' method",
-			"The primary key (composite or not) and all the 'non key' attributes are used"
-		},
-		example={	
-			"$entity.toStringMethodCodeLinesWithKey(8, \"compositePrimaryKey\" )"
-		},
-		parameters = {
-				"leftMargin : number of blanks for the left margin",
-				"keyVarName : variable name for the composite primary key embedded id (if any) "
-		}
-	)
-    public String toStringMethodCodeLinesWithKey( int iLeftMargin, String embeddedIdName )
-    {
-    	return toStringMethodCodeLinesWithKey( iLeftMargin, _nonKeyAttributes, embeddedIdName );
-    }
+//	//-------------------------------------------------------------------------------------
+//	@VelocityMethod (
+//		text= { 
+//			"Returns a multiline String containing all the Java instructions for the 'toString' method",
+//			"The primary key (composite or not) and all the 'non key' attributes are used"
+//		},
+//		example={	
+//			"$entity.toStringMethodCodeLinesWithKey(8, \"compositePrimaryKey\" )"
+//		},
+//		parameters = {
+//				"leftMargin : number of blanks for the left margin",
+//				"keyVarName : variable name for the composite primary key embedded id (if any) "
+//		}
+//	)
+//    public String toStringMethodCodeLinesWithKey( int iLeftMargin, String embeddedIdName )
+//    {
+//    	return toStringMethodCodeLinesWithKey( iLeftMargin, _nonKeyAttributes, embeddedIdName );
+//    }
+//    
+//	//-------------------------------------------------------------------------------------
+//	@VelocityMethod ( text= { 
+//			"Returns a multiline String containing all the Java instructions for the 'toString' method",
+//			"The primary key (composite or not) and given list of attributes are used"
+//		},
+//		example={	
+//			"$entity.toStringMethodCodeLinesWithKey(8, $attributes, \"compositePrimaryKey\" )"
+//		},
+//		parameters = {
+//			"leftMargin : number of blanks for the left margin",
+//			"attributes : specific list of attributes to be used in the 'toString' method (except key attributes)",
+//			"keyVarName : variable name for the composite primary key embedded id (if any) "
+//	}
+//	)
+//    public String toStringMethodCodeLinesWithKey( int iLeftMargin, List<JavaBeanClassAttribute> specificNonKeyAttributes, String embeddedIdName )
+//    {
+//    	String leftMargin = GeneratorUtil.blanks(iLeftMargin);
+//    	
+//    	if ( _attributes != null )
+//    	{
+//    		int n = _attributes.size();
+//    		if ( n > 0 )
+//    		{
+//    			int count = 0 ;
+//                StringBuffer sb = new StringBuffer();
+//    			sb.append(leftMargin);
+//    			sb.append("StringBuffer sb = new StringBuffer(); \n");
+//    			
+//    			//--- PRIMARY KEY attributes ( composite key or not )
+//    			if ( _keyAttributes != null ) {
+//					if ( hasCompositePrimaryKey() && ( embeddedIdName != null ) ) {
+//						// Embedded id 
+//						count = count + toStringForEmbeddedId( leftMargin, sb, embeddedIdName );
+//					}
+//					else {
+//						// No embedded id 
+//						count = count + toStringForAttributes( leftMargin, sb, _keyAttributes );
+//					}
+//        		}
+//
+//    			if ( count > 0 ) {
+//    				sb.append(leftMargin);
+//    				sb.append("sb.append(\"|\"); \n");
+//    			}
+//    			
+//    			//--- NON KEY attributes ( composite key or not )
+//    			if ( specificNonKeyAttributes != null ) {
+//    				count = count + toStringForAttributes( leftMargin, sb, specificNonKeyAttributes );
+//    			}
+//    			
+//    			sb.append(leftMargin);
+//    			sb.append("return sb.toString();"); // Last line => No EOL
+//    			if ( count > 0 ) {
+//                    return sb.toString() ;
+//    			}
+//    			else {
+//    				return leftMargin + "return \"Instance of " + getName() + " (no usable attribute)\" ;" ;
+//    			}
+//    		}
+//    		else {
+//				return leftMargin + "return \"Instance of " + getName() + " (attributes.size = 0)\" ;" ;    			
+//    		}
+//    	}
+//    	else {
+//        	return leftMargin + "return \"Instance of " + getName() + " (attributes is null)\" ;" ;
+//    	}
+//    }
     
-	//-------------------------------------------------------------------------------------
-	@VelocityMethod ( text= { 
-			"Returns a multiline String containing all the Java instructions for the 'toString' method",
-			"The primary key (composite or not) and given list of attributes are used"
-		},
-		example={	
-			"$entity.toStringMethodCodeLinesWithKey(8, $attributes, \"compositePrimaryKey\" )"
-		},
-		parameters = {
-			"leftMargin : number of blanks for the left margin",
-			"attributes : specific list of attributes to be used in the 'toString' method (except key attributes)",
-			"keyVarName : variable name for the composite primary key embedded id (if any) "
-	}
-	)
-    public String toStringMethodCodeLinesWithKey( int iLeftMargin, List<JavaBeanClassAttribute> specificNonKeyAttributes, String embeddedIdName )
-    {
-    	String leftMargin = GeneratorUtil.blanks(iLeftMargin);
-    	
-    	if ( _attributes != null )
-    	{
-    		int n = _attributes.size();
-    		if ( n > 0 )
-    		{
-    			int count = 0 ;
-                StringBuffer sb = new StringBuffer();
-    			sb.append(leftMargin);
-    			sb.append("StringBuffer sb = new StringBuffer(); \n");
-    			
-    			//--- PRIMARY KEY attributes ( composite key or not )
-    			if ( _keyAttributes != null ) {
-					if ( hasCompositePrimaryKey() && ( embeddedIdName != null ) ) {
-						// Embedded id 
-						count = count + toStringForEmbeddedId( leftMargin, sb, embeddedIdName );
-					}
-					else {
-						// No embedded id 
-						count = count + toStringForAttributes( leftMargin, sb, _keyAttributes );
-					}
-        		}
-
-    			if ( count > 0 ) {
-    				sb.append(leftMargin);
-    				sb.append("sb.append(\"|\"); \n");
-    			}
-    			
-    			//--- NON KEY attributes ( composite key or not )
-    			if ( specificNonKeyAttributes != null ) {
-    				count = count + toStringForAttributes( leftMargin, sb, specificNonKeyAttributes );
-    			}
-    			
-    			sb.append(leftMargin);
-    			sb.append("return sb.toString();"); // Last line => No EOL
-    			if ( count > 0 ) {
-                    return sb.toString() ;
-    			}
-    			else {
-    				return leftMargin + "return \"Instance of " + getName() + " (no usable attribute)\" ;" ;
-    			}
-    		}
-    		else {
-				return leftMargin + "return \"Instance of " + getName() + " (attributes.size = 0)\" ;" ;    			
-    		}
-    	}
-    	else {
-        	return leftMargin + "return \"Instance of " + getName() + " (attributes is null)\" ;" ;
-    	}
-    }
-    
-    private int toStringForAttributes( String leftMargin, StringBuffer sb, List<JavaBeanClassAttribute> attributes )
-    {
-    	int count = 0 ;
-    	for ( JavaBeanClassAttribute attribute : attributes ) {
-    		if ( typeUsedInToString( attribute.getType() ) )
-    		{
-                if ( count > 0 ) // if it's not the first one
-                {
-        			sb.append(leftMargin); sb.append("sb.append( \"|\" ); \n");
-                }        		
-    			sb.append(leftMargin); sb.append("sb.append(" + attribute.getName() + "); \n" );
-    			count++ ;
-    		}
-    	}
-    	return count ;
-    }
-    private int toStringForEmbeddedId( String leftMargin, StringBuffer sb, String embeddedIdName )
-    {
-		sb.append(leftMargin); sb.append("if ( " + embeddedIdName + " != null ) {  \n");
-		sb.append(leftMargin); sb.append("    sb.append(" + embeddedIdName + ".toString());  \n");
-		sb.append(leftMargin); sb.append("}  \n");
-		sb.append(leftMargin); sb.append("else {  \n");
-		sb.append(leftMargin); sb.append("    sb.append( \"(null-key)\" );  \n");
-		sb.append(leftMargin); sb.append("}  \n");
-		return 1 ;
-    }
+//    private int toStringForAttributes( String leftMargin, StringBuffer sb, List<JavaBeanClassAttribute> attributes )
+//    {
+//    	int count = 0 ;
+//    	for ( JavaBeanClassAttribute attribute : attributes ) {
+//    		if ( typeUsedInToString( attribute.getType() ) )
+//    		{
+//                if ( count > 0 ) // if it's not the first one
+//                {
+//        			sb.append(leftMargin); sb.append("sb.append( \"|\" ); \n");
+//                }        		
+//    			sb.append(leftMargin); sb.append("sb.append(" + attribute.getName() + "); \n" );
+//    			count++ ;
+//    		}
+//    	}
+//    	return count ;
+//    }
+//    private int toStringForEmbeddedId( String leftMargin, StringBuffer sb, String embeddedIdName )
+//    {
+//		sb.append(leftMargin); sb.append("if ( " + embeddedIdName + " != null ) {  \n");
+//		sb.append(leftMargin); sb.append("    sb.append(" + embeddedIdName + ".toString());  \n");
+//		sb.append(leftMargin); sb.append("}  \n");
+//		sb.append(leftMargin); sb.append("else {  \n");
+//		sb.append(leftMargin); sb.append("    sb.append( \"(null-key)\" );  \n");
+//		sb.append(leftMargin); sb.append("}  \n");
+//		return 1 ;
+//    }
 
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod ( text= { 

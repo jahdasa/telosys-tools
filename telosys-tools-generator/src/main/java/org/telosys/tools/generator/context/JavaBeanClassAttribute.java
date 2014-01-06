@@ -1437,7 +1437,7 @@ public class JavaBeanClassAttribute
 	//-----------------------------------------------------------------------------
     
     /**
-     * Returns true if the attribute is a long text that must be stored in a separate XML tag
+     * Returns true if the attribute is a long text
      * @return 
      */
 	@VelocityMethod(
