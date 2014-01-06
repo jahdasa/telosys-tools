@@ -168,8 +168,11 @@ public class GenerationTask {
 						methodInvocationException.getLineNumber(), entityName);
 				String msg2 =  methodInvocationException.getMessage() 
 					+ "\n\n" 
-					+ "Method name : \n" + methodInvocationException.getMethodName()
-					+ "Reference name : \n" + methodInvocationException.getReferenceName()
+					+ "Reference name : '" + methodInvocationException.getReferenceName() + "'"
+					+ "\n" 
+					+ "Method name : '" + methodInvocationException.getMethodName() + "'"
+					+ "\n\n" 
+					+ getCauseMessage(generatorExceptionCause) 
 					;
 				MsgBox.error( "Method invocation error", msg1 + msg2 );
 			}			
@@ -212,5 +215,27 @@ public class GenerationTask {
 		}
 		return "Template \"" + template + "\"" + lineMsg + "  -  Entity : \"" 
 				+ entity + "\" \n\n" ;
+	}
+	//-------------------------------------------------------------------------------------------------------------
+	private String getCauseMessage(Throwable exception) {
+		Throwable cause = exception.getCause();
+		if ( cause != null ) {
+			StringBuilder sb = new StringBuilder() ;
+			int n = 0 ;
+			while ( cause != null ) {
+				n++ ;
+				sb.append( "Cause #" + n + " : " );
+				sb.append( cause.getClass().getSimpleName() );
+				sb.append( "\n" );
+				sb.append( cause.getMessage()  );
+				sb.append( "\n" );
+				sb.append( "\n" );
+				cause = cause.getCause() ;
+			}
+			return sb.toString();
+		}
+		else {
+			return "No cause.\n" ;
+		}
 	}
 }
