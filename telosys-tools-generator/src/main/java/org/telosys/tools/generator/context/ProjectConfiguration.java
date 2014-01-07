@@ -17,11 +17,11 @@ package org.telosys.tools.generator.context;
 
 import java.util.Properties;
 
-import org.telosys.tools.generator.ContextName;
+import org.telosys.tools.commons.variables.Variable;
+import org.telosys.tools.commons.variables.VariablesUtil;
 import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityObject;
-import org.telosys.tools.generator.variables.Variable;
-import org.telosys.tools.generator.variables.VariablesUtil;
+import org.telosys.tools.generator.context.names.ContextName;
 
 
 /**

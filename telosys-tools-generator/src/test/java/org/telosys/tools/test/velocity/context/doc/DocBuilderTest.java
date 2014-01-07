@@ -4,7 +4,6 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.telosys.tools.generator.ContextName;
 import org.telosys.tools.generator.context.BeanValidation;
 import org.telosys.tools.generator.context.Const;
 import org.telosys.tools.generator.context.Fn;
@@ -16,6 +15,7 @@ import org.telosys.tools.generator.context.doc.ClassInfo;
 import org.telosys.tools.generator.context.doc.DocBuilder;
 import org.telosys.tools.generator.context.doc.MethodInfo;
 import org.telosys.tools.generator.context.doc.MethodParameter;
+import org.telosys.tools.generator.context.names.ContextName;
 
 
 public class DocBuilderTest  extends TestCase {

@@ -21,10 +21,10 @@ import java.net.URL;
 import java.net.URLClassLoader;
 
 import org.apache.velocity.VelocityContext;
-import org.telosys.tools.generator.ContextName;
 import org.telosys.tools.generator.GeneratorException;
 import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityObject;
+import org.telosys.tools.generator.context.names.ContextName;
 
 /**
  * Special class used as a specific class loader <br> 

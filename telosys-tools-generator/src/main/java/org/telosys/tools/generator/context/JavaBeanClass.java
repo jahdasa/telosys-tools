@@ -19,12 +19,12 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.telosys.tools.generator.ContextName;
 import org.telosys.tools.generator.GeneratorContextException;
 import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityNoDoc;
 import org.telosys.tools.generator.context.doc.VelocityObject;
 import org.telosys.tools.generator.context.doc.VelocityReturnType;
+import org.telosys.tools.generator.context.names.ContextName;
 import org.telosys.tools.generator.context.tools.AmbiguousTypesDetector;
 import org.telosys.tools.repository.model.Column;
 import org.telosys.tools.repository.model.Entity;

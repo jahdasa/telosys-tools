@@ -15,9 +15,9 @@
  */
 package org.telosys.tools.generator.context;
 
-import org.telosys.tools.generator.ContextName;
 import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityObject;
+import org.telosys.tools.generator.context.names.ContextName;
 
 /**
  * Database Foreign Key Column exposed in the generator context

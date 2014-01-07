@@ -23,10 +23,10 @@ import org.telosys.tools.commons.JavaTypeUtil;
 import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.commons.jdbctypes.JdbcTypes;
 import org.telosys.tools.commons.jdbctypes.JdbcTypesManager;
-import org.telosys.tools.generator.ContextName;
 import org.telosys.tools.generator.GeneratorUtil;
 import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityObject;
+import org.telosys.tools.generator.context.names.ContextName;
 import org.telosys.tools.repository.model.Column;
 import org.telosys.tools.repository.persistence.util.RepositoryConst;
 

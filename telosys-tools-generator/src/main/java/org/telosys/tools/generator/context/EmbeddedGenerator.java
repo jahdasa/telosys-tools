@@ -18,13 +18,13 @@ package org.telosys.tools.generator.context;
 import java.util.List;
 
 import org.telosys.tools.commons.TelosysToolsLogger;
-import org.telosys.tools.generator.ContextName;
 import org.telosys.tools.generator.Generator;
 import org.telosys.tools.generator.GeneratorException;
 import org.telosys.tools.generator.GeneratorVersion;
 import org.telosys.tools.generator.config.IGeneratorConfig;
 import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityObject;
+import org.telosys.tools.generator.context.names.ContextName;
 import org.telosys.tools.generator.target.TargetDefinition;
 import org.telosys.tools.repository.model.Entity;
 import org.telosys.tools.repository.model.RepositoryModel;

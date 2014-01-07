@@ -17,11 +17,11 @@ package org.telosys.tools.generator.context;
 
 import org.telosys.tools.commons.JavaClassUtil;
 import org.telosys.tools.commons.StrUtil;
-import org.telosys.tools.generator.ContextName;
 import org.telosys.tools.generator.GeneratorContextException;
 import org.telosys.tools.generator.GeneratorUtil;
 import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityObject;
+import org.telosys.tools.generator.context.names.ContextName;
 import org.telosys.tools.repository.model.Entity;
 import org.telosys.tools.repository.model.JoinColumn;
 import org.telosys.tools.repository.model.JoinColumns;

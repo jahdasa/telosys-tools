@@ -15,11 +15,13 @@
  */
 package org.telosys.tools.generator.config;
 
+import java.io.File;
 import java.util.Properties;
 
 import org.telosys.tools.commons.FileUtil;
 import org.telosys.tools.commons.StrUtil;
-import org.telosys.tools.generator.ContextName;
+import org.telosys.tools.commons.dbcfg.DatabasesConfigurations;
+import org.telosys.tools.commons.variables.VariablesNames;
 import org.telosys.tools.generator.context.ProjectConfiguration;
 
 /**
@@ -40,7 +42,6 @@ public class GeneratorConfig implements IGeneratorConfig
 
 	private final String     _sBundleName ;
 
-	//private final Variable[] _projectVariables ;
 	private final Properties           _projectProperties ;  // v 2.0.7
 	private final ProjectConfiguration _projectConfiguration ;  // v 2.0.7
 	
@@ -58,42 +59,10 @@ public class GeneratorConfig implements IGeneratorConfig
 		
 		//--- Packages names
     	//_sEntityClassPackage  = prop.getProperty(GeneratorConfigConst.ENTITIES_PACKAGE, null);
-    	_sEntityClassPackage  = prop.getProperty(ContextName.ENTITY_PKG, null); // v 2.0.6
+    	_sEntityClassPackage  = prop.getProperty(VariablesNames.ENTITY_PKG, null); // v 2.0.6
     	
     	//--- Bundle name to use (can be null or void)
     	_sBundleName = bundleName ; // v 2.0.7
-    	
-/***
-    	//--- All variables : specific project variables + folders 
-    	Hashtable<String, String> allVariables = new Hashtable<String, String>();
-    	
-    	//--- 1) Project user defined variables
-    	Variable[] specificVariables = VariablesUtil.getVariablesFromProperties( prop );
-    	for ( Variable v : specificVariables ) {
-    		allVariables.put(v.getName(), v.getValue());
-    	}
-    	//--- 2) Packages and folders ( at the end to override specific variables if any )
-    	allVariables.put( ContextName.ROOT_PKG,   prop.getProperty(ContextName.ROOT_PKG,    "") ); // v 2.0.6
-    	allVariables.put( ContextName.ENTITY_PKG, prop.getProperty(ContextName.ENTITY_PKG,  "") ); // v 2.0.6
-    	
-    	allVariables.put( ContextName.SRC,      prop.getProperty(ContextName.SRC,      "") );
-    	allVariables.put( ContextName.RES,      prop.getProperty(ContextName.RES,      "") );
-    	allVariables.put( ContextName.WEB,      prop.getProperty(ContextName.WEB,      "") );
-    	allVariables.put( ContextName.TEST_SRC, prop.getProperty(ContextName.TEST_SRC, "") );
-    	allVariables.put( ContextName.TEST_RES, prop.getProperty(ContextName.TEST_RES, "") );
-    	allVariables.put( ContextName.DOC,      prop.getProperty(ContextName.DOC,      "") );
-    	allVariables.put( ContextName.TMP,      prop.getProperty(ContextName.TMP,      "") );
-    	
-    	//--- 3) Get all variables to build the array
-    	LinkedList<Variable> variablesList = new LinkedList<Variable>();
-    	for ( String varName : allVariables.keySet() ) {
-    		String varValue = allVariables.get(varName) ;
-    		variablesList.add( new Variable( varName, varValue) ) ;
-    	}
-    	Variable[] allVariablesArray = variablesList.toArray( new Variable[0] );
-    	
-    	_projectVariables = allVariablesArray ;
-***/
     	
     	//_projectVariables = VariablesUtil.getAllVariablesFromProperties(prop);  // v 2.0.7
     	_projectProperties = prop ; // v 2.0.7
@@ -209,6 +178,32 @@ public class GeneratorConfig implements IGeneratorConfig
     	{
     		return null ;
     	}
+	}
+
+    private DatabasesConfigurations databasesConfigurations ;
+    
+	public File getDatabasesConfigurationsFile() 
+	{
+		// TODO
+		//_projectConfiguration.getXXXX
+		return null ;
+	}
+	
+	public DatabasesConfigurations getDatabasesConfigurations() 
+	{
+		//--- Databases configurations not yet loaded ?
+		
+		// TODO
+//		if ( this.databasesConfigurations == null ) {
+//			File databasesConfigFile ;
+//			try {
+//				DbConfigManager dbConfigManager = new DbConfigManager( databasesConfigFile );
+//				this.databasesConfigurations = dbConfigManager.load() ;
+//			} catch (TelosysToolsException e) {
+//				this.databasesConfigurations = null ;
+//			}		
+//		}
+		return this.databasesConfigurations ;
 	}
 
 }

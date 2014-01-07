@@ -35,6 +35,7 @@ import org.apache.velocity.exception.MethodInvocationException;
 import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.telosys.tools.commons.TelosysToolsLogger;
+import org.telosys.tools.commons.variables.Variable;
 import org.telosys.tools.generator.config.IGeneratorConfig;
 import org.telosys.tools.generator.context.BeanValidation;
 import org.telosys.tools.generator.context.Const;
@@ -49,13 +50,13 @@ import org.telosys.tools.generator.context.Model;
 import org.telosys.tools.generator.context.ProjectConfiguration;
 import org.telosys.tools.generator.context.Target;
 import org.telosys.tools.generator.context.Today;
+import org.telosys.tools.generator.context.names.ContextName;
 import org.telosys.tools.generator.directive.AssertFalseDirective;
 import org.telosys.tools.generator.directive.AssertTrueDirective;
 import org.telosys.tools.generator.directive.DirectiveException;
 import org.telosys.tools.generator.directive.ErrorDirective;
 import org.telosys.tools.generator.directive.UsingDirective;
 import org.telosys.tools.generator.events.GeneratorEvents;
-import org.telosys.tools.generator.variables.Variable;
 import org.telosys.tools.repository.model.RepositoryModel;
 
 /**

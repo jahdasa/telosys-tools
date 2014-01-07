@@ -18,7 +18,7 @@ package org.telosys.tools.generator.context.doc;
 import java.util.List;
 import java.util.Map;
 
-import org.telosys.tools.generator.context.VariableNames;
+import org.telosys.tools.generator.context.names.ContextNames;
 
 public class ContextInfo {
 
@@ -38,7 +38,7 @@ public class ContextInfo {
 	 * @return
 	 */
 	public String[] getVariableNames() {
-		return VariableNames.getVariableNames() ;
+		return ContextNames.getVariableNames() ;
 	}
 	
 	/**
@@ -46,7 +46,7 @@ public class ContextInfo {
 	 * @return
 	 */
 	public String[] getObjectNames() {
-		return VariableNames.getObjectNames();
+		return ContextNames.getObjectNames();
 	}
 	
 	/**
@@ -54,7 +54,7 @@ public class ContextInfo {
 	 * @return
 	 */
 	public String[] getPredefinedNames() {
-		return VariableNames.getPredefinedNames();
+		return ContextNames.getPredefinedNames();
 	}
 	
 	/**
@@ -63,7 +63,7 @@ public class ContextInfo {
 	 * @return
 	 */
 	public String[] getObjectAndVariableNames() {
-		return VariableNames.getObjectAndVariableNames();
+		return ContextNames.getObjectAndVariableNames();
 	}
 	
 	/**

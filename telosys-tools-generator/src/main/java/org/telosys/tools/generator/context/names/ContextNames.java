@@ -13,23 +13,24 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.telosys.tools.generator.context;
+package org.telosys.tools.generator.context.names;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.telosys.tools.generator.ContextName;
-import org.telosys.tools.generator.variables.Variable;
+import org.telosys.tools.commons.variables.Variable;
+import org.telosys.tools.commons.variables.VariablesNames;
+import org.telosys.tools.generator.context.names.ContextName;
 
 /**
- * Reserved variable names
+ * Reserved context names
  *  
  * @author L. Guerin
  *
  */
-public class VariableNames {
+public class ContextNames {
 	
 	private final static String[] VOID_STRING_ARRAY = {} ;
 	
@@ -46,17 +47,17 @@ public class VariableNames {
 		VARIABLES_LIST.add( ContextName.RBRACE );
 		
 		//--- PACKAGES predefined variables names ( v 2.0.6 )
-		VARIABLES_LIST.add( ContextName.ROOT_PKG );
-		VARIABLES_LIST.add( ContextName.ENTITY_PKG );
+		VARIABLES_LIST.add( VariablesNames.ROOT_PKG );
+		VARIABLES_LIST.add( VariablesNames.ENTITY_PKG );
 		
 		//--- FOLDERS predefined variables names ( v 2.0.3 )
-		VARIABLES_LIST.add( ContextName.SRC );
-		VARIABLES_LIST.add( ContextName.RES );
-		VARIABLES_LIST.add( ContextName.WEB );
-		VARIABLES_LIST.add( ContextName.TEST_SRC );
-		VARIABLES_LIST.add( ContextName.TEST_RES );
-		VARIABLES_LIST.add( ContextName.DOC );
-		VARIABLES_LIST.add( ContextName.TMP );
+		VARIABLES_LIST.add( VariablesNames.SRC );
+		VARIABLES_LIST.add( VariablesNames.RES );
+		VARIABLES_LIST.add( VariablesNames.WEB );
+		VARIABLES_LIST.add( VariablesNames.TEST_SRC );
+		VARIABLES_LIST.add( VariablesNames.TEST_RES );
+		VARIABLES_LIST.add( VariablesNames.DOC );
+		VARIABLES_LIST.add( VariablesNames.TMP );
 		
 		Collections.sort(VARIABLES_LIST);
 	}

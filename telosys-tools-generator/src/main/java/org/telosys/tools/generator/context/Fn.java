@@ -20,9 +20,9 @@ import java.util.List;
 
 import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.commons.XmlUtil;
-import org.telosys.tools.generator.ContextName;
 import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityObject;
+import org.telosys.tools.generator.context.names.ContextName;
 
 /**
  * Set of functions usable in Velocity template with $fn.functionName(...) 

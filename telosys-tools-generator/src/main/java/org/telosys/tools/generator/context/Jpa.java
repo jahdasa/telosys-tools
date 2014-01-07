@@ -19,10 +19,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.telosys.tools.commons.StrUtil;
-import org.telosys.tools.generator.ContextName;
 import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityObject;
 import org.telosys.tools.generator.context.doc.VelocityReturnType;
+import org.telosys.tools.generator.context.names.ContextName;
 import org.telosys.tools.generator.context.tools.AnnotationsBuilder;
 import org.telosys.tools.generator.context.tools.AnnotationsForJPA;
 import org.telosys.tools.repository.model.Entity;
