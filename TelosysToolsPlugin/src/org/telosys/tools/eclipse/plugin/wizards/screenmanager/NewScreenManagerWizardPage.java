@@ -46,7 +46,8 @@ public class NewScreenManagerWizardPage extends StandardNewJavaClassWizardPage
 //		}
 
 		//--- If the resource selected is a Java Class that extends the ScreenData 
-		String sScreenDataAncestor = projectConfig.getScreenDataAncestor() ;
+		//String sScreenDataAncestor = projectConfig.getScreenDataAncestor() ;
+		String sScreenDataAncestor = "XXXXXXX" ; // TODO
 		if ( isSelectionExtends( sScreenDataAncestor) )
 		{
 			//PluginLogger.log(getClass().getName() + " : initFields() : SCREEN DATA SELECTED ");		
@@ -86,7 +87,8 @@ public class NewScreenManagerWizardPage extends StandardNewJavaClassWizardPage
 		createSeparator();
 		
 		ProjectConfig projectConfig = getProjectConfig() ;
-		String sScreenDataClassMask = projectConfig.getScreenDataClassMask();
+		//String sScreenDataClassMask = projectConfig.getScreenDataClassMask();
+		String sScreenDataClassMask = "XXXXXX"; // TODO
 		ScreenDataField field = new ScreenDataField( FIELD_SCREEN_DATA_CLASS, this, getShell(), getJavaProjectSelected(), sScreenDataClassMask );
 		createClassToUseControl(field) ;
 		

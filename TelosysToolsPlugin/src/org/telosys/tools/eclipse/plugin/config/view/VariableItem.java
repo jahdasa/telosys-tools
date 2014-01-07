@@ -1,9 +1,9 @@
 package org.telosys.tools.eclipse.plugin.config.view;
 
 import org.eclipse.swt.graphics.Image;
+import org.telosys.tools.commons.variables.Variable;
 import org.telosys.tools.eclipse.plugin.commons.ITableItem;
 import org.telosys.tools.eclipse.plugin.commons.MsgBox;
-import org.telosys.tools.generator.variables.Variable;
 
 public class VariableItem extends Variable implements ITableItem
 {

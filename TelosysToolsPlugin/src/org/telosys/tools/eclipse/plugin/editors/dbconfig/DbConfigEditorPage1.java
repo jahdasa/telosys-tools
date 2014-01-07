@@ -48,6 +48,7 @@ import org.telosys.tools.commons.FileUtil;
 import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.commons.TelosysToolsException;
 import org.telosys.tools.commons.TelosysToolsLogger;
+import org.telosys.tools.commons.cfg.TelosysToolsCfg;
 import org.telosys.tools.commons.dbcfg.DatabaseConfiguration;
 import org.telosys.tools.commons.dbcfg.DatabasesConfigurations;
 import org.telosys.tools.commons.jdbc.ConnectionManager;
@@ -1204,7 +1205,8 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
         	MsgBox.error("Cannot get project configuration !\n Check project properties / Telosys Tools");
         	return voidLib ;
 		}
-        String dir  = projectConfig.getLibrariesFolder();
+        //String dir  = projectConfig.getLibrariesFolder();
+        String dir  = projectConfig.getTelosysToolsCfg().getLibrariesFolder();
     	log("getLibrariesFromFolder() : folder = '" + dir + "'");    	
         
         IResource resource = EclipseProjUtil.getResource(project, dir);
@@ -1250,7 +1252,8 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     private String getRepositoryFileName(String sDatabaseName) 
     {
 		ProjectConfig projectConfig = ProjectConfigManager.getProjectConfig( _editor.getProject() );		
-        String dir   = projectConfig.getRepositoriesFolder();
+        //String dir   = projectConfig.getRepositoriesFolder();
+        String dir   = projectConfig.getTelosysToolsCfg().getRepositoriesFolder();
         return FileUtil.buildFilePath(dir, sDatabaseName+".dbrep" );
     }
     
@@ -1770,8 +1773,13 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     {
     	IProject project = getEclipseProject();
     	ProjectConfig projectConfig = ProjectConfigManager.getProjectConfig(project);
-		log("repositoriesFolder = " + projectConfig.getRepositoriesFolder() );
-		IFolder repositoriesFolder = project.getFolder(projectConfig.getRepositoriesFolder());
+    	TelosysToolsCfg telosysToolsCfg = projectConfig.getTelosysToolsCfg();
+		
+//    	log("repositoriesFolder = " + projectConfig.getRepositoriesFolder() );
+//		IFolder repositoriesFolder = project.getFolder(projectConfig.getRepositoriesFolder());
+    	log("repositoriesFolder = " + telosysToolsCfg.getRepositoriesFolder() );
+		IFolder repositoriesFolder = project.getFolder(telosysToolsCfg.getRepositoriesFolder());
+		
 		log("is repositories Folder Synchronized = " + repositoriesFolder.isSynchronized(IResource.DEPTH_INFINITE) );
 		try {
 			repositoriesFolder.refreshLocal(IResource.DEPTH_INFINITE, null);

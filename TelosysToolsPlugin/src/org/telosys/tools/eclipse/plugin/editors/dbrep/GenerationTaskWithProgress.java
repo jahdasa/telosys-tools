@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.telosys.tools.commons.TelosysToolsLogger;
+import org.telosys.tools.commons.variables.Variable;
 import org.telosys.tools.eclipse.plugin.commons.BundleResourcesManager;
 import org.telosys.tools.eclipse.plugin.commons.MsgBox;
 import org.telosys.tools.eclipse.plugin.commons.TelosysPluginException;
@@ -22,7 +23,6 @@ import org.telosys.tools.generator.config.IGeneratorConfig;
 import org.telosys.tools.generator.context.JavaBeanClass;
 import org.telosys.tools.generator.context.Target;
 import org.telosys.tools.generator.target.TargetDefinition;
-import org.telosys.tools.generator.variables.Variable;
 import org.telosys.tools.repository.model.Entity;
 import org.telosys.tools.repository.model.RepositoryModel;
 

@@ -14,8 +14,8 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+import org.telosys.tools.commons.variables.Variable;
 import org.telosys.tools.eclipse.plugin.config.view.VariableItem;
-import org.telosys.tools.generator.variables.Variable;
 
 public abstract class GenericEditableTable extends Composite 
 {

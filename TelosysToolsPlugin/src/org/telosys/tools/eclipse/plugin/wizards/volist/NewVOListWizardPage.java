@@ -83,7 +83,8 @@ public class NewVOListWizardPage extends StandardNewJavaClassWizardPage {
 		createSeparator();
 		
 		ProjectConfig projectConfig = getProjectConfig() ;
-		String sVOClassMask = projectConfig.getVOClassMask();
+		//String sVOClassMask = projectConfig.getVOClassMask();
+		String sVOClassMask = "XXX"; // TODO
 		VOBeanField field = new VOBeanField(FIELD_VO_CLASS, this, getShell(),
 				getJavaProjectSelected(), sVOClassMask);
 		createClassToUseControl(field);

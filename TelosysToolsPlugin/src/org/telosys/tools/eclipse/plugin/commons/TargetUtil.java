@@ -37,7 +37,8 @@ public class TargetUtil {
 		log( "getFileFromTemplatesFolder(..)..." + fileName );
 		ProjectConfig projectConfig = ProjectConfigManager.getProjectConfig( project );
 		if ( projectConfig != null ) {
-			String templatesFolder = projectConfig.getTemplatesFolder();
+			//String templatesFolder = projectConfig.getTemplatesFolder();
+			String templatesFolder = projectConfig.getTelosysToolsCfg().getTemplatesFolder();
 			
 			// Add bundle folder if any
 			if ( ! StrUtil.nullOrVoid(bundleName) ) {

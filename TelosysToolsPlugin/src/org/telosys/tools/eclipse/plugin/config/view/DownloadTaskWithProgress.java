@@ -9,13 +9,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Text;
 import org.telosys.tools.commons.FileUtil;
+import org.telosys.tools.commons.variables.VariablesManager;
 import org.telosys.tools.eclipse.plugin.commons.EclipseProjUtil;
 import org.telosys.tools.eclipse.plugin.commons.EclipseWksUtil;
 import org.telosys.tools.eclipse.plugin.commons.HttpDownloader;
 import org.telosys.tools.eclipse.plugin.commons.MsgBox;
 import org.telosys.tools.eclipse.plugin.commons.TelosysPluginException;
 import org.telosys.tools.eclipse.plugin.commons.ZipUtil;
-import org.telosys.tools.generator.variables.VariablesManager;
 
 /**
  * Eclipse runnable task with a progress bar 

@@ -76,53 +76,35 @@ public class WizardGeneratorProvider {
 					+ "\n Cannot get project configuration ! ");
 		}
 		
-//		//--- Get the project configuration
-//		ProjectConfig projectConfig = ProjectConfigManager.getProjectConfig(project);
+//		String sConfigFullFileName   = ProjectConfigManager.getProjectConfigFileName(project);
+//		PluginLogger.log("getGenerator() : config full file name = " + sConfigFullFileName );
 //		
-//		//--- Get the templates directory		
-//		String sTemplateDirectory = projectConfig.getTemplatesFolderFullPath();		
-//		PluginLogger.log("Template Directory : " + sTemplateDirectory);
+//		//--- Init the generator configuration from the "telosys-tools.cfg" file 
+//		GeneratorConfigManager mgr = new GeneratorConfigManager(logger);
+//		PluginLogger.log("getGenerator() : GeneratorConfigManager created. " );
 //		
-//		//--- Get the project variables	
-//		Variable[] projectVariables = projectConfig.getProjectVariables();
+//		IGeneratorConfig generatorConfig;
+//		try {
+//			generatorConfig = mgr.initFromFile(sConfigFullFileName);
+//		} catch (GeneratorException e) {
+//			MsgBox.error("Cannot initialize generator configuration \n"
+//			+ "\n Config file name = '" + sConfigFullFileName + "'" );
+//			throw e ;
+//		}
+//		PluginLogger.log("getGenerator() : GeneratorConfigManager initialized from file " + sConfigFullFileName);
+//		
+//		//--- Create the TARGET 
+//		Target target = new Target( sTemplateFile ); // [LGU] 2012-11-30
 //		
 //		//--- Create the GENERATOR 
-//		Generator generator = new Generator(sTemplateDirectory, sTemplateFile, projectVariables, logger );
-
-		//--- Get the "telosys-tools.cfg" full file name for the current project
-//		String sProjectConfigDir = ProjectConfigManager.getProjectConfigDir(project);
-//		String sConfigFileName   = ProjectConfigManager.getConfigFileName();
+//		PluginLogger.log("getGenerator() : try to create a new Generator instance... " );
+//		Generator generator = new Generator(target, generatorConfig, null, logger); // v 2.0.7
+//		PluginLogger.log("getGenerator() : Generator instance created. " );
+//
+//		return generator ;
 		
-		String sConfigFullFileName   = ProjectConfigManager.getProjectConfigFileName(project);
-		PluginLogger.log("getGenerator() : config full file name = " + sConfigFullFileName );
-		
-		//--- Init the generator configuration from the "telosys-tools.cfg" file 
-		GeneratorConfigManager mgr = new GeneratorConfigManager(logger);
-		PluginLogger.log("getGenerator() : GeneratorConfigManager created. " );
-		
-		IGeneratorConfig generatorConfig;
-		try {
-			generatorConfig = mgr.initFromFile(sConfigFullFileName);
-		} catch (GeneratorException e) {
-			MsgBox.error("Cannot initialize generator configuration \n"
-//					+ "\n Project config directory = '" + sProjectConfigDir + "'"
-//					+ "\n Config file name = '" + sConfigFileName + "'" );
-			+ "\n Config file name = '" + sConfigFullFileName + "'" );
-			throw e ;
-		}
-		PluginLogger.log("getGenerator() : GeneratorConfigManager initialized from file " + sConfigFullFileName);
-		
-		//--- Create the TARGET 
-		Target target = new Target( sTemplateFile ); // [LGU] 2012-11-30
-		
-		//--- Create the GENERATOR 
-		PluginLogger.log("getGenerator() : try to create a new Generator instance... " );
-		//Generator generator = new Generator(sTemplateFile, generatorConfig, logger);
-		//Generator generator = new Generator(target, generatorConfig, logger); // [LGU] 2012-11-30
-		Generator generator = new Generator(target, generatorConfig, null, logger); // v 2.0.7
-		PluginLogger.log("getGenerator() : Generator instance created. " );
-
-		return generator ;
+		// TODO : WIZARDS to be removed
+		return null ;
 	}
 	
 	//----------------------------------------------------------------------------------------

@@ -10,6 +10,7 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.telosys.tools.commons.cfg.TelosysToolsCfg;
 import org.telosys.tools.eclipse.plugin.commons.MsgBox;
 import org.telosys.tools.eclipse.plugin.commons.PluginLogger;
 import org.telosys.tools.eclipse.plugin.commons.Util;
@@ -92,11 +93,13 @@ import org.telosys.tools.eclipse.plugin.config.ProjectConfig;
 		
 		addConfigRow(body, "Workspace folder :", config.getWorkspaceFolder() );
 		addConfigRow(body, "Project folder :", config.getProjectFolder() );
-		addConfigRow(body, "Plugin configuration file :", config.getPluginConfigFile() );
 
-		addConfigRow(body, "Templates folder :", config.getTemplatesFolder() );
-		addConfigRow(body, "Templates folder full path :", config.getTemplatesFolderFullPath() );
-		addConfigRow(body, "Repositories folder :", config.getRepositoriesFolder() );
+		TelosysToolsCfg telosysToolsCfg = config.getTelosysToolsCfg();
+		addConfigRow(body, "Configuration file full path :", telosysToolsCfg.getCfgFileAbsolutePath() );
+
+		addConfigRow(body, "Templates folder :", telosysToolsCfg.getTemplatesFolder() );
+		addConfigRow(body, "Templates folder full path :", telosysToolsCfg.getTemplatesFolderAbsolutePath() );
+		addConfigRow(body, "Repositories folder :", telosysToolsCfg.getRepositoriesFolder() );
 
 		
 		addConfigRow(body, "", "" );

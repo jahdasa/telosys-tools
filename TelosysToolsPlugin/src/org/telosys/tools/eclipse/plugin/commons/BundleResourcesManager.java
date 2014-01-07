@@ -29,12 +29,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.telosys.tools.commons.FileUtil;
 import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.commons.TelosysToolsLogger;
+import org.telosys.tools.commons.variables.Variable;
 import org.telosys.tools.eclipse.plugin.commons.dialogbox.OverwriteDialogBox;
 import org.telosys.tools.eclipse.plugin.config.ProjectConfig;
 import org.telosys.tools.generator.GeneratorException;
 import org.telosys.tools.generator.context.Target;
 import org.telosys.tools.generator.target.TargetDefinition;
-import org.telosys.tools.generator.variables.Variable;
 
 
 public class BundleResourcesManager {
@@ -97,7 +97,8 @@ public class BundleResourcesManager {
 	 * @throws Exception
 	 */
 	private IFolder getResourcesFolder() throws Exception {
-		String projectTemplatesFolder = _projectConfig.getTemplatesFolder() ;
+		//String projectTemplatesFolder = _projectConfig.getTemplatesFolder() ;
+		String projectTemplatesFolder = _projectConfig.getTelosysToolsCfg().getTemplatesFolder();
 		IFolder templatesFolder = _eclipseProject.getFolder( projectTemplatesFolder ) ;
 		if ( ! templatesFolder.exists() ) {
 			throw new Exception("Templates folder '" + templatesFolder.getFullPath() + "' not found");
@@ -117,11 +118,8 @@ public class BundleResourcesManager {
 	private List<Target> getResourcesTargets(List<TargetDefinition> targetsDefinitions ) {
 		log("getResourcesTargets()... " );
 		
-		Variable[] projectVariables = _projectConfig.getAllVariables();
-//		log(" variables : " );
-//		for ( Variable v : projectVariables ) {
-//			log(" . " + v.getName() + " = " + v.getValue()  );
-//		}
+		//Variable[] projectVariables = _projectConfig.getAllVariables();
+		Variable[] projectVariables = _projectConfig.getTelosysToolsCfg().getAllVariables();
 		LinkedList<Target> targets = new LinkedList<Target>();
 		if ( targetsDefinitions != null ) {
 			for ( TargetDefinition targetDefinition : targetsDefinitions ) {

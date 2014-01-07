@@ -29,6 +29,10 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.telosys.tools.commons.FileUtil;
 import org.telosys.tools.commons.StrUtil;
+import org.telosys.tools.commons.cfg.TelosysToolsCfg;
+import org.telosys.tools.commons.variables.Variable;
+import org.telosys.tools.commons.variables.VariablesNames;
+import org.telosys.tools.commons.variables.VariablesUtil;
 import org.telosys.tools.eclipse.plugin.MyPlugin;
 import org.telosys.tools.eclipse.plugin.commons.EclipseProjUtil;
 import org.telosys.tools.eclipse.plugin.commons.MsgBox;
@@ -38,12 +42,9 @@ import org.telosys.tools.eclipse.plugin.commons.TelosysPluginException;
 import org.telosys.tools.eclipse.plugin.commons.Util;
 import org.telosys.tools.eclipse.plugin.config.ProjectConfig;
 import org.telosys.tools.eclipse.plugin.config.ProjectConfigManager;
-import org.telosys.tools.generator.ContextName;
 import org.telosys.tools.generator.GeneratorVersion;
 import org.telosys.tools.generator.config.GeneratorConfigConst;
-import org.telosys.tools.generator.context.VariableNames;
-import org.telosys.tools.generator.variables.Variable;
-import org.telosys.tools.generator.variables.VariablesUtil;
+import org.telosys.tools.generator.context.names.ContextNames;
 
 /**
  * Project properties configuration page ( one configuration file for each project )
@@ -592,7 +593,7 @@ public class PropertiesPage extends PropertyPage {
     	{
             public void widgetSelected(SelectionEvent arg0)
             {
-            	String[] reserverdNames = VariableNames.getSortedReservedNames() ;
+            	String[] reserverdNames = ContextNames.getSortedReservedNames() ;
             	StringBuffer sb = new StringBuffer();
             	sb.append("The following names are reserved : \n\n") ;
             	for ( String name : reserverdNames ) {
@@ -1254,69 +1255,36 @@ public class PropertiesPage extends PropertyPage {
 		_tProjectLocation.setText(projectConfig.getProjectFolder() );		
 		_tWorkspaceLocation.setText(projectConfig.getWorkspaceFolder() );
 		
-		//_tPluginConfigFile.setText( ProjectConfigManager.getCurrentProjectConfigFileName() );
-		_tPluginConfigFile.setText( projectConfig.getPluginConfigFile() );
+		TelosysToolsCfg telosysToolsCfg = projectConfig.getTelosysToolsCfg();
+
+		_tPluginConfigFile.setText( telosysToolsCfg.getCfgFileAbsolutePath() );
 		
-		_tRepositoriesFolder.setText( projectConfig.getRepositoriesFolder() );
-		_tTemplatesFolder.setText( projectConfig.getTemplatesFolder() );
-		_tDownloadsFolder.setText( projectConfig.getDownloadsFolder() );
-		_tLibrariesFolder.setText( projectConfig.getLibrariesFolder() );
+		_tRepositoriesFolder.setText( telosysToolsCfg.getRepositoriesFolder() );
+		_tTemplatesFolder.setText( telosysToolsCfg.getTemplatesFolder() );
+		_tDownloadsFolder.setText( telosysToolsCfg.getDownloadsFolder() );
+		_tLibrariesFolder.setText( telosysToolsCfg.getLibrariesFolder() );
 		
 		//--- Tab "Packages"
 		//_tEntityPackage.setText( projectConfig.getPackageForJavaBeans() );
-		_tEntityPackage.setText( projectConfig.getEntityPackage() ); // v 2.0.6
-		_tRootPackage.setText( projectConfig.getRootPackage() ); // v 2.0.6
+		_tEntityPackage.setText( telosysToolsCfg.getEntityPackage() ); // v 2.0.6
+		_tRootPackage.setText( telosysToolsCfg.getRootPackage() ); // v 2.0.6
 		
 		//--- Tab "Folders" ( considered as pre-defined variables )
-		_tSrcFolder.setText( projectConfig.getSRC() ) ;
-		_tResFolder.setText( projectConfig.getRES() ) ;
-		_tWebFolder.setText( projectConfig.getWEB() ) ;
-		_tTestSrcFolder.setText( projectConfig.getTEST_SRC() ) ;
-		_tTestResFolder.setText( projectConfig.getTEST_RES() ) ;
-		_tDocFolder.setText( projectConfig.getDOC() ) ;
-		_tTmpFolder.setText( projectConfig.getTMP() ) ;
+		_tSrcFolder.setText( telosysToolsCfg.getSRC() ) ;
+		_tResFolder.setText( telosysToolsCfg.getRES() ) ;
+		_tWebFolder.setText( telosysToolsCfg.getWEB() ) ;
+		_tTestSrcFolder.setText( telosysToolsCfg.getTEST_SRC() ) ;
+		_tTestResFolder.setText( telosysToolsCfg.getTEST_RES() ) ;
+		_tDocFolder.setText( telosysToolsCfg.getDOC() ) ;
+		_tTmpFolder.setText( telosysToolsCfg.getTMP() ) ;
 
 		
 		//--- Tab "Variables"
-		Variable[] items = projectConfig.getSpecificVariables();
+		Variable[] items = telosysToolsCfg.getSpecificVariables();
 		if ( items != null )
 		{
 			_variablesTable.initItems(items);
 		}
-		
-		
-		/*
-		if (((String) p.get(PropName.SPECIFIC_TEMPLATES)).equals("1")) {
-			checkTemplate.setSelection(true);
-			templateDirText.setText((String) p.get(PropName.TEMPLATE_DIRECTORY));
-		} else {
-			checkTemplate.setSelection(false);
-			openTemplate.setEnabled(false);
-			templateDirText.setEnabled(false);
-			templateDirText.setText("Default");
-		}
-
-		String sSpecificInitCheck = (String) p.get(PropName.SPECIFIC_INIT_CHECK);
-		if (sSpecificInitCheck.equals("1")) {
-			//--- Specific initializer / Checker
-			defaultCheck.setSelection(false);
-			specificCheck.setSelection(true);
-			checkClassText
-					.setText((String) p.get(PropName.INIT_CHECK_CLASS_NAME));
-			checkClassDirText.setText((String) p
-					.get(PropName.INIT_CHECK_CLASS_DIR));
-			//--- Enable all specific fields
-			setSpecificInitCheckClass(true);
-		} else {
-			//--- Default initializer / Checker
-			defaultCheck.setSelection(true);
-			specificCheck.setSelection(false);
-			checkClassText.setText("");
-			checkClassDirText.setText("");
-			//--- Disable all specific fields
-			setSpecificInitCheckClass(false);
-		}
-*/
 	}
 	
 	/**
@@ -1335,17 +1303,17 @@ public class PropertiesPage extends PropertyPage {
 				
 		//--- Tab "Packages"
 		//props.put(GeneratorConfigConst.ENTITIES_PACKAGE,  _tEntityPackage.getText());
-		props.put(ContextName.ENTITY_PKG,  _tEntityPackage.getText());
-		props.put(ContextName.ROOT_PKG,    _tRootPackage.getText());
+		props.put(VariablesNames.ENTITY_PKG,  _tEntityPackage.getText());
+		props.put(VariablesNames.ROOT_PKG,    _tRootPackage.getText());
 		
 		//--- Tab "Folders" ( considered as pre-defined variables )
-		props.put(ContextName.SRC,       _tSrcFolder.getText() );
-		props.put(ContextName.RES,       _tResFolder.getText() );
-		props.put(ContextName.WEB,       _tWebFolder.getText() );
-		props.put(ContextName.TEST_SRC,  _tTestSrcFolder.getText() );
-		props.put(ContextName.TEST_RES,  _tTestResFolder.getText() );
-		props.put(ContextName.DOC,       _tDocFolder.getText() );
-		props.put(ContextName.TMP,       _tTmpFolder.getText() );
+		props.put(VariablesNames.SRC,       _tSrcFolder.getText() );
+		props.put(VariablesNames.RES,       _tResFolder.getText() );
+		props.put(VariablesNames.WEB,       _tWebFolder.getText() );
+		props.put(VariablesNames.TEST_SRC,  _tTestSrcFolder.getText() );
+		props.put(VariablesNames.TEST_RES,  _tTestResFolder.getText() );
+		props.put(VariablesNames.DOC,       _tDocFolder.getText() );
+		props.put(VariablesNames.TMP,       _tTmpFolder.getText() );
 
 		//--- Tab "Variables"		
 		log("propertiesToFields : variables ...");
@@ -1366,7 +1334,7 @@ public class PropertiesPage extends PropertyPage {
 		}
 		
 		//--- Check 
-		String[] invalidNames = VariableNames.getInvalidVariableNames(variables);
+		String[] invalidNames = ContextNames.getInvalidVariableNames(variables);
 		if ( invalidNames != null )
 		{
 			//--- Invalid names

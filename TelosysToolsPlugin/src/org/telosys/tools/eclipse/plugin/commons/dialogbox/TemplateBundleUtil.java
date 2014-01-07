@@ -80,7 +80,8 @@ public class TemplateBundleUtil {
 	public static String getBundlesLocation( IProject eclipseProject ) {
 		ProjectConfig projectConfig = ProjectConfigManager.getProjectConfig( eclipseProject );
 		if ( projectConfig != null ) {
-			return  projectConfig.getTemplatesFolder();
+			//return  projectConfig.getTemplatesFolder();
+			return  projectConfig.getTelosysToolsCfg().getTemplatesFolder();
 		}
 		return null ;
 	}
@@ -91,7 +92,8 @@ public class TemplateBundleUtil {
 		//log( "getFileFromTemplatesFolder(..)..." + fileName );
 		ProjectConfig projectConfig = ProjectConfigManager.getProjectConfig( eclipseProject );
 		if ( projectConfig != null ) {
-			String templatesFolder = projectConfig.getTemplatesFolder();
+			//String templatesFolder = projectConfig.getTemplatesFolder();
+			String templatesFolder = projectConfig.getTelosysToolsCfg().getTemplatesFolder();
 			log( "  templates folder = " + templatesFolder );
 //			if ( templatesFolder.endsWith("/") || templatesFolder.endsWith("\\") ) {
 //				templateFile = templatesFolder + fileName;
