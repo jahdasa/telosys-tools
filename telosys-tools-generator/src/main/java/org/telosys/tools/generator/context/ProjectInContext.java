@@ -15,17 +15,15 @@
  */
 package org.telosys.tools.generator.context;
 
-import java.util.Properties;
-
 import org.telosys.tools.commons.variables.Variable;
-import org.telosys.tools.commons.variables.VariablesUtil;
+import org.telosys.tools.generator.config.GeneratorConfig;
 import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityObject;
 import org.telosys.tools.generator.context.names.ContextName;
 
 
 /**
- * The current project configuration parameters ( folders, packages, ... )
+ * The current project configuration ( variables, packages, ... )
  *  
  * @author Laurent GUERIN
  *
@@ -37,71 +35,30 @@ import org.telosys.tools.generator.context.names.ContextName;
 		since = ""
  )
 //-------------------------------------------------------------------------------------
-public class ProjectConfiguration
+public class ProjectInContext
 {
-	private final static Variable[] VOID_VARIABLES = new Variable[0];
-	
-	private final String templatesFolderFullPath ;
-	
-	private final String packageForBean ;
-
-	private final Variable[] specificVariables ;
-	private final Variable[] allVariables ;
+	private final GeneratorConfig _generatorConfig ;
 	
     //---------------------------------------------------------------------------
-
-//	public ProjectConfiguration( 
-//			String templatesFolderFullPath,
-//			String packageForBean, 
-//			Variable[] projectVariables ) 
-//	{
-//		super();
-//		this.templatesFolderFullPath = templatesFolderFullPath ;
-//		
-//		this.packageForBean = packageForBean;
-//		
-//		this.projectVariables = projectVariables;
-//	}
-	public ProjectConfiguration( 
-			String templatesFolderFullPath,
-			String packageForBean, 
-			Properties projectProperties ) 
+	public ProjectInContext(GeneratorConfig generatorConfig)
 	{
 		super();
-		this.templatesFolderFullPath = templatesFolderFullPath ;
-		
-		this.packageForBean = packageForBean;
-		
-		this.specificVariables = VariablesUtil.getVariablesFromProperties(projectProperties);
-		this.allVariables      = VariablesUtil.getAllVariablesFromProperties(projectProperties);
+		_generatorConfig = generatorConfig ;
 	}
 
 	//--------------------------------------------------------------------------------------------------------------
 	@VelocityMethod (
 		text = { 
-				"Returns the templates folder (the full path)",
+				"Returns the full path of the current project's location",
 				"(just for information, not supposed to be used in generation)" },
 		example = {
-				"$project.templatesFolderFullPath"
-			}
+				"$project.locationFullPath"
+			},
+		since = "2.0.7"
 	)
-    public String getTemplatesFolderFullPath()
+    public String getLocationFullPath()
     {
-        return templatesFolderFullPath ;
-    }
-
-	//--------------------------------------------------------------------------------------------------------------
-	@VelocityMethod (
-		text = { 
-				"Returns the package for the Java Bean classes",
-				"(just for information, not supposed to be used in generation)" },
-		example = {
-				"$project.packageForBean"
-			}
-		)
-    public String getPackageForBean()
-    {
-        return packageForBean ;
+        return _generatorConfig.getProjectLocation() ;
     }
 
 	//--------------------------------------------------------------------------------------------------------------
@@ -118,12 +75,7 @@ public class ProjectConfiguration
 	)
     public Variable[] getSpecificVariables()
     {
-    	if ( specificVariables != null ) {
-            return specificVariables ;
-    	}
-    	else {
-    		return VOID_VARIABLES ;
-    	}
+		return _generatorConfig.getTelosysToolsCfg().getSpecificVariables();
     }
 	//--------------------------------------------------------------------------------------------------------------
 	@VelocityMethod (
@@ -139,11 +91,6 @@ public class ProjectConfiguration
 	)
     public Variable[] getAllVariables()
     {
-    	if ( allVariables != null ) {
-            return allVariables ;
-    	}
-    	else {
-    		return VOID_VARIABLES ;
-    	}
+		return _generatorConfig.getTelosysToolsCfg().getAllVariables();
     }
 }

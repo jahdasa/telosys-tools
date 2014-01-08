@@ -18,26 +18,26 @@ package org.telosys.tools.generator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.telosys.tools.generator.config.GeneratorConfig;
 import org.telosys.tools.generator.context.JavaBeanClass;
-import org.telosys.tools.generator.context.ProjectConfiguration;
 import org.telosys.tools.repository.model.Entity;
 import org.telosys.tools.repository.model.RepositoryModel;
 
 public class RepositoryModelUtil {
 
 	/**
-	 * Builds a context JavaBeanClass instance from the repository (model definition)
+	 * Builds a context Entity instance from the repository (model definition)
 	 * @param entityName
 	 * @param repositoryModel
-	 * @param projectConfiguration
+	 * @param generatorConfig
 	 * @return
-	 * @throws GeneratorException if entity not found
+	 * @throws GeneratorException
 	 */
 	public static JavaBeanClass buildJavaBeanClass( 
 			// Target target, // 2013-02-04
 			String entityName, // 2013-02-04
 			RepositoryModel repositoryModel, 
-			ProjectConfiguration projectConfiguration ) throws GeneratorException
+			GeneratorConfig generatorConfig ) throws GeneratorException
 	{
 		//String entityName = target.getEntityName() ;
 		
@@ -56,7 +56,8 @@ public class RepositoryModelUtil {
     	String beanClassName = entity.getBeanJavaClass();
     	
 		//--- Java Bean Package name determined from the target folder
-    	String beanPackage = projectConfiguration.getPackageForBean();
+    	//String beanPackage = projectConfiguration.getPackageForBean();
+    	String beanPackage = generatorConfig.getTelosysToolsCfg().getEntityPackage(); // v 2.1.0
     		
     	//--- New instance of JavaBeanClass
     	JavaBeanClass beanClass = new JavaBeanClass(entity, repositoryModel, beanClassName, beanPackage);    	
@@ -66,50 +67,50 @@ public class RepositoryModelUtil {
 	}
 	
 	/**
-	 * Build a list of JavaBeanClass for each given entity name 
-	 * @param entitiesNames 
+	 * Builds a list of context Entities for each given entity name 
+	 * @param entitiesNames
 	 * @param repositoryModel
-	 * @param projectConfiguration
+	 * @param generatorConfig
 	 * @return
 	 * @throws GeneratorException
 	 */
 	public static List<JavaBeanClass> buildJavaBeanClasses( 
 			List<String> entitiesNames, 
 			RepositoryModel repositoryModel, 
-			ProjectConfiguration projectConfiguration ) throws GeneratorException
+			//ProjectConfiguration projectConfiguration 
+			GeneratorConfig generatorConfig // v 2.1.0
+			) throws GeneratorException
 	{
 		List<JavaBeanClass> javaBeanClasses = new LinkedList<JavaBeanClass>();
 		for ( String entityName : entitiesNames ) {
 			JavaBeanClass entityBeanClass = buildJavaBeanClass( 
 												entityName, 
 												repositoryModel, 
-												projectConfiguration );
+												generatorConfig );
 			javaBeanClasses.add(entityBeanClass);
 		}
 		return javaBeanClasses ;
 	}	
 
 	/**
-	 * Build a list of JavaBeanClass for all entities defined in the model 
-	 * 
+	 * Build a list of context Entities for all entities defined in the model 
 	 * @param repositoryModel
-	 * @param projectConfiguration
+	 * @param generatorConfig
 	 * @return
 	 * @throws GeneratorException
-	 * @since 2.0.7
 	 */
 	public static List<JavaBeanClass> buildAllJavaBeanClasses( RepositoryModel repositoryModel, 
-			ProjectConfiguration projectConfiguration ) throws GeneratorException 
+			//ProjectConfiguration projectConfiguration 
+			GeneratorConfig generatorConfig // v 2.1.0
+			) throws GeneratorException 
 	{
 		List<JavaBeanClass> javaBeanClasses = new LinkedList<JavaBeanClass>();
 		//--- Get the names of all the entities defined in the model 
 		String[] names = repositoryModel.getEntitiesNames();
 		for ( String entityName : names ) {
 			//--- Build an "entity BeanClass" for each
-			JavaBeanClass entityBeanClass = buildJavaBeanClass( 
-					entityName, 
-					repositoryModel, 
-					projectConfiguration );
+			//JavaBeanClass entityBeanClass = buildJavaBeanClass(entityName, repositoryModel, projectConfiguration );
+			JavaBeanClass entityBeanClass = buildJavaBeanClass(entityName, repositoryModel, generatorConfig );
 			javaBeanClasses.add(entityBeanClass);
 		}
 		return javaBeanClasses ;

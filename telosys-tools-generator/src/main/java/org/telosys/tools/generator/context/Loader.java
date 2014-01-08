@@ -20,7 +20,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-import org.apache.velocity.VelocityContext;
 import org.telosys.tools.generator.GeneratorException;
 import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityObject;
@@ -49,13 +48,23 @@ public class Loader {
 
 	private final static String CLASSES = "classes" ;
 	
-	private final ProjectConfiguration  projectConfig ;
-//	private final VelocityContext       velocityContext ;
+//	private final ProjectConfiguration  projectConfig ;
+//	
+//	public Loader(ProjectConfiguration projectConfig, VelocityContext velocityContext) {
+//		super();
+//		this.projectConfig   = projectConfig;
+//	}
+
+	private final String templatesFolderFullPath ; // Full templates full path with bundle name
 	
-	public Loader(ProjectConfiguration projectConfig, VelocityContext velocityContext) {
+	/**
+	 * Constructor ( ver 2.1.0 )
+	 * @param templatesFolderFullPath
+	 * @param velocityContext
+	 */
+	public Loader(String templatesFolderFullPath) {
 		super();
-		this.projectConfig   = projectConfig;
-//		this.velocityContext = velocityContext;
+		this.templatesFolderFullPath = templatesFolderFullPath;
 	}
 
 	//--------------------------------------------------------------------------------------------------------------
@@ -66,7 +75,8 @@ public class Loader {
 	 */
 	private File getClassesFolderAsFile()
 	{
-		String templatesFolder = projectConfig.getTemplatesFolderFullPath();
+		//String templatesFolder = projectConfig.getTemplatesFolderFullPath();
+		String templatesFolder = this.templatesFolderFullPath ;
 		String javaClassFolder ;		
 		if ( templatesFolder.endsWith("/") || templatesFolder.endsWith("\\") ) {
 			javaClassFolder = templatesFolder + CLASSES ;

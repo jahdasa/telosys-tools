@@ -18,10 +18,11 @@ package org.telosys.tools.generator.context;
 import java.util.List;
 
 import org.telosys.tools.commons.TelosysToolsLogger;
+import org.telosys.tools.commons.variables.Variable;
 import org.telosys.tools.generator.Generator;
 import org.telosys.tools.generator.GeneratorException;
 import org.telosys.tools.generator.GeneratorVersion;
-import org.telosys.tools.generator.config.IGeneratorConfig;
+import org.telosys.tools.generator.config.GeneratorConfig;
 import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityObject;
 import org.telosys.tools.generator.context.names.ContextName;
@@ -45,7 +46,7 @@ import org.telosys.tools.repository.model.RepositoryModel;
 public class EmbeddedGenerator {
 
 	private final RepositoryModel    repositoryModel ;
-	private final IGeneratorConfig   generatorConfig ;
+	private final GeneratorConfig    generatorConfig ;
 	private final TelosysToolsLogger logger ;
 	private final boolean            canGenerate ;
 	private final List<Target>       generatedTargets ;
@@ -67,9 +68,10 @@ public class EmbeddedGenerator {
 	 * @param repositoryModel
 	 * @param generatorConfig
 	 * @param logger
+	 * @param generatedTargets
 	 */
 	public EmbeddedGenerator(RepositoryModel repositoryModel,
-			IGeneratorConfig generatorConfig, TelosysToolsLogger logger, List<Target> generatedTargets) {
+			GeneratorConfig generatorConfig, TelosysToolsLogger logger, List<Target> generatedTargets) {
 		super();
 		this.repositoryModel = repositoryModel;
 		this.generatorConfig = generatorConfig;
@@ -149,7 +151,8 @@ public class EmbeddedGenerator {
 			throw new GeneratorException( err + "(template file is null)");
 		}
 		
-		ProjectConfiguration projectConfiguration = generatorConfig.getProjectConfiguration();
+		//ProjectConfiguration projectConfiguration = generatorConfig.getProjectConfiguration();
+		Variable[] allVariables = generatorConfig.getTelosysToolsCfg().getAllVariables(); // v 2.1.0
 		
 		Entity entity = repositoryModel.getEntityByName(entityName.trim());
 		if ( null == entity ) {
@@ -158,7 +161,8 @@ public class EmbeddedGenerator {
 		
 		TargetDefinition genericTarget = new TargetDefinition("Dynamic target", outputFile, outputFolder, templateFile, "");
 		
-		Target target = new Target( genericTarget, entity.getName(), entity.getBeanJavaClass(), projectConfiguration.getAllVariables() );
+		//Target target = new Target( genericTarget, entity.getName(), entity.getBeanJavaClass(), projectConfiguration.getAllVariables() );
+		Target target = new Target( genericTarget, entity.getName(), entity.getBeanJavaClass(), allVariables ); // v 2.1.0
 		
 		//Generator generator = new Generator(target, generatorConfig, logger);
 		Generator generator = new Generator(target, generatorConfig, repositoryModel, logger); // v 2.0.7

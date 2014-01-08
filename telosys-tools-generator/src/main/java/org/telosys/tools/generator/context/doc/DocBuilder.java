@@ -27,6 +27,7 @@ import org.telosys.tools.generator.context.BeanValidation;
 import org.telosys.tools.generator.context.Const;
 import org.telosys.tools.generator.context.EmbeddedGenerator;
 import org.telosys.tools.generator.context.Fn;
+import org.telosys.tools.generator.context.GenerationInContext;
 import org.telosys.tools.generator.context.Java;
 import org.telosys.tools.generator.context.JavaBeanClass;
 import org.telosys.tools.generator.context.JavaBeanClassAttribute;
@@ -36,7 +37,7 @@ import org.telosys.tools.generator.context.JavaBeanClassLink;
 import org.telosys.tools.generator.context.Jpa;
 import org.telosys.tools.generator.context.Loader;
 import org.telosys.tools.generator.context.Model;
-import org.telosys.tools.generator.context.ProjectConfiguration;
+import org.telosys.tools.generator.context.ProjectInContext;
 import org.telosys.tools.generator.context.Target;
 import org.telosys.tools.generator.context.Today;
 
@@ -214,6 +215,7 @@ public class DocBuilder {
 		Const.class,
 		EmbeddedGenerator.class,
 		Fn.class,
+		GenerationInContext.class, // ver 2.1.0
 		Java.class, // ver 2.0.7
 		Jpa.class, // ver 2.0.7
 		BeanValidation.class, // ver 2.0.7
@@ -224,7 +226,8 @@ public class DocBuilder {
 		JavaBeanClassLink.class,
 		Loader.class,
 		Model.class, // ver 2.0.7
-		ProjectConfiguration.class,
+		//ProjectConfiguration.class,
+		ProjectInContext.class, // ver 2.1.0
 		Target.class,
 		Today.class
 	};

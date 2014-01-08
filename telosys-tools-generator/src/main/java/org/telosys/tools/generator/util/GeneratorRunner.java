@@ -20,11 +20,11 @@ import java.util.List;
 
 import org.telosys.tools.commons.TelosysToolsException;
 import org.telosys.tools.commons.TelosysToolsLogger;
+import org.telosys.tools.commons.variables.Variable;
 import org.telosys.tools.generator.Generator;
 import org.telosys.tools.generator.GeneratorException;
+import org.telosys.tools.generator.config.GeneratorConfig;
 import org.telosys.tools.generator.config.GeneratorConfigManager;
-import org.telosys.tools.generator.config.IGeneratorConfig;
-import org.telosys.tools.generator.context.ProjectConfiguration;
 import org.telosys.tools.generator.context.Target;
 import org.telosys.tools.generator.target.TargetDefinition;
 import org.telosys.tools.repository.model.Entity;
@@ -41,7 +41,7 @@ public class GeneratorRunner {
 
 	private final RepositoryModel     repositoryModel  ;
 
-	private final IGeneratorConfig    generatorConfig ;
+	private final GeneratorConfig    generatorConfig ;
 	
 	private final TelosysToolsLogger  logger ;
 	
@@ -52,7 +52,7 @@ public class GeneratorRunner {
 	 * @param generatorConfig
 	 * @param logger
 	 */
-	public GeneratorRunner(RepositoryModel repositoryModel, IGeneratorConfig generatorConfig, TelosysToolsLogger logger) throws GeneratorException
+	public GeneratorRunner(RepositoryModel repositoryModel, GeneratorConfig generatorConfig, TelosysToolsLogger logger) throws GeneratorException
 	{
 		super();
 		if ( null == repositoryModel ) {
@@ -91,7 +91,7 @@ public class GeneratorRunner {
 		
 		//--- Load the configuration
 		GeneratorConfigManager configManager = new GeneratorConfigManager(logger);
-		IGeneratorConfig config = configManager.initFromDirectory(projectLocation, null);
+		GeneratorConfig config = configManager.initFromDirectory(projectLocation, null);
 		this.generatorConfig = config ;
  
 	}
@@ -127,7 +127,7 @@ public class GeneratorRunner {
 			//----------------------------------------------------------------
 			String err = "ERROR " ;
 
-			ProjectConfiguration projectConfiguration = generatorConfig.getProjectConfiguration();
+			//ProjectConfiguration projectConfiguration = generatorConfig.getProjectConfiguration();
 			
 			Entity entity = repositoryModel.getEntityByName(entityName.trim());
 			if ( null == entity ) {
@@ -135,8 +135,10 @@ public class GeneratorRunner {
 			}
 
 			TargetDefinition genericTarget = new TargetDefinition("Dynamic target", outputFile, outputFolder, templateFileName, "");
+			//Target target = new Target( genericTarget, entity.getName(), entity.getBeanJavaClass(), projectConfiguration.getAllVariables() );
 			
-			Target target = new Target( genericTarget, entity.getName(), entity.getBeanJavaClass(), projectConfiguration.getAllVariables() );
+			Variable[] allVariables = this.generatorConfig.getTelosysToolsCfg().getAllVariables(); // ver 2.1.0
+			Target target = new Target( genericTarget, entity.getName(), entity.getBeanJavaClass(), allVariables );
 			
 			//----------------------------------------------------------------
 			// 2) Launch the generation 

@@ -36,18 +36,19 @@ import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.telosys.tools.commons.TelosysToolsLogger;
 import org.telosys.tools.commons.variables.Variable;
-import org.telosys.tools.generator.config.IGeneratorConfig;
+import org.telosys.tools.generator.config.GeneratorConfig;
 import org.telosys.tools.generator.context.BeanValidation;
 import org.telosys.tools.generator.context.Const;
 import org.telosys.tools.generator.context.EmbeddedGenerator;
 import org.telosys.tools.generator.context.Fn;
+import org.telosys.tools.generator.context.GenerationInContext;
 import org.telosys.tools.generator.context.Java;
 import org.telosys.tools.generator.context.JavaBeanClass;
 import org.telosys.tools.generator.context.JavaClass;
 import org.telosys.tools.generator.context.Jpa;
 import org.telosys.tools.generator.context.Loader;
 import org.telosys.tools.generator.context.Model;
-import org.telosys.tools.generator.context.ProjectConfiguration;
+import org.telosys.tools.generator.context.ProjectInContext;
 import org.telosys.tools.generator.context.Target;
 import org.telosys.tools.generator.context.Today;
 import org.telosys.tools.generator.context.names.ContextName;
@@ -89,7 +90,7 @@ public class Generator {
 
 	private final VelocityContext    _velocityContext ;
 
-	private final IGeneratorConfig   _generatorConfig ;
+	private final GeneratorConfig    _generatorConfig ;
 	
 	private final TelosysToolsLogger _logger ;
 
@@ -102,7 +103,7 @@ public class Generator {
 	 * @param logger 
 	 * @throws GeneratorException
 	 */
-	public Generator( Target target, IGeneratorConfig generatorConfig, 
+	public Generator( Target target, GeneratorConfig generatorConfig, 
 						RepositoryModel repositoryModel, TelosysToolsLogger logger) throws GeneratorException 
 	{
 		_logger = logger;
@@ -126,7 +127,8 @@ public class Generator {
 		//_repositoryModel = repositoryModel ;
 		// Build the list of all the entities defined in the repository  
 		if ( repositoryModel != null ) {
-			_allEntities = RepositoryModelUtil.buildAllJavaBeanClasses(repositoryModel,	_generatorConfig.getProjectConfiguration() );
+			//_allEntities = RepositoryModelUtil.buildAllJavaBeanClasses(repositoryModel,	_generatorConfig.getProjectConfiguration() );
+			_allEntities = RepositoryModelUtil.buildAllJavaBeanClasses(repositoryModel,	_generatorConfig ); // v 2.1.0
 		}
 		else {
 			_allEntities = new LinkedList<JavaBeanClass>();
@@ -265,7 +267,7 @@ public class Generator {
 	//========================================================================
 	// CONTEXT MANAGEMENT
 	//========================================================================
-	private void initContext( IGeneratorConfig generatorConfig, TelosysToolsLogger logger)
+	private void initContext( GeneratorConfig generatorConfig, TelosysToolsLogger logger)
 	{
 		log("initContext()..." );
 
@@ -292,17 +294,23 @@ public class Generator {
 		
 		_velocityContext.put(ContextName.CLASS, null);
 		
-		ProjectConfiguration projectConfiguration = generatorConfig.getProjectConfiguration();
 		
-		//--- Set the dynamic loader 
-		Loader loader = new Loader(projectConfiguration, _velocityContext);
+		//--- Set the dynamic class loader 
+		//Loader loader = new Loader(projectConfiguration, _velocityContext);
+		Loader loader = new Loader( generatorConfig.getTemplatesFolderFullPath() ); // ver 2.1.0
 		_velocityContext.put(ContextName.LOADER, loader);
 		
 		//--- Set the "$project" variable in the context
-		_velocityContext.put(ContextName.PROJECT, projectConfiguration);
+//		ProjectConfiguration projectConfiguration = generatorConfig.getProjectConfiguration();
+//		_velocityContext.put(ContextName.PROJECT, projectConfiguration);
+		_velocityContext.put(ContextName.PROJECT, new ProjectInContext(generatorConfig)); // ver 2.1.0
+
+		//--- Set the "$generation" variable in the context
+		_velocityContext.put(ContextName.GENERATION, new GenerationInContext(generatorConfig)); // ver 2.1.0
 		
-		//--- Get the project variables and put them in the context	
-		Variable[] projectVariables = projectConfiguration.getAllVariables();
+		//--- Get all the project variables and put them in the context	
+		//Variable[] projectVariables = projectConfiguration.getAllVariables();
+		Variable[] projectVariables = generatorConfig.getTelosysToolsCfg().getAllVariables();
 		log("initContext() : Project variables count = " + ( projectVariables != null ? projectVariables.length : 0 ) );
 
 		//--- Set the project variables in the context ( if any )
@@ -447,14 +455,15 @@ public class Generator {
 	{
 		_logger.info("Generation in progress : target = " + target.getTargetName() + " / entity = " + target.getEntityName() );
 		
-		ProjectConfiguration projectConfiguration = _generatorConfig.getProjectConfiguration();
+		//ProjectConfiguration projectConfiguration = _generatorConfig.getProjectConfiguration();
 		
 		// 2013-02-04
 		//JavaBeanClass javaBeanClass = RepositoryModelUtil.buildJavaBeanClass(target, repositoryModel, projectConfiguration) ;
 		JavaBeanClass javaBeanClass = null ;
 		if ( target.getEntityName().trim().length() > 0 ) {
 			//--- Target with entity ( classical target )
-			javaBeanClass = RepositoryModelUtil.buildJavaBeanClass(target.getEntityName(), repositoryModel, projectConfiguration) ;
+			//javaBeanClass = RepositoryModelUtil.buildJavaBeanClass(target.getEntityName(), repositoryModel, projectConfiguration) ;
+			javaBeanClass = RepositoryModelUtil.buildJavaBeanClass(target.getEntityName(), repositoryModel, _generatorConfig) ; // v 2.1.0
 		}
 		else {
 			//--- Target without entity ( e.g. "once" target )
