@@ -19,8 +19,10 @@ import java.io.File;
 
 import org.telosys.tools.commons.FileUtil;
 import org.telosys.tools.commons.StrUtil;
+import org.telosys.tools.commons.TelosysToolsException;
 import org.telosys.tools.commons.cfg.TelosysToolsCfg;
 import org.telosys.tools.commons.dbcfg.DatabasesConfigurations;
+import org.telosys.tools.commons.dbcfg.DbConfigManager;
 
 /**
  * Generator configuration implementation 
@@ -237,30 +239,42 @@ public class GeneratorConfig //implements IGeneratorConfig
 //    	}
 	}
 
-    private DatabasesConfigurations databasesConfigurations ;
+    //------------------------------------------------------------------------------------------------------
+    // DATABASES CONFIGURATIONS (since ver 2.1.0 )
+    //------------------------------------------------------------------------------------------------------
     
-	public File getDatabasesConfigurationsFile() 
-	{
-		// TODO
-		//_projectConfiguration.getXXXX
-		return null ;
-	}
-	
+    private DatabasesConfigurations _databasesConfigurations = null ;
+    
+	/**
+	 * Returns the databases configurations loaded from the "databases.dbcfg" file
+	 * @return
+	 */
 	public DatabasesConfigurations getDatabasesConfigurations() 
 	{
-		//--- Databases configurations not yet loaded ?
-		
-		// TODO
-//		if ( this.databasesConfigurations == null ) {
-//			File databasesConfigFile ;
-//			try {
-//				DbConfigManager dbConfigManager = new DbConfigManager( databasesConfigFile );
-//				this.databasesConfigurations = dbConfigManager.load() ;
-//			} catch (TelosysToolsException e) {
-//				this.databasesConfigurations = null ;
-//			}		
-//		}
-		return this.databasesConfigurations ;
+		if ( _databasesConfigurations == null ) {
+			// Not yet loaded
+			_databasesConfigurations = loadDatabasesConfigurations() ;
+		}
+		return _databasesConfigurations ;
+	}
+	
+	private DatabasesConfigurations loadDatabasesConfigurations() 
+	{
+		DatabasesConfigurations databasesConfigurations = null ;
+		String dbcfgFileName = _telosysToolsCfg.getDatabasesDbCfgFileAbsolutePath();
+		File dbcfgFile = new File(dbcfgFileName);
+		if ( dbcfgFile.exists() ) {
+			try {
+				DbConfigManager dbConfigManager = new DbConfigManager( dbcfgFile );
+				databasesConfigurations = dbConfigManager.load() ;
+			} catch (TelosysToolsException e) {
+				databasesConfigurations = new DatabasesConfigurations() ; // Void
+			}
+			return databasesConfigurations ;
+		}
+		else {
+			return new DatabasesConfigurations() ; // Void
+		}
 	}
 
 }

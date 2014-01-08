@@ -48,16 +48,16 @@ public class ContextName {
 //	public final static String  TMP      = "TMP" ;
 	
 	//--- Standard objects names always in context
-	public final static String  GENERATOR       = "generator" ;
-	public final static String  TODAY           = "today" ;
-	public final static String  CONST           = "const" ;
-	public final static String  FN              = "fn" ;	
-	public final static String  LOADER          = "loader" ;
-	public final static String  PROJECT         = "project" ;
-	public final static String  GENERATION      = "generation" ; // ver 2.1.0
-	public final static String  JAVA            = "java" ; // ver 2.0.7
-	public final static String  JPA             = "jpa" ; // ver 2.0.7
-	public final static String  BEAN_VALIDATION = "beanValidation" ; // ver 2.0.7
+	public final static String  GENERATOR        = "generator" ;
+	public final static String  TODAY            = "today" ;
+	public final static String  CONST            = "const" ;
+	public final static String  FN               = "fn" ;	
+	public final static String  LOADER           = "loader" ;
+	public final static String  PROJECT          = "project" ;
+	public final static String  GENERATION       = "generation" ; // ver 2.1.0
+	public final static String  JAVA             = "java" ; // ver 2.0.7
+	public final static String  JPA              = "jpa" ; // ver 2.0.7
+	public final static String  BEAN_VALIDATION  = "beanValidation" ; // ver 2.0.7
 	//---  
 	public final static String  ENTITY            = "entity" ;    // New name 
 	public final static String  BEAN_CLASS        = "beanClass" ; // Other name for "entity"
@@ -72,9 +72,12 @@ public class ContextName {
 	
 	public final static String  LINK              = "link" ;
 	
-	public final static String  FK     = "fk" ;    // v 2.0.7
-	public final static String  FKCOL  = "fkcol" ; // v 2.0.7
+	public final static String  FK                = "fk" ;    // v 2.0.7
+	public final static String  FKCOL             = "fkcol" ; // v 2.0.7
 
+	public final static String  DATABASE          = "database" ; // ver 2.1.0
+	public final static String  DATABASES         = "databases" ; // ver 2.1.0
+	
 	//---  
 	public final static String  CLASS             = "class" ;
 	

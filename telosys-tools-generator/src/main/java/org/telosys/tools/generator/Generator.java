@@ -38,6 +38,7 @@ import org.telosys.tools.commons.variables.Variable;
 import org.telosys.tools.generator.config.GeneratorConfig;
 import org.telosys.tools.generator.context.BeanValidation;
 import org.telosys.tools.generator.context.Const;
+import org.telosys.tools.generator.context.DatabasesInContext;
 import org.telosys.tools.generator.context.EmbeddedGenerator;
 import org.telosys.tools.generator.context.Fn;
 import org.telosys.tools.generator.context.GenerationInContext;
@@ -291,8 +292,12 @@ public class Generator {
 		_velocityContext.put(ContextName.JPA,             new Jpa());   // JPA utility functions
 		_velocityContext.put(ContextName.BEAN_VALIDATION, new BeanValidation()); // Bean Validation utility functions
 		
+		_velocityContext.put(ContextName.DATABASES,
+							new DatabasesInContext( generatorConfig.getDatabasesConfigurations() ) ); // ver 2.1.0
+		
 		//_velocityContext.put(ContextName.MODEL,         new Model(_allEntities) );  // The "model" object (v 2.0.7)
-		_velocityContext.put(ContextName.MODEL,  new ModelInContext(repositoryModel, generatorConfig) );  // The "model" object (v 2.0.7)
+		_velocityContext.put(ContextName.MODEL,  
+							new ModelInContext(repositoryModel, generatorConfig) );  // The "model" object (v 2.0.7)
 		
 		_velocityContext.put(ContextName.CLASS, null);
 		

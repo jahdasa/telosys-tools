@@ -75,6 +75,7 @@ public class ContextNames {
 		GENERATOR_OBJECTS_LIST.add( ContextName.LOADER );
 		GENERATOR_OBJECTS_LIST.add( ContextName.PROJECT );
 		GENERATOR_OBJECTS_LIST.add( ContextName.MODEL ); // ver 2.0.7
+		GENERATOR_OBJECTS_LIST.add( ContextName.DATABASES ); // ver 2.1.0
 		GENERATOR_OBJECTS_LIST.add( ContextName.TODAY );
 
 		//--- Current Entity/Target objects
@@ -100,6 +101,8 @@ public class ContextNames {
 
 		PREDEFINED_NAMES_LIST.add( ContextName.FK ); // v 2.0.7
 		PREDEFINED_NAMES_LIST.add( ContextName.FKCOL ); // v 2.0.7
+
+		PREDEFINED_NAMES_LIST.add( ContextName.DATABASE ); // v 2.1.0
 	}
 
 	private static List<String> WIZARDS_OBJECTS_LIST = new LinkedList<String>();
