@@ -430,13 +430,13 @@ public class GenerationTaskWithProgress implements IRunnableWithProgress
 		return _result != null ? _result : new GenerationTaskResult() ;
 	}
 
-	//--------------------------------------------------------------------------------------------------
-    private boolean confirmBulkGeneration(int numberOfFilesToBeGenerated)
-    {
-		String sMsg = "The generation will overwrite existing files if they exist." 
-			+ "\n\n" + "At least " + numberOfFilesToBeGenerated + " file(s) will be generated."
-			+ "\n\n" + "Launch generation ?";
-		return MsgBox.confirm(" Confirm generation", sMsg) ;
-    }
+//	//--------------------------------------------------------------------------------------------------
+//    private boolean confirmBulkGeneration(int numberOfFilesToBeGenerated)
+//    {
+//		String sMsg = "The generation will overwrite existing files if they exist." 
+//			+ "\n\n" + "At least " + numberOfFilesToBeGenerated + " file(s) will be generated."
+//			+ "\n\n" + "Launch generation ?";
+//		return MsgBox.confirm(" Confirm generation", sMsg) ;
+//    }
 	
 }
