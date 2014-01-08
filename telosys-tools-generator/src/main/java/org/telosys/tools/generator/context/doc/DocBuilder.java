@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.telosys.tools.generator.context.BeanValidation;
 import org.telosys.tools.generator.context.Const;
+import org.telosys.tools.generator.context.DatabaseInContext;
 import org.telosys.tools.generator.context.DatabasesInContext;
 import org.telosys.tools.generator.context.EmbeddedGenerator;
 import org.telosys.tools.generator.context.Fn;
@@ -229,6 +230,7 @@ public class DocBuilder {
 		//Model.class, // ver 2.0.7
 		ModelInContext.class, // ver 2.1.0
 		DatabasesInContext.class, // ver 2.1.0
+		DatabaseInContext.class, // ver 2.1.0
 		//ProjectConfiguration.class,
 		ProjectInContext.class, // ver 2.1.0
 		Target.class,
