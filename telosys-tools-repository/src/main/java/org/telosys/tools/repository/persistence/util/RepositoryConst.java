@@ -96,9 +96,10 @@ public class RepositoryConst {
 	//--------------------------------------------------------------------------------------------------
 	//--- XML <tablelist> element and attributes
 	public final static String TABLELIST = "tableList";
-	public final static String TABLELIST_GENERATION = "generation";
-	public final static String TABLELIST_NAME       = "name";
-	public final static String TABLELIST_TYPE       = "type";
+	public final static String TABLELIST_GENERATION  = "generation";
+	public final static String TABLELIST_NAME        = "name";
+	public final static String TABLELIST_TYPE        = "type";
+	public final static String TABLELIST_DATABASE_ID = "databaseId";
 
 	//--------------------------------------------------------------------------------------------------
 	//--- XML <table> element and attributes

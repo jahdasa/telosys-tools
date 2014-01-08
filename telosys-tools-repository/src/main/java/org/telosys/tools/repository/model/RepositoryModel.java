@@ -22,10 +22,11 @@ import java.util.Hashtable;
 
 public class RepositoryModel 
 {
-
 	private String version ;
 	
 	private String databaseName ;
+
+	private int databaseId = -1 ; // Database Id in the ".dbcfg" file ( v 2.1.0 )
 
 	private String databaseType ;
 	
@@ -35,6 +36,7 @@ public class RepositoryModel
 	
 	private Hashtable<String,Entity> htEntities = new Hashtable<String,Entity>() ; 
 
+	//-----------------------------------------------
 	public String getVersion() {
 		return version;
 	}
@@ -43,6 +45,7 @@ public class RepositoryModel
 		this.version = version;
 	}
 
+	//-----------------------------------------------
 	public String getDatabaseName() {
 		return databaseName;
 	}
@@ -51,6 +54,24 @@ public class RepositoryModel
 		this.databaseName = databaseName;
 	}
 
+	//-----------------------------------------------
+	/**
+	 * Returns the database id ( ".dbcfg" id )
+	 * @return
+	 */
+	public int getDatabaseId() {
+		return databaseId;
+	}
+
+	/**
+	 * Set the database id ( ".dbcfg" id )
+	 * @param databaseId
+	 */
+	public void setDatabaseId(int databaseId) {
+		this.databaseId = databaseId;
+	}
+
+	//-----------------------------------------------
 	public String getDatabaseType() {
 		return databaseType;
 	}
@@ -59,6 +80,7 @@ public class RepositoryModel
 		this.databaseType = databaseType;
 	}
 
+	//-----------------------------------------------
 	public Date getGenerationDate() {
 		return generationDate;
 	}
@@ -67,6 +89,7 @@ public class RepositoryModel
 		this.generationDate = generationDate;
 	}
 
+	//-----------------------------------------------
 	public Date getLastUpdateDate() {
 		return lastUpdateDate;
 	}

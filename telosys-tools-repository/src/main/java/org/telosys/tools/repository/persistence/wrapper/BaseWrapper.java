@@ -15,6 +15,7 @@
  */
 package org.telosys.tools.repository.persistence.wrapper;
 
+import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.repository.model.RepositoryModel;
 import org.telosys.tools.repository.persistence.util.RepositoryConst;
 import org.w3c.dom.Document;
@@ -31,6 +32,7 @@ public class BaseWrapper {
 		model.setDatabaseName(base.getAttribute(RepositoryConst.TABLELIST_NAME));
 		model.setDatabaseType(base.getAttribute(RepositoryConst.TABLELIST_TYPE));
 		model.setGenerationDate(RepositoryConst.getDate(base.getAttribute(RepositoryConst.TABLELIST_GENERATION)));
+		model.setDatabaseId(StrUtil.getInt(base.getAttribute(RepositoryConst.TABLELIST_DATABASE_ID)) );	 // v 2.1.0	
 		return model;
 	}
 
@@ -39,6 +41,8 @@ public class BaseWrapper {
 		table.setAttribute(RepositoryConst.TABLELIST_NAME, model.getDatabaseName());
 		table.setAttribute(RepositoryConst.TABLELIST_TYPE, model.getDatabaseType());
 		table.setAttribute(RepositoryConst.TABLELIST_GENERATION, RepositoryConst.DATE_TIME_ISO_FORMAT.format(model.getGenerationDate()));
+		table.setAttribute(RepositoryConst.TABLELIST_DATABASE_ID, Integer.toString( model.getDatabaseId() ) ); // v 2.1.0
+		
 		return table;
 	}
 

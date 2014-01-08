@@ -23,6 +23,7 @@ import java.util.Iterator;
 
 import org.telosys.tools.commons.TelosysToolsException;
 import org.telosys.tools.commons.TelosysToolsLogger;
+import org.telosys.tools.commons.dbcfg.DatabaseConfiguration;
 import org.telosys.tools.db.model.DatabaseModelManager;
 import org.telosys.tools.db.model.DatabaseTable;
 import org.telosys.tools.db.model.DatabaseTables;
@@ -38,35 +39,25 @@ import org.telosys.tools.repository.model.RepositoryModel;
 
 public class RepositoryGenerator extends RepositoryManager
 {
-//	/**
-//	 * Constructor
-//	 * 
-//	 * @param inichk
-//	 * @param classNameProvider
-//	 * @param logger
-//	 */
-//	public RepositoryGenerator(InitializerChecker inichk, ClassNameProvider classNameProvider, TelosysToolsLogger logger) 
-//	{
-//		super(inichk, classNameProvider, logger);
-//	}
+	/**
+	 * Constructor
+	 * @param entityInformationProvider
+	 * @param uiInfoProvider
+	 * @param logger
+	 */
 	public RepositoryGenerator(EntityInformationProvider entityInformationProvider, UserInterfaceInformationProvider uiInfoProvider, TelosysToolsLogger logger) 
 	{
 		super(entityInformationProvider, uiInfoProvider, logger);
 	}
 
 	/**
-	 * Generates the repository model
+	 * Generates the repository model from the given database
 	 * @param con
-	 * @param sDatabaseName
-	 * @param sCatalog
-	 * @param sSchema
-	 * @param sTableNamePattern
-	 * @param arrayTableTypes
+	 * @param databaseConfig
 	 * @return
 	 * @throws TelosysToolsException
 	 */
-	public RepositoryModel generate(Connection con, String sDatabaseName, String sCatalog, String sSchema,
-			String sTableNamePattern, String[] arrayTableTypes) throws TelosysToolsException 
+	public RepositoryModel generate(Connection con, DatabaseConfiguration databaseConfig) throws TelosysToolsException 
 	{
 		logger.log("--> Repository generation ");
 
@@ -77,14 +68,19 @@ public class RepositoryGenerator extends RepositoryManager
 					
 		try {
 			//--- Init new repository	
-			repositoryModel.setDatabaseName(sDatabaseName);
-			repositoryModel.setDatabaseType(dbmd.getDatabaseProductName() );
+			repositoryModel.setDatabaseName( databaseConfig.getDatabaseName() );
+			repositoryModel.setDatabaseId( databaseConfig.getDatabaseId() );
+			repositoryModel.setDatabaseType( dbmd.getDatabaseProductName() );
 			repositoryModel.setGenerationDate( new Date() );
-			repositoryModel.setVersion(ModelVersion.VERSION);
+			repositoryModel.setVersion( ModelVersion.VERSION );
 
 			//--- Add all tables/entities to the new repository	
-			//generateEntities(repositoryModel, dbmd, sCatalog, sSchema, sTableNamePattern, arrayTableTypes);
-			generateEntities(repositoryModel, con, sCatalog, sSchema, sTableNamePattern, arrayTableTypes);
+			generateEntities(repositoryModel, 
+					con, 
+					databaseConfig.getMetadataCatalog(), 
+					databaseConfig.getMetadataSchema(), 
+					databaseConfig.getMetadataTableNamePattern(), 
+					databaseConfig.getMetadataTableTypesArray());
 			
 		} catch (SQLException e) {
 			throw new TelosysToolsException("SQLException", e);
@@ -92,6 +88,45 @@ public class RepositoryGenerator extends RepositoryManager
 
 		return repositoryModel ;
 	}
+	
+//	/**
+//	 * Generates the repository model
+//	 * @param con
+//	 * @param sDatabaseName
+//	 * @param sCatalog
+//	 * @param sSchema
+//	 * @param sTableNamePattern
+//	 * @param arrayTableTypes
+//	 * @return
+//	 * @throws TelosysToolsException
+//	 */
+//	public RepositoryModel generate(Connection con, String sDatabaseName, String sCatalog, String sSchema,
+//			String sTableNamePattern, String[] arrayTableTypes) throws TelosysToolsException 
+//	{
+//		logger.log("--> Repository generation ");
+//
+//		logger.log(" . get meta-data ");
+//		DatabaseMetaData dbmd = getMetaData(con);
+//
+//		RepositoryModel repositoryModel = new RepositoryModel();
+//					
+//		try {
+//			//--- Init new repository	
+//			repositoryModel.setDatabaseName(sDatabaseName);
+//			repositoryModel.setDatabaseType(dbmd.getDatabaseProductName() );
+//			repositoryModel.setGenerationDate( new Date() );
+//			repositoryModel.setVersion(ModelVersion.VERSION);
+//
+//			//--- Add all tables/entities to the new repository	
+//			//generateEntities(repositoryModel, dbmd, sCatalog, sSchema, sTableNamePattern, arrayTableTypes);
+//			generateEntities(repositoryModel, con, sCatalog, sSchema, sTableNamePattern, arrayTableTypes);
+//			
+//		} catch (SQLException e) {
+//			throw new TelosysToolsException("SQLException", e);
+//		}
+//
+//		return repositoryModel ;
+//	}
 
 	private void generateEntities(RepositoryModel repositoryModel, Connection con, 
 			String sCatalog, String sSchema,
