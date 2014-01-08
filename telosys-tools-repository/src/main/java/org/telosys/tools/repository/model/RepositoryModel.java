@@ -26,13 +26,13 @@ public class RepositoryModel
 	
 	private String databaseName ;
 
-	private int databaseId = -1 ; // Database Id in the ".dbcfg" file ( v 2.1.0 )
+	private int    databaseId = -1 ; // Database Id in the ".dbcfg" file ( v 2.1.0 )
 
-	private String databaseType ;
+	private String databaseProductName ; 
 	
-	private Date generationDate ;
+	private Date   generationDate ;
 	
-	private Date lastUpdateDate ;
+	private Date   lastUpdateDate ;
 	
 	private Hashtable<String,Entity> htEntities = new Hashtable<String,Entity>() ; 
 
@@ -72,12 +72,20 @@ public class RepositoryModel
 	}
 
 	//-----------------------------------------------
-	public String getDatabaseType() {
-		return databaseType;
+	/**
+	 * Returns the database product name retrieved from the meta-data
+	 * @return
+	 */
+	public String getDatabaseProductName() {
+		return databaseProductName;
 	}
 
-	public void setDatabaseType(String databaseType) {
-		this.databaseType = databaseType;
+	/**
+	 * Set the database product name retrieved from the meta-data
+	 * @param databaseType
+	 */
+	public void setDatabaseProductName(String databaseType) {
+		this.databaseProductName = databaseType;
 	}
 
 	//-----------------------------------------------

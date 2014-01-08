@@ -70,7 +70,7 @@ public class RepositoryGenerator extends RepositoryManager
 			//--- Init new repository	
 			repositoryModel.setDatabaseName( databaseConfig.getDatabaseName() );
 			repositoryModel.setDatabaseId( databaseConfig.getDatabaseId() );
-			repositoryModel.setDatabaseType( dbmd.getDatabaseProductName() );
+			repositoryModel.setDatabaseProductName( dbmd.getDatabaseProductName() );
 			repositoryModel.setGenerationDate( new Date() );
 			repositoryModel.setVersion( ModelVersion.VERSION );
 

@@ -29,17 +29,17 @@ public class BaseWrapper {
 
 	public RepositoryModel getBase(final Element base) {
 		final RepositoryModel model = new RepositoryModel();
-		model.setDatabaseName(base.getAttribute(RepositoryConst.TABLELIST_NAME));
-		model.setDatabaseType(base.getAttribute(RepositoryConst.TABLELIST_TYPE));
+		model.setDatabaseName(base.getAttribute(RepositoryConst.TABLELIST_DATABASE_NAME));
+		model.setDatabaseProductName(base.getAttribute(RepositoryConst.TABLELIST_DATABASE_PRODUCT_NAME));
 		model.setGenerationDate(RepositoryConst.getDate(base.getAttribute(RepositoryConst.TABLELIST_GENERATION)));
-		model.setDatabaseId(StrUtil.getInt(base.getAttribute(RepositoryConst.TABLELIST_DATABASE_ID)) );	 // v 2.1.0	
+		model.setDatabaseId(StrUtil.getInt(base.getAttribute(RepositoryConst.TABLELIST_DATABASE_ID), -1) );	 // v 2.1.0	
 		return model;
 	}
 
 	public Element getXmlDesc(final RepositoryModel model, final Document doc) {
 		final Element table = doc.createElement(RepositoryConst.TABLELIST);
-		table.setAttribute(RepositoryConst.TABLELIST_NAME, model.getDatabaseName());
-		table.setAttribute(RepositoryConst.TABLELIST_TYPE, model.getDatabaseType());
+		table.setAttribute(RepositoryConst.TABLELIST_DATABASE_NAME, model.getDatabaseName());
+		table.setAttribute(RepositoryConst.TABLELIST_DATABASE_PRODUCT_NAME, model.getDatabaseProductName());
 		table.setAttribute(RepositoryConst.TABLELIST_GENERATION, RepositoryConst.DATE_TIME_ISO_FORMAT.format(model.getGenerationDate()));
 		table.setAttribute(RepositoryConst.TABLELIST_DATABASE_ID, Integer.toString( model.getDatabaseId() ) ); // v 2.1.0
 		
