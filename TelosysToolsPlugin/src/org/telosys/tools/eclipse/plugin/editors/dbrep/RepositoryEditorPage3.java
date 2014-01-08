@@ -99,8 +99,9 @@ import org.telosys.tools.repository.model.RepositoryModel;
 			//---------------------------------------------------------------
 			// Line 1 - Column 1 : The page title
 			//---------------------------------------------------------------
-			Util.setPageTitle(scrolledFormBody, "Links between entities"  ) ;
-	
+			//Util.setPageTitle(scrolledFormBody, "Links between entities"  ) ;
+			Util.setPageTitle(scrolledFormBody, this.getTitle() ) ; // Title defined in the constructor
+			
 			//---------------------------------------------------------------
 			// Line 2 - Column 1 : The filter criteria 
 			//---------------------------------------------------------------

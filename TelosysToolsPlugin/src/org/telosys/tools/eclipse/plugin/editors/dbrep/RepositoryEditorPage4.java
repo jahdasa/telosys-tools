@@ -15,6 +15,7 @@ import org.telosys.tools.eclipse.plugin.commons.MsgBox;
 import org.telosys.tools.eclipse.plugin.commons.PluginLogger;
 import org.telosys.tools.eclipse.plugin.commons.Util;
 import org.telosys.tools.eclipse.plugin.config.ProjectConfig;
+import org.telosys.tools.repository.model.RepositoryModel;
 
 /**
  * Page 3 of the editor <br>
@@ -25,7 +26,9 @@ import org.telosys.tools.eclipse.plugin.config.ProjectConfig;
 /* package */ class RepositoryEditorPage4 extends RepositoryEditorPage 
 {
 
+	//--------------------------------------------------------------------------------------------------
 	/**
+	 * Constructor
 	 * @param editor
 	 * @param id
 	 * @param title
@@ -35,9 +38,22 @@ import org.telosys.tools.eclipse.plugin.config.ProjectConfig;
 		PluginLogger.log(this, "constructor(.., '"+id+"', '"+ title +"')..." );		
 	}
 
+	//----------------------------------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IEditorPart#init(org.eclipse.ui.IEditorSite, org.eclipse.ui.IEditorInput)
+	 */
+	@Override
+	public void init(IEditorSite site, IEditorInput input) {
+		super.init(site, input);
+		PluginLogger.log(this, "init(..,..) : site id = '" + site.getId() + "'" );
+		PluginLogger.log(this, "init(..,..) : input name = '" + input.getName() + "'" );
+	}
+
+	//--------------------------------------------------------------------------------------------------
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.FormPage#createFormContent(org.eclipse.ui.forms.IManagedForm)
 	 */
+	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		
@@ -83,7 +99,7 @@ import org.telosys.tools.eclipse.plugin.config.ProjectConfig;
 		//---------------------------------------------------------------
 		GridData gdTitle = new GridData(GridData.FILL_HORIZONTAL);
 		gdTitle.horizontalSpan = 2;		
-		Label labelTitle = Util.setPageTitle(body, "Project configuration" ) ;
+		Label labelTitle = Util.setPageTitle(body, this.getTitle() ) ; // Title defined in the constructor
 		labelTitle.setLayoutData(gdTitle);
 		
 		
@@ -100,9 +116,15 @@ import org.telosys.tools.eclipse.plugin.config.ProjectConfig;
 		addConfigRow(body, "Templates folder :", telosysToolsCfg.getTemplatesFolder() );
 		addConfigRow(body, "Templates folder full path :", telosysToolsCfg.getTemplatesFolderAbsolutePath() );
 		addConfigRow(body, "Repositories folder :", telosysToolsCfg.getRepositoriesFolder() );
-
 		
 		addConfigRow(body, "", "" );
+		
+		RepositoryModel repositoryModel = getRepositoryModel();
+		addConfigRow(body, "Database used to generate the model", "" );
+		addConfigRow(body, ". database ID :", ""+repositoryModel.getDatabaseId() );
+		addConfigRow(body, ". database name :", ""+repositoryModel.getDatabaseName() );
+		addConfigRow(body, ". database type :", ""+repositoryModel.getDatabaseType() );
+
 		//addConfigRow(body, "Generator version", GeneratorConst.GENERATOR_VERSION );
 		
 	}
@@ -115,15 +137,6 @@ import org.telosys.tools.eclipse.plugin.config.ProjectConfig;
 
 		Label label2 = new Label( c, SWT.LEFT );
 		label2.setText(s2) ;
-	}
-	//----------------------------------------------------------------------------------------------
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IEditorPart#init(org.eclipse.ui.IEditorSite, org.eclipse.ui.IEditorInput)
-	 */
-	public void init(IEditorSite site, IEditorInput input) {
-		super.init(site, input);
-		PluginLogger.log(this, "init(..,..) : site id = '" + site.getId() + "'" );
-		PluginLogger.log(this, "init(..,..) : input name = '" + input.getName() + "'" );
 	}
 
 }

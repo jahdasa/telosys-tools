@@ -174,7 +174,9 @@ import org.telosys.tools.repository.model.RepositoryModel;
 	 * @param formBody
 	 */
 	private void createFormCellRow1Col1(Composite formBody) {
-		Label labelTitle = Util.setPageTitle(formBody, "Bulk generation" ) ;
+		//Label labelTitle = Util.setPageTitle(formBody, "Bulk generation" ) ;
+		Label labelTitle = Util.setPageTitle(formBody, this.getTitle() ) ; // Title defined in the constructor
+		
 		GridData titleGridData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		titleGridData.verticalIndent = 0 ;
 //		titleGridData.verticalAlignment = GridData.VERTICAL_ALIGN_BEGINNING ;

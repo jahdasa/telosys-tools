@@ -37,8 +37,11 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
  */
 public class RepositoryEditor extends FormEditor 
 {
+	//--- Pages titles ( shown at the bottom of each page tab )
 	private final static String PAGE_1_TITLE = " Entities mapping and generation " ;
 	private final static String PAGE_2_TITLE = " Bulk generation " ;
+	private final static String PAGE_3_TITLE = " Links between entities " ;
+	private final static String PAGE_4_TITLE = " Information and configuration " ;
 	
 	protected final static int LAYOUT_MARGIN_WIDTH = 10 ;
 	
@@ -66,6 +69,7 @@ public class RepositoryEditor extends FormEditor
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorPart#init(org.eclipse.ui.IEditorSite, org.eclipse.ui.IEditorInput)
 	 */
+    @Override
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException 
 	{
 		super.init(site, input);
@@ -150,13 +154,10 @@ public class RepositoryEditor extends FormEditor
 //			targetsList = projectConfig.getTemplates(null); // NB : the list can be null 
 //		}
 
-		//_page1 = new RepositoryEditorPage1(this, "RepositoryEditorPage1", PAGE_1_TITLE, targetsList);
 		_page1 = new RepositoryEditorPage1(this, "RepositoryEditorPage1", PAGE_1_TITLE );
-		//_page2 = new RepositoryEditorPage2(this, "RepositoryEditorPage2", PAGE_2_TITLE, targetsList);
 		_page2 = new RepositoryEditorPage2(this, "RepositoryEditorPage2", PAGE_2_TITLE );
-		
-		IFormPage page3 = new RepositoryEditorPage3(this, "RepositoryEditorPage3", " Links between entities ");
-		IFormPage page4 = new RepositoryEditorPage4(this, "RepositoryEditorPage4", " Project configuration ");
+		IFormPage page3 = new RepositoryEditorPage3(this, "RepositoryEditorPage3", PAGE_3_TITLE);
+		IFormPage page4 = new RepositoryEditorPage4(this, "RepositoryEditorPage4", PAGE_4_TITLE);
 		try {
 			addPage(_page1);
 			addPage(_page2);

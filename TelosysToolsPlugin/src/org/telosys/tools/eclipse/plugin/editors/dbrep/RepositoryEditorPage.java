@@ -25,6 +25,12 @@ public abstract class RepositoryEditorPage extends FormPage
 	private Color              _backgroundColor = null ;
 	
 	//----------------------------------------------------------------------------------------------
+	/**
+	 * Constructor 
+	 * @param editor
+	 * @param id
+	 * @param title
+	 */
 	public RepositoryEditorPage(FormEditor editor, String id, String title) 
 	{
 		super(editor, id, title);		
@@ -40,7 +46,7 @@ public abstract class RepositoryEditorPage extends FormPage
 		{
 			_logger = new ConsoleLogger();
 		}
-		log(this, "constructor(.., '"+id+"', '"+ title +"')..." );
+		log(this, "ancestor constructor(.., '"+id+"', '"+ title +"')..." );
 		
 //		//--- Init the default background color // ERROR / Eclipse !!!
 //		Display display = new Display();// ERROR / Eclipse !!!

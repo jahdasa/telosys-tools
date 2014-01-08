@@ -173,6 +173,7 @@ import org.telosys.tools.repository.model.RepositoryModel;
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.FormPage#createFormContent(org.eclipse.ui.forms.IManagedForm)
 	 */
+	@Override
 	protected void createFormContent(IManagedForm managedForm) 
 	{
 		super.createFormContent(managedForm);
@@ -267,7 +268,8 @@ import org.telosys.tools.repository.model.RepositoryModel;
 		//---------------------------------------------------------------
 		// Line 0 - Column 1 : The page title
 		//---------------------------------------------------------------
-		Util.setPageTitle(scrolledFormBody, "Entities mapping and generation" ) ;
+		//Util.setPageTitle(scrolledFormBody, "Entities mapping and generation" ) ;
+		Util.setPageTitle(scrolledFormBody, this.getTitle() ) ; // Title defined in the constructor
 		
 		//---------------------------------------------------------------
 		// Line 1 - Column 1 in the "body layout"
