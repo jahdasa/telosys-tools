@@ -123,7 +123,7 @@ import org.telosys.tools.repository.model.RepositoryModel;
 		addConfigRow(body, "Database used to generate the model", "" );
 		addConfigRow(body, ". database ID :", ""+repositoryModel.getDatabaseId() );
 		addConfigRow(body, ". database name :", ""+repositoryModel.getDatabaseName() );
-		addConfigRow(body, ". database type :", ""+repositoryModel.getDatabaseType() );
+		addConfigRow(body, ". database product name :", ""+repositoryModel.getDatabaseProductName() );
 
 		//addConfigRow(body, "Generator version", GeneratorConst.GENERATOR_VERSION );
 		

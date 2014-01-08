@@ -230,20 +230,20 @@ public class RepositoryEditor extends FormEditor
 		return _fileName ;
 	}
 	
-	public String getDatabaseTitle()
-	{
-		if ( _repositoryModel != null )
-		{
-			String sName = _repositoryModel.getDatabaseName();
-			String sType = _repositoryModel.getDatabaseType();
-			return "Database \"" + sName + "\"  ( " + sType+ " ) " ; 
-		}
-		else
-		{
-			MsgBox.error("getTitle() : _databaseRepository is null ");
-			return "???";
-		}
-	}
+//	public String getDatabaseTitle()
+//	{
+//		if ( _repositoryModel != null )
+//		{
+//			String sName = _repositoryModel.getDatabaseName();
+//			String sType = _repositoryModel.getDatabaseType();
+//			return "Database \"" + sName + "\"  ( " + sType+ " ) " ; 
+//		}
+//		else
+//		{
+//			MsgBox.error("getTitle() : _databaseRepository is null ");
+//			return "???";
+//		}
+//	}
 	public IFile getFile ()
 	{
 		return _file ;
