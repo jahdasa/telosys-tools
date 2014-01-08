@@ -30,6 +30,13 @@ public class DatabasesConfigurations {
 	
 	private Map<Integer, DatabaseConfiguration> databasesMap = new HashMap<Integer, DatabaseConfiguration>();
 
+	/**
+	 * Constructor
+	 */
+	public DatabasesConfigurations() {
+		super();
+		databaseDefaultId = 0 ;
+	}
 	
 	public int getDatabaseMaxId() {
 		return databaseMaxId;
