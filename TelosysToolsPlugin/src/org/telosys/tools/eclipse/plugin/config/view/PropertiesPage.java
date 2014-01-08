@@ -43,7 +43,6 @@ import org.telosys.tools.eclipse.plugin.commons.Util;
 import org.telosys.tools.eclipse.plugin.config.ProjectConfig;
 import org.telosys.tools.eclipse.plugin.config.ProjectConfigManager;
 import org.telosys.tools.generator.GeneratorVersion;
-import org.telosys.tools.generator.config.GeneratorConfigConst;
 import org.telosys.tools.generator.context.names.ContextNames;
 
 /**
@@ -1296,10 +1295,10 @@ public class PropertiesPage extends PropertyPage {
 		log("fieldsToProperties ...");
 		
 		//--- Tab "General"
-		props.put(GeneratorConfigConst.REPOS_FOLDER,      _tRepositoriesFolder.getText() );
-		props.put(GeneratorConfigConst.TEMPLATES_FOLDER,  _tTemplatesFolder.getText() );
-		props.put(GeneratorConfigConst.DOWNLOADS_FOLDER,  _tDownloadsFolder.getText() );
-		props.put(GeneratorConfigConst.LIBRARIES_FOLDER,  _tLibrariesFolder.getText() );
+		props.put(TelosysToolsCfg.REPOS_FOLDER,      _tRepositoriesFolder.getText() );
+		props.put(TelosysToolsCfg.TEMPLATES_FOLDER,  _tTemplatesFolder.getText() );
+		props.put(TelosysToolsCfg.DOWNLOADS_FOLDER,  _tDownloadsFolder.getText() );
+		props.put(TelosysToolsCfg.LIBRARIES_FOLDER,  _tLibrariesFolder.getText() );
 				
 		//--- Tab "Packages"
 		//props.put(GeneratorConfigConst.ENTITIES_PACKAGE,  _tEntityPackage.getText());

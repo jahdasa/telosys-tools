@@ -4,12 +4,8 @@ import org.eclipse.core.resources.IProject;
 import org.telosys.tools.commons.TelosysToolsLogger;
 import org.telosys.tools.eclipse.plugin.commons.MsgBox;
 import org.telosys.tools.eclipse.plugin.commons.PluginLogger;
-import org.telosys.tools.eclipse.plugin.config.ProjectConfigManager;
 import org.telosys.tools.generator.Generator;
 import org.telosys.tools.generator.GeneratorException;
-import org.telosys.tools.generator.config.GeneratorConfigManager;
-import org.telosys.tools.generator.config.IGeneratorConfig;
-import org.telosys.tools.generator.context.Target;
 
 
 /**

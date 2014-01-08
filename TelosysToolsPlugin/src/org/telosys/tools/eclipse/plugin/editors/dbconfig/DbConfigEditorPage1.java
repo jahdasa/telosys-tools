@@ -1927,7 +1927,7 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 		
 		IFile repositoryFile = project.getFile(sRepositoryFile);
 
-		ProjectConfig projectConfig = ProjectConfigManager.getProjectConfig(project);
+		//ProjectConfig projectConfig = ProjectConfigManager.getProjectConfig(project);
         
 		String sMsg = "This operation will replace the current version of the repository if it exists." 
 				+ "\n\n" + "Repository file : \n" + sRepositoryFile 
@@ -1941,7 +1941,8 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     		if ( con != null )
     		{
 				try {
-					repositoryCreated = generateRepository(con, db, projectConfig, repositoryFile, logger ) ;
+					//repositoryCreated = generateRepository(con, db, projectConfig, repositoryFile, logger ) ;
+					repositoryCreated = generateRepository(con, db, repositoryFile, logger ) ; // ver 2.1.0
 				} 
 				catch (Exception e)  // Catch ALL exceptions 
 				{
@@ -1974,12 +1975,10 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     	return new UserInterfaceInformationProviderHTML5();
 	}
     
-    private boolean generateRepository(Connection con, DatabaseConfiguration db, ProjectConfig projectConfig, 
+    private boolean generateRepository(Connection con, DatabaseConfiguration db, // ProjectConfig projectConfig, 
     		IFile repositoryFile,
     		TelosysToolsLogger logger ) 
     {
-		//InitializerChecker initchk = new DefaultInitializerChecker();
-		//ClassNameProvider classNameProvider = new ProjectClassNameProvider(projectConfig);
     	EntityInformationProvider entityInformationProvider = getEntityInformationProvider();
     	UserInterfaceInformationProvider uiInformationProvider = getUserInterfaceInformationProvider();
     	
@@ -1987,11 +1986,11 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 
 		//--- 1) Generate the repository in memory
 		try {
-			//RepositoryGenerator generator = new RepositoryGenerator(initchk, classNameProvider, logger) ;			
 			RepositoryGenerator generator = new RepositoryGenerator(entityInformationProvider, uiInformationProvider, logger) ;			
-			repo = generator.generate(con, 
-					db.getDatabaseName(), db.getMetadataCatalog(), db.getMetadataSchema(), 
-					db.getMetadataTableNamePattern(), db.getMetadataTableTypesArray() );
+//			repo = generator.generate(con, 
+//					db.getDatabaseName(), db.getMetadataCatalog(), db.getMetadataSchema(), 
+//					db.getMetadataTableNamePattern(), db.getMetadataTableTypesArray() );
+			repo = generator.generate(con, db); // ver 2.1.0 (for Database Id in model )
 		} catch (TelosysToolsException e) {
 			MsgBox.error("Cannot generate.", e);
 			return false ;

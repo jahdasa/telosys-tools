@@ -19,7 +19,7 @@ import org.telosys.tools.eclipse.plugin.config.ProjectConfig;
 import org.telosys.tools.generator.Generator;
 import org.telosys.tools.generator.GeneratorException;
 import org.telosys.tools.generator.RepositoryModelUtil;
-import org.telosys.tools.generator.config.IGeneratorConfig;
+import org.telosys.tools.generator.config.GeneratorConfig;
 import org.telosys.tools.generator.context.JavaBeanClass;
 import org.telosys.tools.generator.context.Target;
 import org.telosys.tools.generator.target.TargetDefinition;
@@ -43,7 +43,7 @@ public class GenerationTaskWithProgress implements IRunnableWithProgress
 	private final LinkedList<TargetDefinition>  _selectedTargets ;
 	private final List<TargetDefinition>        _resourcesTargets ;
 	private final RepositoryModel      _repositoryModel ;
-	private final IGeneratorConfig     _generatorConfig ;
+	private final GeneratorConfig      _generatorConfig ;
 	private final IProject             _project ;
 	private final String               _bundleName ;
 	private final ProjectConfig        _projectConfig ;
@@ -73,7 +73,7 @@ public class GenerationTaskWithProgress implements IRunnableWithProgress
 			LinkedList<TargetDefinition> selectedTargets,
 			List<TargetDefinition>       resourcesTargets,
 //			RepositoryModel              repositoryModel, 
-			IGeneratorConfig             generatorConfig, 
+			GeneratorConfig             generatorConfig, 
 //			IProject                     project,
 			TelosysToolsLogger           logger
 			) throws TelosysPluginException
@@ -148,7 +148,8 @@ public class GenerationTaskWithProgress implements IRunnableWithProgress
 		//Variable[] projectVariables = _generatorConfig.getProjectConfiguration().getVariables();
 		// From _projectConfig.getProjectVariables : invalid variables $WEB, $SRC ... not in the list !!!
 		// Variable[] projectVariables = _projectConfig.getProjectVariables();
-		Variable[] projectVariables = _generatorConfig.getProjectConfiguration().getAllVariables();
+		//Variable[] projectVariables = _generatorConfig.getProjectConfiguration().getAllVariables();
+		Variable[] projectVariables = _generatorConfig.getTelosysToolsCfg().getAllVariables();
 		
 		//--- 1) Copy the given resources (or do nothing if null)
 		int numberOfResourcesCopied = copyResourcesIfAny(_resourcesTargets);
@@ -272,8 +273,10 @@ public class GenerationTaskWithProgress implements IRunnableWithProgress
 		//--- Build the selected entities list (to be stored in the Velocity context)
 		List<JavaBeanClass> selectedEntities;
 		try {
+//			selectedEntities = RepositoryModelUtil.buildJavaBeanClasses(_selectedEntities, 
+//														_repositoryModel, _generatorConfig.getProjectConfiguration() );
 			selectedEntities = RepositoryModelUtil.buildJavaBeanClasses(_selectedEntities, 
-														_repositoryModel, _generatorConfig.getProjectConfiguration() );
+					_repositoryModel, _generatorConfig );
 		} catch (GeneratorException e1) {
 			MsgBox.error("Cannot build selected entities ", e1);
 			return 0 ;

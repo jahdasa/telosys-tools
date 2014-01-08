@@ -18,8 +18,8 @@ import org.telosys.tools.eclipse.plugin.commons.Util;
 import org.telosys.tools.eclipse.plugin.config.ProjectConfig;
 import org.telosys.tools.generator.GeneratorContextException;
 import org.telosys.tools.generator.GeneratorException;
+import org.telosys.tools.generator.config.GeneratorConfig;
 import org.telosys.tools.generator.config.GeneratorConfigManager;
-import org.telosys.tools.generator.config.IGeneratorConfig;
 import org.telosys.tools.generator.directive.DirectiveException;
 import org.telosys.tools.generator.target.TargetDefinition;
 
@@ -27,7 +27,7 @@ public class GenerationTask {
 
 	private final RepositoryEditor    editor ;
 //	private final RepositoryModel     repositoryModel ;
-	private final IGeneratorConfig    generatorConfig ;
+	private final GeneratorConfig     generatorConfig ;
 	private final IProject            project;
 	private final TelosysToolsLogger  telosysToolsLogger;
 	
