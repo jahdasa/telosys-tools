@@ -24,7 +24,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
@@ -47,7 +46,7 @@ import org.telosys.tools.generator.context.JavaBeanClass;
 import org.telosys.tools.generator.context.JavaClass;
 import org.telosys.tools.generator.context.Jpa;
 import org.telosys.tools.generator.context.Loader;
-import org.telosys.tools.generator.context.Model;
+import org.telosys.tools.generator.context.ModelInContext;
 import org.telosys.tools.generator.context.ProjectInContext;
 import org.telosys.tools.generator.context.Target;
 import org.telosys.tools.generator.context.Today;
@@ -84,7 +83,7 @@ public class Generator {
 	public final static boolean DO_NOT_CREATE_DIR = false ;
 	
 	//private final RepositoryModel     _repositoryModel ; // v 2.0.7
-	private final List<JavaBeanClass> _allEntities ; // v 2.0.7
+	//private final List<JavaBeanClass> _allEntities ; // v 2.0.7
 	
 	private final VelocityEngine     _velocityEngine ;
 
@@ -100,7 +99,8 @@ public class Generator {
 	 * Constructor
 	 * @param target the target to be generated
 	 * @param generatorConfig the generator configuration
-	 * @param logger 
+	 * @param repositoryModel the current repository model
+	 * @param logger
 	 * @throws GeneratorException
 	 */
 	public Generator( Target target, GeneratorConfig generatorConfig, 
@@ -124,15 +124,15 @@ public class Generator {
 		
 		_generatorConfig = generatorConfig ;
 		
-		//_repositoryModel = repositoryModel ;
-		// Build the list of all the entities defined in the repository  
-		if ( repositoryModel != null ) {
-			//_allEntities = RepositoryModelUtil.buildAllJavaBeanClasses(repositoryModel,	_generatorConfig.getProjectConfiguration() );
-			_allEntities = RepositoryModelUtil.buildAllJavaBeanClasses(repositoryModel,	_generatorConfig ); // v 2.1.0
-		}
-		else {
-			_allEntities = new LinkedList<JavaBeanClass>();
-		}
+//		//_repositoryModel = repositoryModel ;
+//		// Build the list of all the entities defined in the repository  
+//		if ( repositoryModel != null ) {
+//			//_allEntities = RepositoryModelUtil.buildAllJavaBeanClasses(repositoryModel,	_generatorConfig.getProjectConfiguration() );
+//			_allEntities = RepositoryModelUtil.buildAllJavaBeanClasses(repositoryModel,	_generatorConfig ); // v 2.1.0
+//		}
+//		else {
+//			_allEntities = new LinkedList<JavaBeanClass>();
+//		}
 		
 		//------------------------------------------------------------------
 		// Workaround for Velocity error in OSGi environment
@@ -157,7 +157,7 @@ public class Generator {
 			log("Generator constructor : VelocityContext events attached.");
 	
 			log("Generator constructor : VelocityContext initialization ...");
-			initContext(generatorConfig, logger); 
+			initContext(generatorConfig, repositoryModel, logger); 
 			log("Generator constructor : VelocityContext initialized.");
 			
 			//------------------------------------------------------------------
@@ -267,7 +267,8 @@ public class Generator {
 	//========================================================================
 	// CONTEXT MANAGEMENT
 	//========================================================================
-	private void initContext( GeneratorConfig generatorConfig, TelosysToolsLogger logger)
+	private void initContext( GeneratorConfig generatorConfig, RepositoryModel repositoryModel, TelosysToolsLogger logger)
+		throws GeneratorException
 	{
 		log("initContext()..." );
 
@@ -290,7 +291,8 @@ public class Generator {
 		_velocityContext.put(ContextName.JPA,             new Jpa());   // JPA utility functions
 		_velocityContext.put(ContextName.BEAN_VALIDATION, new BeanValidation()); // Bean Validation utility functions
 		
-		_velocityContext.put(ContextName.MODEL,         new Model(_allEntities) );  // The "model" object (v 2.0.7)
+		//_velocityContext.put(ContextName.MODEL,         new Model(_allEntities) );  // The "model" object (v 2.0.7)
+		_velocityContext.put(ContextName.MODEL,  new ModelInContext(repositoryModel, generatorConfig) );  // The "model" object (v 2.0.7)
 		
 		_velocityContext.put(ContextName.CLASS, null);
 		

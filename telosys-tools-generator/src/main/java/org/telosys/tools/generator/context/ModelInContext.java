@@ -19,9 +19,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.telosys.tools.generator.GeneratorException;
+import org.telosys.tools.generator.RepositoryModelUtil;
+import org.telosys.tools.generator.config.GeneratorConfig;
 import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityObject;
 import org.telosys.tools.generator.context.names.ContextName;
+import org.telosys.tools.repository.model.RepositoryModel;
 
 /**
  * This class give access to the entire repository model
@@ -36,11 +40,13 @@ import org.telosys.tools.generator.context.names.ContextName;
 		since = ""
  )
 //-------------------------------------------------------------------------------------
-public class Model
+public class ModelInContext
 {
 	private final List<JavaBeanClass>       _allEntities ;
 	private final Map<String,JavaBeanClass> _entitiesByTableName ;
 	private final Map<String,JavaBeanClass> _entitiesByClassName ;
+	private final int      _databaseId ;
+	private final String   _databaseProductName ;
 	
 	//-------------------------------------------------------------------------------------
 	/**
@@ -48,25 +54,30 @@ public class Model
 	 * 
 	 * @param allJavaBeanClasses all the entities to be exposed in the model object
 	 */
-	public Model( List<JavaBeanClass> allJavaBeanClasses ) {
+	public ModelInContext( RepositoryModel repositoryModel, GeneratorConfig generatorConfig ) throws GeneratorException  {
 		super();
+		if ( repositoryModel == null ) throw new GeneratorException("RepositoryModel is null");
+		if ( generatorConfig == null ) throw new GeneratorException("GeneratorConfig is null");
+		
 		//--- All the entities
-		_allEntities = allJavaBeanClasses ;
+		_allEntities = RepositoryModelUtil.buildAllJavaBeanClasses(repositoryModel, generatorConfig );
 		
 		//--- Entities by TABLE NAME
 		_entitiesByTableName = new HashMap<String,JavaBeanClass>();
-		for ( JavaBeanClass entity : allJavaBeanClasses ) {
+		for ( JavaBeanClass entity : _allEntities ) {
 			// The table name is unique 
 			_entitiesByTableName.put(entity.getDatabaseTable(), entity);
 		}
 		
 		//--- Entities by CLASS NAME
 		_entitiesByClassName = new HashMap<String,JavaBeanClass>();
-		for ( JavaBeanClass entity : allJavaBeanClasses ) {
+		for ( JavaBeanClass entity : _allEntities ) {
 			// The class name is supposed to be unique 
 			_entitiesByClassName.put(entity.getName(), entity);
 		}
 		
+		_databaseId          = repositoryModel.getDatabaseId();
+		_databaseProductName = repositoryModel.getDatabaseProductName();
 	}
 
 	//-------------------------------------------------------------------------------------
@@ -149,6 +160,32 @@ public class Model
     public boolean hasEntityWithClassName( String name )
     {
 		return ( _entitiesByClassName.get(name) != null ) ;
+    }
+
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the ID of the database used to generate the model",
+			"A valid ID is >= 0 ",
+			"-1 means undefined"
+			}
+	)
+    public int getDatabaseId()
+    {
+		return _databaseId ;
+    }
+
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the product name of the database used to generate the model",
+			"This is the product name return by the JDBC meta-data",
+			"(e.g. 'Apache Derby') "
+			}
+	)
+    public String getDatabaseProductName()
+    {
+		return _databaseProductName ;
     }
 
 }
