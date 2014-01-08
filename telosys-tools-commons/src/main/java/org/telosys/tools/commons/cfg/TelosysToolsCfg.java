@@ -266,8 +266,8 @@ public class TelosysToolsCfg
     // Packages 
     //=======================================================================================================
 	/**
-	 * Returns the package for entity classes 
-	 * ie "org.demo.bean"
+	 * Returns the package for entity classes <br>
+	 * ( e.g. "org.demo.bean" )
 	 * @return 
 	 */
 	public String getEntityPackage() 
@@ -277,8 +277,8 @@ public class TelosysToolsCfg
 	
 	//------------------------------------------------------------------------------------------------------
 	/**
-	 * Returns the root package  
-	 * ie "org.demo"
+	 * Returns the root package <br> 
+	 * ( e.g. "org.demo" )
 	 * @return 
 	 */
 	public String getRootPackage() 
@@ -290,8 +290,8 @@ public class TelosysToolsCfg
     // Variables 
     //=======================================================================================================
 	/**
-	 * Returns the specific variables defined for the project  
-	 * @return array of variables, or null if none
+	 * Returns the specific variables defined for the current project  
+	 * @return array of variables (never null, void array if none)
 	 */
 	public Variable[] getSpecificVariables()
 	{
@@ -300,9 +300,9 @@ public class TelosysToolsCfg
 
 	//------------------------------------------------------------------------------------------------------
 	/**
-	 * Returns all the variables defined for the project <br>
+	 * Returns all the variables defined for the current project <br>
 	 * (standard variables + specific variables )
-	 * @return
+	 * @return array of variables (never null, void array if none)
 	 */
 	public Variable[] getAllVariables()
 	{
