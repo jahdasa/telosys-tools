@@ -60,7 +60,7 @@ public class ContextName {
 	public final static String  BEAN_VALIDATION  = "beanValidation" ; // ver 2.0.7
 	//---  
 	public final static String  ENTITY            = "entity" ;    // New name 
-	public final static String  BEAN_CLASS        = "beanClass" ; // Other name for "entity"
+	//public final static String  BEAN_CLASS        = "beanClass" ; // Other name for "entity" removed in ver 2.1.0
 	public final static String  SELECTED_ENTITIES = "selectedEntities" ;
 	public final static String  TARGET            = "target" ;
 	public final static String  MODEL             = "model" ; // ver 2.0.7

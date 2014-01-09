@@ -42,7 +42,7 @@ public class ContextInfoTest  extends TestCase {
 		print("Object names", names);
 		
 		//assertTrue ( names.length == 11 );
-		assertTrue ( names.length == 16 ); // v 2.1.0
+		assertTrue ( names.length == 15 ); // v 2.1.0
 	}
 
 	public void testObjectAndVariableNames() {
@@ -83,8 +83,8 @@ public class ContextInfoTest  extends TestCase {
 		
 		classInfo = getClassInfo("entity");
 		assertNotNull( classInfo );
-		classInfo = getClassInfo("beanClass"); // other name for 'entity'
-		assertNotNull( classInfo );
+//		classInfo = getClassInfo("beanClass"); // other name for 'entity'
+//		assertNotNull( classInfo );
 		
 		classInfo = getClassInfo("foo");
 		assertNull( classInfo );
@@ -143,10 +143,10 @@ public class ContextInfoTest  extends TestCase {
 		System.out.println(doc);
 		assertNotNull(doc);
 
-		System.out.println("$beanClass : ");
-		doc = contextInfo.getClassDocumentation("beanClass");
-		System.out.println(doc);
-		assertNotNull(doc);
+//		System.out.println("$beanClass : ");
+//		doc = contextInfo.getClassDocumentation("beanClass");
+//		System.out.println(doc);
+//		assertNotNull(doc);
 	}
 	
 	public void testGetMethodDocumentation() {

@@ -80,7 +80,7 @@ public class ContextNames {
 
 		//--- Current Entity/Target objects
 		GENERATOR_OBJECTS_LIST.add( ContextName.TARGET      );
-		GENERATOR_OBJECTS_LIST.add( ContextName.BEAN_CLASS  ); // old name
+		//GENERATOR_OBJECTS_LIST.add( ContextName.BEAN_CLASS  ); // old name
 		GENERATOR_OBJECTS_LIST.add( ContextName.ENTITY      ); // new name
 		GENERATOR_OBJECTS_LIST.add( ContextName.SELECTED_ENTITIES  );
 

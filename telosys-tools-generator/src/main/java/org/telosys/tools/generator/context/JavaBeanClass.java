@@ -46,7 +46,7 @@ import org.telosys.tools.repository.model.RepositoryModel;
 //-------------------------------------------------------------------------------------
 @VelocityObject(
 		contextName= ContextName.ENTITY ,
-		otherContextNames=ContextName.BEAN_CLASS,
+		//otherContextNames=ContextName.BEAN_CLASS,
 		text = { 
 				"Entity class for the current generation ",
 				"",

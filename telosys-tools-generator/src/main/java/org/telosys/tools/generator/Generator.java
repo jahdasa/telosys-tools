@@ -483,7 +483,7 @@ public class Generator {
 		_velocityContext.put(ContextName.TARGET, target);
 		//--- Set the "$beanClass"  in the context ( the Java Bean Class for this target )
 		_velocityContext.put(ContextName.ENTITY, javaBeanClass ); // NEW NAME since 2.0.5
-		_velocityContext.put(ContextName.BEAN_CLASS, javaBeanClass ); // OLD NAME still in 2.0.5 for backward compatibility
+		//_velocityContext.put(ContextName.BEAN_CLASS, javaBeanClass ); // OLD NAME remove in ver 2.1.0
 		//--- Set the "$generator"  in the context ( "real" embedded generator )
 		EmbeddedGenerator embeddedGenerator = new EmbeddedGenerator(repositoryModel, _generatorConfig, _logger, generatedTargets );
 		_velocityContext.put(ContextName.GENERATOR, embeddedGenerator );
