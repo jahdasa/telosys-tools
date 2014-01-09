@@ -1,7 +1,10 @@
 Before :
- Check plugin version  in "plugin.xml"
- Check feature version and plugin version  in "feature.xml" (and reference to plugin version)
- Check version in "build_dist.xml"
+ In PLUGIN : 
+    Check version in "plugin.xml" and "PluginBuildInfo.java"
+ In FEATURE :
+    Check feature version and plugin version in "feature.xml" (and reference to plugin version)
+ In UPDATE SITE :
+    Check version in "build_dist.xml"
 
 How to generate the "Update Site" :
 
