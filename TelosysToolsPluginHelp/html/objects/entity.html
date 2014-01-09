@@ -40,7 +40,6 @@
 </head>							
 <body>											
 <h1> $entity</h1>	
-<p class="otherNames">								Other name(s) : <b>$beanClass</b></p>
 <p class="desc">								
 Entity class for the current generation <br>
 <br>
@@ -483,54 +482,11 @@ Returns the attributes tagged as 'long text' for this entity<br>
 </TD>
 </TR>
 <TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.toStringMethodCodeLines(int leftMargin) : String</B> </CODE>
+<TD class="doc" ><CODE class="simpledesc"> <B>.toStringMethodCodeLines(int ?) : String</B> </CODE>
 <p class="doc">
-Returns a multiline String containing all the Java instructions for the 'toString' method<br>
-Argument : number of spaces for the left margin <br>
-<br>
 <br>
 <b>Parameters : </b><br>
-&nbsp;&nbsp;&nbsp;<b>leftMargin</b> : number of blanks for the left margin<br>
-<br>
-<b>Example : </b><br>
-<code>
-&nbsp;&nbsp;&nbsp;$entity.toStringMethodCodeLines(4)<br>
-</code>
-</p>
-</TD>
-</TR>
-<TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.toStringMethodCodeLinesWithKey(int leftMargin, List attributes, String keyVarName) : String</B> </CODE>
-<p class="doc">
-Returns a multiline String containing all the Java instructions for the 'toString' method<br>
-The primary key (composite or not) and given list of attributes are used<br>
-<br>
-<b>Parameters : </b><br>
-&nbsp;&nbsp;&nbsp;<b>leftMargin</b> : number of blanks for the left margin<br>
-&nbsp;&nbsp;&nbsp;<b>attributes</b> : specific list of attributes to be used in the 'toString' method (except key attributes)<br>
-&nbsp;&nbsp;&nbsp;<b>keyVarName</b> : variable name for the composite primary key embedded id (if any)<br>
-<br>
-<b>Example : </b><br>
-<code>
-&nbsp;&nbsp;&nbsp;$entity.toStringMethodCodeLinesWithKey(8, $attributes, "compositePrimaryKey" )<br>
-</code>
-</p>
-</TD>
-</TR>
-<TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.toStringMethodCodeLinesWithKey(int leftMargin, String keyVarName) : String</B> </CODE>
-<p class="doc">
-Returns a multiline String containing all the Java instructions for the 'toString' method<br>
-The primary key (composite or not) and all the 'non key' attributes are used<br>
-<br>
-<b>Parameters : </b><br>
-&nbsp;&nbsp;&nbsp;<b>leftMargin</b> : number of blanks for the left margin<br>
-&nbsp;&nbsp;&nbsp;<b>keyVarName</b> : variable name for the composite primary key embedded id (if any)<br>
-<br>
-<b>Example : </b><br>
-<code>
-&nbsp;&nbsp;&nbsp;$entity.toStringMethodCodeLinesWithKey(8, "compositePrimaryKey" )<br>
-</code>
+&nbsp;&nbsp;&nbsp;<b>?</b> : <br>
 </p>
 </TD>
 </TR>

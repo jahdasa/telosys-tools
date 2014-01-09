@@ -169,6 +169,51 @@ Returns the list of Java classes to be imported for the given attributes<br>
 </p>
 </TD>
 </TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.toStringMethod(JavaBeanClass entity, List nonKeyAttributes, String embeddedIdName) : String</B> </CODE>
+<p class="doc">
+Returns a string containing all the code for a Java 'toString' method<br>
+Generates a 'toString' method with the primary key attribute or the embedded key <br>
+and the given list of 'non key' attributes if their type is usable in a 'toString' method<br>
+(excluded types are 'array', 'Clob', 'Blob', and 'Long Text String') <br>
+<br>
+<b>Parameters : </b><br>
+&nbsp;&nbsp;&nbsp;<b>entity</b> : the entity to be used<br>
+&nbsp;&nbsp;&nbsp;<b>nonKeyAttributes</b> : list of attributes that are not in the Primary Key<br>
+&nbsp;&nbsp;&nbsp;<b>embeddedIdName</b> : variable name for the embedded id (used only if the entity has a composite primary key)<br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;$java.toStringMethod( entity, nonKeyAttributes, embeddedIdName, indentSpaces )<br>
+</code>
+<br>
+<b>Since : </b>2.0.7<br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.toStringMethod(JavaBeanClass entity, List nonKeyAttributes, String embeddedIdName, int indentSpaces) : String</B> </CODE>
+<p class="doc">
+Returns a string containing all the code for a Java 'toString' method<br>
+Generates a 'toString' method with the primary key attribute or the embedded key <br>
+and the given list of 'non key' attributes if their type is usable in a 'toString' method<br>
+(excluded types are 'array', 'Clob', 'Blob', and 'Long Text String') <br>
+<br>
+<b>Parameters : </b><br>
+&nbsp;&nbsp;&nbsp;<b>entity</b> : the entity to be used<br>
+&nbsp;&nbsp;&nbsp;<b>nonKeyAttributes</b> : list of attributes that are not in the Primary Key<br>
+&nbsp;&nbsp;&nbsp;<b>embeddedIdName</b> : variable name for the embedded id (used only if the entity has a composite primary key)<br>
+&nbsp;&nbsp;&nbsp;<b>indentSpaces</b> : number of spaces to be used for each indentation level<br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;$java.toStringMethod( entity, nonKeyAttributes, embeddedIdName, indentSpaces )<br>
+</code>
+<br>
+<b>Since : </b>2.0.7<br>
+</p>
+</TD>
+</TR>
 </table>
 </body>
 </html>

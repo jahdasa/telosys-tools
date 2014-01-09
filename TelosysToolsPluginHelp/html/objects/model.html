@@ -56,6 +56,24 @@ Returns a list containing all the entities defined in the model<br>
 </TD>
 </TR>
 <TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.databaseId : int</B> </CODE>
+<p class="doc">
+Returns the ID of the database used to generate the model<br>
+A valid ID is >= 0 <br>
+-1 means undefined<br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.databaseProductName : String</B> </CODE>
+<p class="doc">
+Returns the product name of the database used to generate the model<br>
+This is the product name return by the JDBC meta-data<br>
+(e.g. 'Apache Derby') <br>
+</p>
+</TD>
+</TR>
+<TR>
 <TD class="doc" ><CODE class="simpledesc"> <B>.getEntityByClassName(String name) : JavaBeanClass</B> </CODE>
 <p class="doc">
 Returns the entity identified by the given class name<br>

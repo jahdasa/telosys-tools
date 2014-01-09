@@ -2,7 +2,7 @@
 <html>								
 <head>								
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">	
-	<title> $project</title>	
+	<title> $generation</title>	
 	<style type="text/css">		
 	h1 {							
 		font-size:28px;				
@@ -39,61 +39,39 @@
 	</style>						
 </head>							
 <body>											
-<h1> $project</h1>	
+<h1> $generation</h1>	
 <p class="desc">								
-Current project configuration parameters ( variables, folders, ... )<br>
+Information about the generation in progress<br>
 <br>
+Since : 2.1.0<br>
 </p>		
 <table width="100%" border="1" cellspacing="0">		
 <TR class="title">										
   <TD>Attributes and methods</TD>			
 </TR>		
 <TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.allVariables : Variable[]</B> </CODE>
+<TD class="doc" ><CODE class="simpledesc"> <B>.bundleName : String</B> </CODE>
 <p class="doc">
-Returns all the variables available for the current project<br>
-( the specific variables defined for the project and the standard variables )<br>
-<br>
-<b>Example : </b><br>
-<code>
-&nbsp;&nbsp;&nbsp;#foreach( $var in $project.allVariables )<br>
-&nbsp;&nbsp;&nbsp;  $var.name = $var.value<br>
-&nbsp;&nbsp;&nbsp;#end<br>
-</code>
-<br>
-<b>Since : </b>2.0.7<br>
-</p>
-</TD>
-</TR>
-<TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.locationFullPath : String</B> </CODE>
-<p class="doc">
-Returns the full path of the current project's location<br>
+Returns the current bundle name<br>
 (just for information, not supposed to be used in generation)<br>
 <br>
 <b>Example : </b><br>
 <code>
-&nbsp;&nbsp;&nbsp;$project.locationFullPath<br>
+&nbsp;&nbsp;&nbsp;$generation.bundleName<br>
 </code>
-<br>
-<b>Since : </b>2.0.7<br>
 </p>
 </TD>
 </TR>
 <TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.specificVariables : Variable[]</B> </CODE>
+<TD class="doc" ><CODE class="simpledesc"> <B>.templatesFolderFullPath : String</B> </CODE>
 <p class="doc">
-Returns the specific variables defined for the current project<br>
-( the specific variables defined for the project and the standard variables )<br>
+Returns the full path of current templates folder with the bundle name<br>
+(just for information, not supposed to be used in generation)<br>
 <br>
 <b>Example : </b><br>
 <code>
-&nbsp;&nbsp;&nbsp;#foreach( $var in $project.specificVariables )<br>
-&nbsp;&nbsp;&nbsp;  $var.name = $var.value<br>
-&nbsp;&nbsp;&nbsp;#end<br>
+&nbsp;&nbsp;&nbsp;$generation.templatesFolderFullPath<br>
 </code>
-<br>
-<b>Since : </b>2.0.7<br>
 </p>
 </TD>
 </TR>

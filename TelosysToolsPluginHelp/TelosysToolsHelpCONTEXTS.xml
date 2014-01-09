@@ -6,18 +6,18 @@
    		
    		<!-- Context topics ( subpart of the topics defined in the full TOC Help ) --> 
    		<!-- sub-topics are not allowed in context -->
-		<topic label="#assertFalse" href="html/velocity/assertfalse.html"/>
-		<topic label="#assertTrue"  href="html/velocity/asserttrue.html"/>
-		<topic label="#error"       href="html/velocity/error.html"/>
+		<topic label="#assertFalse"     href="html/velocity/assertfalse.html"/>
+		<topic label="#assertTrue"      href="html/velocity/asserttrue.html"/>
+		<topic label="#error"           href="html/velocity/error.html"/>
 		
-		<topic label="#foreach" href="html/velocity/foreach.html"/> 
-		<topic label="#if"      href="html/velocity/if.html"/> 
-		<topic label="#include" href="html/velocity/include.html"/> 
-		<topic label="#macro"   href="html/velocity/macro.html"/> 
-		<topic label="#parse"   href="html/velocity/parse.html"/> 
-		<topic label="#set"     href="html/velocity/set.html"/> 
+		<topic label="#foreach"         href="html/velocity/foreach.html"/> 
+		<topic label="#if"              href="html/velocity/if.html"/> 
+		<topic label="#include"         href="html/velocity/include.html"/> 
+		<topic label="#macro"           href="html/velocity/macro.html"/> 
+		<topic label="#parse"           href="html/velocity/parse.html"/> 
+		<topic label="#set"             href="html/velocity/set.html"/> 
 
-		<topic label="#using"       href="html/velocity/using.html"/>
+		<topic label="#using"           href="html/velocity/using.html"/>
 		
 		<topic label="comments"         href="html/velocity/comments.html"/> 
 		<topic label="unparsed content" href="html/velocity/unparsed.html"/> 
@@ -26,10 +26,13 @@
 		<topic label="$attribute"       href="html/objects/attribute.html"/> 
 		<topic label="$beanValidation"  href="html/objects/beanValidation.html"/> 
 		<topic label="$const"           href="html/objects/const.html"/> 
+		<topic label="$database"        href="html/objects/database.html"/> 
+		<topic label="$databases"       href="html/objects/databases.html"/> 
 		<topic label="$entity"          href="html/objects/entity.html"/> 
 		<topic label="$fk"              href="html/objects/fk.html"/> 
 		<topic label="$fkcol"           href="html/objects/fkcol.html"/> 
 		<topic label="$fn"              href="html/objects/fn.html"/> 
+		<topic label="$generation"      href="html/objects/generation.html"/> 
 		<topic label="$generator"       href="html/objects/generator.html"/> 
 		<topic label="$java"            href="html/objects/java.html"/> 
 		<topic label="$jpa"             href="html/objects/jpa.html"/> 
