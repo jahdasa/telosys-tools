@@ -12,6 +12,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.telosys.tools.commons.dbcfg.DatabaseType;
+import org.telosys.tools.commons.dbcfg.DatabaseTypeProvider;
 import org.telosys.tools.commons.dbcfg.DatabasesConfigurations;
 import org.telosys.tools.eclipse.plugin.commons.PluginLogger;
 
@@ -188,8 +190,8 @@ public class DialogBoxNewDatabase extends TitleAreaDialog
 
 		index = comboDatabaseType.getSelectionIndex() ; // 
 		if ( index >= 0 ) {
-			String s = comboDatabaseType.getItem(index) ;
-			this.selectedDatabaseType = DatabaseTypeProvider.getDbType(s);
+			String dbTypeName = comboDatabaseType.getItem(index) ;
+			this.selectedDatabaseType = DatabaseTypeProvider.getDatabaseTypeByName(dbTypeName);
 		}
 		else {
 			this.selectedDatabaseType = null ;
@@ -222,7 +224,7 @@ public class DialogBoxNewDatabase extends TitleAreaDialog
 	{
 		PluginLogger.log(this, "populateDatabaseTypeCombo" );
 		for ( DatabaseType t : DatabaseTypeProvider.getDbTypesList() ) {
-			comboDatabaseType.add( t.getTypeName() );
+			comboDatabaseType.add( t.getName() );
 		}
 	}
 	
