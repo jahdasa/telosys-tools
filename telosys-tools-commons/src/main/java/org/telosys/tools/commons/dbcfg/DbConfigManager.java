@@ -120,6 +120,9 @@ public class DbConfigManager {
         databaseConfiguration.setDatabaseName  ( XmlUtil.getNodeAttribute(dbNode, ConstXML.DB_NAME_ATTRIBUTE) );
         databaseConfiguration.setJdbcUrl       ( XmlUtil.getNodeAttribute(dbNode, ConstXML.DB_URL_ATTRIBUTE));
         databaseConfiguration.setDriverClass   ( XmlUtil.getNodeAttribute(dbNode, ConstXML.DB_DRIVER_ATTRIBUTE));
+
+        databaseConfiguration.setTypeName      ( XmlUtil.getNodeAttribute(dbNode, ConstXML.DB_TYPE_NAME) ); // Ver 2.1.0
+        databaseConfiguration.setDialect       ( XmlUtil.getNodeAttribute(dbNode, ConstXML.DB_DIALECT) ); // Ver 2.1.0
         
         databaseConfiguration.setIsolationLevel( XmlUtil.getNodeAttribute(dbNode, ConstXML.DB_ISOLATION_LEVEL_ATTRIBUTE));
         databaseConfiguration.setPoolSize      ( XmlUtil.getNodeAttributeAsInt(dbNode, ConstXML.DB_POOLSIZE_ATTRIBUTE));
@@ -177,6 +180,9 @@ public class DbConfigManager {
 		dbElement.setAttribute(ConstXML.DB_URL_ATTRIBUTE,    databaseConfiguration.getJdbcUrl());
 		dbElement.setAttribute(ConstXML.DB_DRIVER_ATTRIBUTE, databaseConfiguration.getDriverClass() );
         
+		dbElement.setAttribute(ConstXML.DB_TYPE_NAME,  databaseConfiguration.getTypeName() ); // Ver 2.1.0
+		dbElement.setAttribute(ConstXML.DB_DIALECT,    databaseConfiguration.getDialect() ); // Ver 2.1.0
+		
 		dbElement.setAttribute(ConstXML.DB_ISOLATION_LEVEL_ATTRIBUTE, databaseConfiguration.getIsolationLevel() );
 		dbElement.setAttribute(ConstXML.DB_POOLSIZE_ATTRIBUTE,        ""+databaseConfiguration.getPoolSize() );
         

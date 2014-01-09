@@ -18,7 +18,7 @@ package org.telosys.tools.commons.dbcfg;
 /**
  * XML constants for  "dbconfig.xml" or "databases.dbcfg" file
  * 
- * @author S.Leroy, L.Guerin
+ * @author L.Guerin
  *
  */
 class ConstXML {
@@ -34,6 +34,9 @@ class ConstXML {
 	 public final static String DB_NAME_ATTRIBUTE = "name";
 	 public final static String DB_DRIVER_ATTRIBUTE = "driver";
 	 public final static String DB_URL_ATTRIBUTE = "url";
+
+	 public final static String DB_TYPE_NAME  = "typeName"; // ver 2.1.0
+	 public final static String DB_DIALECT    = "dialect";  // ver 2.1.0
 	 
 	 public final static String DB_ISOLATION_LEVEL_ATTRIBUTE = "isolationLevel";
 	 public final static String DB_POOLSIZE_ATTRIBUTE = "poolSize";

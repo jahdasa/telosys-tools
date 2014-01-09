@@ -26,6 +26,8 @@ import java.util.StringTokenizer;
  */
 public class DatabaseConfiguration
 {	
+    private final static String  TO_BE_DEFINED          = "TO_BE_DEFINED" ;
+
     private int        id                       = 0 ;
 
     private String     name                     = "";
@@ -53,12 +55,42 @@ public class DatabaseConfiguration
     private String     metadataTableTypes       = null;
 
     //private String[]   _arrayMetadataTableTypes   = null;
+	private String     typeName = "" ; // ver 2.1.0
+	private String     dialect  = "" ; // ver 2.1.0
 
+	//----------------------------------------------------------------------------------
     /**
-     * 
+     * Constructor <br>
+     * Initialize the database configuration with the given DatabaseType and the default values
      */
-    public DatabaseConfiguration()
-    {
+    public DatabaseConfiguration(int databaseId, DatabaseType databaseType) {
+    	super();
+    	//--- Set the ID
+    	this.id = databaseId ;
+    	//--- Initialize default values from the given type
+    	this.name            = databaseType.getName() ;
+    	this.driverClass     = databaseType.getDriver();
+    	this.jdbcUrl         = databaseType.getUrl();
+    	this.user            = TO_BE_DEFINED ;
+    	this.password        = TO_BE_DEFINED ;
+    	this.dialect         = databaseType.getDialect();
+    	this.typeName        = databaseType.getTypeName();
+    	
+    	this.poolSize        = 1 ;
+    	this.isolationLevel  = "" ;
+    	
+    	this.metadataCatalog          = databaseType.getMetadataCatalog();
+    	this.metadataSchema           = TO_BE_DEFINED ;
+    	this.metadataTableNamePattern = "%" ;
+    	this.metadataTableTypes       = "TABLE" ;
+    }
+
+	//----------------------------------------------------------------------------------
+    /**
+     * Constructor
+     */
+    public DatabaseConfiguration() {
+    	super();
     }
 
 	//----------------------------------------------------------------------------------
@@ -72,6 +104,7 @@ public class DatabaseConfiguration
 		this.id = id;
 	}
 
+    //----------------------------------------------------------------------------------
     public String getDatabaseName()
     {
         return name;
@@ -80,6 +113,7 @@ public class DatabaseConfiguration
 		this.name = databaseName;
 	}
 
+    //----------------------------------------------------------------------------------
     public String getDriverClass()
     {
         return driverClass;
@@ -89,6 +123,7 @@ public class DatabaseConfiguration
 	}
 
 
+    //----------------------------------------------------------------------------------
     public String getJdbcUrl()
     {
         return jdbcUrl;
@@ -97,6 +132,7 @@ public class DatabaseConfiguration
 		this.jdbcUrl = jdbcUrl;
 	}
 
+    //----------------------------------------------------------------------------------
     public String getUser()
     {
     	return user ;
@@ -105,6 +141,7 @@ public class DatabaseConfiguration
 		this.user = user;
 	}
     
+    //----------------------------------------------------------------------------------
     public String getPassword()
     {
     	return password ;
@@ -122,6 +159,7 @@ public class DatabaseConfiguration
 		this.isolationLevel = isolationLevel;
 	}
 
+    //----------------------------------------------------------------------------------
     public int getPoolSize()
     {
         return poolSize;
@@ -129,6 +167,34 @@ public class DatabaseConfiguration
 	public void setPoolSize(int poolSize) {
 		this.poolSize = poolSize;
 	}
+
+	//----------------------------------------------------------------------------------
+	/**
+	 * Returns the database type name or vendor name <br>
+	 * Can be used as JPA type or datasource type<br>
+	 * ( e.g. "DB2", "DERBY", "H2", "MYSQL", "ORACLE", "POSTGRESQL", etc )
+	 * @return
+	 */
+	public String getTypeName() {
+		return typeName;
+	}
+	public void setTypeName(String typeName) {
+		this.typeName = typeName;
+	}
+
+    //----------------------------------------------------------------------------------
+	/**
+	 * Returns the database dialect <br>
+	 * ( e.g. the Hibernate dialect class )
+	 * @return
+	 */
+	public String getDialect() {
+		return dialect;
+	}
+	public void setDialect(String dialect) {
+		this.dialect = dialect;
+	}
+
 
     //----------------------------------------------------------------------------------
     // Metadata configuration ( tag <metadata ... /> )
