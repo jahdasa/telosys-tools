@@ -43,19 +43,17 @@ public class DatabaseInContext
     private final String     name  ;
 
     private final String     jdbcUrl ;
-
     private final String     driverClass ;
-
     private final String     user ;
-
     private final String     password ;
 
-    private final String     isolationLevel ;
+    private final String     type ;    // ver 2.1.0
+    private final String     dialect ; // ver 2.1.0
 
+    private final String     isolationLevel ;
     private final int        poolSize ;
    
     private final String     metadataCatalog ;
-
     private final String     metadataSchema ;
 
 //    private String     metadataTableNamePattern = null;
@@ -73,6 +71,9 @@ public class DatabaseInContext
     	jdbcUrl         = databaseConfiguration.getJdbcUrl();
     	user            = databaseConfiguration.getUser();
     	password        = databaseConfiguration.getPassword();
+
+    	type        = databaseConfiguration.getTypeName();
+    	dialect         = databaseConfiguration.getDialect();
     	
     	isolationLevel  = databaseConfiguration.getIsolationLevel();
     	poolSize        = databaseConfiguration.getPoolSize();
@@ -85,8 +86,7 @@ public class DatabaseInContext
 	@VelocityMethod(
 		text={ "Returns the database id" }
 		)
-    public int getId()
-    {
+    public int getId() {
         return id;
     }
 
@@ -94,8 +94,7 @@ public class DatabaseInContext
 	@VelocityMethod(
 		text={ "Returns the database name" }
 		)
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
@@ -103,8 +102,7 @@ public class DatabaseInContext
 	@VelocityMethod(
 		text={ "Returns the JDBC driver class to be used to establish a JDBC connection " }
 		)
-    public String getDriverClass()
-    {
+    public String getDriverClass() {
         return driverClass;
     }
 
@@ -112,8 +110,7 @@ public class DatabaseInContext
 	@VelocityMethod(
 		text={ "Returns the URL to be used to establish a JDBC connection " }
 		)
-    public String getJdbcUrl()
-    {
+    public String getJdbcUrl() {
         return jdbcUrl;
     }
 
@@ -121,8 +118,7 @@ public class DatabaseInContext
 	@VelocityMethod(
 		text={ "Returns the USER to be used to establish a JDBC connection " }
 		)
-    public String getUser()
-    {
+    public String getUser() {
     	return user ;
     }
     
@@ -130,17 +126,33 @@ public class DatabaseInContext
 	@VelocityMethod(
 		text={ "Returns the PASSWORD to be used to establish a JDBC connection " }
 		)
-    public String getPassword()
-    {
+    public String getPassword() {
     	return password ;
+    }
+
+	//----------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={ "Returns the type name. Usually used to identify the type/vendor of the database ",
+				"(e.g. 'DERBY', 'MYSQL', 'ORACLE', etc)"}
+		)
+    public String getType() {
+    	return type ;
+    }
+
+	//----------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={ "Returns the 'dialect' of the database. Can be used to identify the Hibernate dialect class ",
+				"(e.g. 'org.hibernate.dialect.MySQLDialect', etc)"}
+		)
+    public String getDialect() {
+    	return dialect ;
     }
 
     //----------------------------------------------------------------------------------
 	@VelocityMethod(
 			text={ "Returns the isolation level " }
 			)
-    public String getIsolationLevel()
-    {
+    public String getIsolationLevel() {
         return isolationLevel;
     }
 
@@ -148,8 +160,7 @@ public class DatabaseInContext
 	@VelocityMethod(
 			text={ "Returns the pool size " }
 			)
-    public int getPoolSize()
-    {
+    public int getPoolSize() {
         return poolSize;
     }
 
@@ -157,8 +168,7 @@ public class DatabaseInContext
 	@VelocityMethod(
 			text={ "Returns the CATALOG to be used to retrieve the meta-data " }
 			)
-    public String getCatalog()
-    {
+    public String getCatalog() {
         return metadataCatalog;
     }
 
@@ -166,15 +176,13 @@ public class DatabaseInContext
 	@VelocityMethod(
 			text={ "Returns the SCHEMA to be used to retrieve the meta-data " }
 			)
-    public String getSchema()
-    {
+    public String getSchema() {
         return metadataSchema;
     }
 
     //----------------------------------------------------------------------------------
     @Override
-    public String toString()
-    {
+    public String toString() {
         return name ;
     }
 }
