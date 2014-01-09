@@ -34,6 +34,7 @@ import org.telosys.tools.commons.variables.Variable;
 import org.telosys.tools.commons.variables.VariablesNames;
 import org.telosys.tools.commons.variables.VariablesUtil;
 import org.telosys.tools.eclipse.plugin.MyPlugin;
+import org.telosys.tools.eclipse.plugin.PluginBuildInfo;
 import org.telosys.tools.eclipse.plugin.commons.EclipseProjUtil;
 import org.telosys.tools.eclipse.plugin.commons.MsgBox;
 import org.telosys.tools.eclipse.plugin.commons.PluginLogger;
@@ -980,7 +981,7 @@ public class PropertiesPage extends PropertyPage {
 		
 		t = createTextField(tabContent, "Version :") ;
 		t.setEnabled(false);
-		t.setText( MyPlugin.getVersion() );
+		t.setText( MyPlugin.getVersion() + " - " + PluginBuildInfo.BUILD_ID + "  ( " + PluginBuildInfo.BUILD_DATE + " ) ");
 		
 		t = createTextField(tabContent, "Id :") ;
 		t.setEnabled(false);
