@@ -33,10 +33,11 @@ import org.telosys.tools.repository.model.ModelVersion;
 import org.telosys.tools.repository.model.RepositoryModel;
 
 /**
- * @author Sylvain LEROY, Laurent GUERIN, Eric LEMELIN
+ * Repository (model) generator 
+ * 
+ * @author Laurent GUERIN, Eric LEMELIN
  * 
  */
-
 public class RepositoryGenerator extends RepositoryManager
 {
 	/**
@@ -51,13 +52,35 @@ public class RepositoryGenerator extends RepositoryManager
 	}
 
 	/**
-	 * Generates the repository model from the given database
+	 * Generates the repository model from the given database <br>
+	 * Generates all the entities and all the links between the entities
+	 * 
 	 * @param con
 	 * @param databaseConfig
 	 * @return
 	 * @throws TelosysToolsException
 	 */
 	public RepositoryModel generate(Connection con, DatabaseConfiguration databaseConfig) throws TelosysToolsException 
+	{
+		//--- STEP 1 : Generates the model entities 
+		RepositoryModel repositoryModel = generateRepository(con, databaseConfig);
+		
+		//--- STEP 2 : Generates the links between entities 
+		LinksGenerator linksGenerator = new LinksGenerator(getLogger());
+		linksGenerator.generateAllLinks(repositoryModel);
+
+		
+		return repositoryModel ;
+	}
+	
+	/**
+	 * Generates the repository model from the given database
+	 * @param con
+	 * @param databaseConfig
+	 * @return
+	 * @throws TelosysToolsException
+	 */
+	private RepositoryModel generateRepository(Connection con, DatabaseConfiguration databaseConfig) throws TelosysToolsException 
 	{
 		logger.log("--> Repository generation ");
 
@@ -89,45 +112,6 @@ public class RepositoryGenerator extends RepositoryManager
 		return repositoryModel ;
 	}
 	
-//	/**
-//	 * Generates the repository model
-//	 * @param con
-//	 * @param sDatabaseName
-//	 * @param sCatalog
-//	 * @param sSchema
-//	 * @param sTableNamePattern
-//	 * @param arrayTableTypes
-//	 * @return
-//	 * @throws TelosysToolsException
-//	 */
-//	public RepositoryModel generate(Connection con, String sDatabaseName, String sCatalog, String sSchema,
-//			String sTableNamePattern, String[] arrayTableTypes) throws TelosysToolsException 
-//	{
-//		logger.log("--> Repository generation ");
-//
-//		logger.log(" . get meta-data ");
-//		DatabaseMetaData dbmd = getMetaData(con);
-//
-//		RepositoryModel repositoryModel = new RepositoryModel();
-//					
-//		try {
-//			//--- Init new repository	
-//			repositoryModel.setDatabaseName(sDatabaseName);
-//			repositoryModel.setDatabaseType(dbmd.getDatabaseProductName() );
-//			repositoryModel.setGenerationDate( new Date() );
-//			repositoryModel.setVersion(ModelVersion.VERSION);
-//
-//			//--- Add all tables/entities to the new repository	
-//			//generateEntities(repositoryModel, dbmd, sCatalog, sSchema, sTableNamePattern, arrayTableTypes);
-//			generateEntities(repositoryModel, con, sCatalog, sSchema, sTableNamePattern, arrayTableTypes);
-//			
-//		} catch (SQLException e) {
-//			throw new TelosysToolsException("SQLException", e);
-//		}
-//
-//		return repositoryModel ;
-//	}
-
 	private void generateEntities(RepositoryModel repositoryModel, Connection con, 
 			String sCatalog, String sSchema,
 			String sTableNamePattern, String[] arrayTableTypes) throws SQLException 
