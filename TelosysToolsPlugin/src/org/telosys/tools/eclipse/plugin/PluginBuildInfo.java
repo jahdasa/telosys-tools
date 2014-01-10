@@ -25,5 +25,5 @@ public class PluginBuildInfo {
 
 	public final static String BUILD_ID   = "RC4" ;
 
-	public final static String BUILD_DATE = "2014-01-09" ;
+	public final static String BUILD_DATE = "2014-01-10" ;
 }
