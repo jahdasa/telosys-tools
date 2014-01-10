@@ -991,6 +991,24 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
         }
     }    
     
+    /**
+     * Returns the mapper associated with the given text control
+     * @param text
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    private MapperTextBean<DatabaseConfiguration> getMapper(Text text)
+    {
+    	Object o = text.getData(TEXT_DATA_MAPPER);
+    	return (MapperTextBean<DatabaseConfiguration>) o ;
+    }
+    
+    /**
+     * Updates the model (DatabaseConfiguration) from the view fields
+     * @param text
+     * @param setterMethodName
+     * @param setterMethodArgType
+     */
     private void bindViewToModel(Text text, String setterMethodName, Class<?> setterMethodArgType )
     {
     	MapperTextBean<DatabaseConfiguration> mapperInstance = 
@@ -1010,7 +1028,8 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 						Text text = (Text) e.widget ;
 		        		//log(this, "Text modified : '" + text.getText() + "'" );
 		        		//--- Update the model 
-		        		MapperTextBean<DatabaseConfiguration> mapper = (MapperTextBean<DatabaseConfiguration>) text.getData(TEXT_DATA_MAPPER);
+		        		//MapperTextBean<DatabaseConfiguration> mapper = (MapperTextBean<DatabaseConfiguration>) text.getData(TEXT_DATA_MAPPER);
+		        		MapperTextBean<DatabaseConfiguration> mapper = getMapper(text) ;
 		        		DatabaseConfiguration currentDatabaseConfig = getCurrentDatabaseConfig(true) ;
 		        		if ( currentDatabaseConfig != null ) {		        			
 			        		try {
