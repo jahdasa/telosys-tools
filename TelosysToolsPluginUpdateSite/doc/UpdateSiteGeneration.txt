@@ -1,11 +1,20 @@
-Before :
- In PLUGIN : 
-    Check version in "plugin.xml" and "PluginBuildInfo.java"
- In FEATURE :
-    Check feature version and plugin version in "feature.xml" (and reference to plugin version)
- In UPDATE SITE :
-    Check version in "build_dist.xml"
+Before - Check version in :
 
+ * "TelosysToolsPlugin" project  
+    . "plugin.xml" ( tabs "Overview", "Runtime / Classpath" )
+    . "PluginBuildInfo.java" ( BUILD_ID, BUILD_DATE )
+    
+ * "TelosysToolsPluginHelp" project  
+    . "plugin.xml" ( tab "Overview"  )
+    
+ * "TelosysToolsPluginFeature" project
+    . "feature.xml" ( tabs "Overview", "Information", "Plug_ins" )
+    
+ * "TelosysToolsUpdateSite" project  
+    . "build_dist.xml"
+    . "site.xml" ( check feature version )
+
+--------------------------------------------------------------------------------
 How to generate the "Update Site" :
 
 1) Clean the existing artifacts with ANT : "build_clean.xml"
