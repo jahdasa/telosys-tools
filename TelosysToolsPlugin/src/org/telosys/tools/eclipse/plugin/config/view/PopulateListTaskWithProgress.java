@@ -50,9 +50,11 @@ public class PopulateListTaskWithProgress implements IRunnableWithProgress
 			//--- 
 			progressMonitor.subTask("Populating the list ...");
 			for ( GitHubRepository repo : repositories ) {
-				if ( repo.getSize() > 0 ) {
-					_listGitHubRepositories.add( repo.getName() );
-				}
+// Removed in ver 2.1.0 ( "size" is not reliable in the GitHub API ) 
+//				if ( repo.getSize() > 0 ) {
+//					_listGitHubRepositories.add( repo.getName() );
+//				}
+				_listGitHubRepositories.add( repo.getName() );
 			}
 			progressMonitor.worked(1);
 

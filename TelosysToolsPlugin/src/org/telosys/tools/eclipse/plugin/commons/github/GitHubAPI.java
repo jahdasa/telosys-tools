@@ -88,8 +88,8 @@ public class GitHubAPI {
 				for ( Object repositoryObject: repositoriesArray ) {
 					JSONObject repo = (JSONObject) repositoryObject ; 
 					long   id   = getLongAttribute(repo, "id");
-					String name = getStringAttribute(repo, "name");
-					String description = getStringAttribute(repo, "description");
+					String name = getStringAttribute(repo, "name", "(#"+id+"-no-name)");
+					String description = getStringAttribute(repo, "description", "(no-description)");
 					long   size = getLongAttribute(repo, "size");
 					// Add the repository in the list
 					repositories.add( new GitHubRepository(id, name, description, size ) );
@@ -122,9 +122,10 @@ public class GitHubAPI {
 	 * Returns the String value of the given attribute name
 	 * @param jsonObject
 	 * @param attributeName
+	 * @param defaultValue
 	 * @return
 	 */
-	private static String getStringAttribute( JSONObject jsonObject, String attributeName ) {
+	private static String getStringAttribute( JSONObject jsonObject, String attributeName, String defaultValue ) {
 		Object oAttributeValue = jsonObject.get( attributeName );
 		if ( oAttributeValue != null ) {
 			if ( oAttributeValue instanceof String) {
@@ -135,7 +136,12 @@ public class GitHubAPI {
 			}
 		}
 		else {
-			throw new RuntimeException ( "JSON error : attribute '" + attributeName + "' not found");
+			if ( defaultValue != null ) {
+				return defaultValue ;
+			}
+			else {
+				throw new RuntimeException ( "JSON error : attribute '" + attributeName + "' not found");
+			}
 		}
 	}
 
