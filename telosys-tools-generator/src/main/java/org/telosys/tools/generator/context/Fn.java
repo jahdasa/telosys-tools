@@ -18,6 +18,7 @@ package org.telosys.tools.generator.context;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.velocity.VelocityContext;
 import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.commons.XmlUtil;
 import org.telosys.tools.generator.context.doc.VelocityMethod;
@@ -51,11 +52,14 @@ public class Fn {
 //		return ! isNull(o);
 //	}
 	
-	/**
-	 * Returns true is the string is null or void or contains only spaces
-	 * @param s
-	 * @return
-	 */
+	private final VelocityContext _velocityContext ;
+	
+	
+	public Fn(VelocityContext velocityContext) {
+		super();
+		this._velocityContext = velocityContext;
+	}
+	
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
 		text={	
@@ -369,5 +373,37 @@ public class Fn {
 			return StrUtil.firstCharUC( s );
 		}
 		return "";
+	}
+
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(text={	
+			"Returns TRUE if the given object name is defined in the Velocity Context"
+			},
+			parameters = { "objectName : the name (or key) in the Velocity Context" },
+			example = {
+				"#if ( $fn.isDefined('myvar') ) "
+			},
+			since = "2.1.0"
+			)
+	public boolean isDefined(String objectName) {
+		Object o = _velocityContext.get(objectName);
+		return ( o != null );
+	}
+
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(text={	
+			"Returns the object stored with the given name in the Velocity Context",
+			"If there's no object for the given name the default value is returned"
+			},
+			parameters = { 
+				"objectName : the name (or key) in the Velocity Context",
+				"defaultValue : the value to be returned if the object is not defined"},
+			example = {
+				"#if ( $fn.isDefined('myvar') ) " },
+			since = "2.1.0"
+			)
+	public Object get(String objectName, Object defaultValue) {
+		Object o = _velocityContext.get(objectName);
+		return ( o != null ? o : defaultValue );
 	}
 }

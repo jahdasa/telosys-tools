@@ -287,7 +287,7 @@ public class Generator {
 		_velocityContext.put(ContextName.GENERATOR,       new EmbeddedGenerator());  // Limited generator without generation capability 
 		_velocityContext.put(ContextName.TODAY,           new Today()); // Current date and time 
 		_velocityContext.put(ContextName.CONST,           new Const()); // Constants (static values)
-		_velocityContext.put(ContextName.FN,              new Fn());    // Utility function
+		_velocityContext.put(ContextName.FN,              new Fn(_velocityContext));    // Utility function
 		_velocityContext.put(ContextName.JAVA,            new Java());  // Java utility functions
 		_velocityContext.put(ContextName.JPA,             new Jpa());   // JPA utility functions
 		_velocityContext.put(ContextName.BEAN_VALIDATION, new BeanValidation()); // Bean Validation utility functions
@@ -300,7 +300,6 @@ public class Generator {
 							new ModelInContext(repositoryModel, generatorConfig) );  // The "model" object (v 2.0.7)
 		
 		_velocityContext.put(ContextName.CLASS, null);
-		
 		
 		//--- Set the dynamic class loader 
 		//Loader loader = new Loader(projectConfiguration, _velocityContext);
