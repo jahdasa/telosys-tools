@@ -18,9 +18,7 @@ import org.telosys.tools.eclipse.plugin.commons.TelosysPluginException;
 import org.telosys.tools.eclipse.plugin.config.ProjectConfig;
 import org.telosys.tools.generator.Generator;
 import org.telosys.tools.generator.GeneratorException;
-import org.telosys.tools.generator.RepositoryModelUtil;
 import org.telosys.tools.generator.config.GeneratorConfig;
-import org.telosys.tools.generator.context.JavaBeanClass;
 import org.telosys.tools.generator.context.Target;
 import org.telosys.tools.generator.target.TargetDefinition;
 import org.telosys.tools.repository.model.Entity;
@@ -270,17 +268,18 @@ public class GenerationTaskWithProgress implements IRunnableWithProgress
 //		}
 		progressMonitor.beginTask("Generation in progress", totalWorkTasks ); 
 		
-		//--- Build the selected entities list (to be stored in the Velocity context)
-		List<JavaBeanClass> selectedEntities;
-		try {
-//			selectedEntities = RepositoryModelUtil.buildJavaBeanClasses(_selectedEntities, 
-//														_repositoryModel, _generatorConfig.getProjectConfiguration() );
-			selectedEntities = RepositoryModelUtil.buildJavaBeanClasses(_selectedEntities, 
-					_repositoryModel, _generatorConfig );
-		} catch (GeneratorException e1) {
-			MsgBox.error("Cannot build selected entities ", e1);
-			return 0 ;
-		}
+//		//--- Build the selected entities list (to be stored in the Velocity context)
+//		//List<JavaBeanClass> selectedEntities;
+//		List<EntityInContext> selectedEntities;
+//		try {
+//			//selectedEntities = RepositoryModelUtil.buildJavaBeanClasses(_selectedEntities, _repositoryModel, _generatorConfig );
+//			//selectedEntities = RepositoryModelUtil.buildSelectedEntities(_selectedEntities, _repositoryModel, _generatorConfig );
+//			EntitiesBuilder entitiesBuilder = new EntitiesBuilder();
+//			selectedEntities = entitiesBuilder.buildSelectedEntities(_selectedEntities, _repositoryModel, _generatorConfig );
+//		} catch (GeneratorException e1) {
+//			MsgBox.error("Cannot build selected entities ", e1);
+//			return 0 ;
+//		}
 		
 		
 		int numberOfFilesGenerated = 0 ; 
@@ -298,7 +297,8 @@ public class GenerationTaskWithProgress implements IRunnableWithProgress
 					Target target = new Target( targetDefinition, entity.getName(), 
 							entity.getBeanJavaClass(), variables );
 					
-					numberOfFilesGenerated = numberOfFilesGenerated + generateTarget(progressMonitor, target, selectedEntities); 
+					//numberOfFilesGenerated = numberOfFilesGenerated + generateTarget(progressMonitor, target, selectedEntities); 
+					numberOfFilesGenerated = numberOfFilesGenerated + generateTarget(progressMonitor, target, _selectedEntities); 
 					
 				}
 				//--- One TARGET done
@@ -314,7 +314,8 @@ public class GenerationTaskWithProgress implements IRunnableWithProgress
 		//--- Finally, generate the "ONCE" targets ( NEW in version 2.0.3 / Feb 2013 )
 		for ( TargetDefinition targetDefinition : onceTargets ) {
 			Target target = new Target( targetDefinition, "", "", variables );
-			numberOfFilesGenerated = numberOfFilesGenerated + generateTarget(progressMonitor, target, selectedEntities); 
+			//numberOfFilesGenerated = numberOfFilesGenerated + generateTarget(progressMonitor, target, selectedEntities); 
+			numberOfFilesGenerated = numberOfFilesGenerated + generateTarget(progressMonitor, target, _selectedEntities); 
 		}
 		
 		//--- Notifies that the work is done; that is, either the main task is completed or the user canceled it.
@@ -338,7 +339,10 @@ public class GenerationTaskWithProgress implements IRunnableWithProgress
 	 * @throws InvocationTargetException
 	 * @throws InterruptedException
 	 */
-	private int generateTarget(IProgressMonitor progressMonitor, Target target, List<JavaBeanClass> selectedEntities) 
+	//private int generateTarget(IProgressMonitor progressMonitor, Target target, List<JavaBeanClass> selectedEntities) 
+//	private int generateTarget(IProgressMonitor progressMonitor, Target target, List<EntityInContext> selectedEntities) 
+//					throws InvocationTargetException, InterruptedException 
+	private int generateTarget(IProgressMonitor progressMonitor, Target target, List<String> selectedEntitiesNames) 
 					throws InvocationTargetException, InterruptedException 
 	{
 
@@ -354,8 +358,8 @@ public class GenerationTaskWithProgress implements IRunnableWithProgress
 		try {
 			//Generator generator = new Generator(target, _generatorConfig, _logger);
 			Generator generator = new Generator(target, _generatorConfig, _repositoryModel, _logger); // v 2.0.7
-			generator.setSelectedEntitiesInContext(selectedEntities); // New [2013-02-04]
-			generator.generateTarget(target, _repositoryModel, generatedTargets);						
+			//generator.setSelectedEntitiesInContext(selectedEntities); // New [2013-02-04]
+			generator.generateTarget(target, _repositoryModel, selectedEntitiesNames, generatedTargets);						
 			
 		} catch (GeneratorException e) {
 			// if the "run" method must propagate a checked exception, 
