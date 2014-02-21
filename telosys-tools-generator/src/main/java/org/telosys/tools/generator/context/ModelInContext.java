@@ -19,8 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.telosys.tools.generator.EntitiesBuilder;
 import org.telosys.tools.generator.GeneratorException;
-import org.telosys.tools.generator.RepositoryModelUtil;
 import org.telosys.tools.generator.config.GeneratorConfig;
 import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityObject;
@@ -42,36 +42,48 @@ import org.telosys.tools.repository.model.RepositoryModel;
 //-------------------------------------------------------------------------------------
 public class ModelInContext
 {
-	private final List<JavaBeanClass>       _allEntities ;
-	private final Map<String,JavaBeanClass> _entitiesByTableName ;
-	private final Map<String,JavaBeanClass> _entitiesByClassName ;
+//	private final List<JavaBeanClass>       _allEntities ;
+//	private final Map<String,JavaBeanClass> _entitiesByTableName ;
+//	private final Map<String,JavaBeanClass> _entitiesByClassName ;
+	private final List<EntityInContext>       _allEntities ;
+	private final Map<String,EntityInContext> _entitiesByTableName ;
+	private final Map<String,EntityInContext> _entitiesByClassName ;
 	private final int      _databaseId ;
 	private final String   _databaseProductName ;
 	
 	//-------------------------------------------------------------------------------------
 	/**
 	 * Constructor
-	 * 
-	 * @param allJavaBeanClasses all the entities to be exposed in the model object
+	 * @param repositoryModel
+	 * @param generatorConfig
+	 * @param env
+	 * @throws GeneratorException
 	 */
-	public ModelInContext( RepositoryModel repositoryModel, GeneratorConfig generatorConfig ) throws GeneratorException  {
+	public ModelInContext( RepositoryModel repositoryModel, GeneratorConfig generatorConfig, EnvInContext env ) throws GeneratorException  {
 		super();
 		if ( repositoryModel == null ) throw new GeneratorException("RepositoryModel is null");
 		if ( generatorConfig == null ) throw new GeneratorException("GeneratorConfig is null");
+		if ( env == null ) throw new GeneratorException("EnvInContext is null");
 		
 		//--- All the entities
-		_allEntities = RepositoryModelUtil.buildAllJavaBeanClasses(repositoryModel, generatorConfig );
+		//_allEntities = RepositoryModelUtil.buildAllJavaBeanClasses(repositoryModel, generatorConfig );
+		EntitiesBuilder entitiesBuilder = new EntitiesBuilder(env);
+		_allEntities = entitiesBuilder.buildAllEntities(repositoryModel, generatorConfig );
 		
 		//--- Entities by TABLE NAME
-		_entitiesByTableName = new HashMap<String,JavaBeanClass>();
-		for ( JavaBeanClass entity : _allEntities ) {
+		//_entitiesByTableName = new HashMap<String,JavaBeanClass>();
+		//for ( JavaBeanClass entity : _allEntities ) {
+		_entitiesByTableName = new HashMap<String,EntityInContext>();
+		for ( EntityInContext entity : _allEntities ) {
 			// The table name is unique 
 			_entitiesByTableName.put(entity.getDatabaseTable(), entity);
 		}
 		
 		//--- Entities by CLASS NAME
-		_entitiesByClassName = new HashMap<String,JavaBeanClass>();
-		for ( JavaBeanClass entity : _allEntities ) {
+//		_entitiesByClassName = new HashMap<String,JavaBeanClass>();
+//		for ( JavaBeanClass entity : _allEntities ) {
+		_entitiesByClassName = new HashMap<String,EntityInContext>();
+		for ( EntityInContext entity : _allEntities ) {
 			// The class name is supposed to be unique 
 			_entitiesByClassName.put(entity.getName(), entity);
 		}
@@ -97,7 +109,8 @@ public class ModelInContext
 			"Returns a list containing all the entities defined in the model" 
 			}
 	)
-    public List<JavaBeanClass> getAllEntites()
+    //public List<JavaBeanClass> getAllEntites()
+    public List<EntityInContext> getAllEntites()
     {
 		return _allEntities ;
     }
@@ -112,7 +125,8 @@ public class ModelInContext
 			"name : the table name identifying the entity (the table name) "
 		}
 	)
-    public JavaBeanClass getEntityByTableName( String name )
+    //public JavaBeanClass getEntityByTableName( String name )
+    public EntityInContext getEntityByTableName( String name )
     {
 		return _entitiesByTableName.get(name);
     }
@@ -127,7 +141,8 @@ public class ModelInContext
 			"name : the class name identifying the entity (supposed to be unique) "
 		}
 	)
-    public JavaBeanClass getEntityByClassName( String name )
+    //public JavaBeanClass getEntityByClassName( String name )
+    public EntityInContext getEntityByClassName( String name )
     {
 		return _entitiesByClassName.get(name);
     }

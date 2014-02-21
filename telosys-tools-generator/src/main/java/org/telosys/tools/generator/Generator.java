@@ -40,11 +40,11 @@ import org.telosys.tools.generator.context.BeanValidation;
 import org.telosys.tools.generator.context.Const;
 import org.telosys.tools.generator.context.DatabasesInContext;
 import org.telosys.tools.generator.context.EmbeddedGenerator;
+import org.telosys.tools.generator.context.EntityInContext;
+import org.telosys.tools.generator.context.EnvInContext;
 import org.telosys.tools.generator.context.Fn;
 import org.telosys.tools.generator.context.GenerationInContext;
 import org.telosys.tools.generator.context.Java;
-import org.telosys.tools.generator.context.JavaBeanClass;
-import org.telosys.tools.generator.context.JavaClass;
 import org.telosys.tools.generator.context.Jpa;
 import org.telosys.tools.generator.context.Loader;
 import org.telosys.tools.generator.context.ModelInContext;
@@ -291,15 +291,11 @@ public class Generator {
 		_velocityContext.put(ContextName.JAVA,            new Java());  // Java utility functions
 		_velocityContext.put(ContextName.JPA,             new Jpa());   // JPA utility functions
 		_velocityContext.put(ContextName.BEAN_VALIDATION, new BeanValidation()); // Bean Validation utility functions
-		
+
 		_velocityContext.put(ContextName.DATABASES,
 							new DatabasesInContext( generatorConfig.getDatabasesConfigurations() ) ); // ver 2.1.0
-		
-		//_velocityContext.put(ContextName.MODEL,         new Model(_allEntities) );  // The "model" object (v 2.0.7)
-		_velocityContext.put(ContextName.MODEL,  
-							new ModelInContext(repositoryModel, generatorConfig) );  // The "model" object (v 2.0.7)
-		
-		_velocityContext.put(ContextName.CLASS, null);
+				
+		//_velocityContext.put(ContextName.CLASS, null);
 		
 		//--- Set the dynamic class loader 
 		//Loader loader = new Loader(projectConfiguration, _velocityContext);
@@ -330,29 +326,31 @@ public class Generator {
 		}
 	}
 
-	/**
-	 * Set the selected entities Java Bean class in the context <br>
-	 * Useful for "Multi-Entities" targets 
-	 * @param javaBeanClasses
-	 * @since Version 2.0.3 ( 2013-Feb )
-	 */
-	public void setSelectedEntitiesInContext( List<JavaBeanClass> javaBeanClasses )
-	{
-		if ( javaBeanClasses != null ) {
-			_velocityContext.put(ContextName.SELECTED_ENTITIES, javaBeanClasses);
-		}
-	}
-	
-	/**
-	 * Set the current JavaClass target in the context ( the "$class" variable ) <br>
-	 * Useful for WIZARDS to set the current "$class"
-	 * 
-	 * @param javaClass
-	 */
-	public void setJavaClassTargetInContext(JavaClass javaClass) 
-	{
-		_velocityContext.put(ContextName.CLASS, javaClass);
-	}
+// REMOVED in v 2.1.0
+//	/**
+//	 * Set the selected entities Java Bean class in the context <br>
+//	 * Useful for "Multi-Entities" targets 
+//	 * @param javaBeanClasses
+//	 * @since Version 2.0.3 ( 2013-Feb )
+//	 */
+//	//public void setSelectedEntitiesInContext( List<JavaBeanClass> javaBeanClasses )
+//	public void setSelectedEntitiesInContext( List<EntityInContext> javaBeanClasses )
+//	{
+//		if ( javaBeanClasses != null ) {
+//			_velocityContext.put(ContextName.SELECTED_ENTITIES, javaBeanClasses);
+//		}
+//	}
+
+//	/**
+//	 * Set the current JavaClass target in the context ( the "$class" variable ) <br>
+//	 * Useful for WIZARDS to set the current "$class"
+//	 * 
+//	 * @param javaClass
+//	 */
+//	public void setJavaClassTargetInContext(JavaClass javaClass) 
+//	{
+//		_velocityContext.put(ContextName.CLASS, javaClass);
+//	}
 	
 	/**
 	 * Set a new attribute (variable) in the Velocity Context <br>
@@ -422,7 +420,7 @@ public class Generator {
 	 * @return
 	 * @throws GeneratorException
 	 */
-	public InputStream generateInMemory() throws GeneratorException {
+	private InputStream generateInMemory() throws GeneratorException {
 		log("generateInMemory()...");
 		StringWriter stringWriter = new StringWriter();
 		
@@ -451,40 +449,74 @@ public class Generator {
 	// generateTarget moved from GenerationManager to Generator 
 	//================================================================================================
 	/**
-	 * Generated the given target 
+	 * Generates the given target 
 	 * @param target the target to be generated
-	 * @param repositoryModel the repository model 
+	 * @param repositoryModel the 'repository model'
+	 * @param selectedEntitiesNames list of names for all the selected entities (or null if none)
 	 * @param generatedTargets list of generated targets to be updated (or null if not useful)
 	 * @throws GeneratorException
 	 */
-	public void generateTarget(Target target, RepositoryModel repositoryModel, List<Target> generatedTargets) throws GeneratorException
+	public void generateTarget(Target target, 
+			RepositoryModel repositoryModel, 
+			List<String> selectedEntitiesNames,
+			List<Target> generatedTargets) throws GeneratorException
 	{
 		_logger.info("Generation in progress : target = " + target.getTargetName() + " / entity = " + target.getEntityName() );
 		
+		//--- "$env" object : Environment configuration
+		EnvInContext env = new EnvInContext() ;
+		_velocityContext.put(ContextName.ENV, env);   // ver 2.1.0
+		
+		//--- "$model" object : it provides all the entities (v 2.0.7)
+		ModelInContext model = new ModelInContext(repositoryModel, _generatorConfig, env );
+		_velocityContext.put(ContextName.MODEL, model); 
+		
+		//--- Set the "$target"  in the context 
+		_velocityContext.put(ContextName.TARGET, target);
+
 		//ProjectConfiguration projectConfiguration = _generatorConfig.getProjectConfiguration();
 		
-		// 2013-02-04
-		//JavaBeanClass javaBeanClass = RepositoryModelUtil.buildJavaBeanClass(target, repositoryModel, projectConfiguration) ;
-		JavaBeanClass javaBeanClass = null ;
+//		// 2013-02-04
+//		//JavaBeanClass javaBeanClass = RepositoryModelUtil.buildJavaBeanClass(target, repositoryModel, projectConfiguration) ;
+//		JavaBeanClass javaBeanClass = null ;
+//		if ( target.getEntityName().trim().length() > 0 ) {
+//			//--- Target with entity ( classical target )
+//			//javaBeanClass = RepositoryModelUtil.buildJavaBeanClass(target.getEntityName(), repositoryModel, projectConfiguration) ;
+//			javaBeanClass = RepositoryModelUtil.buildJavaBeanClass(target.getEntityName(), repositoryModel, _generatorConfig) ; // v 2.1.0
+//		}
+//		else {
+//			//--- Target without entity ( e.g. "once" target )
+//			javaBeanClass = null ;
+//		}
+		EntitiesBuilder entitiesBuilder = new EntitiesBuilder(env);
+
+		//--- List of selected entities ( $selectedEntities )
+		if ( selectedEntitiesNames != null ) {
+			List<EntityInContext> selectedEntities = 
+				entitiesBuilder.buildSelectedEntities(selectedEntitiesNames, repositoryModel, _generatorConfig );
+			_velocityContext.put(ContextName.SELECTED_ENTITIES, selectedEntities);
+		}
+		
+		//--- Current entity : "$entity" in context
+		EntityInContext entity = null ;
 		if ( target.getEntityName().trim().length() > 0 ) {
 			//--- Target with entity ( classical target )
-			//javaBeanClass = RepositoryModelUtil.buildJavaBeanClass(target.getEntityName(), repositoryModel, projectConfiguration) ;
-			javaBeanClass = RepositoryModelUtil.buildJavaBeanClass(target.getEntityName(), repositoryModel, _generatorConfig) ; // v 2.1.0
+			//javaBeanClass = RepositoryModelUtil.buildJavaBeanClass(target.getEntityName(), repositoryModel, _generatorConfig) ; // v 2.1.0
+			entity = entitiesBuilder.buildEntity(target.getEntityName(), repositoryModel, _generatorConfig);
 		}
 		else {
 			//--- Target without entity ( e.g. "once" target )
-			javaBeanClass = null ;
+			entity = null ;
 		}
-		
 
-		//---------- Set additional objects in the Velocity Context
-		//--- Set the "$target"  in the context 
-		_velocityContext.put(ContextName.TARGET, target);
-		//--- Set the "$beanClass"  in the context ( the Java Bean Class for this target )
-		_velocityContext.put(ContextName.ENTITY, javaBeanClass ); // NEW NAME since 2.0.5
+		//--- Set the "$entity"  in the context ( the Java Bean Class for this target )
+		//_velocityContext.put(ContextName.ENTITY, javaBeanClass ); 
+		_velocityContext.put(ContextName.ENTITY, entity ); 
 		//_velocityContext.put(ContextName.BEAN_CLASS, javaBeanClass ); // OLD NAME remove in ver 2.1.0
+		
 		//--- Set the "$generator"  in the context ( "real" embedded generator )
-		EmbeddedGenerator embeddedGenerator = new EmbeddedGenerator(repositoryModel, _generatorConfig, _logger, generatedTargets );
+		EmbeddedGenerator embeddedGenerator = new EmbeddedGenerator(
+				repositoryModel, _generatorConfig, _logger, selectedEntitiesNames, generatedTargets );
 		_velocityContext.put(ContextName.GENERATOR, embeddedGenerator );
 		
 		//---------- ((( GENERATION ))) 

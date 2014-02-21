@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.telosys.tools.generator.GeneratorContextException;
+import org.telosys.tools.generator.GeneratorUtil;
 import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityNoDoc;
 import org.telosys.tools.generator.context.doc.VelocityObject;
@@ -33,7 +34,7 @@ import org.telosys.tools.repository.model.Link;
 import org.telosys.tools.repository.model.RepositoryModel;
 
 /**
- * Specific Java Class for an entity Java Bean with Object-Relational Mapping (ORM) <br>
+ * Specific Java Class for an Entity Java Bean with Object-Relational Mapping (ORM) <br>
  * This class provides the standard Java class informations plus : <br>
  * . the attributes of the class <br>
  * . the imports required by attributes types <br>
@@ -58,8 +59,15 @@ import org.telosys.tools.repository.model.RepositoryModel;
 		since = "2.0.0"
  )
 //-------------------------------------------------------------------------------------
-public class JavaBeanClass extends JavaClass
+public class EntityInContext 
 {
+	private final static String   NONE = "" ;
+	
+	private String     _sName        = NONE ;
+	private String     _sPackage     = NONE ;
+	private String     _sFullName    = NONE ;
+	//private String     _sSuperClass  = NONE ;	
+	
 	
 	private final static List<JavaBeanClassAttribute>  VOID_ATTRIBUTES_LIST    = new LinkedList<JavaBeanClassAttribute>();
 	private final static List<JavaBeanClassForeignKey> VOID_FOREIGN_KEYS_LIST  = new LinkedList<JavaBeanClassForeignKey>();
@@ -67,7 +75,7 @@ public class JavaBeanClass extends JavaClass
 //	private final static List<String>                 VOID_STRINGS_LIST    = new LinkedList<String>();
 	//private final static Set<String>                  VOID_STRINGS_SET     = new LinkedHashSet<String>();
 	
-	private final static List<JavaBeanClassLink>      VOID_LINKS_LIST    = new LinkedList<JavaBeanClassLink>();
+	private final static List<LinkInContext>      VOID_LINKS_LIST    = new LinkedList<LinkInContext>();
 	
 //	// The imports for all fields of this class ( list of "java.xx.Class" )
 //	private List<String>                       _importsForAllFields = VOID_STRINGS_LIST ; 
@@ -94,23 +102,28 @@ public class JavaBeanClass extends JavaClass
 
 	//--- JPA specific
 //	private Set<String>                   _importsJpa = null ; // The imports JPA for this class ( list of "java.xx.Class" )
-	private LinkedList<JavaBeanClassLink> _links  = null ; // The links for this class ( ALL ATTRIBUTES )
+	private LinkedList<LinkInContext> _links  = null ; // The links for this class ( ALL ATTRIBUTES )
 //	private Entity                        _entite = null;
+	
+	private final EnvInContext _env ; // ver 2.1.0
 	
 	//-----------------------------------------------------------------------------------------------
 	/**
 	 * Constructor based on Repository Entity
 	 * @param entity
-	 * @param model
-	 * @param nameEntity
-	 * @param sPackage
+	 * @param repositoryModel
+	 * @param entityPackage
+	 * @param env environment configuration 
 	 */
-	public JavaBeanClass(final Entity entity, final RepositoryModel model, final String nameEntity, 
-			final String sPackage ) 
+	public EntityInContext(final Entity entity, final RepositoryModel repositoryModel, 
+			final String entityPackage, final EnvInContext env ) 
 	{
-		super(entity.getBeanJavaClass(), sPackage);
+		_sName = entity.getBeanJavaClass() ;
+		_sPackage = entityPackage;
+		_sFullName = entityPackage + "." + _sName;
 		
-//		this._entite = entity;
+		_env = env ;
+		
 		this._sDatabaseTable   = entity.getName();
 		this._sDatabaseCatalog = entity.getCatalog();
 		this._sDatabaseSchema  = entity.getSchema();
@@ -132,9 +145,9 @@ public class JavaBeanClass extends JavaClass
 		Collection<Link> entityLinks = entity.getLinksCollection() ;
 		for ( Link link : entityLinks ) {
 			// On va trouver le bean correspondant a ce lien dans le model
-			Entity entityCible = model.getEntityByName(link.getTargetTableName());
+			Entity referencedEntity = repositoryModel.getEntityByName(link.getTargetTableName());
 //			JavaBeanClassLink jcl = new JavaBeanClassLink(link, this._entite , entityCible );
-			JavaBeanClassLink jcl = new JavaBeanClassLink(link, entity , entityCible );
+			LinkInContext jcl = new LinkInContext(link, referencedEntity );
 			
 //			//ajouter import specifique
 //			JavaBeanClassImports jbci = new JavaBeanClassImports();
@@ -160,167 +173,136 @@ public class JavaBeanClass extends JavaClass
 		//this.processJpaSpecificImport();
 	}
 	
-	//-----------------------------------------------------------------------------------------------
+//	//-----------------------------------------------------------------------------------------------
+//	/**
+//	 * Constructor based on a list of attributes
+//	 * @param sFullClassName
+//	 * @param attributes
+//	 */
+//	public EntityInContext( String sFullClassName, JavaBeanClassAttribute[] attributes ) 
+//	{
+//		super( sFullClassName );
+//		initAttributes( attributes ); 
+//	}
+//	
+//	//-----------------------------------------------------------------------------------------------
+//	/**
+//	 * Constructor based on a list of attributes
+//	 * @param sShortClassName
+//	 * @param sPackage
+//	 * @param attributes
+//	 */
+//	public EntityInContext( String sShortClassName, String sPackage, JavaBeanClassAttribute[] attributes ) 
+//	{
+//		super( sShortClassName, sPackage);
+//		initAttributes( attributes ); 
+//	}
+	
 	/**
-	 * Constructor based on a list of attributes
-	 * @param sFullClassName
-	 * @param attributes
+	 * Returns the Java class name without the package ( ie : "MyClass" )
+	 * @return
 	 */
-	public JavaBeanClass( String sFullClassName, JavaBeanClassAttribute[] attributes ) 
+	@VelocityMethod ( text= { 
+			"Returns the class name for the entity without the package ( ie : \"MyClass\" )"
+		},
+		example="$entity.name"
+	)
+	public String getName()
 	{
-		super( sFullClassName );
-		initAttributes( attributes ); 
+		return _sName ;
 	}
 	
-	//-----------------------------------------------------------------------------------------------
 	/**
-	 * Constructor based on a list of attributes
-	 * @param sShortClassName
-	 * @param sPackage
-	 * @param attributes
+	 * Returns the Java class package or void ( ie : "my.package" or "" )
+	 * @return
 	 */
-	public JavaBeanClass( String sShortClassName, String sPackage, JavaBeanClassAttribute[] attributes ) 
+	@VelocityMethod ( text= { 
+			"Returns the package name (or void) for the entity ( ie : \"my.package\" or \"\" )"
+		},
+		example="$entity.package"
+	)
+	public String getPackage()
+    {
+        return _sPackage ;
+    }
+	
+//	/**
+//	 * Returns the super class of this Java class 
+//	 * @return
+//	 */
+//	@VelocityMethod ( text= { 
+//			"Returns the super class for the entity's class (or void if none)"
+//		},
+//		example="$entity.superClass"
+//	)
+//	public String getSuperClass()
+//    {
+//        return _sSuperClass ;
+//    }
+
+	/**
+	 * Returns the Java class full name ( ie : "my.package.MyClass" )
+	 * @return
+	 */
+	@VelocityMethod ( text= { 
+			"Returns the full class name for the entity (ie : \"my.package.MyClass\" )"
+		},
+		example="$entity.fullName"
+	)
+	public String getFullName()
+    {
+		return _sFullName ;
+    }
+	
+    /**
+     * Returns the Java line instruction for the toString() method
+     * @return
+     */
+    public String getToStringInstruction()
+    {
+    	return "\"JavaClass : '" + getName() + "' \"";
+    }
+    
+    public String toStringMethodCodeLines( int iLeftMargin )
+    {
+    	String leftMargin = GeneratorUtil.blanks(iLeftMargin);
+    	return leftMargin + "return \"JavaClass : '" + getName() + "' \" ; \n";
+    }
+    
+	/* (non-Javadoc)
+	 * Same as getName() 
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString()
 	{
-		super( sShortClassName, sPackage);
-		initAttributes( attributes ); 
+		// NB : must return only the class name => do not change
+		// Usage example in ".vm" : ${beanClass}.class 
+		return getName() ;
 	}
 	
+	
+//	//-----------------------------------------------------------------------------------------------
+//	private void initAttributes(JavaBeanClassAttribute[] attributes) 
+//	{
+//		//--- Add each attribute 
+//		if ( attributes != null ) 
+//		{
+//			for ( JavaBeanClassAttribute attribute : attributes )
+//			{
+//				addAttribute(attribute);
+//			}
+//			//endOfDefinition(); // close the class definition (prepares imports list)
+//			endOfAttributesDefinition();
+//		}		
+//	}
 	//-----------------------------------------------------------------------------------------------
-	private void initAttributes(JavaBeanClassAttribute[] attributes) 
-	{
-		//--- Add each attribute 
-		if ( attributes != null ) 
-		{
-			for ( JavaBeanClassAttribute attribute : attributes )
-			{
-				addAttribute(attribute);
-			}
-			//endOfDefinition(); // close the class definition (prepares imports list)
-			endOfAttributesDefinition();
-		}		
-	}
-	//-----------------------------------------------------------------------------------------------
-	private void addLink(JavaBeanClassLink jcl) {
+	private void addLink(LinkInContext jcl) {
 		if ( _links == null )
 		{
-			_links = new LinkedList<JavaBeanClassLink>();
+			_links = new LinkedList<LinkInContext>();
 		}
 		_links.add(jcl);
 	}
-
-//	//-------------------------------------------------------------------------------------
-//	@VelocityMethod ( text= { 
-//			"Returns a multiline String containing all the Java JPA annotations required for the current entity",
-//			"without left marging before each line"
-//		},
-//		example={	
-//			"$entity.jpaAnnotations"
-//		}
-//	)
-//	public String getJpaAnnotations()
-//    {
-//		return jpaAnnotations(0);
-//    }
-	
-//	//-------------------------------------------------------------------------------------
-//	/**
-//	 * Returns the JPA annotations without left margin 
-//	 * Usage : $x.jpaAnnotations() 
-//	 * @return
-//	 */
-//	@VelocityNoDoc
-//	public String jpaAnnotations()
-//    {
-//		return jpaAnnotations(0);
-//    }
-//	
-//	//-------------------------------------------------------------------------------------
-//	@VelocityMethod ( text= { 
-//			"Returns a multiline String containing all the Java JPA annotations required for the current entity",
-//			"with the given left marging before each line"
-//		},
-//		parameters = "leftMargin : number of blanks for the left margin",
-//		example={	
-//			"$entity.jpaAnnotations(4)"
-//		}
-//	)
-//	public String jpaAnnotations(int iLeftMargin)
-//    {
-//		AnnotationsBuilder b = new AnnotationsBuilder(iLeftMargin);
-//		
-//		b.addLine("@Entity");
-//		
-//		String s = "@Table(name=\"" + _sDatabaseTable + "\"" ;
-//		if ( ! StrUtil.nullOrVoid( _sDatabaseSchema ) ) {
-//			s = s + ", schema=\"" + _sDatabaseSchema + "\"" ; 
-//		}
-//		if ( ! StrUtil.nullOrVoid( _sDatabaseCatalog ) ) {
-//			s = s + ", catalog=\"" + _sDatabaseCatalog + "\"" ; 
-//		}
-//		s = s + " )" ;
-//
-//		b.addLine(s);
-//		
-//		return b.getAnnotations();
-//    }
-//	
-//	//-------------------------------------------------------------------------------------
-//	@VelocityMethod ( text= { 
-//			"Returns a list of all the Java imports required for all the fields of the current entity",
-//			"For example, 'java.util.Date' if the entity uses Date objects, etc..."
-//		},
-//		example={	
-//			"#foreach( $import in $entity.imports )",
-//			"import $import;",
-//			"#end" 
-//		}
-//	)
-//	@VelocityReturnType("List of 'String'")
-//	public List<String> getImports() 
-//	{
-////		if ( _importsForAllFields != null )
-////		{
-////			return _importsForAllFields ;
-////		}
-////		return VOID_STRINGS_LIST ;
-//		return _importsForAllFields ;
-//	}
-	
-//	//-------------------------------------------------------------------------------------
-//	@VelocityMethod ( text= { 
-//			"Returns a list of all the Java imports required for the KEY fields of the current entity"
-//		},
-//		example={	
-//			"#foreach( $import in $entity.importsForKeyFields )",
-//			"import $import;",
-//			"#end" 
-//		}
-//	)
-//	@VelocityReturnType("List of 'String'")
-//	public List<String> getImportsForKeyFields() 
-//	{
-//		return _importsForKeyFields ;
-//	}
-	
-//	//-------------------------------------------------------------------------------------
-//	@VelocityMethod ( text= { 
-//			"Returns a list of all the Java JPA imports required by the current entity"
-//		},
-//		example={	
-//			"#foreach( $import in $entity.importsJpa )",
-//			"import $import;",
-//			"#end" 
-//		}
-//	)
-//	@VelocityReturnType("List of 'String'")
-//	public Set<String> getImportsJpa() 
-//	{
-//		if ( _importsJpa != null )
-//		{
-//			return _importsJpa ;
-//		}
-//		return VOID_STRINGS_SET ;
-//	}
 
 	//-------------------------------------------------------------------------------------
 	/**
@@ -369,7 +351,7 @@ public class JavaBeanClass extends JavaClass
 		}
 	)
 	@VelocityReturnType("List of 'link' objects")
-	public List<JavaBeanClassLink> getLinks() 
+	public List<LinkInContext> getLinks() 
 	{
 		if ( _links != null )
 		{
@@ -391,13 +373,13 @@ public class JavaBeanClass extends JavaClass
 		}
 	)
 	@VelocityReturnType("List of 'link' objects")
-	public List<JavaBeanClassLink> getSelectedLinks() 
+	public List<LinkInContext> getSelectedLinks() 
 	{
 		if ( _links != null )
 		{
 			if ( _links.size() > 0 ) {
-				LinkedList<JavaBeanClassLink> selectedLinks = new LinkedList<JavaBeanClassLink>();
-				for ( JavaBeanClassLink link : _links ) {
+				LinkedList<LinkInContext> selectedLinks = new LinkedList<LinkInContext>();
+				for ( LinkInContext link : _links ) {
 					if ( link.isSelected() ) {
 						selectedLinks.add(link) ;
 					}
@@ -477,8 +459,8 @@ public class JavaBeanClass extends JavaClass
 	private List<JavaBeanClassAttribute> getAttributesByAddedCriteria( int criteria ) 
 	{
 		ContextLogger.log("getAttributesByAddedCriteria(" + criteria + ")" );
-		List<JavaBeanClassLink> allLinks = getLinks() ;
-		List<JavaBeanClassLink> selectedLinks = getSelectedLinks() ;
+		List<LinkInContext> allLinks = getLinks() ;
+		List<LinkInContext> selectedLinks = getSelectedLinks() ;
 		
 		LinkedList<JavaBeanClassAttribute> selectedAttributes = new LinkedList<JavaBeanClassAttribute>();
 		
@@ -1160,16 +1142,6 @@ public class JavaBeanClass extends JavaClass
     	return null ;
 	}
 
-	/* (non-Javadoc)
-	 * Same as getName() 
-	 * @see java.lang.Object#toString()
-	 */
-	public String toString()
-	{
-		return super.toString() ;
-	}
-	
-	
 	// -------------------------------------------------------------------------------------------------
 	
 	/**
@@ -1185,45 +1157,6 @@ public class JavaBeanClass extends JavaClass
 		_attributes.add(attribute);
 	}
 	
-//	/**
-//	 * Initialize the imports required for all fields 
-//	 * @param imports
-//	 */
-//    private void setImportsForAllFields(JavaBeanClassImports imports) 
-//	{
-//		// Reset ALL => create a new list
-//		_importsForAllFields = new LinkedList<String>();
-//		_importsForAllFields.addAll( imports.getList() );
-//	}
-    
-//    /**
-//	 * Initialize the imports required for the key fields of the class 
-//     * @param imports
-//     */
-//    private void setImportsForKeyFields(JavaBeanClassImports imports) 
-//	{
-//		// Reset ALL => create a new list
-//		_importsForKeyFields = new LinkedList<String>();
-//		_importsForKeyFields.addAll( imports.getList() );
-//	}    
-
-//	/**
-//	 * Init the Jpa imports list
-//	 * @param imports
-//	 */
-//    private void addImportsJpa(JavaBeanClassImports imports) 
-//	{
-//		if ( imports != null )
-//		{
-//			// Reset ALL => create a new list
-//			if (_importsJpa == null) {
-//				_importsJpa = new LinkedHashSet<String>();
-//			}
-//			
-//			_importsJpa.addAll( imports.getList() );
-//		}
-//	}
-    
 	private LinkedList<JavaBeanClassAttribute> buildAttributesList ( boolean bKeyAttribute ) 
 	{
 		LinkedList<JavaBeanClassAttribute> attributesList = new LinkedList<JavaBeanClassAttribute>();
@@ -1275,95 +1208,6 @@ public class JavaBeanClass extends JavaClass
 		}
 	}
 	
-//	//-----------------------------------------------------------------------------------------------
-//	/**
-//	 * This method close the definition of the class (when all the attributes have been added) <br>
-//	 * 
-//	 * It build the "KEY" and "NON KEY" attributes 
-//	 * 
-//	 * It determines if there is import types collision ( eg "java.util.Date" with "java.sql.Date" ) <br>
-//	 * and managed the imports list and attributes declarations types to avoid imports error
-//	 *  
-//	 */
-//	private void endOfDefinition() 
-//	{
-//		if ( _attributes == null ) return ;
-//		
-//		//--- Build the list of the "KEY" attributes
-//		_keyAttributes = buildAttributesList ( true );
-//		
-//		//--- Build the list of the "NON KEY" attributes
-//		_nonKeyAttributes = buildAttributesList ( false ); 
-//		
-//		//--- Define the imports required for all the fields of this class 
-//		JavaBeanClassImports javaImportsForAllFields = new JavaBeanClassImports();
-//		//JavaBeanClassImports javaImportsForKeyFields = new JavaBeanClassImports();
-//		
-//		for ( JavaBeanClassAttribute attribute : _attributes ) {
-//			javaImportsForAllFields.declareType( attribute.getFullType() ); // register the type to import if necessary
-////			if ( attribute.isKeyElement() ) {
-////				javaImportsForKeyFields.declareType( attribute.getFullType() );
-////			}
-//		}
-//		
-//		//--- Extract potential collided types ( and retrieve the list of collided full types )
-//		LinkedList<String> collidedTypes = javaImportsForAllFields.extractDuplicatedShortNames();
-////		javaImportsForKeyFields.extractDuplicatedShortNames();
-//
-////		//--- Set imports list for the current class
-////		this.setImportsForAllFields(javaImportsForAllFields);
-////		this.setImportsForKeyFields(javaImportsForKeyFields);
-//		
-//		//--- If there's collided types => Check each attribute type 
-//		if ( collidedTypes != null )
-//		{
-//			//--- Some collided types have been extracted from imports 
-//			for ( JavaBeanClassAttribute attr : _attributes ) {
-//				String sFullType = attr.getFullType();
-//				if ( collidedTypes.contains( sFullType ) ) // if this attribute is impacted
-//				{
-//					//--- force this attributes to use its "full type" for variable declaration
-//					//attr.forceType ( sFullType );
-//					attr.useFullType() ; // v 2.0.7
-//				}
-//			}
-//		}
-//	}
-
-//	/**
-//	 * This method process the jpa specific imports <br>
-//	 */
-//	private void processJpaSpecificImport() {
-//		JavaBeanClassImports jpaImports = new JavaBeanClassImports();
-//
-//		// TODO a afiner
-//		jpaImports.declareType("javax.persistence.*");
-//		
-//		this.addImportsJpa(jpaImports);
-//		
-//		/*
-//		jpaImports.declareType("javax.persistence.Entity");
-//		jpaImports.declareType("javax.persistence.Table");
-//		jpaImports.declareType("javax.persistence.Id");
-//		
-//		jpaImports.declareType("javax.persistence.UniqueConstraint");
-//		jpaImports.declareType("javax.persistence.EmbeddedId");
-//		jpaImports.declareType("javax.persistence.Embeddable");
-//		jpaImports.declareType("javax.persistence.AttributeOverride");
-//		jpaImports.declareType("javax.persistence.AttributeOverrides");
-//
-//		jpaImports.declareType("javax.persistence.OneToOne");
-//		jpaImports.declareType("javax.persistence.ManyToMany");
-//		jpaImports.declareType("javax.persistence.ManyToOne");
-//		jpaImports.declareType("javax.persistence.OneToMany");
-//
-//		jpaImports.declareType("javax.persistence.GeneratedValue");
-//		jpaImports.declareType("javax.persistence.GenerationType");
-//		jpaImports.declareType("javax.persistence.SequenceGenerator");
-//		jpaImports.declareType("javax.persistence.TableGenerator");
-//		*/
-//	}
-
 	private String buildDbColumnsList ( boolean bKeyAttribute ) 
 	{
     	if ( _attributes != null )

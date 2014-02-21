@@ -77,6 +77,7 @@ public class ContextNames {
 		GENERATOR_OBJECTS_LIST.add( ContextName.MODEL ); // ver 2.0.7
 		GENERATOR_OBJECTS_LIST.add( ContextName.DATABASES ); // ver 2.1.0
 		GENERATOR_OBJECTS_LIST.add( ContextName.TODAY );
+		GENERATOR_OBJECTS_LIST.add( ContextName.ENV ); // ver 2.1.0
 
 		//--- Current Entity/Target objects
 		GENERATOR_OBJECTS_LIST.add( ContextName.TARGET      );
@@ -89,14 +90,10 @@ public class ContextNames {
 
 	private static List<String> PREDEFINED_NAMES_LIST = new LinkedList<String>();
 	static {
-		//PREDEFINED_NAMES_LIST.add( "attribute" ); 
 		PREDEFINED_NAMES_LIST.add( ContextName.ATTRIBUTE ); 
-		//PREDEFINED_NAMES_LIST.add( "attrib" ); 
 		PREDEFINED_NAMES_LIST.add( ContextName.ATTRIB ); 
-		//PREDEFINED_NAMES_LIST.add( "field" ); 
 		PREDEFINED_NAMES_LIST.add( ContextName.FIELD ); 
 				
-		//PREDEFINED_NAMES_LIST.add( "link" ); 
 		PREDEFINED_NAMES_LIST.add( ContextName.LINK ); 
 
 		PREDEFINED_NAMES_LIST.add( ContextName.FK ); // v 2.0.7
@@ -105,15 +102,15 @@ public class ContextNames {
 		PREDEFINED_NAMES_LIST.add( ContextName.DATABASE ); // v 2.1.0
 	}
 
-	private static List<String> WIZARDS_OBJECTS_LIST = new LinkedList<String>();
-	static {
-		//--- Invariable objects 
-		WIZARDS_OBJECTS_LIST.add( ContextName.CLASS  );
-//		"context", 
-//		"screendata",
-//		"triggers"
-
-	}
+//	private static List<String> WIZARDS_OBJECTS_LIST = new LinkedList<String>();
+//	static {
+//		//--- Invariable objects 
+//		WIZARDS_OBJECTS_LIST.add( ContextName.CLASS  );
+////		"context", 
+////		"screendata",
+////		"triggers"
+//
+//	}
 	
 	private static List<String> RESERVED_NAMES_LIST = new LinkedList<String>();
 	static {
@@ -126,9 +123,9 @@ public class ContextNames {
 		for ( String s : PREDEFINED_NAMES_LIST ) {
 			RESERVED_NAMES_LIST.add(s);
 		}
-		for ( String s : WIZARDS_OBJECTS_LIST ) {
-			RESERVED_NAMES_LIST.add(s);
-		}
+//		for ( String s : WIZARDS_OBJECTS_LIST ) {
+//			RESERVED_NAMES_LIST.add(s);
+//		}
 		Collections.sort(RESERVED_NAMES_LIST);
 	}
 	
@@ -143,8 +140,6 @@ public class ContextNames {
 		Collections.sort(VARIABLE_AND_OBJECT_NAMES_LIST);
 	}
 	
-	//private final static String[] RESERVED_NAMES_ARRAY = RESERVED_NAMES_LIST.toArray( VOID_STRING_ARRAY );
-
 	public final static String[] getVariableNames()
 	{
 		return VARIABLES_LIST.toArray( VOID_STRING_ARRAY );
@@ -171,10 +166,6 @@ public class ContextNames {
 	 */
 	public final static String[] getReservedNames()
 	{
-//		int n = RESERVED_NAMES_ARRAY.length;
-//		String[] newArray = new String[ n ] ;
-//		System.arraycopy(RESERVED_NAMES_ARRAY, 0, newArray, 0, n);
-//		return newArray ;
 		return RESERVED_NAMES_LIST.toArray( VOID_STRING_ARRAY );
 	}
 	
@@ -202,10 +193,6 @@ public class ContextNames {
 					return true ;
 				}
 			}
-//			for ( int i = 0 ; i < RESERVED_NAMES_ARRAY.length ; i++ )
-//			{
-//				if ( s.equals( RESERVED_NAMES_ARRAY[i] ) ) return true ;
-//			}
 		}
 		return false ;
 	}

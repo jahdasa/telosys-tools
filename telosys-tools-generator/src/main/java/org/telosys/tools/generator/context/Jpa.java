@@ -25,7 +25,6 @@ import org.telosys.tools.generator.context.doc.VelocityReturnType;
 import org.telosys.tools.generator.context.names.ContextName;
 import org.telosys.tools.generator.context.tools.AnnotationsBuilder;
 import org.telosys.tools.generator.context.tools.AnnotationsForJPA;
-import org.telosys.tools.repository.model.Entity;
 import org.telosys.tools.repository.model.InverseJoinColumns;
 import org.telosys.tools.repository.model.JoinColumn;
 import org.telosys.tools.repository.model.JoinColumns;
@@ -51,6 +50,12 @@ public class Jpa {
 	
 	private final static List<String> VOID_STRINGS_LIST = new LinkedList<String>();
 
+	//-------------------------------------------------------------------------------------
+	// CONSTRUCTOR
+	//-------------------------------------------------------------------------------------
+	public Jpa() {
+		super();
+	}
 	
 	//-------------------------------------------------------------------------------------
 	// JPA IMPORTS
@@ -71,7 +76,8 @@ public class Jpa {
 		since = "2.0.7"
 	)
 	@VelocityReturnType("List of 'String'")
-	public List<String> imports(JavaBeanClass entity) 
+	//public List<String> imports(JavaBeanClass entity) 
+	public List<String> imports(EntityInContext entity) 
 	{
 		JavaBeanClassImports _importsJpa = getImports(entity) ;
 		if ( _importsJpa != null )
@@ -81,7 +87,8 @@ public class Jpa {
 		return VOID_STRINGS_LIST ;
 	}
 	
-	private JavaBeanClassImports getImports(JavaBeanClass entity) {
+	//private JavaBeanClassImports getImports(JavaBeanClass entity) {
+	private JavaBeanClassImports getImports(EntityInContext entity) {
 		JavaBeanClassImports jpaImports = new JavaBeanClassImports();
 
 		jpaImports.declareType("javax.persistence.*");
@@ -126,7 +133,8 @@ public class Jpa {
 		},
 		since = "2.0.7"
 	)
-	public String entityAnnotations(int iLeftMargin, JavaBeanClass entity)
+	//public String entityAnnotations(int iLeftMargin, JavaBeanClass entity)
+	public String entityAnnotations(int iLeftMargin, EntityInContext entity)
     {
 		AnnotationsBuilder b = new AnnotationsBuilder(iLeftMargin);
 		
@@ -162,11 +170,12 @@ public class Jpa {
 			"fieldsMapped : list of all the fields mapped by JPA "},
 		since = "2.0.7"
 			)
-	public String linkAnnotations( int marginSize, JavaBeanClassLink entityLink, List<JavaBeanClassAttribute> fieldsList ) {
+	public String linkAnnotations( int marginSize, LinkInContext entityLink, List<JavaBeanClassAttribute> fieldsList ) {
 		
 		Link   _link         = entityLink.getLink(); 
-		Entity _targetEntity = entityLink.getTargetEntity() ;
-		
+		//Entity _targetEntity = entityLink.getTargetEntity() ;
+		String targetEntityClassName = entityLink.getTargetEntityClassName() ; // refactoring v 2.1.0
+
 		AnnotationsBuilder annotations = new AnnotationsBuilder(marginSize);
 		
 		if ( _link.isOwningSide() ) 
@@ -187,13 +196,13 @@ public class Jpa {
 			} 
 			else if (_link.isTypeManyToMany()) 
 			{
-				annotations.addLine(getOwningSideCardinalityAnnotation( entityLink, "ManyToMany", _targetEntity.getBeanJavaClass() ) ); 
+				annotations.addLine(getOwningSideCardinalityAnnotation( entityLink, "ManyToMany", targetEntityClassName ) ); 
 				processJoinTable(annotations, _link.getJoinTable(), MANY_TO_MANY) ;
 			}
 			else if (_link.isTypeOneToMany()) 
 			{
 				//--- Possible for unidirectional "OneToMany" relationship ( whithout inverse side )
-				annotations.addLine(getOwningSideCardinalityAnnotation( entityLink, "OneToMany", _targetEntity.getBeanJavaClass() ) ); 
+				annotations.addLine(getOwningSideCardinalityAnnotation( entityLink, "OneToMany", targetEntityClassName ) ); 
 				processJoinTable(annotations, _link.getJoinTable(), ONE_TO_MANY) ;				
 			} 
 			else 
@@ -235,16 +244,16 @@ public class Jpa {
 	 * Build an return the cardinality annotation for an "OWNING SIDE"
 	 * Example : "@ManyToOne ( cascade = CascadeType.ALL, fetch = FetchType.EAGER ) "
 	 * @param cardinality
-	 * @param targetEntity the target entity ( or null if none ) 
+	 * @param targetEntityClassName the target entity ( or null if none ) 
 	 * @return
 	 */
-	private String getOwningSideCardinalityAnnotation( JavaBeanClassLink entityLink, String cardinality, String targetEntity ) 
+	private String getOwningSideCardinalityAnnotation( LinkInContext entityLink, String cardinality, String targetEntityClassName ) 
 	{
 		Link _link = entityLink.getLink(); 
 
 		StringBuilder sb = new StringBuilder();
 		sb.append( "@" + cardinality ) ;
-		if ( targetEntity != null ) {
+		if ( targetEntityClassName != null ) {
 			sb.append( "(" );
 			//--- Common further information : cascade, fetch and optional
 			// ie "cascade = CascadeType.ALL, fetch = FetchType.EAGER"
@@ -254,7 +263,7 @@ public class Jpa {
 				sb.append( ", " );
 			}
 			//--- targetEntity ( for ManyToMany and OneToMany )
-			sb.append( "targetEntity=" + targetEntity + ".class" ) ;			
+			sb.append( "targetEntity=" + targetEntityClassName + ".class" ) ;			
 			sb.append( ")" );
 		}
 		else {
@@ -277,10 +286,11 @@ public class Jpa {
 	 * @param cardinality
 	 * @return
 	 */
-	private String getInverseSideCardinalityAnnotation( JavaBeanClassLink entityLink, String cardinality ) 
+	private String getInverseSideCardinalityAnnotation( LinkInContext entityLink, String cardinality ) 
 	{
 		Link   _link         = entityLink.getLink(); 
-		Entity _targetEntity = entityLink.getTargetEntity() ;
+		//Entity _targetEntity = entityLink.getTargetEntity() ;
+		String targetEntityClassName = entityLink.getTargetEntityClassName() ; // refactoring v 2.1.0
 		
 		StringBuilder annotation = new StringBuilder();
 		annotation.append( "@" + cardinality ) ;
@@ -298,7 +308,8 @@ public class Jpa {
 			annotation.append( ", " ); 
 		}
 		//--- targetEntity ( always usable, even with ManyToOne )
-		annotation.append( "targetEntity=" + _targetEntity.getBeanJavaClass() + ".class" ); // No quote for "targetEntity"
+		//annotation.append( "targetEntity=" + _targetEntity.getBeanJavaClass() + ".class" ); // No quote for "targetEntity"
+		annotation.append( "targetEntity=" + targetEntityClassName + ".class" ); // No quotes 
 		//---
 		annotation.append( ")" );
 		return annotation.toString();

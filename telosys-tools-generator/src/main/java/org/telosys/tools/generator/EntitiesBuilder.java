@@ -19,28 +19,37 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.telosys.tools.generator.config.GeneratorConfig;
-import org.telosys.tools.generator.context.JavaBeanClass;
+import org.telosys.tools.generator.context.EntityInContext;
+import org.telosys.tools.generator.context.EnvInContext;
 import org.telosys.tools.repository.model.Entity;
 import org.telosys.tools.repository.model.RepositoryModel;
 
-public class RepositoryModelUtil {
+public class EntitiesBuilder {
 
+	private final EnvInContext _env ;
+	
+	public EntitiesBuilder() {
+		_env = new EnvInContext() ; // Default environment
+	}
+
+	public EntitiesBuilder(EnvInContext env) {
+		_env = env ; // Specific environment instance
+	}
+	
+	
 	/**
 	 * Builds a context Entity instance from the repository (model definition)
-	 * @param entityName
+	 * @param entityName the name of the entity to be built
 	 * @param repositoryModel
 	 * @param generatorConfig
 	 * @return
 	 * @throws GeneratorException
 	 */
-	public static JavaBeanClass buildJavaBeanClass( 
-			// Target target, // 2013-02-04
-			String entityName, // 2013-02-04
+	public EntityInContext buildEntity( 
+			String entityName, 
 			RepositoryModel repositoryModel, 
 			GeneratorConfig generatorConfig ) throws GeneratorException
 	{
-		//String entityName = target.getEntityName() ;
-		
 		//--- Retrieve the entity from the repository model
 		Entity entity = repositoryModel.getEntityByName(entityName);
 		if ( null == entity ) 
@@ -52,65 +61,58 @@ public class RepositoryModelUtil {
 			throw new GeneratorException("Repository corrupted : Entity name '" + entityName + "' != '" + entity.getName() +"'");
 		}
 		
-		//--- Java Bean Class name defined in the repository
-    	String beanClassName = entity.getBeanJavaClass();
+//		//--- Java Bean Class name defined in the repository
+//    	String beanClassName = entity.getBeanJavaClass();
     	
 		//--- Java Bean Package name determined from the target folder
-    	//String beanPackage = projectConfiguration.getPackageForBean();
-    	String beanPackage = generatorConfig.getTelosysToolsCfg().getEntityPackage(); // v 2.1.0
+    	String beanPackage = generatorConfig.getTelosysToolsCfg().getEntityPackage(); 
     		
     	//--- New instance of JavaBeanClass
-    	JavaBeanClass beanClass = new JavaBeanClass(entity, repositoryModel, beanClassName, beanPackage);    	
+    	EntityInContext entityInContext = new EntityInContext(entity, repositoryModel, beanPackage, _env);    	
     	
-    	return beanClass ;
+    	return entityInContext ;
 		
 	}
 	
 	/**
-	 * Builds a list of context Entities for each given entity name 
-	 * @param entitiesNames
+	 * Builds a list of context Entities for each selected entity (defined by its name)
+	 * @param entitiesNames list of selected entities names (or null if none)
 	 * @param repositoryModel
 	 * @param generatorConfig
 	 * @return
 	 * @throws GeneratorException
 	 */
-	public static List<JavaBeanClass> buildJavaBeanClasses( 
+	public List<EntityInContext> buildSelectedEntities( 
 			List<String> entitiesNames, 
 			RepositoryModel repositoryModel, 
-			//ProjectConfiguration projectConfiguration 
-			GeneratorConfig generatorConfig // v 2.1.0
+			GeneratorConfig generatorConfig
 			) throws GeneratorException
 	{
-		List<JavaBeanClass> javaBeanClasses = new LinkedList<JavaBeanClass>();
-		for ( String entityName : entitiesNames ) {
-			JavaBeanClass entityBeanClass = buildJavaBeanClass( 
-												entityName, 
-												repositoryModel, 
-												generatorConfig );
-			javaBeanClasses.add(entityBeanClass);
+		List<EntityInContext> selectedEntities = new LinkedList<EntityInContext>();
+		if ( entitiesNames != null ) {
+			for ( String entityName : entitiesNames ) {
+				EntityInContext entityBeanClass = buildEntity( entityName, repositoryModel, generatorConfig );
+				selectedEntities.add(entityBeanClass);
+			}
 		}
-		return javaBeanClasses ;
+		return selectedEntities ;
 	}	
-
+	
 	/**
-	 * Build a list of context Entities for all entities defined in the model 
+	 * Builds a list of context Entities for all the entities defined in the model 
 	 * @param repositoryModel
 	 * @param generatorConfig
 	 * @return
 	 * @throws GeneratorException
 	 */
-	public static List<JavaBeanClass> buildAllJavaBeanClasses( RepositoryModel repositoryModel, 
-			//ProjectConfiguration projectConfiguration 
-			GeneratorConfig generatorConfig // v 2.1.0
-			) throws GeneratorException 
+	public List<EntityInContext> buildAllEntities( RepositoryModel repositoryModel, GeneratorConfig generatorConfig) throws GeneratorException 
 	{
-		List<JavaBeanClass> javaBeanClasses = new LinkedList<JavaBeanClass>();
+		List<EntityInContext> javaBeanClasses = new LinkedList<EntityInContext>();
 		//--- Get the names of all the entities defined in the model 
 		String[] names = repositoryModel.getEntitiesNames();
 		for ( String entityName : names ) {
 			//--- Build an "entity BeanClass" for each
-			//JavaBeanClass entityBeanClass = buildJavaBeanClass(entityName, repositoryModel, projectConfiguration );
-			JavaBeanClass entityBeanClass = buildJavaBeanClass(entityName, repositoryModel, generatorConfig );
+			EntityInContext entityBeanClass = buildEntity(entityName, repositoryModel, generatorConfig );
 			javaBeanClasses.add(entityBeanClass);
 		}
 		return javaBeanClasses ;

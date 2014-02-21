@@ -147,31 +147,31 @@ public class JavaBeanClassAttribute
 //	
 //	private AnnotationsForJPA            _annotationsJPA = null ;
 	
-	//-----------------------------------------------------------------------------------------------
-	/**
-	 * Constructor to create a Java Class Attribute without model <br>
-	 * This constructor is designed to be used by the WIZARDS GENERATOR<br>
-	 * 
-	 * @param name internal (private) java attribute name
-	 * @param simpleType the shortest type to use ( "String", "int", "BigDecimal", "Date", "java.util.Date", ... ), <br>
-	 *              can be a full type ( eg : if "java.util.Date" and "java.sql.Date" are used in the same class ) 
-	 * @param fullType standard full type with package ( "java.lang.String", "int", "java.math.BigDecimal", ... )
-	 * @param initialValue
-	 */
-	//public JavaBeanClassAttribute(String sName, String sType, String sFullType, String sInitialValue, String sGetter, String sSetter) 
-	public JavaBeanClassAttribute(String name, String simpleType, String fullType, String initialValue ) // v 2.0.7
-	{
-		_sName = name ; 
-//		_sType = StrUtil.removeAllBlanks(sType);    
-		_sSimpleType   = StrUtil.removeAllBlanks(simpleType);    // v 2.0.7
-		_sFullType     = StrUtil.removeAllBlanks(fullType);  
-		_sInitialValue = initialValue; // can be null 
-		_sDefaultValue = null ; // keep null ( for hasDefaultValue )
-		
-		// v 2.0.7
-//		_sGetter = sGetter ;
-//		_sSetter = sSetter ;		
-	}
+//	//-----------------------------------------------------------------------------------------------
+//	/**
+//	 * Constructor to create a Java Class Attribute without model <br>
+//	 * This constructor is designed to be used by the WIZARDS GENERATOR<br>
+//	 * 
+//	 * @param name internal (private) java attribute name
+//	 * @param simpleType the shortest type to use ( "String", "int", "BigDecimal", "Date", "java.util.Date", ... ), <br>
+//	 *              can be a full type ( eg : if "java.util.Date" and "java.sql.Date" are used in the same class ) 
+//	 * @param fullType standard full type with package ( "java.lang.String", "int", "java.math.BigDecimal", ... )
+//	 * @param initialValue
+//	 */
+//	//public JavaBeanClassAttribute(String sName, String sType, String sFullType, String sInitialValue, String sGetter, String sSetter) 
+//	public JavaBeanClassAttribute(String name, String simpleType, String fullType, String initialValue ) // v 2.0.7
+//	{
+//		_sName = name ; 
+////		_sType = StrUtil.removeAllBlanks(sType);    
+//		_sSimpleType   = StrUtil.removeAllBlanks(simpleType);    // v 2.0.7
+//		_sFullType     = StrUtil.removeAllBlanks(fullType);  
+//		_sInitialValue = initialValue; // can be null 
+//		_sDefaultValue = null ; // keep null ( for hasDefaultValue )
+//		
+//		// v 2.0.7
+////		_sGetter = sGetter ;
+////		_sSetter = sSetter ;		
+//	}
 	
 	//-----------------------------------------------------------------------------------------------
 	/**
@@ -723,13 +723,13 @@ public class JavaBeanClassAttribute
 		},
 	parameters="links : list of links where to search the attribute"
 	)
-    public boolean isUsedInLinkJoinColumn( List<JavaBeanClassLink> links )
+    public boolean isUsedInLinkJoinColumn( List<LinkInContext> links )
     {
     	if ( null == _sDataBaseName ) {
     		return false ; // No mapping 
     	}
     	
-		for ( JavaBeanClassLink link : links ) {
+		for ( LinkInContext link : links ) {
 			if ( link.isOwningSide() && link.hasJoinColumns() ) {
 				String[] joinColumns = link.getJoinColumns() ;
 				if ( joinColumns != null ) {

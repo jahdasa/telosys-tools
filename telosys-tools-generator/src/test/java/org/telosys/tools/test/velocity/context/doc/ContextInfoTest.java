@@ -42,7 +42,7 @@ public class ContextInfoTest  extends TestCase {
 		print("Object names", names);
 		
 		//assertTrue ( names.length == 11 );
-		assertTrue ( names.length == 15 ); // v 2.1.0
+		assertTrue ( names.length == 16 ); // v 2.1.0
 	}
 
 	public void testObjectAndVariableNames() {

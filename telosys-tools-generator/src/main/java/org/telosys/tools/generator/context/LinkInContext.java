@@ -50,12 +50,7 @@ import org.telosys.tools.repository.model.Link;
 		
  )
 //-------------------------------------------------------------------------------------
-public class JavaBeanClassLink {
-	
-//	private final static int ONE_TO_ONE   = 1 ;
-//	private final static int MANY_TO_ONE  = 2 ;
-//	private final static int ONE_TO_MANY  = 3 ;
-//	private final static int MANY_TO_MANY = 4 ;
+public class LinkInContext {
 	
 	private final Link    _link;
 	private final Entity  _targetEntity;
@@ -63,8 +58,13 @@ public class JavaBeanClassLink {
 	private final String  _sGetter;
 	private final String  _sSetter;
 	
-	
-	public JavaBeanClassLink(final Link link, final Entity currentEntity, final Entity targetEntity ) 
+	//-------------------------------------------------------------------------------------
+	/**
+	 * Constructor
+	 * @param link link in the repository 
+	 * @param targetEntity targeted entity in the repository 
+	 */
+	public LinkInContext(final Link link, final Entity targetEntity ) 
 	{
 		this._link = link;
 		this._targetEntity  = targetEntity;
@@ -78,8 +78,12 @@ public class JavaBeanClassLink {
 		return this._link ;
 	}
 	//-------------------------------------------------------------------------------------
-	protected Entity getTargetEntity() {
-		return this._targetEntity ;
+//	protected Entity getTargetEntity() {
+//		return this._targetEntity ;
+//	}
+	protected String getTargetEntityClassName() {
+		// TODO : $env Prefix & Suffix
+		return _targetEntity.getBeanJavaClass() ;
 	}
 	
 	//-------------------------------------------------------------------------------------
@@ -112,14 +116,17 @@ public class JavaBeanClassLink {
 	)
 	public String getLinkType() {
 		String currentType = "";
+		String targetEntityClassName = this.getTargetEntityClassName() ; // v 2.1.0
 		if (StrUtil.nullOrVoid(this.getJavaTypeShort())) {
-			currentType = this._targetEntity.getBeanJavaClass();
+			currentType = targetEntityClassName ; // this._targetEntity.getBeanJavaClass();
 		} else {
 			// S'il s'agit de collection, on ajout la description du generic
 			if (this.isCardinalityOneToMany()) {
-				currentType = this.getJavaTypeShort() + "<" + this._targetEntity.getBeanJavaClass() + ">";
+				//currentType = this.getJavaTypeShort() + "<" + this._targetEntity.getBeanJavaClass() + ">";
+				currentType = this.getJavaTypeShort() + "<" + targetEntityClassName + ">";
 			} else if (this.isCardinalityManyToMany()) {
-				currentType = this.getJavaTypeShort() + "<" + this._targetEntity.getBeanJavaClass() + ">";
+				//currentType = this.getJavaTypeShort() + "<" + this._targetEntity.getBeanJavaClass() + ">";
+				currentType = this.getJavaTypeShort() + "<" + targetEntityClassName + ">";
 			} else {
 				currentType = this.getJavaTypeShort();
 			}
@@ -275,82 +282,6 @@ public class JavaBeanClassLink {
 //		return sb.toString();
 //	}
 	
-//	/**
-//	 * Returns the JPA annotations for the link attribute 
-//	 * @param marginSize
-//	 * @return
-//	 */
-//	@VelocityMethod(
-//	text={	
-//		"Returns all the JPA annotations for the link (with a left margin)"
-//		},
-//	parameters = "leftMargin : the left margin (number of blanks) "
-//	)
-//	public String jpaAnnotations(int marginSize)
-//    {
-//		AnnotationsBuilder annotations = new AnnotationsBuilder(marginSize);
-//		
-//		if ( _link.isOwningSide() ) 
-//		{
-//			if (_link.isTypeOneToOne()) 
-//			{
-//				// Examples :
-//				//   @OneToOne 
-//			    //   @JoinColumn(name="BADGE_NUMBER", referencedColumnName="BADGE_NUMBER")
-//
-//				annotations.addLine(getOwningSideCardinalityAnnotation( "OneToOne", null ) ); 
-//				processJoinColumns(annotations, _link.getJoinColumns(), ONE_TO_ONE );
-//			} 
-//			else if (_link.isTypeManyToOne()) 
-//			{
-//				annotations.addLine(getOwningSideCardinalityAnnotation( "ManyToOne", null ) ); 
-//				processJoinColumns(annotations, _link.getJoinColumns(), MANY_TO_ONE );
-//			} 
-//			else if (_link.isTypeManyToMany()) 
-//			{
-//				annotations.addLine(getOwningSideCardinalityAnnotation( "ManyToMany", _targetEntity.getBeanJavaClass() ) ); 
-//				processJoinTable(annotations, _link.getJoinTable(), MANY_TO_MANY) ;
-//			}
-//			else if (_link.isTypeOneToMany()) 
-//			{
-//				//--- Possible for unidirectional "OneToMany" relationship ( whithout inverse side )
-//				annotations.addLine(getOwningSideCardinalityAnnotation( "OneToMany", _targetEntity.getBeanJavaClass() ) ); 
-//				processJoinTable(annotations, _link.getJoinTable(), ONE_TO_MANY) ;				
-//			} 
-//			else 
-//			{
-//				// Error 
-//			}
-//		} 
-//		else 
-//		{
-//			//--- INVERSE SIDE
-//			if (this.isCardinalityOneToOne()) 
-//			{
-//				annotations.addLine(getInverseSideCardinalityAnnotation( "OneToOne" ) ); 
-//			} 
-//			else if (this.isCardinalityOneToMany()) 
-//			{
-//				annotations.addLine(getInverseSideCardinalityAnnotation( "OneToMany" ) ); 
-//			} 
-//			else if (this.isCardinalityManyToMany()) 
-//			{
-//				annotations.addLine(getInverseSideCardinalityAnnotation( "ManyToMany" ) ); 
-//			} 
-//			else if (this.isCardinalityManyToOne()) 
-//			{
-//				// Not supposed to occur for an INVERSE SIDE !
-//				annotations.addLine(getInverseSideCardinalityAnnotation( "ManyToOne" ) ); 
-//			} 
-//			else 
-//			{
-//				// Error 
-//			}
-//		}
-//		
-//		return annotations.getAnnotations();
-//    }
-
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
 		text={	

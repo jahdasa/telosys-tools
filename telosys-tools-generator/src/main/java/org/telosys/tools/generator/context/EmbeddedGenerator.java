@@ -48,6 +48,7 @@ public class EmbeddedGenerator {
 	private final RepositoryModel    repositoryModel ;
 	private final GeneratorConfig    generatorConfig ;
 	private final TelosysToolsLogger logger ;
+	private final List<String>       selectedEntitiesNames;	
 	private final boolean            canGenerate ;
 	private final List<Target>       generatedTargets ;
 	
@@ -59,6 +60,7 @@ public class EmbeddedGenerator {
 		this.repositoryModel = null ;
 		this.generatorConfig = null ;
 		this.logger = null ;
+		this.selectedEntitiesNames = null ;
 		this.canGenerate = false ;
 		this.generatedTargets = null ;
 	}
@@ -68,10 +70,14 @@ public class EmbeddedGenerator {
 	 * @param repositoryModel
 	 * @param generatorConfig
 	 * @param logger
+	 * @param selectedEntitiesNames
 	 * @param generatedTargets
 	 */
-	public EmbeddedGenerator(RepositoryModel repositoryModel,
-			GeneratorConfig generatorConfig, TelosysToolsLogger logger, List<Target> generatedTargets) {
+	public EmbeddedGenerator(	RepositoryModel repositoryModel,
+								GeneratorConfig generatorConfig, 
+								TelosysToolsLogger logger, 
+								List<String> selectedEntitiesNames,
+								List<Target> generatedTargets) {
 		super();
 		this.repositoryModel = repositoryModel;
 		this.generatorConfig = generatorConfig;
@@ -82,6 +88,7 @@ public class EmbeddedGenerator {
 		else {
 			this.canGenerate = false ;
 		}
+		this.selectedEntitiesNames = selectedEntitiesNames ;
 		this.generatedTargets = generatedTargets ;
 	}
 
@@ -167,7 +174,7 @@ public class EmbeddedGenerator {
 		//Generator generator = new Generator(target, generatorConfig, logger);
 		Generator generator = new Generator(target, generatorConfig, repositoryModel, logger); // v 2.0.7
 		
-		generator.generateTarget(target, repositoryModel, this.generatedTargets);
+		generator.generateTarget(target, repositoryModel, selectedEntitiesNames, this.generatedTargets);
 		
 	}
 	

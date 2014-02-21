@@ -277,7 +277,8 @@ public class Java {
 				"entity : entity to be used " },
 			since = "2.0.7"
 				)
-	public List<String> imports( JavaBeanClass entity ) {
+	//public List<String> imports( JavaBeanClass entity ) {
+	public List<String> imports( EntityInContext entity ) {
 		if ( entity != null ) {
 			JavaBeanClassImports imports = new JavaBeanClassImports();
 			//--- All the attributes
@@ -286,7 +287,7 @@ public class Java {
 				imports.declareType( attribute.getFullType() ); 
 			}
 			//--- All the links 
-			for ( JavaBeanClassLink link : entity.getLinks() ) {
+			for ( LinkInContext link : entity.getLinks() ) {
 				if ( link.isCardinalityOneToMany() || link.isCardinalityManyToMany() ) {
 					// "java.util.List", "java.util.Set", ... 
 					imports.declareType( link.getJavaTypeFull() ); 
@@ -322,10 +323,11 @@ public class Java {
 				"embeddedIdName : variable name for the embedded id (used only if the entity has a composite primary key) " },
 			since = "2.0.7"
 				)
-		public String toStringMethod( JavaBeanClass entity, List<JavaBeanClassAttribute> nonKeyAttributes, String embeddedIdName ) {
+	//public String toStringMethod( JavaBeanClass entity, List<JavaBeanClassAttribute> nonKeyAttributes, String embeddedIdName ) {
+	public String toStringMethod( EntityInContext entity, List<JavaBeanClassAttribute> nonKeyAttributes, String embeddedIdName ) {
 			
-			return toStringMethod( entity , nonKeyAttributes, embeddedIdName, new LinesBuilder() ); 
-		}
+		return toStringMethod( entity , nonKeyAttributes, embeddedIdName, new LinesBuilder() ); 
+	}
 		
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
@@ -344,13 +346,15 @@ public class Java {
 			"indentSpaces : number of spaces to be used for each indentation level"},
 		since = "2.0.7"
 			)
-	public String toStringMethod( JavaBeanClass entity, List<JavaBeanClassAttribute> nonKeyAttributes, String embeddedIdName, int indentSpaces ) {
+	//public String toStringMethod( JavaBeanClass entity, List<JavaBeanClassAttribute> nonKeyAttributes, String embeddedIdName, int indentSpaces ) {
+	public String toStringMethod( EntityInContext entity, List<JavaBeanClassAttribute> nonKeyAttributes, String embeddedIdName, int indentSpaces ) {
 		
 		return toStringMethod( entity , nonKeyAttributes, embeddedIdName, new LinesBuilder(indentSpaces) ); 
 	}
 	
 	//-------------------------------------------------------------------------------------
-	private String toStringMethod( JavaBeanClass entity, List<JavaBeanClassAttribute> nonKeyAttributes, String embeddedIdName, LinesBuilder lb ) {
+	//private String toStringMethod( JavaBeanClass entity, List<JavaBeanClassAttribute> nonKeyAttributes, String embeddedIdName, LinesBuilder lb ) {
+	private String toStringMethod( EntityInContext entity, List<JavaBeanClassAttribute> nonKeyAttributes, String embeddedIdName, LinesBuilder lb ) {
 
 		int indent = 1 ;
 		lb.append(indent, "public String toString() { ");

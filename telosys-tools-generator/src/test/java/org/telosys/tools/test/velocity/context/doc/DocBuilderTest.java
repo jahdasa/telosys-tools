@@ -6,9 +6,9 @@ import junit.framework.TestCase;
 
 import org.telosys.tools.generator.context.BeanValidation;
 import org.telosys.tools.generator.context.Const;
+import org.telosys.tools.generator.context.EntityInContext;
 import org.telosys.tools.generator.context.Fn;
 import org.telosys.tools.generator.context.Java;
-import org.telosys.tools.generator.context.JavaBeanClass;
 import org.telosys.tools.generator.context.Jpa;
 import org.telosys.tools.generator.context.Today;
 import org.telosys.tools.generator.context.doc.ClassInfo;
@@ -115,10 +115,11 @@ public class DocBuilderTest  extends TestCase {
 
 	public void testClassJavaBeanClass() {
 		DocBuilder docBuilder = new DocBuilder();
-		ClassInfo classInfo = docBuilder.getClassInfo(JavaBeanClass.class);
+		//ClassInfo classInfo = docBuilder.getClassInfo(JavaBeanClass.class);
+		ClassInfo classInfo = docBuilder.getClassInfo(EntityInContext.class);
 		print(classInfo);
 
-		assertTrue ( "JavaBeanClass".equals( classInfo.getJavaClassName() ) );
+		assertTrue ( "EntityInContext".equals( classInfo.getJavaClassName() ) );
 		assertTrue ( ContextName.ENTITY.equals( classInfo.getContextName() ) );
 		System.out.println("Methods count = " + classInfo.getMethodsCount() );
 		//assertTrue ( classInfo.getMethodsCount() == 35 );

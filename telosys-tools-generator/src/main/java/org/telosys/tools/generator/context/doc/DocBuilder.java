@@ -28,14 +28,15 @@ import org.telosys.tools.generator.context.Const;
 import org.telosys.tools.generator.context.DatabaseInContext;
 import org.telosys.tools.generator.context.DatabasesInContext;
 import org.telosys.tools.generator.context.EmbeddedGenerator;
+import org.telosys.tools.generator.context.EntityInContext;
+import org.telosys.tools.generator.context.EnvInContext;
 import org.telosys.tools.generator.context.Fn;
 import org.telosys.tools.generator.context.GenerationInContext;
 import org.telosys.tools.generator.context.Java;
-import org.telosys.tools.generator.context.JavaBeanClass;
 import org.telosys.tools.generator.context.JavaBeanClassAttribute;
 import org.telosys.tools.generator.context.JavaBeanClassForeignKey;
 import org.telosys.tools.generator.context.JavaBeanClassForeignKeyColumn;
-import org.telosys.tools.generator.context.JavaBeanClassLink;
+import org.telosys.tools.generator.context.LinkInContext;
 import org.telosys.tools.generator.context.Jpa;
 import org.telosys.tools.generator.context.Loader;
 import org.telosys.tools.generator.context.ModelInContext;
@@ -221,11 +222,12 @@ public class DocBuilder {
 		Java.class, // ver 2.0.7
 		Jpa.class, // ver 2.0.7
 		BeanValidation.class, // ver 2.0.7
-		JavaBeanClass.class,
+		//JavaBeanClass.class,
+		EntityInContext.class, // replaces JavaBeanClass.class ( ver 2.1.0 )
 		JavaBeanClassAttribute.class,
 		JavaBeanClassForeignKey.class, // ver 2.0.7
 		JavaBeanClassForeignKeyColumn.class, // ver 2.0.7
-		JavaBeanClassLink.class,
+		LinkInContext.class,
 		Loader.class,
 		//Model.class, // ver 2.0.7
 		ModelInContext.class, // ver 2.1.0
@@ -234,7 +236,8 @@ public class DocBuilder {
 		//ProjectConfiguration.class,
 		ProjectInContext.class, // ver 2.1.0
 		Target.class,
-		Today.class
+		Today.class,
+		EnvInContext.class, // ver 2.1.0
 	};
 	
 	public Map<String,ClassInfo> getVelocityClassesInfo() {
