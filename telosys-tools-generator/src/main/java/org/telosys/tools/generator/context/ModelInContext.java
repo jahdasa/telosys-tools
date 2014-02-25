@@ -19,9 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.telosys.tools.generator.EntitiesBuilder;
+import org.telosys.tools.generator.EntitiesManager;
 import org.telosys.tools.generator.GeneratorException;
-import org.telosys.tools.generator.config.GeneratorConfig;
 import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityObject;
 import org.telosys.tools.generator.context.names.ContextName;
@@ -59,16 +58,17 @@ public class ModelInContext
 	 * @param env
 	 * @throws GeneratorException
 	 */
-	public ModelInContext( RepositoryModel repositoryModel, GeneratorConfig generatorConfig, EnvInContext env ) throws GeneratorException  {
+	public ModelInContext( RepositoryModel repositoryModel, EntitiesManager entitiesManager ) throws GeneratorException  {
 		super();
 		if ( repositoryModel == null ) throw new GeneratorException("RepositoryModel is null");
-		if ( generatorConfig == null ) throw new GeneratorException("GeneratorConfig is null");
-		if ( env == null ) throw new GeneratorException("EnvInContext is null");
+//		if ( generatorConfig == null ) throw new GeneratorException("GeneratorConfig is null");
+//		if ( env == null ) throw new GeneratorException("EnvInContext is null");
+		if ( entitiesManager == null ) throw new GeneratorException("EntitiesBuilder is null");
 		
 		//--- All the entities
 		//_allEntities = RepositoryModelUtil.buildAllJavaBeanClasses(repositoryModel, generatorConfig );
-		EntitiesBuilder entitiesBuilder = new EntitiesBuilder(env);
-		_allEntities = entitiesBuilder.buildAllEntities(repositoryModel, generatorConfig );
+//		EntitiesBuilder entitiesBuilder = new EntitiesBuilder(repositoryModel, generatorConfig, env);
+		_allEntities = entitiesManager.getAllEntities();
 		
 		//--- Entities by TABLE NAME
 		//_entitiesByTableName = new HashMap<String,JavaBeanClass>();

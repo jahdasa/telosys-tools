@@ -17,20 +17,22 @@ package org.telosys.tools.generator.context;
 
 import org.telosys.tools.commons.JavaClassUtil;
 import org.telosys.tools.commons.StrUtil;
+import org.telosys.tools.generator.EntitiesManager;
 import org.telosys.tools.generator.GeneratorContextException;
+import org.telosys.tools.generator.GeneratorException;
 import org.telosys.tools.generator.GeneratorUtil;
 import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityObject;
 import org.telosys.tools.generator.context.names.ContextName;
-import org.telosys.tools.repository.model.Entity;
 import org.telosys.tools.repository.model.JoinColumn;
 import org.telosys.tools.repository.model.JoinColumns;
 import org.telosys.tools.repository.model.JoinTable;
 import org.telosys.tools.repository.model.Link;
 
 /**
+ * Link exposed in the Velocity Context 
+ *  
  * @author S.Labbe, L.Guerin
- *
  */
 //-------------------------------------------------------------------------------------
 @VelocityObject(
@@ -44,7 +46,7 @@ import org.telosys.tools.repository.model.Link;
 		example= {
 				"",
 				"#foreach( $link in $entity.selectedLinks )",
-				"    private $link.formatedType(10) $link.formatedName(12);",
+				"    private $link.formattedFieldType(10) $link.formattedFieldName(12);",
 				"#end"				
 		}
 		
@@ -53,10 +55,12 @@ import org.telosys.tools.repository.model.Link;
 public class LinkInContext {
 	
 	private final Link    _link;
-	private final Entity  _targetEntity;
+	//private final Entity  _targetEntity;
+	//private final EntityInContext  _targetEntity;
+	private final EntitiesManager  _entitiesManager;
 
-	private final String  _sGetter;
-	private final String  _sSetter;
+//	private final String  _sGetter;
+//	private final String  _sSetter;
 	
 	//-------------------------------------------------------------------------------------
 	/**
@@ -64,13 +68,19 @@ public class LinkInContext {
 	 * @param link link in the repository 
 	 * @param targetEntity targeted entity in the repository 
 	 */
-	public LinkInContext(final Link link, final Entity targetEntity ) 
+	//public LinkInContext(final Link link, final Entity targetEntity ) 
+	//public LinkInContext(final Link link, final EntityInContext targetEntity ) 
+	public LinkInContext(final Link link, final EntitiesManager entitiesManager ) 
 	{
 		this._link = link;
-		this._targetEntity  = targetEntity;
+//		this._targetEntity  = targetEntity;
+		this._entitiesManager  = entitiesManager;
 		
-		_sGetter = Util.buildGetter(this.getJavaName(), this.getLinkType());
-		_sSetter = Util.buildSetter(this.getJavaName());
+////		_sGetter = Util.buildGetter(this.getJavaName(), this.getLinkType());
+////		_sSetter = Util.buildSetter(this.getJavaName());		
+//		_sGetter = Util.buildGetter(this.getFieldName(), this.getFieldType());
+//		_sSetter = Util.buildSetter(this.getFieldName());
+		
 	}
 
 	//-------------------------------------------------------------------------------------
@@ -81,23 +91,19 @@ public class LinkInContext {
 //	protected Entity getTargetEntity() {
 //		return this._targetEntity ;
 //	}
-	protected String getTargetEntityClassName() {
-		// TODO : $env Prefix & Suffix
-		return _targetEntity.getBeanJavaClass() ;
-	}
-	
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
 		text={	
-			"Returns the link's type with n trailing blanks "
+			"Returns the link's type with n trailing blanks ",
+			"eg : List, List<Person>, Person, ..."
 			},
 		parameters = { 
 			"n : the number of blanks to be added at the end of the name" 
 			}
 	)
-	public String formatedType(int iSize)
+	public String formattedFieldType(int iSize) throws GeneratorException
     {
-		String currentType = getLinkType();
+		String currentType = getFieldType();
 		String sTrailingBlanks = "";
         int iDelta = iSize - currentType.length();
         if (iDelta > 0) // if needs trailing blanks
@@ -110,42 +116,16 @@ public class LinkInContext {
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
 		text={	
-			"Returns the type of the link ",
-			"eg : List, List<Person>, Person, ..."
-			}
-	)
-	public String getLinkType() {
-		String currentType = "";
-		String targetEntityClassName = this.getTargetEntityClassName() ; // v 2.1.0
-		if (StrUtil.nullOrVoid(this.getJavaTypeShort())) {
-			currentType = targetEntityClassName ; // this._targetEntity.getBeanJavaClass();
-		} else {
-			// S'il s'agit de collection, on ajout la description du generic
-			if (this.isCardinalityOneToMany()) {
-				//currentType = this.getJavaTypeShort() + "<" + this._targetEntity.getBeanJavaClass() + ">";
-				currentType = this.getJavaTypeShort() + "<" + targetEntityClassName + ">";
-			} else if (this.isCardinalityManyToMany()) {
-				//currentType = this.getJavaTypeShort() + "<" + this._targetEntity.getBeanJavaClass() + ">";
-				currentType = this.getJavaTypeShort() + "<" + targetEntityClassName + ">";
-			} else {
-				currentType = this.getJavaTypeShort();
-			}
-		}
-		return currentType;
-	}	
-
-	//-------------------------------------------------------------------------------------
-	@VelocityMethod(
-		text={	
 			"Returns the link's name with n trailing blanks "
 			},
 		parameters = { 
 			"n : the number of blanks to be added at the end of the name" 
 			}
 	)
-	public String formatedName(int iSize)
+	public String formattedFieldName(int iSize)
     {
-        String s = this.getJavaName() ;
+        //String s = this.getJavaName() ;
+        String s = this.getFieldName();
         String sTrailingBlanks = "";
         int iDelta = iSize - s.length();
         if (iDelta > 0) // if needs trailing blanks
@@ -288,8 +268,9 @@ public class LinkInContext {
 			"Returns the Java getter for the link e.g. 'getPerson' for link 'person' "
 			}
 	)
-	public String getGetter() {
-		return _sGetter;
+	public String getGetter() throws GeneratorException  {
+		//return _sGetter;
+		return Util.buildGetter(this.getFieldName(), this.getFieldType());
 	}
 
 	//-------------------------------------------------------------------------------------
@@ -299,7 +280,8 @@ public class LinkInContext {
 			}
 	)
 	public String getSetter() {
-		return _sSetter;
+		//return _sSetter;
+		return Util.buildSetter(this.getFieldName());
 	}
 
 	//-------------------------------------------------------------------------------------
@@ -374,7 +356,8 @@ public class LinkInContext {
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
 		text={	
-			"Returns the unique id of the link in the repository (id used by the tool)"
+			"Returns the unique id of the link in the repository (id used by the tool)",
+			"(not supposed to be used in a generated file)"
 			}
 	)
 	public String getId() {
@@ -404,32 +387,61 @@ public class LinkInContext {
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
 		text={	
-			"Returns the Java field name for the link"
+			"Returns the field name for the link (attribute name in the entity class)"
 			}
 	)
-	public String getJavaName() {
+	public String getFieldName() {
 		return _link.getJavaFieldName();
 	}
 
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
 		text={	
-			"Returns the full Java type for the link ( eg 'java.util.List' ) "
+			"Returns the field 'full type' for the link ( eg 'java.util.List' ) "
 			}
 	)
-	public String getJavaTypeFull() {
+	public String getFieldFullType() {
 		return _link.getJavaFieldType();
 	}
 
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
 		text={	
-			"Returns the short Java type for the link ( eg 'List' ) "
+			"Returns the field 'simple type' for the link ( eg 'List' ) "
 			}
 	)
-	public String getJavaTypeShort() {
+	public String getFieldSimpleType() {
 		return JavaClassUtil.shortName(_link.getJavaFieldType());
 	}
+	
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the type of the link ",
+			"eg : List, List<Person>, Person, ..."
+			}
+	)
+	public String getFieldType() throws GeneratorException {
+		String type = "";
+		String targetEntityClassName = this.getTargetEntitySimpleType() ; // v 2.1.0
+		String simpleType = this.getFieldSimpleType();
+		
+		if ( StrUtil.nullOrVoid(simpleType) ) {
+			type = targetEntityClassName ; // this._targetEntity.getBeanJavaClass();
+		} else {
+			// S'il s'agit de collection, on ajout la description du generic
+			if (this.isCardinalityOneToMany()) {
+				//currentType = this.getJavaTypeShort() + "<" + this._targetEntity.getBeanJavaClass() + ">";
+				type = simpleType + "<" + targetEntityClassName + ">";
+			} else if (this.isCardinalityManyToMany()) {
+				//currentType = this.getJavaTypeShort() + "<" + this._targetEntity.getBeanJavaClass() + ">";
+				type = simpleType + "<" + targetEntityClassName + ">";
+			} else {
+				type = simpleType ;
+			}
+		}
+		return type;
+	}	
 	
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
@@ -455,13 +467,52 @@ public class LinkInContext {
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
 		text={	
+			"Returns the entity referenced by the link ",
+			"eg : 'Book', 'Customer', ...",
+			""
+			},
+		since = "2.1.0"
+	)
+	public EntityInContext getTargetEntity() throws GeneratorException {
+		return _entitiesManager.getEntity( getTargetTableName() );
+	}
+	
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
 			"Returns the type of the entity referenced by the link ",
+			"eg : 'Book', 'Customer', ...",
 			""
 			}
 	)
-	public String getTargetEntityType() {
-		return _link.getTargetEntityJavaType();
+	public String getTargetEntitySimpleType() throws GeneratorException {
+//		//return _link.getTargetEntityJavaType();
+//		//return _targetEntity.getName(); // v 2.1.0
+//		EntityInContext entity = _entitiesBuilder.getEntity( getTargetTableName() );
+//		return entity.getName();
+		return this.getTargetEntity().getName();
 	}
+	//-------------------------------------------------------------------------------------
+//	protected String getTargetEntityClassName() {
+//		// TODO : $env Prefix & Suffix
+//		//return _targetEntity.getBeanJavaClass() ;
+//		return _targetEntity.getName();
+//	}
+	
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the type of the entity referenced by the link ",
+			"eg : 'my.package.Book', 'my.package.Customer', ...",
+			""
+			}
+	)
+	public String getTargetEntityFullType() throws GeneratorException {
+////		return _targetEntity.getFullName(); // v 2.1.0
+//		EntityInContext entity = _entitiesBuilder.getEntity( getTargetTableName() );
+		return this.getTargetEntity().getFullName();	
+	}
+
 
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
@@ -658,215 +709,4 @@ public class LinkInContext {
 		return _link.isOptionalTrue();
 	}
 
-//	//----------------------------------------------------------------
-//	/**
-//	 * Build an return the cardinality annotation for an "OWNING SIDE"
-//	 * Example : "@ManyToOne ( cascade = CascadeType.ALL, fetch = FetchType.EAGER ) "
-//	 * @param cardinality
-//	 * @param targetEntity the target entity ( or null if none ) 
-//	 * @return
-//	 */
-//	private String getOwningSideCardinalityAnnotation( String cardinality, String targetEntity ) 
-//	{
-//		StringBuilder sb = new StringBuilder();
-//		sb.append( "@" + cardinality ) ;
-//		if ( targetEntity != null ) {
-//			sb.append( "(" );
-//			//--- Common further information : cascade, fetch and optional
-//			// ie "cascade = CascadeType.ALL, fetch = FetchType.EAGER"
-//			String sCardinalityFurtherInformation = getCardinalityFurtherInformation(_link);
-//			if ( ! StrUtil.nullOrVoid(sCardinalityFurtherInformation)) {
-//				sb.append( sCardinalityFurtherInformation );
-//				sb.append( ", " );
-//			}
-//			//--- targetEntity ( for ManyToMany and OneToMany )
-//			sb.append( "targetEntity=" + targetEntity + ".class" ) ;			
-//			sb.append( ")" );
-//		}
-//		else {
-//			//--- Common further information : cascade, fetch and optional
-//			// ie "cascade = CascadeType.ALL, fetch = FetchType.EAGER"
-//			String sCardinalityFurtherInformation = getCardinalityFurtherInformation(_link);
-//			if ( ! StrUtil.nullOrVoid(sCardinalityFurtherInformation)) {
-//				sb.append( "(" );
-//				sb.append( sCardinalityFurtherInformation );
-//				sb.append( ")" );
-//			}
-//		}
-//		return sb.toString();
-//	}
-
-//	/**
-//	 * Build an return the cardinality annotation for an "INVERSE SIDE"
-//	 * Example : "@OneToMany ( mappedBy="fieldName", targetEntity=TheClass.class ) "
-//	 * @param cardinality
-//	 * @return
-//	 */
-//	private String getInverseSideCardinalityAnnotation( String cardinality ) 
-//	{
-//		StringBuilder annotation = new StringBuilder();
-//		annotation.append( "@" + cardinality ) ;
-//		annotation.append( "(" );
-//		//--- Common further information : cascade, fetch and optional
-//		// ie "cascade = CascadeType.ALL, fetch = FetchType.EAGER"
-//		String sCardinalityFurtherInformation = getCardinalityFurtherInformation(_link);
-//		if ( ! StrUtil.nullOrVoid(sCardinalityFurtherInformation)) {
-//			annotation.append( sCardinalityFurtherInformation );
-//			annotation.append( ", " ); 
-//		}
-//		//--- mappedBy - NB : no "mappedBy" for ManyToOne (see JPA javadoc) ( cannot be an inverse side )
-//		if ( ! _link.isTypeManyToOne() ) { 
-//			annotation.append( "mappedBy=\"" + getMappedBy() + "\"" );
-//			annotation.append( ", " ); 
-//		}
-//		//--- targetEntity ( always usable, even with ManyToOne )
-//		annotation.append( "targetEntity=" + _targetEntity.getBeanJavaClass() + ".class" ); // No quote for "targetEntity"
-//		//---
-//		annotation.append( ")" );
-//		return annotation.toString();
-//	}
-	
-//	/**
-//	 * Build and return a single "@JoinColumn" annotation 
-//	 * @param joinColumn
-//	 * @param linkCardinality
-//	 * @return
-//	 */
-//	private String getJoinColumnAnnotation(JoinColumn joinColumn, int linkCardinality ) 
-//	{
-//		StringBuilder annotation = new StringBuilder();
-//		annotation.append( "@JoinColumn(");
-//		annotation.append( "name=\"" + joinColumn.getName()+"\"" );
-//		annotation.append( ", " );
-//		annotation.append( "referencedColumnName=\"" + joinColumn.getReferencedColumnName()+"\"" );
-//		// TODO 
-//		// columnDefinition
-//		// nullable
-//		// table
-//		// unique
-//		if ( linkCardinality == MANY_TO_ONE ) {
-//			// Add insertable=false and updatable=false to avoid classical error 
-//			// should be mapped with insert="false" update="false"
-//			annotation.append( ", " );
-//			annotation.append( "insertable=false" ); 
-//			annotation.append( ", " );
-//			annotation.append( "updatable=false" ); 
-//		}
-//		annotation.append( ")");
-//		return annotation.toString();
-//	}
-	
-//	/**
-//	 * Generates a "@JoinColumn" (single column) or "@JoinColumns" (multiple columns) annotation
-//	 * @param annotations
-//	 * @param joinColumns
-//	 * @param linkCardinality
-//	 */
-//	private void processJoinColumns(AnnotationsBuilder annotations, JoinColumns joinColumns, int linkCardinality ) 
-//	{
-//		if ( joinColumns != null ) 
-//		{
-//			String[] jc = getJoinColumnAnnotations( joinColumns.getAll(), linkCardinality );
-//			if ( jc != null ) {
-//				if ( jc.length == 1 ) 
-//				{
-//					// Single Join Column
-//					// Example :
-//					//   @JoinColumn(name="MGR_COUNTRY", referencedColumnName="COUNTRY") 
-//					
-//					annotations.addLine( jc[0] );
-//				}
-//				else 
-//				{
-//					// Multiple Join Columns
-//					// Example :
-//					// @JoinColumns( {
-//					//   @JoinColumn(name="MGR_COUNTRY", referencedColumnName="COUNTRY") ,
-//					//   @JoinColumn(name="MGR_ID", referencedColumnName="EMP_ID") } )
-//					
-//					annotations.addLine("@JoinColumns( { " );
-//					for ( int i = 0 ; i < jc.length ; i++ ) {
-//						String end = ( i < jc.length - 1) ? "," : " } )" ;
-//						annotations.addLine("    " + jc[i] + end );
-//					}
-//				}
-//			}
-//		}
-//	}
-	
-//	/**
-//	 * Generates the join table annotation : "@JoinTable"
-//	 * @param annotations
-//	 * @param joinTable
-//	 * @param linkCardinality
-//	 */
-//	private void processJoinTable(AnnotationsBuilder annotations, JoinTable joinTable, int linkCardinality) 	 
-//	{
-//		annotations.addLine("@JoinTable(name=\"" + joinTable.getName() + "\", " );
-//		
-//		JoinColumns joinColumns = joinTable.getJoinColumns();
-//		if ( joinColumns != null ) 
-//		{
-//			processJoinTableColumns(annotations, "joinColumns", joinColumns.getAll(), ",", linkCardinality);
-//		}
-//		
-//		InverseJoinColumns inverseJoinColumns = joinTable.getInverseJoinColumns();
-//		if ( inverseJoinColumns != null ) 
-//		{
-//			processJoinTableColumns(annotations, "inverseJoinColumns", inverseJoinColumns.getAll(), "", linkCardinality);
-//		}
-//		annotations.addLine(" ) \n" );
-//		
-//	}
-
-//	private void processJoinTableColumns( AnnotationsBuilder annotations, String name, JoinColumn[] joinColumns, String end, int linkCardinality ) 
-//	{
-//		String[] jc = getJoinColumnAnnotations( joinColumns, linkCardinality );
-//		if ( jc != null ) {
-//			if ( jc.length == 1 ) 
-//			{
-//				// Single Join Column
-//				// Example :
-//				//   joinColumns=@JoinColumn(name="MGR_COUNTRY", referencedColumnName="COUNTRY") 
-//				
-//				annotations.addLine("  " + name + "=" + jc[0] + end);
-//			}
-//			else 
-//			{
-//				// Multiple Join Columns
-//				// Example :
-//				//   joinColumns={
-//				//     @JoinColumn(name="MGR_COUNTRY", referencedColumnName="COUNTRY") ,
-//				//     @JoinColumn(name="MGR_ID", referencedColumnName="EMP_ID") }
-//				
-//				annotations.addLine("  " + name + "={" );
-//				for ( int i = 0 ; i < jc.length ; i++ ) {
-//					String jcEnd = ( i < jc.length - 1) ? "," : ( "}"+end ) ;
-//					annotations.addLine("    " + jc[i] + jcEnd );
-//				}
-//			}
-//		}
-//	}
-	
-//	/**
-//	 * Returns an array of string containing the annotations <br>
-//	 * Example : <br>
-//	 *  0 : "@JoinColumn(name="MGR_COUNTRY", referencedColumnName="COUNTRY")"
-//	 *  1 : "@JoinColumn(name="MGR_ID", referencedColumnName="EMP_ID")"
-//	 *  
-//	 * @param joinColumns
-//	 * @param linkCardinality
-//	 * @return
-//	 */
-//	private String[] getJoinColumnAnnotations( JoinColumn[] joinColumns, int linkCardinality ) 
-//	{
-//		if ( null == joinColumns ) return null ;
-//		if ( joinColumns.length == 0 ) return null ;
-//		String[] annotations = new String[joinColumns.length];
-//		for ( int i = 0 ; i < joinColumns.length ; i++ ) {
-//			annotations[i] = getJoinColumnAnnotation(joinColumns[i], linkCardinality);
-//		}
-//		return annotations;
-//	}
-	
 }

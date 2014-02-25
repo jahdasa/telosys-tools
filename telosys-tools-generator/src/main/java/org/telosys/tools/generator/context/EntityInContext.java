@@ -19,7 +19,9 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.telosys.tools.generator.EntitiesManager;
 import org.telosys.tools.generator.GeneratorContextException;
+import org.telosys.tools.generator.GeneratorException;
 import org.telosys.tools.generator.GeneratorUtil;
 import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityNoDoc;
@@ -31,7 +33,6 @@ import org.telosys.tools.repository.model.Column;
 import org.telosys.tools.repository.model.Entity;
 import org.telosys.tools.repository.model.ForeignKey;
 import org.telosys.tools.repository.model.Link;
-import org.telosys.tools.repository.model.RepositoryModel;
 
 /**
  * Specific Java Class for an Entity Java Bean with Object-Relational Mapping (ORM) <br>
@@ -65,7 +66,7 @@ public class EntityInContext
 	
 	private String     _sName        = NONE ;
 	private String     _sPackage     = NONE ;
-	private String     _sFullName    = NONE ;
+	//private String     _sFullName    = NONE ;
 	//private String     _sSuperClass  = NONE ;	
 	
 	
@@ -105,7 +106,8 @@ public class EntityInContext
 	private LinkedList<LinkInContext> _links  = null ; // The links for this class ( ALL ATTRIBUTES )
 //	private Entity                        _entite = null;
 	
-	private final EnvInContext _env ; // ver 2.1.0
+	private final EntitiesManager _entitiesManager ; // ver 2.1.0
+	private final EnvInContext    _env ; // ver 2.1.0
 	
 	//-----------------------------------------------------------------------------------------------
 	/**
@@ -115,13 +117,14 @@ public class EntityInContext
 	 * @param entityPackage
 	 * @param env environment configuration 
 	 */
-	public EntityInContext(final Entity entity, final RepositoryModel repositoryModel, 
-			final String entityPackage, final EnvInContext env ) 
+	public EntityInContext(final Entity entity, //final RepositoryModel repositoryModel, 
+			final String entityPackage, final EntitiesManager entitiesManager, EnvInContext env ) throws GeneratorException
 	{
 		_sName = entity.getBeanJavaClass() ;
 		_sPackage = entityPackage;
-		_sFullName = entityPackage + "." + _sName;
+		//_sFullName = entityPackage + "." + _sName;
 		
+		_entitiesManager = entitiesManager ;
 		_env = env ;
 		
 		this._sDatabaseTable   = entity.getName();
@@ -142,17 +145,20 @@ public class EntityInContext
 		/*
 		 * Set all the links of the current Java class
 		 */
+		
 		Collection<Link> entityLinks = entity.getLinksCollection() ;
 		for ( Link link : entityLinks ) {
 			// On va trouver le bean correspondant a ce lien dans le model
-			Entity referencedEntity = repositoryModel.getEntityByName(link.getTargetTableName());
-//			JavaBeanClassLink jcl = new JavaBeanClassLink(link, this._entite , entityCible );
-			LinkInContext jcl = new LinkInContext(link, referencedEntity );
+//			Entity referencedEntity = repositoryModel.getEntityByName(link.getTargetTableName());
+////			JavaBeanClassLink jcl = new JavaBeanClassLink(link, this._entite , entityCible );
+//			LinkInContext jcl = new LinkInContext(link, referencedEntity );
+
+			String entityName = link.getTargetTableName() ;
+			System.out.println("link on entity '" + entityName + "'"); System.out.flush();
+//			EntityInContext referencedEntity = _entitiesBuilder.getEntity( entityName ) ;
+//			LinkInContext jcl = new LinkInContext(link, referencedEntity );
+			LinkInContext jcl = new LinkInContext(link, _entitiesManager );
 			
-//			//ajouter import specifique
-//			JavaBeanClassImports jbci = new JavaBeanClassImports();
-//			jbci.declareType(jcl.getJavaTypeFull());
-////			this.addImportsJpa(jbci);
 			this.addLink(jcl);
 		}
 		
@@ -209,7 +215,16 @@ public class EntityInContext
 	)
 	public String getName()
 	{
-		return _sName ;
+		if ( _env != null ) {
+			StringBuilder sb = new StringBuilder();
+			sb.append( _env.getEntityClassNamePrefix() ) ; // Never null ( "" if not set )
+			sb.append( _sName ) ; // Never null ( "" if not set )
+			sb.append( _env.getEntityClassNameSuffix() ) ; // Never null ( "" if not set )
+			return sb.toString();
+		}
+		else {
+			return _sName ;
+		}
 	}
 	
 	/**
@@ -251,7 +266,9 @@ public class EntityInContext
 	)
 	public String getFullName()
     {
-		return _sFullName ;
+		//return _sFullName ;
+		
+		return _sPackage + "." + getName();
     }
 	
     /**

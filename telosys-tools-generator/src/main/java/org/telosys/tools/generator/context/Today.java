@@ -54,7 +54,7 @@ public class Today
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
 		text={	
-			"Returns the current date formated with the given format"
+			"Returns the current date formatted with the given format"
 			},
 		parameters={
 			"format : the Java date format (cf 'SimpleDateFormat' JavaDoc) "
@@ -80,7 +80,7 @@ public class Today
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
 		text={	
-			"Returns the current time formated with the given format"
+			"Returns the current time formatted with the given format"
 			},
 		parameters={
 			"format : the Java date format (cf 'SimpleDateFormat' JavaDoc) "

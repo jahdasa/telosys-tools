@@ -316,7 +316,7 @@ public class JavaBeanClassAttribute
 			"n : the number of blanks to be added at the end of the name" 
 			}
 	)
-	public String formatedName(int iSize)
+	public String formattedName(int iSize)
     {
         String s = _sName ;
         String sTrailingBlanks = "";
@@ -412,7 +412,7 @@ public class JavaBeanClassAttribute
 			"n : the number of blanks to be added at the end of the name" 
 			}
 	)
-	public String formatedType(int iSize)
+	public String formattedType(int iSize)
     {
 		String sType = this.getType() ;
         String sTrailingBlanks = "";

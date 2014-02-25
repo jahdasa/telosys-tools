@@ -467,8 +467,10 @@ public class Generator {
 		EnvInContext env = new EnvInContext() ;
 		_velocityContext.put(ContextName.ENV, env);   // ver 2.1.0
 		
+		EntitiesManager entitiesManager = new EntitiesManager(repositoryModel, _generatorConfig, env);
+		
 		//--- "$model" object : it provides all the entities (v 2.0.7)
-		ModelInContext model = new ModelInContext(repositoryModel, _generatorConfig, env );
+		ModelInContext model = new ModelInContext(repositoryModel, entitiesManager );
 		_velocityContext.put(ContextName.MODEL, model); 
 		
 		//--- Set the "$target"  in the context 
@@ -488,21 +490,17 @@ public class Generator {
 //			//--- Target without entity ( e.g. "once" target )
 //			javaBeanClass = null ;
 //		}
-		EntitiesBuilder entitiesBuilder = new EntitiesBuilder(env);
 
 		//--- List of selected entities ( $selectedEntities )
-		if ( selectedEntitiesNames != null ) {
-			List<EntityInContext> selectedEntities = 
-				entitiesBuilder.buildSelectedEntities(selectedEntitiesNames, repositoryModel, _generatorConfig );
-			_velocityContext.put(ContextName.SELECTED_ENTITIES, selectedEntities);
-		}
+		List<EntityInContext> selectedEntities = entitiesManager.getEntities( selectedEntitiesNames );
+		_velocityContext.put(ContextName.SELECTED_ENTITIES, selectedEntities);
 		
 		//--- Current entity : "$entity" in context
 		EntityInContext entity = null ;
 		if ( target.getEntityName().trim().length() > 0 ) {
 			//--- Target with entity ( classical target )
 			//javaBeanClass = RepositoryModelUtil.buildJavaBeanClass(target.getEntityName(), repositoryModel, _generatorConfig) ; // v 2.1.0
-			entity = entitiesBuilder.buildEntity(target.getEntityName(), repositoryModel, _generatorConfig);
+			entity = entitiesManager.getEntity(target.getEntityName() );
 		}
 		else {
 			//--- Target without entity ( e.g. "once" target )

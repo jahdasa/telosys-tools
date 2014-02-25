@@ -57,6 +57,12 @@ public class EnvInContext {
 		since = "2.1.0"
 			)
 	public void setEntityClassNamePrefix( String prefix ) {
+		_entityClassNamePrefix = prefix ;
+	}
+
+	//-------------------------------------------------------------------------------------
+	public String getEntityClassNamePrefix() {
+		return _entityClassNamePrefix;
 	}
 
 	//-------------------------------------------------------------------------------------
@@ -74,13 +80,11 @@ public class EnvInContext {
 		since = "2.1.0"
 			)
 	public void setEntityClassNameSuffix( String suffix ) {
+		_entityClassNameSuffix = suffix ;
 	}
 
-	protected String getEntityClassNamePrefix() {
-		return _entityClassNamePrefix;
-	}
-
-	protected String getEntityClassNameSuffix() {
+	//-------------------------------------------------------------------------------------
+	public String getEntityClassNameSuffix() {
 		return _entityClassNameSuffix;
 	}
 

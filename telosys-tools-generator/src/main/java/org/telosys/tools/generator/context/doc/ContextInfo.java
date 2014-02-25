@@ -105,7 +105,7 @@ public class ContextInfo {
 	}
 
 	/**
-	 * Returns an object documentation in a string containing the documentation formated in HTML
+	 * Returns an object documentation in a string containing the documentation formatted in HTML
 	 * @param objectName the object name ( e.g. "fn", "today", ... )
 	 * @return the documentation, or null if the given object name is unknown
 	 */
@@ -121,7 +121,7 @@ public class ContextInfo {
 	}
 	
 	/**
-	 * Returns a method/attribute documentation in a string containing the documentation formated in HTML
+	 * Returns a method/attribute documentation in a string containing the documentation formatted in HTML
 	 * @param objectName the object name ( e.g. "fn", "today", ... )
 	 * @param methodSignature the signature as provided by "MethodInfo.getSignature()"
 	 * @return the documentation, or null if the method is unknown

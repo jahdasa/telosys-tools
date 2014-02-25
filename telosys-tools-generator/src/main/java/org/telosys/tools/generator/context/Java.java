@@ -290,7 +290,8 @@ public class Java {
 			for ( LinkInContext link : entity.getLinks() ) {
 				if ( link.isCardinalityOneToMany() || link.isCardinalityManyToMany() ) {
 					// "java.util.List", "java.util.Set", ... 
-					imports.declareType( link.getJavaTypeFull() ); 
+					//imports.declareType( link.getJavaTypeFull() ); 
+					imports.declareType( link.getFieldFullType() ); 
 				}
 				else {
 					// ManyToOne or OneToOne => bean ( "Book", "Person", ... )

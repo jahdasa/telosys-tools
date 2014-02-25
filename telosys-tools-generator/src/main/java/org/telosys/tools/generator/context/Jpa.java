@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.telosys.tools.commons.StrUtil;
+import org.telosys.tools.generator.GeneratorException;
 import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityObject;
 import org.telosys.tools.generator.context.doc.VelocityReturnType;
@@ -170,11 +171,13 @@ public class Jpa {
 			"fieldsMapped : list of all the fields mapped by JPA "},
 		since = "2.0.7"
 			)
-	public String linkAnnotations( int marginSize, LinkInContext entityLink, List<JavaBeanClassAttribute> fieldsList ) {
+	public String linkAnnotations( int marginSize, LinkInContext entityLink, List<JavaBeanClassAttribute> fieldsList )
+				throws GeneratorException {
 		
 		Link   _link         = entityLink.getLink(); 
 		//Entity _targetEntity = entityLink.getTargetEntity() ;
-		String targetEntityClassName = entityLink.getTargetEntityClassName() ; // refactoring v 2.1.0
+		//String targetEntityClassName = entityLink.getTargetEntitySimpleType() ; // refactoring v 2.1.0
+		String targetEntityClassName = entityLink.getTargetEntity().getName();
 
 		AnnotationsBuilder annotations = new AnnotationsBuilder(marginSize);
 		
@@ -287,10 +290,11 @@ public class Jpa {
 	 * @return
 	 */
 	private String getInverseSideCardinalityAnnotation( LinkInContext entityLink, String cardinality ) 
-	{
+					throws GeneratorException  {
 		Link   _link         = entityLink.getLink(); 
 		//Entity _targetEntity = entityLink.getTargetEntity() ;
-		String targetEntityClassName = entityLink.getTargetEntityClassName() ; // refactoring v 2.1.0
+		//String targetEntityClassName = entityLink.getTargetEntitySimpleType() ; // refactoring v 2.1.0
+		String targetEntityClassName = entityLink.getTargetEntity().getName();
 		
 		StringBuilder annotation = new StringBuilder();
 		annotation.append( "@" + cardinality ) ;
