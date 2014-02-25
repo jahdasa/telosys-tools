@@ -406,4 +406,48 @@ public class Fn {
 		Object o = _velocityContext.get(objectName);
 		return ( o != null ? o : defaultValue );
 	}
+
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(text={	
+			"Capitalizes the given string",
+			"changing the first letter to upper case"
+			},
+			parameters = { 
+				"string : the string to be capitalized"
+			},
+			example = {
+				"$fn.capitalize($var)" },
+			since = "2.1.0"
+			)
+	public String capitalize(String str) {
+		if(str == null || str.length() == 0) {
+			return str;
+		}
+		if(str.length() == 1) {
+			return str.toUpperCase();
+		}
+		return str.substring(0, 1).toUpperCase() + str.substring(1);
+	}
+
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(text={	
+			"Uncapitalizes the given string",
+			"changing the first letter to lower case"
+			},
+			parameters = { 
+				"string : the string to be uncapitalized"
+			},
+			example = {
+				"$fn.uncapitalize($var) " },
+			since = "2.1.0"
+			)
+	public String uncapitalize(String str) {
+		if(str == null || str.length() == 0) {
+			return str;
+		}
+		if(str.length() == 1) {
+			return str.toLowerCase();
+		}
+		return str.substring(0, 1).toLowerCase() + str.substring(1);
+	}	
 }

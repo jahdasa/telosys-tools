@@ -178,7 +178,6 @@ public class Target
 	)
 	public String javaPackageFromFolder(String srcFolder) {
 		
-		System.out.println("javaPackageFromFolder('"+srcFolder+ "') : folder = '" + this.folder + "'");
 		if ( null == srcFolder ) {
 			// Use the folder as is
 			return folderToPackage(this.folder) ;

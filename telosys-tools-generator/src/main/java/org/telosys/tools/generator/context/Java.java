@@ -25,12 +25,12 @@ import org.telosys.tools.generator.context.tools.LinesBuilder;
 
 //-------------------------------------------------------------------------------------
 @VelocityObject(
-		contextName=ContextName.JAVA,
-		text = { 
-				"Object providing a set of utility functions for JAVA language code generation",
-				""
-		},
-		since = "2.0.7"
+	contextName=ContextName.JAVA,
+	text = { 
+		"Object providing a set of utility functions for JAVA language code generation",
+		""
+	},
+	since = "2.0.7"
  )
 //-------------------------------------------------------------------------------------
 public class Java {
@@ -277,7 +277,6 @@ public class Java {
 				"entity : entity to be used " },
 			since = "2.0.7"
 				)
-	//public List<String> imports( JavaBeanClass entity ) {
 	public List<String> imports( EntityInContext entity ) {
 		if ( entity != null ) {
 			JavaBeanClassImports imports = new JavaBeanClassImports();
@@ -290,7 +289,6 @@ public class Java {
 			for ( LinkInContext link : entity.getLinks() ) {
 				if ( link.isCardinalityOneToMany() || link.isCardinalityManyToMany() ) {
 					// "java.util.List", "java.util.Set", ... 
-					//imports.declareType( link.getJavaTypeFull() ); 
 					imports.declareType( link.getFieldFullType() ); 
 				}
 				else {
@@ -310,21 +308,71 @@ public class Java {
 	// toString METHOD GENERATION
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
-			text={	
-				"Returns a string containing all the code for a Java 'toString' method",
-				"Generates a 'toString' method with the primary key attribute or the embedded key ",
-				"and the given list of 'non key' attributes if their type is usable in a 'toString' method",
-				"(excluded types are 'array', 'Clob', 'Blob', and 'Long Text String') "
-				},
-			example={ 
-				"$java.toStringMethod( entity, nonKeyAttributes, embeddedIdName, indentSpaces )" },
-			parameters = { 
-				"entity : the entity to be used",
-				"nonKeyAttributes : list of attributes that are not in the Primary Key",
-				"embeddedIdName : variable name for the embedded id (used only if the entity has a composite primary key) " },
-			since = "2.0.7"
-				)
-	//public String toStringMethod( JavaBeanClass entity, List<JavaBeanClassAttribute> nonKeyAttributes, String embeddedIdName ) {
+		text={	
+			"Returns a string containing all the code for a Java 'toString' method",
+			"Generates a 'toString' method using all the attributes of the given entity",
+			"(excluded types are 'array', 'Clob', 'Blob', and 'Long Text String') "
+			},
+		example={ 
+			"$java.toStringMethod( $entity, 4 )" },
+		parameters = { 
+			"entity : the entity providing the attributes to be used in the 'toString' method",
+			"indentSpaces : number of spaces to be used for each indentation level"},
+		since = "2.1.0"
+			)
+	public String toStringMethod( EntityInContext entity, int indentSpaces ) {
+		return toStringMethod(entity.getAttributes(), indentSpaces );
+	}
+	
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns a string containing all the code for a Java 'toString' method",
+			"Generates a 'toString' method using all the given attributes ",
+			"(excluded types are 'array', 'Clob', 'Blob', and 'Long Text String') "
+			},
+		example={ 
+			"$java.toStringMethod( $attributes, 4 )" },
+		parameters = { 
+			"attributes : list of attributes to be used in the 'toString' method",
+			"indentSpaces : number of spaces to be used for each indentation level"},
+		since = "2.1.0"
+			)
+	public String toStringMethod( List<JavaBeanClassAttribute> attributes, int indentSpaces ) {
+
+		LinesBuilder lb = new LinesBuilder(indentSpaces) ;
+		int indent = 1 ;
+		lb.append(indent, "public String toString() { ");
+		
+		indent++;
+		lb.append(indent, "StringBuffer sb = new StringBuffer(); ");
+		//--- All the given attributes 
+		if ( attributes != null ) {
+			toStringForAttributes( attributes, lb, indent );
+		}
+		lb.append(indent, "return sb.toString(); ");
+		indent--;
+		
+		lb.append(indent, "} ");
+		return lb.toString();
+	}
+    
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns a string containing all the code for a Java 'toString' method",
+			"Generates a 'toString' method with the primary key attribute or the embedded key ",
+			"and the given list of 'non key' attributes if their type is usable in a 'toString' method",
+			"(excluded types are 'array', 'Clob', 'Blob', and 'Long Text String') "
+			},
+		example={ 
+			"$java.toStringMethod( $entity, $nonKeyAttributes, $embeddedIdName, 4 )" },
+		parameters = { 
+			"entity : the entity to be used",
+			"nonKeyAttributes : list of attributes that are not in the Primary Key",
+			"embeddedIdName : variable name for the embedded id (used only if the entity has a composite primary key) " },
+		since = "2.0.7"
+			)
 	public String toStringMethod( EntityInContext entity, List<JavaBeanClassAttribute> nonKeyAttributes, String embeddedIdName ) {
 			
 		return toStringMethod( entity , nonKeyAttributes, embeddedIdName, new LinesBuilder() ); 
@@ -339,7 +387,7 @@ public class Java {
 			"(excluded types are 'array', 'Clob', 'Blob', and 'Long Text String') "
 			},
 		example={ 
-			"$java.toStringMethod( entity, nonKeyAttributes, embeddedIdName, indentSpaces )" },
+			"$java.toStringMethod( $entity, $nonKeyAttributes, $embeddedIdName, 4 )" },
 		parameters = { 
 			"entity : the entity to be used",
 			"nonKeyAttributes : list of attributes that are not in the Primary Key",
@@ -347,14 +395,12 @@ public class Java {
 			"indentSpaces : number of spaces to be used for each indentation level"},
 		since = "2.0.7"
 			)
-	//public String toStringMethod( JavaBeanClass entity, List<JavaBeanClassAttribute> nonKeyAttributes, String embeddedIdName, int indentSpaces ) {
 	public String toStringMethod( EntityInContext entity, List<JavaBeanClassAttribute> nonKeyAttributes, String embeddedIdName, int indentSpaces ) {
 		
 		return toStringMethod( entity , nonKeyAttributes, embeddedIdName, new LinesBuilder(indentSpaces) ); 
 	}
 	
 	//-------------------------------------------------------------------------------------
-	//private String toStringMethod( JavaBeanClass entity, List<JavaBeanClassAttribute> nonKeyAttributes, String embeddedIdName, LinesBuilder lb ) {
 	private String toStringMethod( EntityInContext entity, List<JavaBeanClassAttribute> nonKeyAttributes, String embeddedIdName, LinesBuilder lb ) {
 
 		int indent = 1 ;
@@ -368,24 +414,17 @@ public class Java {
 		//--- PRIMARY KEY attributes ( composite key or not )
 		if ( entity.hasCompositePrimaryKey() && ( embeddedIdName != null ) ) {
 			// Embedded id 
-			//count = count + toStringForEmbeddedId( leftMargin, sb, embeddedIdName );
 			count = count + toStringForEmbeddedId( embeddedIdName, lb, indent );
 		}
 		else {
 			// No embedded id ( or no name for it )
 			List<JavaBeanClassAttribute> keyAttributes = entity.getKeyAttributes() ;
-			//count = count + toStringForAttributes( leftMargin, sb, _keyAttributes );
 			count = count + toStringForAttributes( keyAttributes, lb, indent );
 		}
-
-//		if ( count > 0 ) {
-//			lb.append(indent, "sb.append(\"|\"); ");
-//		}
 		lb.append(indent, "sb.append(\"]:\"); ");
 		
 		//--- NON KEY attributes ( all the attributes that are not in the Primary Key )
 		if ( nonKeyAttributes != null ) {
-			//count = count + toStringForAttributes( leftMargin, sb, specificNonKeyAttributes );
 			count = count + toStringForAttributes( nonKeyAttributes, lb, indent );
 		}
 				
@@ -412,10 +451,8 @@ public class Java {
     		if ( usableInToString( attribute ) ) {
                 if ( count > 0 ) // if it's not the first one
                 {
-        			//sb.append(leftMargin); sb.append("sb.append( \"|\" ); \n");
         			lb.append(indent, "sb.append(\"|\");" );
                 }        		
-    			//sb.append(leftMargin); sb.append("sb.append(" + attribute.getName() + "); \n" );
     			lb.append(indent, "sb.append(" + attribute.getName() + ");" );
     			count++ ;
     		}
@@ -437,12 +474,6 @@ public class Java {
      */
     private int toStringForEmbeddedId( String embeddedIdName, LinesBuilder lb, int indent  )
     {
-//		sb.append(leftMargin); sb.append("if ( " + embeddedIdName + " != null ) {  \n");
-//		sb.append(leftMargin); sb.append("    sb.append(" + embeddedIdName + ".toString());  \n");
-//		sb.append(leftMargin); sb.append("}  \n");
-//		sb.append(leftMargin); sb.append("else {  \n");
-//		sb.append(leftMargin); sb.append("    sb.append( \"(null-key)\" );  \n");
-//		sb.append(leftMargin); sb.append("}  \n");
 		lb.append(indent, "if ( " + embeddedIdName + " != null ) {  ");
 		lb.append(indent, "    sb.append(" + embeddedIdName + ".toString());  ");
 		lb.append(indent, "}  ");
@@ -469,4 +500,5 @@ public class Java {
     	if ( s.endsWith("Clob") ) return false ; 
     	return true ;
     }
+    
 }

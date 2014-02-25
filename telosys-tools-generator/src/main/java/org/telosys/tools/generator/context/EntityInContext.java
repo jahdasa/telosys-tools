@@ -62,49 +62,40 @@ import org.telosys.tools.repository.model.Link;
 //-------------------------------------------------------------------------------------
 public class EntityInContext 
 {
-	private final static String   NONE = "" ;
+	//--- Static void lists
+	private final static List<JavaBeanClassAttribute>  VOID_ATTRIBUTES_LIST    = new LinkedList<JavaBeanClassAttribute>();
+	private final static List<JavaBeanClassForeignKey> VOID_FOREIGN_KEYS_LIST  = new LinkedList<JavaBeanClassForeignKey>();
+	private final static List<LinkInContext>           VOID_LINKS_LIST         = new LinkedList<LinkInContext>();
 	
-	private String     _sName        = NONE ;
-	private String     _sPackage     = NONE ;
+	//private final static String   NONE = "" ;
+	
+	private final String     _sName ;
+	private final String     _sPackage ;
 	//private String     _sFullName    = NONE ;
 	//private String     _sSuperClass  = NONE ;	
 	
 	
-	private final static List<JavaBeanClassAttribute>  VOID_ATTRIBUTES_LIST    = new LinkedList<JavaBeanClassAttribute>();
-	private final static List<JavaBeanClassForeignKey> VOID_FOREIGN_KEYS_LIST  = new LinkedList<JavaBeanClassForeignKey>();
-
-//	private final static List<String>                 VOID_STRINGS_LIST    = new LinkedList<String>();
-	//private final static Set<String>                  VOID_STRINGS_SET     = new LinkedHashSet<String>();
 	
-	private final static List<LinkInContext>      VOID_LINKS_LIST    = new LinkedList<LinkInContext>();
-	
-//	// The imports for all fields of this class ( list of "java.xx.Class" )
-//	private List<String>                       _importsForAllFields = VOID_STRINGS_LIST ; 
-//	// The imports required when using only the "key fields" of this class ( list of "java.xx.Class" )
-//	private List<String>                       _importsForKeyFields = VOID_STRINGS_LIST ; 
-	
-	private LinkedList<JavaBeanClassAttribute> _attributes  = null ; // The attributes for this class ( ALL ATTRIBUTES )
-	
-    private String     _sDatabaseTable   = null ; // Table name this class is mapped with
-    private String     _sDatabaseCatalog = null ; // The table's catalog 
-    private String     _sDatabaseSchema  = null ; // The table's schema 
-    private String     _sDatabaseType    = null ; // The table's type "table" or "view" 
+    private final String     _sDatabaseTable    ; // Table name this class is mapped with
+    private final String     _sDatabaseCatalog  ; // The table's catalog 
+    private final String     _sDatabaseSchema   ; // The table's schema 
+    private final String     _sDatabaseType     ; // The table's type "table" or "view" 
     
+	private final LinkedList<JavaBeanClassAttribute> _attributes ; // The attributes for this class ( ALL ATTRIBUTES )
 	private LinkedList<JavaBeanClassAttribute>  _keyAttributes     = null ; // The KEY attributes for this class
 	private LinkedList<JavaBeanClassAttribute>  _nonKeyAttributes  = null ; // The NON KEY attributes for this class
+
 	private String     _sSqlKeyColumns = null ;
 	private String     _sSqlNonKeyColumns = null ;
 	
-	private LinkedList<JavaBeanClassForeignKey>  _foreignKeys  = null ; // The database FOREIGN KEYS attributes for this entity ( v 2.0.7)
+	private final LinkedList<JavaBeanClassForeignKey>  _foreignKeys ; // The database FOREIGN KEYS attributes for this entity ( v 2.0.7)
 	
 	//--- XML mapper infos
 	private LinkedList<JavaBeanClassAttribute> _nonTextAttributes  = null ; // Standard attributes for this class ( not "long text" )
 	private LinkedList<JavaBeanClassAttribute> _textAttributes     = null ; // Special "long text" attributes for this class
 
 	//--- JPA specific
-//	private Set<String>                   _importsJpa = null ; // The imports JPA for this class ( list of "java.xx.Class" )
-	private LinkedList<LinkInContext> _links  = null ; // The links for this class ( ALL ATTRIBUTES )
-//	private Entity                        _entite = null;
+	private final LinkedList<LinkInContext> _links ; // The links for this class ( ALL ATTRIBUTES )
 	
 	private final EntitiesManager _entitiesManager ; // ver 2.1.0
 	private final EnvInContext    _env ; // ver 2.1.0
@@ -127,25 +118,22 @@ public class EntityInContext
 		_entitiesManager = entitiesManager ;
 		_env = env ;
 		
-		this._sDatabaseTable   = entity.getName();
-		this._sDatabaseCatalog = entity.getCatalog();
-		this._sDatabaseSchema  = entity.getSchema();
-		this._sDatabaseType    = entity.getDatabaseType(); // ver 2.0.7
+		_sDatabaseTable   = entity.getName();
+		_sDatabaseCatalog = entity.getCatalog();
+		_sDatabaseSchema  = entity.getSchema();
+		_sDatabaseType    = entity.getDatabaseType(); // ver 2.0.7
 		
-		/*
-		 * Set all the attributes of the current Java class
-		 *  
-		 */
+		//--- Init all the ATTRIBUTES for the current entity
+		_attributes = new LinkedList<JavaBeanClassAttribute>();
 		Collection<Column> entityColumns = entity.getColumnsCollection() ;
 		for ( Column col : entityColumns ) {
 			JavaBeanClassAttribute jca = new JavaBeanClassAttribute(col);
-			this.addAttribute(jca);
+			//this.addAttribute(jca);
+			_attributes.add(jca);
 		}
 
-		/*
-		 * Set all the links of the current Java class
-		 */
-		
+		//--- Init all the LINKS for the current entity
+		_links = new LinkedList<LinkInContext>();
 		Collection<Link> entityLinks = entity.getLinksCollection() ;
 		for ( Link link : entityLinks ) {
 			// On va trouver le bean correspondant a ce lien dans le model
@@ -153,19 +141,17 @@ public class EntityInContext
 ////			JavaBeanClassLink jcl = new JavaBeanClassLink(link, this._entite , entityCible );
 //			LinkInContext jcl = new LinkInContext(link, referencedEntity );
 
-			String entityName = link.getTargetTableName() ;
-			System.out.println("link on entity '" + entityName + "'"); System.out.flush();
+			//String entityName = link.getTargetTableName() ;
 //			EntityInContext referencedEntity = _entitiesBuilder.getEntity( entityName ) ;
 //			LinkInContext jcl = new LinkInContext(link, referencedEntity );
 			LinkInContext jcl = new LinkInContext(link, _entitiesManager );
 			
-			this.addLink(jcl);
+			//this.addLink(jcl);
+			_links.add(jcl);
 		}
 		
-		/*
-		 * DATABASE FOREIGN KEYS  ( v 2.0.7 )
-		 */
-		this._foreignKeys = new LinkedList<JavaBeanClassForeignKey>();
+		//--- Init all the DATABASE FOREIGN KEYS  ( v 2.0.7 )
+		_foreignKeys = new LinkedList<JavaBeanClassForeignKey>();
 		Collection<ForeignKey> foreignKeys = entity.getForeignKeysCollection();
 		for ( ForeignKey fk : foreignKeys ) {
 			_foreignKeys.add( new JavaBeanClassForeignKey(fk ) );
@@ -175,8 +161,6 @@ public class EntityInContext
 		//this.endOfDefinition();
 		endOfAttributesDefinition();
 		
-		// import JPA resolution
-		//this.processJpaSpecificImport();
 	}
 	
 //	//-----------------------------------------------------------------------------------------------
@@ -313,13 +297,13 @@ public class EntityInContext
 //		}		
 //	}
 	//-----------------------------------------------------------------------------------------------
-	private void addLink(LinkInContext jcl) {
-		if ( _links == null )
-		{
-			_links = new LinkedList<LinkInContext>();
-		}
-		_links.add(jcl);
-	}
+//	private void addLink(LinkInContext jcl) {
+//		if ( _links == null )
+//		{
+//			_links = new LinkedList<LinkInContext>();
+//		}
+//		_links.add(jcl);
+//	}
 
 	//-------------------------------------------------------------------------------------
 	/**
@@ -571,6 +555,57 @@ public class EntityInContext
 		}
 		return VOID_ATTRIBUTES_LIST ;
 	}
+	
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( text= { 
+			"Returns the key attributes names as a string.",
+			"The attributes names are separated by the given separator",
+			"with a prefix/suffix for each attribute name"
+			},
+			parameters = {
+					"separator : the separator to be put between each attribute name"
+			},
+			example= {
+				"$entity.keyAttributesNamesAsString('/') "
+			},
+			since="2.1.0"
+		)
+    public String keyAttributesNamesAsString(String separator) {
+    	return keyAttributesNamesAsString(separator, "", "");
+    }
+    
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( text= { 
+		"Returns the key attributes names as a string.",
+		"The attributes names are separated by the given separator",
+		"with a prefix/suffix for each attribute name"
+		},
+		parameters = {
+				"separator : the separator to be put between each attribute name",
+				"prefix : the prefix to be put before each attribute name",
+				"suffix : the prefix to be put after each attribute name"
+		},
+		example= {
+			"$entity.keyAttributesNamesAsString('/', '{{', '}}') "
+		},
+		since="2.1.0"
+	)
+    public String keyAttributesNamesAsString(String separator, String prefix, String suffix) {
+    	if( this.hasPrimaryKey() ) {
+               StringBuilder sb = new StringBuilder();
+               int n = 0 ;
+               for ( JavaBeanClassAttribute attribute : this.getKeyAttributes() ) {
+                      n++ ;
+                      if ( n > 1 ) sb.append(separator);
+                      sb.append(prefix);
+                      sb.append(attribute.getName());
+                      sb.append(suffix);
+               }
+               return sb.toString();
+        } else {
+               return "no_primary_key_for_entity_" + this.getName() + "" ;
+        }
+    }
 
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod ( text= { 
@@ -625,20 +660,6 @@ public class EntityInContext
 		return 0 ;
 	}
 
-	//-------------------------------------------------------------------------------------
-//	@VelocityMethod ( text= { 
-//			"Returns the database table mapped with this entity",
-//			"DEPRECATED : use 'databaseTable' instead "
-//		},
-//		example="$entity.sqlTable",
-//		deprecated=true
-//	)
-//	@Deprecated
-//	public String getSqlTable() 
-//	{
-//		return _sDatabaseTable ;
-//	}
-	
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod ( text= { 
 			"Returns the database table mapped with this entity"
@@ -793,202 +814,6 @@ public class EntityInContext
 		}
 		return _sSqlNonKeyColumns ;
 	}
-
-//    /**
-//     * Returns the Java line instruction for the toString() method
-//     * @return
-//     */
-//	//-------------------------------------------------------------------------------------
-//	@VelocityMethod ( text= { 
-//			"Returns the Java line instruction for the toString() method",
-//			"DEPRECATED : use 'toStringMethodCodeLines()' instead "
-//		},
-//		example="$entity.toStringInstruction",
-//		deprecated=true
-//	)
-//	@Deprecated
-//    public String getToStringInstruction()
-//    {
-//    	if ( _attributes != null )
-//    	{
-//    		int n = _attributes.size();
-//    		if ( n > 1 )
-//    		{
-//                StringBuffer sb = new StringBuffer();
-//            	for ( int i = 0 ; i < n ; i++ )        		
-//            	{
-//            		JavaBeanClassAttribute attribute = (JavaBeanClassAttribute) _attributes.get(i);
-//                    if ( i > 0 ) // if it's not the first one
-//                    {
-//                        sb.append( " + \"|\" + " ) ;
-//                    }        		
-//                    sb.append( attribute.getName() ) ;
-//            	}
-//            	return sb.toString(); // example : 'aaa + "|" + bbb + "|" + ccc'
-//    		}
-//    		else 
-//    		{
-//    			// Single attribute => no automatic conversion to String
-//    			JavaBeanClassAttribute attribute = (JavaBeanClassAttribute) _attributes.get(0);
-//    			String sFullType = attribute.getFullType();
-//    			if ( sFullType != null ) {
-//    				if ( sFullType.startsWith("java.") ) {
-//    					//--- Java object
-//    					if ( sFullType.equals("java.lang.String") ) {
-//        					return attribute.getName() ;
-//    					}
-//    					else {
-//        					return attribute.getName() + ".toString()";
-//    					}
-//    				}
-//    				else {
-//    					//--- Primitive type
-//    					return "\"\" + " + attribute.getName() ;
-//    				}
-//    			}
-//    		}
-//    	}
-//    	return "\"Class " + getName() + " (no attributes) \"" ;
-//    }
-
-//    private boolean typeUsedInToString( String sType )
-//    {
-//    	if ( null == sType ) return false ;
-//    	String s = sType.trim() ;
-//    	if ( s.endsWith("]") ) return false ; // Array
-//    	if ( s.endsWith("Blob") ) return false ; 
-//    	if ( s.endsWith("Clob") ) return false ; 
-//    	return true ;
-//    }
-//	//-------------------------------------------------------------------------------------
-//	@VelocityMethod ( text= { 
-//			"Returns a multiline String containing all the Java instructions for the 'toString' method",
-//			"Argument : number of spaces for the left margin ",
-//			""
-//		},
-//		example={	
-//			"$entity.toStringMethodCodeLines(4)"
-//		},
-//		parameters = "leftMargin : number of blanks for the left margin"
-//	)
-//    public String toStringMethodCodeLines( int iLeftMargin )
-//    {
-//    	return toStringMethodCodeLinesWithKey( iLeftMargin, null );
-//    }
-    
-//	//-------------------------------------------------------------------------------------
-//	@VelocityMethod (
-//		text= { 
-//			"Returns a multiline String containing all the Java instructions for the 'toString' method",
-//			"The primary key (composite or not) and all the 'non key' attributes are used"
-//		},
-//		example={	
-//			"$entity.toStringMethodCodeLinesWithKey(8, \"compositePrimaryKey\" )"
-//		},
-//		parameters = {
-//				"leftMargin : number of blanks for the left margin",
-//				"keyVarName : variable name for the composite primary key embedded id (if any) "
-//		}
-//	)
-//    public String toStringMethodCodeLinesWithKey( int iLeftMargin, String embeddedIdName )
-//    {
-//    	return toStringMethodCodeLinesWithKey( iLeftMargin, _nonKeyAttributes, embeddedIdName );
-//    }
-//    
-//	//-------------------------------------------------------------------------------------
-//	@VelocityMethod ( text= { 
-//			"Returns a multiline String containing all the Java instructions for the 'toString' method",
-//			"The primary key (composite or not) and given list of attributes are used"
-//		},
-//		example={	
-//			"$entity.toStringMethodCodeLinesWithKey(8, $attributes, \"compositePrimaryKey\" )"
-//		},
-//		parameters = {
-//			"leftMargin : number of blanks for the left margin",
-//			"attributes : specific list of attributes to be used in the 'toString' method (except key attributes)",
-//			"keyVarName : variable name for the composite primary key embedded id (if any) "
-//	}
-//	)
-//    public String toStringMethodCodeLinesWithKey( int iLeftMargin, List<JavaBeanClassAttribute> specificNonKeyAttributes, String embeddedIdName )
-//    {
-//    	String leftMargin = GeneratorUtil.blanks(iLeftMargin);
-//    	
-//    	if ( _attributes != null )
-//    	{
-//    		int n = _attributes.size();
-//    		if ( n > 0 )
-//    		{
-//    			int count = 0 ;
-//                StringBuffer sb = new StringBuffer();
-//    			sb.append(leftMargin);
-//    			sb.append("StringBuffer sb = new StringBuffer(); \n");
-//    			
-//    			//--- PRIMARY KEY attributes ( composite key or not )
-//    			if ( _keyAttributes != null ) {
-//					if ( hasCompositePrimaryKey() && ( embeddedIdName != null ) ) {
-//						// Embedded id 
-//						count = count + toStringForEmbeddedId( leftMargin, sb, embeddedIdName );
-//					}
-//					else {
-//						// No embedded id 
-//						count = count + toStringForAttributes( leftMargin, sb, _keyAttributes );
-//					}
-//        		}
-//
-//    			if ( count > 0 ) {
-//    				sb.append(leftMargin);
-//    				sb.append("sb.append(\"|\"); \n");
-//    			}
-//    			
-//    			//--- NON KEY attributes ( composite key or not )
-//    			if ( specificNonKeyAttributes != null ) {
-//    				count = count + toStringForAttributes( leftMargin, sb, specificNonKeyAttributes );
-//    			}
-//    			
-//    			sb.append(leftMargin);
-//    			sb.append("return sb.toString();"); // Last line => No EOL
-//    			if ( count > 0 ) {
-//                    return sb.toString() ;
-//    			}
-//    			else {
-//    				return leftMargin + "return \"Instance of " + getName() + " (no usable attribute)\" ;" ;
-//    			}
-//    		}
-//    		else {
-//				return leftMargin + "return \"Instance of " + getName() + " (attributes.size = 0)\" ;" ;    			
-//    		}
-//    	}
-//    	else {
-//        	return leftMargin + "return \"Instance of " + getName() + " (attributes is null)\" ;" ;
-//    	}
-//    }
-    
-//    private int toStringForAttributes( String leftMargin, StringBuffer sb, List<JavaBeanClassAttribute> attributes )
-//    {
-//    	int count = 0 ;
-//    	for ( JavaBeanClassAttribute attribute : attributes ) {
-//    		if ( typeUsedInToString( attribute.getType() ) )
-//    		{
-//                if ( count > 0 ) // if it's not the first one
-//                {
-//        			sb.append(leftMargin); sb.append("sb.append( \"|\" ); \n");
-//                }        		
-//    			sb.append(leftMargin); sb.append("sb.append(" + attribute.getName() + "); \n" );
-//    			count++ ;
-//    		}
-//    	}
-//    	return count ;
-//    }
-//    private int toStringForEmbeddedId( String leftMargin, StringBuffer sb, String embeddedIdName )
-//    {
-//		sb.append(leftMargin); sb.append("if ( " + embeddedIdName + " != null ) {  \n");
-//		sb.append(leftMargin); sb.append("    sb.append(" + embeddedIdName + ".toString());  \n");
-//		sb.append(leftMargin); sb.append("}  \n");
-//		sb.append(leftMargin); sb.append("else {  \n");
-//		sb.append(leftMargin); sb.append("    sb.append( \"(null-key)\" );  \n");
-//		sb.append(leftMargin); sb.append("}  \n");
-//		return 1 ;
-//    }
 
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod ( text= { 
@@ -1161,18 +986,18 @@ public class EntityInContext
 
 	// -------------------------------------------------------------------------------------------------
 	
-	/**
-	 * Add an attribute for this class
-	 * @param attribute
-	 */
-    private void addAttribute(JavaBeanClassAttribute attribute) 
-	{
-		if ( _attributes == null )
-		{
-			_attributes = new LinkedList<JavaBeanClassAttribute>();
-		}
-		_attributes.add(attribute);
-	}
+//	/**
+//	 * Add an attribute for this class
+//	 * @param attribute
+//	 */
+//    private void addAttribute(JavaBeanClassAttribute attribute) 
+//	{
+//		if ( _attributes == null )
+//		{
+//			_attributes = new LinkedList<JavaBeanClassAttribute>();
+//		}
+//		_attributes.add(attribute);
+//	}
 	
 	private LinkedList<JavaBeanClassAttribute> buildAttributesList ( boolean bKeyAttribute ) 
 	{
@@ -1182,7 +1007,6 @@ public class EntityInContext
     		int n = _attributes.size();
         	for ( int i = 0 ; i < n ; i++ )        		
         	{
-        		//JavaBeanClassAttribute attribute = (JavaBeanClassAttribute) _attributes.get(i);
         		JavaBeanClassAttribute attribute = _attributes.get(i);
                 if ( attribute.isKeyElement() == bKeyAttribute ) 
                 {
