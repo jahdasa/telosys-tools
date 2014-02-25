@@ -20,7 +20,7 @@ public class ListenerForTableToolTip implements Listener {
 
 	private Shell tip = null;
 
-	//private Label label = null;
+	//private Label label = null; //
 
 	private TableItem currentTableItem = null;
 
