@@ -109,10 +109,11 @@ public class ListenerForTableToolTip implements Listener {
 			break;
 
 		case SWT.MouseMove: // Each time the mouse move over the table (even without table item)
-			if ( tableItem != currentTableItem ) {
-				// Not on the same item
-				disposeToolTip(); 
-			}
+//			if ( tableItem != currentTableItem ) {
+//				// Not on the same item
+//				disposeToolTip(); 
+//			}
+			disposeToolTip(); 
 			break;
 
 		case SWT.MouseHover: // When the mouse is over a 'table item' and stay a little time on it
