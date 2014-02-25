@@ -38,7 +38,7 @@ public class FolderSelectionDialogBox {
 		
 		String folder = chooseFolder(shell, "My dialog box", "D:\\") ;
 		
-		System.out.println("Selected folder = " + folder);
+		//System.out.println("Selected folder = " + folder);
 		
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {

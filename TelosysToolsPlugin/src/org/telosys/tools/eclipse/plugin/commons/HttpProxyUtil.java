@@ -40,7 +40,7 @@ public class HttpProxyUtil {
         	for (IProxyData data : proxyDataForHost) {
         		
         		sb.append ( ". Type '" + data.getType() + "' : ") ;
-        		System.out.println("getType : "+ data.getType() ) ;
+        		//System.out.println("getType : "+ data.getType() ) ;
         		sb.append ( "host '" + data.getHost() + "', ") ;
         		sb.append ( "port " + data.getPort() + ", ") ;
         		sb.append ( "user '" + data.getUserId() + "', ") ;
