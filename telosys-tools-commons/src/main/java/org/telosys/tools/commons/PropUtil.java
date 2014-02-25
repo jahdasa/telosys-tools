@@ -217,7 +217,7 @@ public class PropUtil {
                 	parts = StrUtil.split(sLine, '=');
                 	if ( parts.length >= 2 )
                 	{
-                		System.out.println(" . " + parts[0] + " = " + parts[1] );
+                		//System.out.println(" . " + parts[0] + " = " + parts[1] );
                 		if ( sKey.equals( parts[0].trim() ) )
                 		{
                 			//--- KEY found
@@ -232,7 +232,7 @@ public class PropUtil {
 	                            writer.write( "# Update " + currentDateTime() + " ( original property : " + sLine + " )");
 	                            writer.newLine();
 	                			// property found => change its value
-	                    		System.out.println("  *** REPLACE BY '" + sNewValue+"'" );
+	                    		//System.out.println("  *** REPLACE BY '" + sNewValue+"'" );
 	                    		sLine = sKey + " = " + sNewValue ;
 	                    		iRet++ ;
                 			}
