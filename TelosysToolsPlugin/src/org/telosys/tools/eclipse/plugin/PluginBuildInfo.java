@@ -23,7 +23,7 @@ package org.telosys.tools.eclipse.plugin;
  */
 public class PluginBuildInfo {
 
-	public final static String BUILD_ID   = "RC6" ;
+	public final static String BUILD_ID   = "RC7" ;
 
-	public final static String BUILD_DATE = "2014-02-25" ;
+	public final static String BUILD_DATE = "2014-02-27" ;
 }

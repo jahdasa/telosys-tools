@@ -35,57 +35,101 @@ public class ProjectConfig
 	
 	//----------------------------------------------------------------------------------------
 	private final TelosysToolsCfg _telosysToolsCfg ;
-	//----------------------------------------------------------------------------------------
-//	//--- Masks
-//	// to be removed (used by WIZARDS only)
-//	private String _sScreenDataClassMask = "*Data" ;
-//	private String _sVOClassMask         = "*VO" ;
 	
 	//----------------------------------------------------------------------------------------	
     /**
      * Constructor 
      * @param project the project associated with the given properties 
      */
-    public ProjectConfig (IProject project, TelosysToolsCfg cfg  )
+    public ProjectConfig ( IProject project )
     {
     	if ( project != null) {
         	
     		_sProjectName = project.getName() ; 
         	
-        	//--- Project location
-        	if ( project.getLocation() != null ) {
-            	_sProjectLocation = project.getLocation().toOSString() ;     	
-        	}
-        	else {
-        		MsgBox.error("ProjectConfig constructor : project location is null");
-        		_sProjectLocation = "unknown" ; 
-        	}
-
-        	//--- Workspace location
-        	IWorkspace wks = project.getWorkspace();
-        	IWorkspaceRoot wksRoot = wks.getRoot();
-        	IPath wksLocation = wksRoot.getLocation();
-        	if ( wksLocation != null )
-        	{
-        		_sWorkspaceLocation = wksLocation.toOSString() ;
-        	}
-        	else
-        	{
-        		MsgBox.error("ProjectConfig constructor : workspace location is null");
-        		_sWorkspaceLocation = "unknown" ; 
-        	}
+//        	//--- Project location
+//        	if ( project.getLocation() != null ) {
+//            	_sProjectLocation = project.getLocation().toOSString() ;     	
+//        	}
+//        	else {
+//        		MsgBox.error("ProjectConfig constructor : project location is null");
+//        		_sProjectLocation = "unknown" ; 
+//        	}
+//
+//        	//--- Workspace location
+//        	IWorkspace wks = project.getWorkspace();
+//        	IWorkspaceRoot wksRoot = wks.getRoot();
+//        	IPath wksLocation = wksRoot.getLocation();
+//        	if ( wksLocation != null )
+//        	{
+//        		_sWorkspaceLocation = wksLocation.toOSString() ;
+//        	}
+//        	else
+//        	{
+//        		MsgBox.error("ProjectConfig constructor : workspace location is null");
+//        		_sWorkspaceLocation = "unknown" ; 
+//        	}
+        	_sProjectLocation = getProjectLocation(project);
+        	_sWorkspaceLocation = getWorkspaceLocation(project);
     	}
     	else {
     		MsgBox.error("ProjectConfig constructor : IProject is null");
         	_sProjectName = "unknown" ; 
+        	_sProjectLocation = "unknown";
+        	_sWorkspaceLocation = "unknown";
     	}
-    	
-    	if ( cfg == null) {
-    		MsgBox.error("ProjectConfig constructor : TelosysToolsCfg is null");
-    	}
-    	_telosysToolsCfg = cfg ;
+    	_telosysToolsCfg = new TelosysToolsCfg (_sProjectLocation );
     }
     
+	public ProjectConfig (IProject project, TelosysToolsCfg cfg  )
+	{
+    	if ( project != null) {
+    		_sProjectName = project.getName() ; 
+        	_sProjectLocation = getProjectLocation(project);
+        	_sWorkspaceLocation = getWorkspaceLocation(project);
+    	}
+    	else {
+    		MsgBox.error("ProjectConfig constructor : IProject is null");
+        	_sProjectName = "unknown" ; 
+        	_sProjectLocation = "unknown";
+        	_sWorkspaceLocation = "unknown";
+    	}
+		if ( cfg == null) {
+			MsgBox.error("ProjectConfig constructor : TelosysToolsCfg is null");
+        	_telosysToolsCfg = new TelosysToolsCfg (_sProjectLocation );
+		}
+		else {
+			_telosysToolsCfg = cfg ;
+		}
+    }
+	
+	private String getProjectLocation ( IProject project )
+	{
+    	if ( project.getLocation() != null ) {
+        	return project.getLocation().toOSString() ;     	
+    	}
+    	else {
+    		MsgBox.error("ProjectConfig constructor : project location is null");
+    		return "unknown" ; 
+    	}
+	}
+	
+	private String getWorkspaceLocation ( IProject project )
+	{
+    	IWorkspace wks = project.getWorkspace();
+    	IWorkspaceRoot wksRoot = wks.getRoot();
+    	IPath wksLocation = wksRoot.getLocation();
+    	if ( wksLocation != null )
+    	{
+    		return wksLocation.toOSString() ;
+    	}
+    	else
+    	{
+    		MsgBox.error("ProjectConfig constructor : workspace location is null");
+    		return "unknown" ; 
+    	}
+	}
+	
 	//------------------------------------------------------------------------------------------------------
     public String getProjectName()
 	{

@@ -3,7 +3,6 @@ package org.telosys.tools.eclipse.plugin.config.view;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.util.Properties;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -31,8 +30,6 @@ import org.telosys.tools.commons.FileUtil;
 import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.commons.cfg.TelosysToolsCfg;
 import org.telosys.tools.commons.variables.Variable;
-import org.telosys.tools.commons.variables.VariablesNames;
-import org.telosys.tools.commons.variables.VariablesUtil;
 import org.telosys.tools.eclipse.plugin.MyPlugin;
 import org.telosys.tools.eclipse.plugin.PluginBuildInfo;
 import org.telosys.tools.eclipse.plugin.commons.EclipseProjUtil;
@@ -277,9 +274,11 @@ public class PropertiesPage extends PropertyPage {
 			createTabAdvanced(tabFolder);
 			createTabAboutPlugin(tabFolder);
 	
-			//shell = parent.getShell();
 			//--- Init screen fields values
-			initFields();
+			//initFields();
+			ProjectConfig projectConfig = loadProjectConfig();
+			configToFields( projectConfig );
+
 		} 
 		catch ( Exception e )
 		{
@@ -1162,17 +1161,14 @@ public class PropertiesPage extends PropertyPage {
 		return gd;
 	}
 
-	//------------------------------------------------------------------------------------------
-	private void initFields()
-	{
-		//checkCurrentProject();
-
-		//ProjectConfig projectConfig = ProjectConfigManager.getCurrentProjectConfig() ;
-		IProject project = getCurrentProject();
-		ProjectConfig projectConfig = ProjectConfigManager.loadProjectConfig(project) ;
-
-		configToFields( projectConfig );
-	}
+//	//------------------------------------------------------------------------------------------
+//	private void initFields()
+//	{
+//		IProject project = getCurrentProject();
+//		ProjectConfig projectConfig = ProjectConfigManager.loadProjectConfig(project) ;
+//
+//		configToFields( projectConfig );
+//	}
 	
 	//------------------------------------------------------------------------------------------
 	private IProject getCurrentProject()
@@ -1187,24 +1183,24 @@ public class PropertiesPage extends PropertyPage {
 	}
 	
 	//------------------------------------------------------------------------------------------
-//	private boolean checkCurrentProject()
-//	{
-//		//--- Set the current project 
-//		IProject project = getCurrentProject();
-//		if ( project != null )
-//		{
-//			ProjectConfigManager.setCurrentProject(project);
-//			return true ;
-//		}
-//		return false ;
-//	}
-	
-	//------------------------------------------------------------------------------------------
-	private void saveProperties(Properties props) 
+	private ProjectConfig loadProjectConfig() 
 	{
-		log("saveProperties(Properties props)...");
-		ProjectConfigManager.saveProjectConfig(getCurrentProject(), props);
+		log("loadProjectConfig()...");
+		ProjectConfig projectConfig = ProjectConfigManager.loadProjectConfig( getCurrentProject() ) ;
+		return projectConfig ;
 	}
+	//------------------------------------------------------------------------------------------
+	private void saveProjectConfig(ProjectConfig projectConfig ) 
+	{
+		log("saveProjectConfig()...");
+		ProjectConfigManager.saveProjectConfig(getCurrentProject(), projectConfig);
+	}
+//	//------------------------------------------------------------------------------------------
+//	private void saveProperties(Properties props) 
+//	{
+//		log("saveProperties(Properties props)...");
+//		ProjectConfigManager.saveProjectConfig(getCurrentProject(), props);
+//	}
 	
 	//------------------------------------------------------------------------------------------
 	/*
@@ -1213,11 +1209,14 @@ public class PropertiesPage extends PropertyPage {
 	protected void performApply() 
 	{
 		try {
-			Properties props = new Properties();
-			fieldsToProperties(props);
+			//Properties props = new Properties();
+			//fieldsToProperties(props);
+			ProjectConfig projectConfig = new ProjectConfig(getCurrentProject());
+			fieldsToConfig(projectConfig);
 			
 			//-- Save the Telosys-Tools configuration for the current project
-			saveProperties(props);		
+			//saveProperties(props);	
+			saveProjectConfig( projectConfig ); 
 			
 		} catch ( Exception e ) {
 			MsgBox.error("Cannot save properties.", e );
@@ -1231,20 +1230,9 @@ public class PropertiesPage extends PropertyPage {
 	protected void performDefaults() {
 	}
 
-//	private void setSpecificInitCheckClass(boolean bFlag) {
-//
-//		//--- Specific class (or not specific)
-//		checkClassLabel.setEnabled(bFlag);
-//		checkClassText.setEnabled(bFlag);
-//		checkClassDirLabel.setEnabled(bFlag);
-//		checkClassDirText.setEnabled(bFlag);
-//		testClassButton.setEnabled(bFlag);
-//		testClassButton.setEnabled(bFlag);
-//		classDirPickerButton.setEnabled(bFlag);
-//	}
-
+	//------------------------------------------------------------------------------------------
 	/**
-	 * @param p
+	 * @param projectConfig
 	 */
 	private void configToFields( ProjectConfig projectConfig  ) 
 	{
@@ -1287,37 +1275,46 @@ public class PropertiesPage extends PropertyPage {
 		}
 	}
 	
+	//------------------------------------------------------------------------------------------
 	/**
 	 * Populates the given properties with screen fields values
 	 * @param props
 	 */
-	private void fieldsToProperties(Properties props) 
+	private void fieldsToConfig( ProjectConfig projectConfig ) 
 	{
-		log("fieldsToProperties ...");
+		log("fieldsToConfig ...");
+		TelosysToolsCfg telosysToolsCfg = projectConfig.getTelosysToolsCfg();
 		
 		//--- Tab "General"
-		props.put(TelosysToolsCfg.REPOS_FOLDER,      _tRepositoriesFolder.getText() );
-		props.put(TelosysToolsCfg.TEMPLATES_FOLDER,  _tTemplatesFolder.getText() );
-		props.put(TelosysToolsCfg.DOWNLOADS_FOLDER,  _tDownloadsFolder.getText() );
-		props.put(TelosysToolsCfg.LIBRARIES_FOLDER,  _tLibrariesFolder.getText() );
-				
+		telosysToolsCfg.setRepositoriesFolder ( _tRepositoriesFolder.getText() ) ;
+		telosysToolsCfg.setTemplatesFolder    ( _tTemplatesFolder.getText() ) ;
+		telosysToolsCfg.setDownloadsFolder    ( _tDownloadsFolder.getText() ) ;
+		telosysToolsCfg.setLibrariesFolder    ( _tLibrariesFolder.getText() ) ;
+
 		//--- Tab "Packages"
-		//props.put(GeneratorConfigConst.ENTITIES_PACKAGE,  _tEntityPackage.getText());
-		props.put(VariablesNames.ENTITY_PKG,  _tEntityPackage.getText());
-		props.put(VariablesNames.ROOT_PKG,    _tRootPackage.getText());
-		
+		telosysToolsCfg.setRootPackage   (_tRootPackage.getText()   );
+		telosysToolsCfg.setEntityPackage (_tEntityPackage.getText() );
+
 		//--- Tab "Folders" ( considered as pre-defined variables )
-		props.put(VariablesNames.SRC,       _tSrcFolder.getText() );
-		props.put(VariablesNames.RES,       _tResFolder.getText() );
-		props.put(VariablesNames.WEB,       _tWebFolder.getText() );
-		props.put(VariablesNames.TEST_SRC,  _tTestSrcFolder.getText() );
-		props.put(VariablesNames.TEST_RES,  _tTestResFolder.getText() );
-		props.put(VariablesNames.DOC,       _tDocFolder.getText() );
-		props.put(VariablesNames.TMP,       _tTmpFolder.getText() );
-
+		telosysToolsCfg.setSRC     ( _tSrcFolder.getText()     );
+		telosysToolsCfg.setRES     ( _tResFolder.getText()     );
+		telosysToolsCfg.setWEB     ( _tWebFolder.getText()     );
+		telosysToolsCfg.setTEST_SRC( _tTestSrcFolder.getText() );
+		telosysToolsCfg.setTEST_RES( _tTestResFolder.getText() );
+		telosysToolsCfg.setDOC     ( _tDocFolder.getText()     );
+		telosysToolsCfg.setTMP     ( _tTmpFolder.getText()     );
+		
 		//--- Tab "Variables"		
-		log("propertiesToFields : variables ...");
-
+		log("fieldsToConfig : variables ...");
+		Variable[] variables = getVariablesFromView();
+		if ( checkVariablesNames(variables) ) {
+			telosysToolsCfg.setSpecificVariables(variables);
+		}
+		log("fieldsToConfig : END");
+	}
+	
+	//------------------------------------------------------------------------------------------
+	private Variable[] getVariablesFromView() {
 		Object[] items = _variablesTable.getItems();
 		Variable[] variables = new Variable[items.length];
 		for ( int i = 0 ; i < items.length ; i++ )
@@ -1329,15 +1326,18 @@ public class PropertiesPage extends PropertyPage {
 			else
 			{
 				MsgBox.error("Item [" + i + "] is not an instance of VariableItem" );
-				return;
+				return new Variable[0] ;
 			}
 		}
-		
-		//--- Check 
+		return variables ;
+	}
+	//------------------------------------------------------------------------------------------
+	private boolean checkVariablesNames(Variable[] variables) {
+		//-- are there invalid names ? 
 		String[] invalidNames = ContextNames.getInvalidVariableNames(variables);
 		if ( invalidNames != null )
 		{
-			//--- Invalid names
+			//--- Invalid names found => display all the invalid names
 			StringBuffer sb = new StringBuffer();
 			for ( int i = 0 ; i < invalidNames.length ; i++ )
 			{
@@ -1347,41 +1347,107 @@ public class PropertiesPage extends PropertyPage {
 			MsgBox.error("Invalid variable name(s) : " + sb.toString() 
 					+ "\n Name(s) reserved for standard variables."
 					+ "\n The current variables will not be saved !");
+			return false ;
 		}
-		else
-		{
-			log("propertiesToFields : all variables names OK => put in properties");
-			//--- All names OK
-			VariablesUtil.putVariablesInProperties( variables, props );
-		}
-
-		//--- Tab "Advanced"
-//		props.put(PropName.TEMPLATES_DIRECTORY, _tTemplatesDirText.getText() );
-		/*
-		if (checkTemplate.getSelection()) {
-			//--- Specific templates
-			props.put(PropName.SPECIFIC_TEMPLATES,  "1");
-			props.put(PropName.TEMPLATE_DIRECTORY, templateDirText.getText());
-		} else {
-			//--- Default templates
-			props.put(PropName.SPECIFIC_TEMPLATES, "0");
-			props
-					.put(PropName.TEMPLATE_DIRECTORY, Plugin
-							.getTemplatesDirectory());
-		}
-
-		//--- "SPECIFIC" Radio Button
-		if (specificCheck.getSelection()) {
-			//--- "SPECIFIC" Radio Button SELECTED
-			props.put(PropName.SPECIFIC_INIT_CHECK, "1");
-			props.put(PropName.INIT_CHECK_CLASS_NAME, checkClassText.getText());
-			props.put(PropName.INIT_CHECK_CLASS_DIR, checkClassDirText.getText());
-		} else {
-			props.put(PropName.SPECIFIC_INIT_CHECK, "0");
-			props.put(PropName.INIT_CHECK_CLASS_NAME, "");
-			props.put(PropName.INIT_CHECK_CLASS_DIR, "");
-		}
-*/
-		log("fieldsToProperties : END ");
+		return true ;
 	}
+	
+	//------------------------------------------------------------------------------------------
+//	/**
+//	 * Populates the given properties with screen fields values
+//	 * @param props
+//	 */
+//	private void fieldsToProperties(Properties props) 
+//	{
+//		log("fieldsToProperties ...");
+//		
+//		//--- Tab "General"
+//		props.put(TelosysToolsCfg.REPOS_FOLDER,      _tRepositoriesFolder.getText() );
+//		props.put(TelosysToolsCfg.TEMPLATES_FOLDER,  _tTemplatesFolder.getText() );
+//		props.put(TelosysToolsCfg.DOWNLOADS_FOLDER,  _tDownloadsFolder.getText() );
+//		props.put(TelosysToolsCfg.LIBRARIES_FOLDER,  _tLibrariesFolder.getText() );
+//				
+//		//--- Tab "Packages"
+//		//props.put(GeneratorConfigConst.ENTITIES_PACKAGE,  _tEntityPackage.getText());
+//		props.put(VariablesNames.ENTITY_PKG,  _tEntityPackage.getText());
+//		props.put(VariablesNames.ROOT_PKG,    _tRootPackage.getText());
+//		
+//		//--- Tab "Folders" ( considered as pre-defined variables )
+//		props.put(VariablesNames.SRC,       _tSrcFolder.getText() );
+//		props.put(VariablesNames.RES,       _tResFolder.getText() );
+//		props.put(VariablesNames.WEB,       _tWebFolder.getText() );
+//		props.put(VariablesNames.TEST_SRC,  _tTestSrcFolder.getText() );
+//		props.put(VariablesNames.TEST_RES,  _tTestResFolder.getText() );
+//		props.put(VariablesNames.DOC,       _tDocFolder.getText() );
+//		props.put(VariablesNames.TMP,       _tTmpFolder.getText() );
+//
+//		//--- Tab "Variables"		
+//		log("propertiesToFields : variables ...");
+//
+//		Object[] items = _variablesTable.getItems();
+//		Variable[] variables = new Variable[items.length];
+//		for ( int i = 0 ; i < items.length ; i++ )
+//		{
+//			if ( items[i] instanceof Variable )
+//			{
+//				variables[i] = (Variable) items[i] ;
+//			}
+//			else
+//			{
+//				MsgBox.error("Item [" + i + "] is not an instance of VariableItem" );
+//				return;
+//			}
+//		}
+//		
+//		//--- Check 
+//		String[] invalidNames = ContextNames.getInvalidVariableNames(variables);
+//		if ( invalidNames != null )
+//		{
+//			//--- Invalid names
+//			StringBuffer sb = new StringBuffer();
+//			for ( int i = 0 ; i < invalidNames.length ; i++ )
+//			{
+//				if ( i > 0 ) sb.append(", ");
+//				sb.append("'"+invalidNames[i]+"'");
+//			}
+//			MsgBox.error("Invalid variable name(s) : " + sb.toString() 
+//					+ "\n Name(s) reserved for standard variables."
+//					+ "\n The current variables will not be saved !");
+//		}
+//		else
+//		{
+//			log("propertiesToFields : all variables names OK => put in properties");
+//			//--- All names OK
+//			VariablesUtil.putVariablesInProperties( variables, props );
+//		}
+//
+//		//--- Tab "Advanced"
+////		props.put(PropName.TEMPLATES_DIRECTORY, _tTemplatesDirText.getText() );
+//		/*
+//		if (checkTemplate.getSelection()) {
+//			//--- Specific templates
+//			props.put(PropName.SPECIFIC_TEMPLATES,  "1");
+//			props.put(PropName.TEMPLATE_DIRECTORY, templateDirText.getText());
+//		} else {
+//			//--- Default templates
+//			props.put(PropName.SPECIFIC_TEMPLATES, "0");
+//			props
+//					.put(PropName.TEMPLATE_DIRECTORY, Plugin
+//							.getTemplatesDirectory());
+//		}
+//
+//		//--- "SPECIFIC" Radio Button
+//		if (specificCheck.getSelection()) {
+//			//--- "SPECIFIC" Radio Button SELECTED
+//			props.put(PropName.SPECIFIC_INIT_CHECK, "1");
+//			props.put(PropName.INIT_CHECK_CLASS_NAME, checkClassText.getText());
+//			props.put(PropName.INIT_CHECK_CLASS_DIR, checkClassDirText.getText());
+//		} else {
+//			props.put(PropName.SPECIFIC_INIT_CHECK, "0");
+//			props.put(PropName.INIT_CHECK_CLASS_NAME, "");
+//			props.put(PropName.INIT_CHECK_CLASS_DIR, "");
+//		}
+//*/
+//		log("fieldsToProperties : END ");
+//	}
 }

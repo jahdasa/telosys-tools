@@ -1,12 +1,14 @@
 package org.telosys.tools.eclipse.plugin.config;
 
 import java.io.File;
-import java.util.Properties;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.telosys.tools.commons.TelosysToolsException;
 import org.telosys.tools.commons.cfg.TelosysToolsCfg;
 import org.telosys.tools.commons.cfg.TelosysToolsCfgManager;
+import org.telosys.tools.commons.variables.Variable;
 import org.telosys.tools.eclipse.plugin.commons.EclipseProjUtil;
 import org.telosys.tools.eclipse.plugin.commons.EclipseWksUtil;
 import org.telosys.tools.eclipse.plugin.commons.MsgBox;
@@ -50,63 +52,45 @@ public class ProjectConfigManager {
 		
 		String projectFolder = EclipseProjUtil.getProjectDir( project );
 		PluginLogger.log("ProjectConfigManager.loadProjectConfig("+projectFolder+")..." );
-		TelosysToolsCfgManager cfgManager = new TelosysToolsCfgManager(projectFolder);
+		TelosysToolsCfgManager telosysToolsCfgManager = new TelosysToolsCfgManager(projectFolder);
 		TelosysToolsCfg telosysToolsCfg = null ;
 		try {
-			telosysToolsCfg = cfgManager.loadProjectConfig(); // Never null
+			telosysToolsCfg = telosysToolsCfgManager.loadProjectConfig(); // Never null
 		} catch (TelosysToolsException e) {
 			MsgBox.error( "Cannot load configuration", e);
 			//--- Create a void configuration
-			telosysToolsCfg = new TelosysToolsCfg(cfgManager.getProjectAbsolutePath(), 
-					cfgManager.getCfgFileAbsolutePath(), null);
+			telosysToolsCfg = new TelosysToolsCfg(telosysToolsCfgManager.getProjectAbsolutePath()) ; 
+		}
+		if ( ! telosysToolsCfg.hasBeenInitializedFromFile() ) {
+			//--- No specific variables => initialize
+			String projectName = project.getName() ;
+			List<Variable> vars = new LinkedList<Variable>();
+			//-- Keep alphabetic order
+			vars.add( new Variable("MAVEN_ARTIFACT_ID", projectName            ) ) ; // for pom.xml artifactId
+			vars.add( new Variable("MAVEN_GROUP_ID",    "group.to.be.defined"  ) ) ; // for pom.xml artifactId
+			vars.add( new Variable("PROJECT_NAME",      projectName            ) ) ; 
+			vars.add( new Variable("PROJECT_VERSION",   "0.1"                  ) ) ; 
+			//-- Set variables in current configuration
+			telosysToolsCfg.setSpecificVariables(vars);
 		}
 		
 		return new ProjectConfig(project, telosysToolsCfg);
-		
-//		String sConfigFileName = getProjectConfigFileName(project);
-//		if ( sConfigFileName != null )
-//		{
-//			PluginLogger.log("ProjectConfigManager.loadProjectConfig(p) : " + sConfigFileName );
-//			PropertiesManager propManager = new PropertiesManager( sConfigFileName ) ;
-//			Properties prop = propManager.load(); // Ret NULL if file not found
-//			if ( prop != null )
-//			{
-//				// Properties loaded
-//				ProjectConfig projectConfig = new ProjectConfig(project, prop, sConfigFileName);
-////				// Store in cache
-////				$cache.put(project,projectConfig);
-//				return projectConfig ;
-//			}
-//			else
-//			{
-//				// Properties file not found, no properties loaded : use default values
-//				ProjectConfig projectConfig = new ProjectConfig(project, null, sConfigFileName);
-//				return projectConfig ;
-//			}
-//		}
-//		else
-//		{
-//			String sMsg = "Cannot get project configuration file name" ;
-//			MsgBox.error( sMsg );
-//			//throw new RuntimeException(sMsg);
-//			return null ;
-//		}
 	}
 	
 	//-------------------------------------------------------------------------------------------------
 	/**
-	 * Saves the given properties in the "telosys-tools.cfg" file in the given project
+	 * Saves the given configuration in the "telosys-tools.cfg" file in the given project
 	 * @param project
-	 * @param prop
+	 * @param projectConfig
 	 */
-	public static void saveProjectConfig( IProject project, Properties prop ) 
+	public static void saveProjectConfig( IProject project, ProjectConfig projectConfig ) 
 	{
 		String projectFolder = EclipseProjUtil.getProjectDir( project );
 		PluginLogger.log("ProjectConfigManager.saveProjectConfig("+projectFolder+", properties)..." );
 		
 		TelosysToolsCfgManager cfgManager = new TelosysToolsCfgManager(projectFolder);
 		try {
-			cfgManager.saveProjectConfig(prop) ;
+			cfgManager.saveProjectConfig( projectConfig.getTelosysToolsCfg() ) ;
 		} catch (TelosysToolsException e) {
 			MsgBox.error( "Cannot save configuration", e);
 		}
@@ -122,30 +106,5 @@ public class ProjectConfigManager {
 					+ "'" + cfgFileAbsolutePath + "' \n"
 					+ "This file doesn't exist");
 		}
-		
-//		PluginLogger.log("ProjectConfigManager.saveProjectConfig(project, prop)..." );
-//		String sConfigFileName = getProjectConfigFileName(project);
-//		if ( sConfigFileName != null )
-//		{
-//			PropertiesManager propManager = new PropertiesManager( sConfigFileName ) ;
-//			propManager.save(prop);
-//			PluginLogger.log("ProjectConfigManager.saveProjectConfig(project, prop) : file = " + sConfigFileName );
-//			//--- Refresh the file in the Eclipse Workspace
-//			File file = new File(sConfigFileName);
-//			EclipseWksUtil.refresh(file);
-//			
-////			//--- Update the configuration cache
-////			ProjectConfig projectConfig = new ProjectConfig(project, prop, sConfigFileName);
-////			$cache.put(project,projectConfig);
-////			return projectConfig ;
-//		}
-//		else
-//		{
-//			PluginLogger.log("ProjectConfigManager.saveProjectConfig(project, prop) : no config file name " );
-//			String sMsg = "Cannot save current project configuration" ;
-//			MsgBox.error( sMsg );
-////			return null ;
-//		}
 	}
-	
 }
