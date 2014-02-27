@@ -16,6 +16,7 @@
 package org.telosys.tools.commons.cfg;
 
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -34,7 +35,8 @@ import org.telosys.tools.commons.variables.VariablesUtil;
  */
 public class TelosysToolsCfg 
 {
-	private final static String DATABASES_DBCFG_FILE = "databases.dbcfg";
+	private final static String     DATABASES_DBCFG_FILE = "databases.dbcfg";
+	private final static Variable[] VOID_VARIABLES_ARRAY = new Variable[0] ;
 	
     //--- Properties Names for directories 
 	private final static String REPOS_FOLDER      = "RepositoriesFolder";
@@ -44,8 +46,9 @@ public class TelosysToolsCfg
     
 	
 	//----------------------------------------------------------------------------------------
-	private final String _projectAbsolutePath ; 
-	private final String _cfgFileAbsolutePath ; 
+	private final String  _projectAbsolutePath ; 
+	private final String  _cfgFileAbsolutePath ; 
+	private final boolean _initializedFromFile ;
 
 	//----------------------------------------------------------------------------------------
 	//--- Project folders default values
@@ -70,7 +73,7 @@ public class TelosysToolsCfg
 	
 	//----------------------------------------------------------------------------------------
 	//--- Project Variables
-	private Variable[] _specificVariables = new Variable[0] ; // Specific variables defined by the user 
+	private Variable[] _specificVariables = VOID_VARIABLES_ARRAY ; // Specific variables defined by the user 
 
 	//private final Variable[] _allVariables ; // Standard variables + specific variables 
 	
@@ -92,7 +95,7 @@ public class TelosysToolsCfg
     	_projectAbsolutePath = projectAbsolutePath ;
     	_cfgFileAbsolutePath = cfgFileAbsolutePath ;
     	
-    	initFromProperties(prop);
+    	_initializedFromFile = initFromProperties(prop);
     }
     
     /**
@@ -109,12 +112,13 @@ public class TelosysToolsCfg
     	TelosysToolsCfgManager cfgManager = new TelosysToolsCfgManager(projectAbsolutePath) ;
     	_cfgFileAbsolutePath = cfgManager.getCfgFileAbsolutePath();
     	
+    	_initializedFromFile = false ;
 		//--- No properties => keep the default values 
     	//--- Init with default specific variables
-    	_specificVariables = getDefaultSpecificVariables();
+    	//_specificVariables = getDefaultSpecificVariables();
     }    
 	//------------------------------------------------------------------------------------------------------
-    protected void initFromProperties(Properties prop)
+    protected boolean initFromProperties(Properties prop)
 	{
     	if ( prop != null)
     	{    	
@@ -140,14 +144,25 @@ public class TelosysToolsCfg
 	    	//--- Project user defined variables
 	    	_specificVariables = VariablesUtil.getVariablesFromProperties( prop );
 	    	//_allVariables      = VariablesUtil.getAllVariablesFromProperties(prop); 
+	    	return true ;
     	}
     	else {
     		//--- Keep the default values 
-	    	//--- Init with default specific variables
-    		_specificVariables = getDefaultSpecificVariables();
+	    	//--- No specific variables
+	    	return false ; // No properties file
     	}
 	}
+    
 	//------------------------------------------------------------------------------------------------------
+    /**
+     * Returns true if the current configuration has been initialized from an existing properties file
+     * @return
+     */
+    public boolean hasBeenInitializedFromFile() {
+    	return _initializedFromFile ;
+    }
+	
+    //------------------------------------------------------------------------------------------------------
     protected Variable[] getDefaultSpecificVariables()
 	{
     	Variable[] v = new Variable[4] ;
@@ -504,6 +519,16 @@ public class TelosysToolsCfg
 		return _specificVariables ;
 	}	
 	/**
+	 * Returns true if the current configuration has at least one specific variable
+	 * @return
+	 */
+	public boolean hasSpecificVariables() {
+		if ( _specificVariables != null && _specificVariables.length > 0 ) {
+			return true;
+		}
+		return false ; 
+	}
+	/**
 	 * Set the specific variables defined for the current project  
 	 * @param variables
 	 */
@@ -516,7 +541,23 @@ public class TelosysToolsCfg
 			_specificVariables = new Variable[0] ;
 		}
 	}	
-
+	/**
+	 * Set the specific variables defined for the current project  
+	 * @param variables
+	 */
+	public void setSpecificVariables(List<Variable> variables )
+	{
+		if ( variables != null ) {
+			_specificVariables = new Variable[variables.size()] ;
+			int i = 0 ;
+			for ( Variable var : variables ) {
+				_specificVariables[i++] = var ;
+			}
+		}
+		else {
+			_specificVariables = new Variable[0] ;
+		}
+	}	
 	//------------------------------------------------------------------------------------------------------
 	/**
 	 * Returns all the variables defined for the current project <br>
