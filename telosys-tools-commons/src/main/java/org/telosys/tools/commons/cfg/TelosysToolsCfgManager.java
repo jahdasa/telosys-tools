@@ -97,11 +97,18 @@ public class TelosysToolsCfgManager {
 	}
 	
 	//-------------------------------------------------------------------------------------------------
-	public void saveProjectConfig( Properties prop ) throws TelosysToolsException
+	public void saveProjectConfig( TelosysToolsCfg telosysToolsCfg ) throws TelosysToolsException
 	{
-		//PluginLogger.log("ProjectConfigManager.saveProjectConfig(project, prop)..." );
 		PropertiesManager propManager = new PropertiesManager( this.cfgFileAbsolutePath ) ;
-		propManager.save(prop);
+		// Save the configuration as a set of properties
+		propManager.save( telosysToolsCfg.getProperties() );
 	}
+//	//-------------------------------------------------------------------------------------------------
+//	public void saveProjectConfig( Properties prop ) throws TelosysToolsException
+//	{
+//		//PluginLogger.log("ProjectConfigManager.saveProjectConfig(project, prop)..." );
+//		PropertiesManager propManager = new PropertiesManager( this.cfgFileAbsolutePath ) ;
+//		propManager.save(prop);
+//	}
 	
 }

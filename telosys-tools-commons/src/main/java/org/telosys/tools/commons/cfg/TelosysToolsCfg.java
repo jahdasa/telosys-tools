@@ -15,12 +15,14 @@
  */
 package org.telosys.tools.commons.cfg;
 
+import java.util.Hashtable;
+import java.util.Map;
 import java.util.Properties;
 
 import org.telosys.tools.commons.FileUtil;
 import org.telosys.tools.commons.variables.Variable;
-import org.telosys.tools.commons.variables.VariablesUtil;
 import org.telosys.tools.commons.variables.VariablesNames;
+import org.telosys.tools.commons.variables.VariablesUtil;
 
 /**
  * Telosys Tools project configuration <br>
@@ -35,10 +37,10 @@ public class TelosysToolsCfg
 	private final static String DATABASES_DBCFG_FILE = "databases.dbcfg";
 	
     //--- Properties Names for directories 
-    public final static String REPOS_FOLDER      = "RepositoriesFolder";
-    public final static String TEMPLATES_FOLDER  = "TemplatesFolder";
-    public final static String DOWNLOADS_FOLDER  = "DownloadsFolder";    
-    public final static String LIBRARIES_FOLDER  = "LibrariesFolder";
+	private final static String REPOS_FOLDER      = "RepositoriesFolder";
+	private final static String TEMPLATES_FOLDER  = "TemplatesFolder";
+	private final static String DOWNLOADS_FOLDER  = "DownloadsFolder";    
+	private final static String LIBRARIES_FOLDER  = "LibrariesFolder";
     
 	
 	//----------------------------------------------------------------------------------------
@@ -68,9 +70,9 @@ public class TelosysToolsCfg
 	
 	//----------------------------------------------------------------------------------------
 	//--- Project Variables
-	private final Variable[] _specificVariables  ; // Specific variables defined by the user 
+	private Variable[] _specificVariables = new Variable[0] ; // Specific variables defined by the user 
 
-	private final Variable[] _allVariables ; // Standard variables + specific variables 
+	//private final Variable[] _allVariables ; // Standard variables + specific variables 
 	
 	//----------------------------------------------------------------------------------------
     /**
@@ -87,9 +89,33 @@ public class TelosysToolsCfg
     	if ( cfgFileAbsolutePath == null ) {
     		throw new IllegalArgumentException("cfgFileAbsolutePath is null");
     	}
-    	_projectAbsolutePath  = projectAbsolutePath ;
+    	_projectAbsolutePath = projectAbsolutePath ;
     	_cfgFileAbsolutePath = cfgFileAbsolutePath ;
-    		
+    	
+    	initFromProperties(prop);
+    }
+    
+    /**
+     * Constructor 
+     * @param projectAbsolutePath the project directory (full path) 
+     */
+    public TelosysToolsCfg ( String projectAbsolutePath )
+    {
+    	if ( projectAbsolutePath == null ) {
+    		throw new IllegalArgumentException("projectAbsolutePath is null");
+    	}
+    	_projectAbsolutePath = projectAbsolutePath ;
+    	
+    	TelosysToolsCfgManager cfgManager = new TelosysToolsCfgManager(projectAbsolutePath) ;
+    	_cfgFileAbsolutePath = cfgManager.getCfgFileAbsolutePath();
+    	
+		//--- No properties => keep the default values 
+    	//--- Init with default specific variables
+    	_specificVariables = getDefaultSpecificVariables();
+    }    
+	//------------------------------------------------------------------------------------------------------
+    protected void initFromProperties(Properties prop)
+	{
     	if ( prop != null)
     	{    	
 	    	// Initialization with the given properties, use original values as default values
@@ -113,16 +139,59 @@ public class TelosysToolsCfg
 	    	
 	    	//--- Project user defined variables
 	    	_specificVariables = VariablesUtil.getVariablesFromProperties( prop );
-	    	_allVariables      = VariablesUtil.getAllVariablesFromProperties(prop); 
+	    	//_allVariables      = VariablesUtil.getAllVariablesFromProperties(prop); 
     	}
     	else {
     		//--- Keep the default values 
-	    	//--- No user defined variables (void)
-    		_specificVariables = new Variable[0] ;
-    		_allVariables = new Variable[0] ;
+	    	//--- Init with default specific variables
+    		_specificVariables = getDefaultSpecificVariables();
     	}
-    }
-    
+	}
+	//------------------------------------------------------------------------------------------------------
+    protected Variable[] getDefaultSpecificVariables()
+	{
+    	Variable[] v = new Variable[4] ;
+    	int i = 0 ;
+    	//-- In alphabetic order
+    	v[i++] = new Variable("MAVEN_ARTIFACT_ID", "artifact-to-be-defined"); // for pom.xml artifactId
+    	v[i++] = new Variable("MAVEN_GROUP_ID",    "group.to.be.defined" ); // for pom.xml artifactId
+    	v[i++] = new Variable("PROJECT_NAME",      "myproject");
+    	v[i++] = new Variable("PROJECT_VERSION",   "0.1");
+    	return v ;
+	}
+	//------------------------------------------------------------------------------------------------------
+    /**
+     * Returns a set of properties containing the current configuration
+     * @return
+     */
+    protected Properties getProperties()
+	{
+    	Properties properties = new Properties();
+    	
+    	//--- General 
+    	properties.setProperty(REPOS_FOLDER,     _sRepositoriesFolder);
+    	properties.setProperty(TEMPLATES_FOLDER, _sTemplatesFolder);
+    	properties.setProperty(DOWNLOADS_FOLDER, _sDownloadsFolder);
+    	properties.setProperty(LIBRARIES_FOLDER, _sLibrariesFolder);
+    	
+    	//--- Packages 
+    	properties.setProperty(VariablesNames.ROOT_PKG,   _ROOT_PKG);
+    	properties.setProperty(VariablesNames.ENTITY_PKG, _ENTITY_PKG);
+
+    	//--- Folders  
+    	properties.setProperty(VariablesNames.SRC,      _SRC);
+    	properties.setProperty(VariablesNames.RES,      _RES);
+    	properties.setProperty(VariablesNames.WEB,      _WEB);
+    	properties.setProperty(VariablesNames.TEST_SRC, _TEST_SRC);
+    	properties.setProperty(VariablesNames.TEST_RES, _TEST_RES);
+    	properties.setProperty(VariablesNames.DOC,      _DOC);
+    	properties.setProperty(VariablesNames.TMP,      _TMP);
+
+    	//--- Variables  
+    	VariablesUtil.putVariablesInProperties(_specificVariables, properties);
+    	
+    	return properties ;
+	}
 	//------------------------------------------------------------------------------------------------------
     /**
      * Returns the file system project folder (absolute path)
@@ -167,26 +236,115 @@ public class TelosysToolsCfg
     //==============================================================================
     // Folders 
     //==============================================================================
+    /**
+     * Returns the "source folder" ( $SRC predefined variable )
+     * @return
+     */
     public String getSRC() {
     	return _SRC;
 	}
+    /**
+     * Set the "source folder" ( $SRC predefined variable )
+     * @param srcFolder
+     */
+    public void setSRC(String srcFolder) {
+    	_SRC = srcFolder ;
+	}
+    
+	//--------------------------------------------------------------------------------
+    /**
+     * Returns the "resources folder" ( $RES predefined variable )
+     * @return
+     */
     public String getRES() {
     	return _RES;
 	}
+    /**
+     * Set the "resources folder" ( $RES predefined variable )
+     * @param resourcesFolder
+     */
+    public void setRES(String resourcesFolder) {
+    	_RES = resourcesFolder ;
+	}
+    
+	//--------------------------------------------------------------------------------
+    /**
+     * Returns the "web folder" ( $WEB predefined variable )
+     * @return
+     */
     public String getWEB() {
     	return _WEB;
 	}
+    /**
+     * Set the "web folder" ( $WEB predefined variable )
+     * @param webFolder
+     */
+    public void setWEB(String webFolder) {
+    	_WEB = webFolder ;
+	}
+    
+	//--------------------------------------------------------------------------------
+    /**
+     * Returns the "test resources folder" ( $TEST_RES predefined variable )
+     * @return
+     */
     public String getTEST_RES() {
     	return _TEST_RES;
 	}
+    /**
+     * Set the "test resources folder" ( $TEST_RES predefined variable )
+     * @param testResourcesFolder
+     */
+    public void setTEST_RES(String testResourcesFolder) {
+    	_TEST_RES = testResourcesFolder ;
+	}
+    
+	//--------------------------------------------------------------------------------
+    /**
+     * Returns the "test source folder" ( $TEST_SRC predefined variable )
+     * @return
+     */
     public String getTEST_SRC() {
     	return _TEST_SRC;
 	}
+    /**
+     * Set the "test source folder" ( $TEST_SRC predefined variable )
+     * @param testSourceFolder
+     */
+    public void setTEST_SRC(String testSourceFolder) {
+    	_TEST_SRC = testSourceFolder ;
+	}
+    
+	//--------------------------------------------------------------------------------
+    /**
+     * Returns the "documentation folder" ( $DOC predefined variable )
+     * @return
+     */
     public String getDOC(){
     	return _DOC;
 	}
+    /**
+     * Set the "documentation folder" ( $DOC predefined variable )
+     * @param docFolder
+     */
+    public void setDOC(String docFolder) {
+    	_DOC = docFolder ;
+	}
+    
+	//--------------------------------------------------------------------------------
+    /**
+     * Returns the "temporary folder" ( $TMP predefined variable )
+     * @return
+     */
     public String getTMP() {
     	return _TMP;
+	}
+    /**
+     * Set the "temporary folder" ( $TMP predefined variable )
+     * @param tmpFolder
+     */
+    public void setTMP(String tmpFolder) {
+    	_TMP = tmpFolder ;
 	}
     
 	//------------------------------------------------------------------------------------------------------
@@ -199,6 +357,13 @@ public class TelosysToolsCfg
     	return _sTemplatesFolder;
 	}
     /**
+     * Set the templates folder in the current project (relative path in the project) <br>
+     * @param templatesFolder
+     */
+    public void setTemplatesFolder(String templatesFolder) {
+    	_sTemplatesFolder = templatesFolder ;
+	}
+    /**
      * Returns the templates folder absolute path <br>
      * ( e.g. 'X:/dir/myproject/TelosysTools/templates' )
      * @return
@@ -209,12 +374,19 @@ public class TelosysToolsCfg
 
 	//------------------------------------------------------------------------------------------------------
     /**
-     * Returns the download folder in the current project (relative path in the project)<br>
+     * Returns the downloads folder in the current project (relative path in the project)<br>
      * ( e.g. 'TelosysTools/downloads' )
      * @return
      */
     public String getDownloadsFolder() {
     	return _sDownloadsFolder;
+    }
+    /**
+     * Set the downloads folder in the current project (relative path in the project)<br>
+     * @param downloadsFolder
+     */
+    public void setDownloadsFolder(String downloadsFolder) {
+    	_sDownloadsFolder = downloadsFolder ;
     }
     /**
      * Returns the download folder absolute path <br>
@@ -233,6 +405,13 @@ public class TelosysToolsCfg
      */
     public String getLibrariesFolder() {
     	return _sLibrariesFolder ;
+    }
+    /**
+     * Set the libraries folder in the current project (relative path in the project)<br>
+     * @param librariesFolder
+     */
+    public void setLibrariesFolder(String librariesFolder) {
+    	_sLibrariesFolder = librariesFolder ;
     }
     /**
      * Returns the download folder absolute path <br>
@@ -254,6 +433,14 @@ public class TelosysToolsCfg
     	return _sRepositoriesFolder ;
 	}
     /**
+     * Set the repositories folder in the current project (relative path in the project) <br>
+     * @param repositoriesFolder
+     */
+    public void setRepositoriesFolder(String repositoriesFolder)
+	{
+    	_sRepositoriesFolder = repositoriesFolder ;
+	}
+    /**
      * Returns the repositories folder absolute path <br>
      * ( e.g. 'X:/dir/myproject/TelosysTools' )
      * @return
@@ -266,7 +453,7 @@ public class TelosysToolsCfg
     // Packages 
     //=======================================================================================================
 	/**
-	 * Returns the package for entity classes <br>
+	 * Returns the package for entity classes ( $ENTITY_PKG predefined variable ) <br>
 	 * ( e.g. "org.demo.bean" )
 	 * @return 
 	 */
@@ -274,16 +461,35 @@ public class TelosysToolsCfg
 	{
 		return _ENTITY_PKG ;
 	}
+	/**
+	 * Returns the package for entity classes ( $ENTITY_PKG predefined variable ) <br>
+	 * ( e.g. "org.demo.bean" )
+	 * @param entityPackage
+	 */
+	public void setEntityPackage(String entityPackage) 
+	{
+		_ENTITY_PKG = entityPackage ;
+	}
+	
 	
 	//------------------------------------------------------------------------------------------------------
 	/**
-	 * Returns the root package <br> 
+	 * Returns the root package ( $ROOT_PKG predefined variable ) <br> 
 	 * ( e.g. "org.demo" )
 	 * @return 
 	 */
 	public String getRootPackage() 
 	{
 		return _ROOT_PKG ;
+	}
+	/**
+	 * Set the root package ( $ROOT_PKG predefined variable )  <br> 
+	 * ( e.g. "org.demo" )
+	 * @param rootPackage
+	 */
+	public void setRootPackage(String rootPackage) 
+	{
+		_ROOT_PKG = rootPackage ;
 	}
 	
     //=======================================================================================================
@@ -297,6 +503,19 @@ public class TelosysToolsCfg
 	{
 		return _specificVariables ;
 	}	
+	/**
+	 * Set the specific variables defined for the current project  
+	 * @param variables
+	 */
+	public void setSpecificVariables(Variable[] variables)
+	{
+		if ( variables != null ) {
+			_specificVariables = variables ;
+		}
+		else {
+			_specificVariables = new Variable[0] ;
+		}
+	}	
 
 	//------------------------------------------------------------------------------------------------------
 	/**
@@ -306,7 +525,46 @@ public class TelosysToolsCfg
 	 */
 	public Variable[] getAllVariables()
 	{
-		return _allVariables ;
+		//return _allVariables ;
+		return buildAllVariablesArray() ;
 	}	
 	
+	//------------------------------------------------------------------------------------------------------
+	private Variable[] buildAllVariablesArray() {
+    	//--- All variables : specific project variables + predefined variables 
+    	Hashtable<String, String> allVariables = new Hashtable<String, String>();
+    	
+    	//--- 1) Project specific variables (defined by user)
+    	for ( Variable v : _specificVariables ) {
+    		allVariables.put(v.getName(), v.getValue());
+    	}
+    	
+    	//--- 2) Predefined variables ( Packages, folders) at the end to override specific variables if any 
+    	allVariables.put( VariablesNames.ROOT_PKG,   _ROOT_PKG ); // v 2.0.6
+    	allVariables.put( VariablesNames.ENTITY_PKG, _ENTITY_PKG ); // v 2.0.6
+    	
+    	allVariables.put( VariablesNames.SRC,      _SRC      );
+    	allVariables.put( VariablesNames.RES,      _RES      );
+    	allVariables.put( VariablesNames.WEB,      _WEB      );
+    	allVariables.put( VariablesNames.TEST_SRC, _TEST_SRC );
+    	allVariables.put( VariablesNames.TEST_RES, _TEST_RES );
+    	allVariables.put( VariablesNames.DOC,      _DOC      );
+    	allVariables.put( VariablesNames.TMP,      _TMP      );
+    	
+    	//--- 3) Get all variables to build the array
+//    	LinkedList<Variable> variablesList = new LinkedList<Variable>();
+//    	for ( String varName : allVariables.keySet() ) {
+//    		String varValue = allVariables.get(varName) ;
+//    		variablesList.add( new Variable( varName, varValue) ) ;
+//    	}
+//    	//--- Convert list to array
+//    	Variable[] allVariablesArray = variablesList.toArray( new Variable[variablesList.size()] );
+    	
+    	Variable[] allVariablesArray = new Variable[ allVariables.size() ];
+    	int i = 0 ;
+    	for ( Map.Entry<String, String> entry : allVariables.entrySet() ) {
+    		allVariablesArray[i++] = new Variable( entry.getKey(), entry.getValue() ) ;
+    	}
+		return allVariablesArray ;
+	}
 }
