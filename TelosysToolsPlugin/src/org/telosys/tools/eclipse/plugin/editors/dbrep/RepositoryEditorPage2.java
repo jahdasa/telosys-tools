@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
@@ -517,10 +518,27 @@ import org.telosys.tools.repository.model.RepositoryModel;
 		//--- Add "fake tool tip" ( since v 2.0.7 )
 		table.setToolTipText(""); // Disable the native tooltip
 		Listener tableListener = new ListenerForTableToolTip(table) ;
-		table.addListener(SWT.Dispose, tableListener);
-		table.addListener(SWT.KeyDown, tableListener);
+		//-- ON
+//		table.addListener(SWT.MouseHover, tableListener);
+		//-- OFF
+//		table.addListener(SWT.Dispose, tableListener);
+//		table.addListener(SWT.KeyDown, tableListener);
+//		table.addListener(SWT.HardKeyDown, tableListener);
 		table.addListener(SWT.MouseMove, tableListener);
-		table.addListener(SWT.MouseHover, tableListener);
+		table.addListener(SWT.MouseDown, tableListener);
+		table.addListener(SWT.MouseUp, tableListener);
+		
+//		table.addListener(SWT.MouseDoubleClick, tableListener);
+		
+//		KeyListener tableKeyListener = (KeyListener) tableListener ;
+////		table.addKeyListener(tableKeyListener);
+////		Control parent = table.getParent() ;
+////		while ( parent.getParent() != null ) {
+////			parent = parent.getParent();
+////		}
+//		table.addKeyListener(tableKeyListener);
+//		Shell shell = table.getShell();
+//		shell.addKeyListener(tableKeyListener);
 		
 		return table;
 	}
