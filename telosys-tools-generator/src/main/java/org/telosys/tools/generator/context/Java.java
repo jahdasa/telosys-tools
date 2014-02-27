@@ -18,6 +18,7 @@ package org.telosys.tools.generator.context;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.telosys.tools.generator.GeneratorException;
 import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityObject;
 import org.telosys.tools.generator.context.names.ContextName;
@@ -277,7 +278,7 @@ public class Java {
 				"entity : entity to be used " },
 			since = "2.0.7"
 				)
-	public List<String> imports( EntityInContext entity ) {
+	public List<String> imports( EntityInContext entity ) throws GeneratorException {
 		if ( entity != null ) {
 			JavaBeanClassImports imports = new JavaBeanClassImports();
 			//--- All the attributes

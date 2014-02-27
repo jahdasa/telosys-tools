@@ -16,7 +16,6 @@
 package org.telosys.tools.generator.context;
 
 import org.telosys.tools.commons.JavaClassUtil;
-import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.generator.EntitiesManager;
 import org.telosys.tools.generator.GeneratorContextException;
 import org.telosys.tools.generator.GeneratorException;
@@ -397,21 +396,39 @@ public class LinkInContext {
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
 		text={	
-			"Returns the field 'full type' for the link ( eg 'java.util.List' ) "
+			"Returns the field 'full type' for the link ( eg 'java.util.List' ) ",
+			"for OneToMany/ManyToMany : the collection full type ( 'java.util.List', ...)",
+			"for ManyToOne/OneToOne : the targeted entity full type ( 'my.package.Person', 'my.package.Customer', ... ) "
 			}
 	)
-	public String getFieldFullType() {
-		return _link.getJavaFieldType();
+	public String getFieldFullType() throws GeneratorException {
+		//return _link.getJavaFieldType();
+		if ( this.isCardinalityOneToMany() || this.isCardinalityManyToMany() ) {
+			// List, Set, ...
+			return _link.getJavaFieldType();
+		} else {
+			// Person, Customer, Book, ...
+			return this.getTargetEntityFullType() ; // v 2.1.0
+		}		
 	}
 
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
 		text={	
-			"Returns the field 'simple type' for the link ( eg 'List' ) "
+			"Returns the field 'simple type' for the link ",
+			"for OneToMany/ManyToMany : the collection short type ( 'List', ...)",
+			"for ManyToOne/OneToOne : the targeted entity short type ( 'Person', 'Customer', ... ) "
 			}
 	)
-	public String getFieldSimpleType() {
-		return JavaClassUtil.shortName(_link.getJavaFieldType());
+	public String getFieldSimpleType() throws GeneratorException {
+		//return JavaClassUtil.shortName(_link.getJavaFieldType());
+		if ( this.isCardinalityOneToMany() || this.isCardinalityManyToMany() ) {
+			// List, Set, ...
+			return JavaClassUtil.shortName( _link.getJavaFieldType() );
+		} else {
+			// Person, Customer, Book, ...
+			return this.getTargetEntitySimpleType() ; // v 2.1.0
+		}		
 	}
 	
 	//-------------------------------------------------------------------------------------
@@ -426,19 +443,12 @@ public class LinkInContext {
 		String targetEntityClassName = this.getTargetEntitySimpleType() ; // v 2.1.0
 		String simpleType = this.getFieldSimpleType();
 		
-		if ( StrUtil.nullOrVoid(simpleType) ) {
-			type = targetEntityClassName ; // this._targetEntity.getBeanJavaClass();
+		if ( this.isCardinalityOneToMany() || this.isCardinalityManyToMany() ) {
+			// List<Xxx>, Set<Xxxx>, ....
+			type = simpleType + "<" + targetEntityClassName + ">";
 		} else {
-			// S'il s'agit de collection, on ajout la description du generic
-			if (this.isCardinalityOneToMany()) {
-				//currentType = this.getJavaTypeShort() + "<" + this._targetEntity.getBeanJavaClass() + ">";
-				type = simpleType + "<" + targetEntityClassName + ">";
-			} else if (this.isCardinalityManyToMany()) {
-				//currentType = this.getJavaTypeShort() + "<" + this._targetEntity.getBeanJavaClass() + ">";
-				type = simpleType + "<" + targetEntityClassName + ">";
-			} else {
-				type = simpleType ;
-			}
+			// Xxx
+			type = targetEntityClassName ;
 		}
 		return type;
 	}	
