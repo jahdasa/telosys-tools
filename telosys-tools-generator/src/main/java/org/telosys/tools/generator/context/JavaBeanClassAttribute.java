@@ -23,6 +23,7 @@ import org.telosys.tools.commons.JavaTypeUtil;
 import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.commons.jdbctypes.JdbcTypes;
 import org.telosys.tools.commons.jdbctypes.JdbcTypesManager;
+import org.telosys.tools.generator.GeneratorException;
 import org.telosys.tools.generator.GeneratorUtil;
 import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityObject;
@@ -68,6 +69,9 @@ public class JavaBeanClassAttribute
     private final static String TYPE_NUM  = "num" ;
     private final static String TYPE_DATE = "date" ;
     private final static String TYPE_TIME = "time" ;
+    
+	//--- 
+    private final EntityInContext _entity ; // The entity 
     
 	//--- Basic minimal attribute info -------------------------------------------------
 	private final String  _sName ;  // attribute name 
@@ -173,8 +177,10 @@ public class JavaBeanClassAttribute
 	 * Constructor to create a Java Class Attribute from the given model-column definition  
 	 * @param column the column of the repository model
 	 */
-	public JavaBeanClassAttribute(final Column column) 
+	public JavaBeanClassAttribute(final EntityInContext entity, final Column column) 
 	{
+		_entity = entity ;
+		
 		_sName   = column.getJavaName();
 		
 //		_sType     = StrUtil.removeAllBlanks(Util.shortestType(column.getJavaType(), new LinkedList<String>()));
@@ -1713,4 +1719,39 @@ public class JavaBeanClassAttribute
 		return _sTableGeneratorPkColumnValue;
 	}
 	
+	//------------------------------------------------------------------------------------------
+	@VelocityMethod(
+	text={	
+		"Returns the 'simple type' of the entity referenced by this attribute (if any) ",
+		"Returns a type only if the attribute is the only 'join column' of the link",
+		"else returns a 'void string' (if the attribute is not involved in a link, ",
+		"or if the link as many join columns)"
+		},
+	since="2.1.0"
+	)
+	public String getReferencedEntityType() throws GeneratorException {
+		for( LinkInContext link : _entity.getLinks()  ) {
+			if( link.isOwningSide() && link.hasJoinColumns() ) {
+				String[] joinColumns = link.getJoinColumns() ;
+				if ( joinColumns != null && joinColumns.length == 1 ) {
+					if( joinColumns[0].equals(this.getDatabaseName() ) ) {
+						return link.getTargetEntitySimpleType() ;
+					}
+				}
+			}
+		}
+		return "";
+	}
+	
+	//------------------------------------------------------------------------------------------
+	@VelocityMethod(
+	text={	
+		"Returns TRUE if the attribute is referencing another entity by itself ",
+		"(if the attribute is the only 'join column' of a link)"
+		},
+		since="2.1.0"
+	)
+	public boolean isReferencingAnotherEntity() throws GeneratorException {
+		return getReferencedEntityType().length() > 0 ;
+	}
 }

@@ -74,8 +74,6 @@ public class EntityInContext
 	//private String     _sFullName    = NONE ;
 	//private String     _sSuperClass  = NONE ;	
 	
-	
-	
     private final String     _sDatabaseTable    ; // Table name this class is mapped with
     private final String     _sDatabaseCatalog  ; // The table's catalog 
     private final String     _sDatabaseSchema   ; // The table's schema 
@@ -104,16 +102,16 @@ public class EntityInContext
 	/**
 	 * Constructor based on Repository Entity
 	 * @param entity
-	 * @param repositoryModel
 	 * @param entityPackage
-	 * @param env environment configuration 
+	 * @param entitiesManager
+	 * @param env
+	 * @throws GeneratorException
 	 */
-	public EntityInContext(final Entity entity, //final RepositoryModel repositoryModel, 
-			final String entityPackage, final EntitiesManager entitiesManager, EnvInContext env ) throws GeneratorException
+	public EntityInContext( final Entity entity, final String entityPackage, 
+							final EntitiesManager entitiesManager, final EnvInContext env ) throws GeneratorException
 	{
 		_sName = entity.getBeanJavaClass() ;
 		_sPackage = entityPackage;
-		//_sFullName = entityPackage + "." + _sName;
 		
 		_entitiesManager = entitiesManager ;
 		_env = env ;
@@ -123,16 +121,15 @@ public class EntityInContext
 		_sDatabaseSchema  = entity.getSchema();
 		_sDatabaseType    = entity.getDatabaseType(); // ver 2.0.7
 		
-		//--- Init all the ATTRIBUTES for the current entity
+		//--- Initialize all the ATTRIBUTES for the current entity
 		_attributes = new LinkedList<JavaBeanClassAttribute>();
 		Collection<Column> entityColumns = entity.getColumnsCollection() ;
-		for ( Column col : entityColumns ) {
-			JavaBeanClassAttribute jca = new JavaBeanClassAttribute(col);
-			//this.addAttribute(jca);
-			_attributes.add(jca);
+		for ( Column column : entityColumns ) {
+			JavaBeanClassAttribute attribute = new JavaBeanClassAttribute(this, column);
+			_attributes.add(attribute);
 		}
 
-		//--- Init all the LINKS for the current entity
+		//--- Initialize all the LINKS for the current entity
 		_links = new LinkedList<LinkInContext>();
 		Collection<Link> entityLinks = entity.getLinksCollection() ;
 		for ( Link link : entityLinks ) {
@@ -144,10 +141,10 @@ public class EntityInContext
 			//String entityName = link.getTargetTableName() ;
 //			EntityInContext referencedEntity = _entitiesBuilder.getEntity( entityName ) ;
 //			LinkInContext jcl = new LinkInContext(link, referencedEntity );
-			LinkInContext jcl = new LinkInContext(link, _entitiesManager );
+			LinkInContext linkInCtx = new LinkInContext(link, _entitiesManager );
 			
 			//this.addLink(jcl);
-			_links.add(jcl);
+			_links.add(linkInCtx);
 		}
 		
 		//--- Init all the DATABASE FOREIGN KEYS  ( v 2.0.7 )
@@ -163,31 +160,7 @@ public class EntityInContext
 		
 	}
 	
-//	//-----------------------------------------------------------------------------------------------
-//	/**
-//	 * Constructor based on a list of attributes
-//	 * @param sFullClassName
-//	 * @param attributes
-//	 */
-//	public EntityInContext( String sFullClassName, JavaBeanClassAttribute[] attributes ) 
-//	{
-//		super( sFullClassName );
-//		initAttributes( attributes ); 
-//	}
-//	
-//	//-----------------------------------------------------------------------------------------------
-//	/**
-//	 * Constructor based on a list of attributes
-//	 * @param sShortClassName
-//	 * @param sPackage
-//	 * @param attributes
-//	 */
-//	public EntityInContext( String sShortClassName, String sPackage, JavaBeanClassAttribute[] attributes ) 
-//	{
-//		super( sShortClassName, sPackage);
-//		initAttributes( attributes ); 
-//	}
-	
+	//-----------------------------------------------------------------------------------------------	
 	/**
 	 * Returns the Java class name without the package ( ie : "MyClass" )
 	 * @return
@@ -281,30 +254,6 @@ public class EntityInContext
 		return getName() ;
 	}
 	
-	
-//	//-----------------------------------------------------------------------------------------------
-//	private void initAttributes(JavaBeanClassAttribute[] attributes) 
-//	{
-//		//--- Add each attribute 
-//		if ( attributes != null ) 
-//		{
-//			for ( JavaBeanClassAttribute attribute : attributes )
-//			{
-//				addAttribute(attribute);
-//			}
-//			//endOfDefinition(); // close the class definition (prepares imports list)
-//			endOfAttributesDefinition();
-//		}		
-//	}
-	//-----------------------------------------------------------------------------------------------
-//	private void addLink(LinkInContext jcl) {
-//		if ( _links == null )
-//		{
-//			_links = new LinkedList<LinkInContext>();
-//		}
-//		_links.add(jcl);
-//	}
-
 	//-------------------------------------------------------------------------------------
 	/**
 	 * Returns all the attributes defined for this class
@@ -983,22 +932,66 @@ public class EntityInContext
     	}
     	return null ;
 	}
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( text= { 
+			"Returns a list of 'simple type' for each entity referenced by the given attributes",
+			""
+		},
+		parameters = {
+			"attributes : list of attributes to be used to search the referenced entities"
+		},
+		example= {
+			"#set( $referencedEntities = $entity.referencedEntityTypes( $entity.nonKeyAttributes ) )"
+		},
+		since="2.1.0"
+	)
+    public List<String> referencedEntityTypes(List<JavaBeanClassAttribute> attributes) throws GeneratorException {
+		List<String> referencedEntityTypes = new LinkedList<String>();
+		for ( JavaBeanClassAttribute field : attributes ) {
+			//--- Is this field involved in a link ?
+			for( LinkInContext link : this.getLinks()  ) {
+				if( link.isOwningSide() && link.hasJoinColumns() ) {
+					for( String joinColumn : link.getJoinColumns() ) {
+						if( joinColumn.equals(field.getDatabaseName() ) ) {						
+							String referencedEntityType = link.getTargetEntitySimpleType() ;
+							if ( referencedEntityTypes.contains(referencedEntityType) == false ) {
+								//--- Not already in the list => add it
+								referencedEntityTypes.add( link.getTargetEntitySimpleType() );
+							}
+						}
+					}
+				}
+			}
+		}
+		return referencedEntityTypes ;
+    }
 
-	// -------------------------------------------------------------------------------------------------
-	
-//	/**
-//	 * Add an attribute for this class
-//	 * @param attribute
-//	 */
-//    private void addAttribute(JavaBeanClassAttribute attribute) 
-//	{
-//		if ( _attributes == null )
-//		{
-//			_attributes = new LinkedList<JavaBeanClassAttribute>();
-//		}
-//		_attributes.add(attribute);
-//	}
-	
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( text= { 
+			"Returns a list of 'simple type' for all the entities referenced by the current entity",
+			"(based on the 'owning side' links)"
+		},
+		example= {
+			"#set( $referencedEntities = $entity.referencedEntityTypes() )"
+		},
+		since="2.1.0"
+	)
+    public List<String> referencedEntityTypes() throws GeneratorException {
+		List<String> referencedEntityTypes = new LinkedList<String>();
+		for( LinkInContext link : this.getLinks()  ) {
+			if ( link.isOwningSide() ) {
+				String referencedEntityType = link.getTargetEntitySimpleType() ;
+				if ( referencedEntityTypes.contains(referencedEntityType) == false ) {
+					//--- Not already in the list => add it
+					referencedEntityTypes.add( referencedEntityType );
+				}
+			}
+		}
+		return referencedEntityTypes ;
+    }
+
+	//-------------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------------
 	private LinkedList<JavaBeanClassAttribute> buildAttributesList ( boolean bKeyAttribute ) 
 	{
 		LinkedList<JavaBeanClassAttribute> attributesList = new LinkedList<JavaBeanClassAttribute>();
