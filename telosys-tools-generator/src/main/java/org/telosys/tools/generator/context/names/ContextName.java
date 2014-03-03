@@ -72,6 +72,8 @@ public class ContextName {
 	public final static String  FIELD             = "field" ;  // Other name for "attribute"
 	
 	public final static String  LINK              = "link" ;
+	public final static String  LINK_ATTRIBUTE    = "linkAttribute" ; // v 2.1.0
+	public final static String  JOIN_COLUMN       = "joinColumn" ; // v 2.1.0
 	
 	public final static String  FK                = "fk" ;    // v 2.0.7
 	public final static String  FKCOL             = "fkcol" ; // v 2.0.7

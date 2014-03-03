@@ -22,7 +22,6 @@ import java.util.List;
 import org.telosys.tools.generator.EntitiesManager;
 import org.telosys.tools.generator.GeneratorContextException;
 import org.telosys.tools.generator.GeneratorException;
-import org.telosys.tools.generator.GeneratorUtil;
 import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityNoDoc;
 import org.telosys.tools.generator.context.doc.VelocityObject;
@@ -83,14 +82,14 @@ public class EntityInContext
 	private LinkedList<JavaBeanClassAttribute>  _keyAttributes     = null ; // The KEY attributes for this class
 	private LinkedList<JavaBeanClassAttribute>  _nonKeyAttributes  = null ; // The NON KEY attributes for this class
 
-	private String     _sSqlKeyColumns = null ;
-	private String     _sSqlNonKeyColumns = null ;
+//	private String     _sSqlKeyColumns = null ;
+//	private String     _sSqlNonKeyColumns = null ;
 	
 	private final LinkedList<JavaBeanClassForeignKey>  _foreignKeys ; // The database FOREIGN KEYS attributes for this entity ( v 2.0.7)
 	
-	//--- XML mapper infos
-	private LinkedList<JavaBeanClassAttribute> _nonTextAttributes  = null ; // Standard attributes for this class ( not "long text" )
-	private LinkedList<JavaBeanClassAttribute> _textAttributes     = null ; // Special "long text" attributes for this class
+//	//--- XML mapper infos
+//	private LinkedList<JavaBeanClassAttribute> _nonTextAttributes  = null ; // Standard attributes for this class ( not "long text" )
+//	private LinkedList<JavaBeanClassAttribute> _textAttributes     = null ; // Special "long text" attributes for this class
 
 	//--- JPA specific
 	private final LinkedList<LinkInContext> _links ; // The links for this class ( ALL ATTRIBUTES )
@@ -141,7 +140,7 @@ public class EntityInContext
 			//String entityName = link.getTargetTableName() ;
 //			EntityInContext referencedEntity = _entitiesBuilder.getEntity( entityName ) ;
 //			LinkInContext jcl = new LinkInContext(link, referencedEntity );
-			LinkInContext linkInCtx = new LinkInContext(link, _entitiesManager );
+			LinkInContext linkInCtx = new LinkInContext(this, link, _entitiesManager );
 			
 			//this.addLink(jcl);
 			_links.add(linkInCtx);
@@ -228,20 +227,20 @@ public class EntityInContext
 		return _sPackage + "." + getName();
     }
 	
-    /**
-     * Returns the Java line instruction for the toString() method
-     * @return
-     */
-    public String getToStringInstruction()
-    {
-    	return "\"JavaClass : '" + getName() + "' \"";
-    }
+//    /**
+//     * Returns the Java line instruction for the toString() method
+//     * @return
+//     */
+//    public String getToStringInstruction()
+//    {
+//    	return "\"JavaClass : '" + getName() + "' \"";
+//    }
     
-    public String toStringMethodCodeLines( int iLeftMargin )
-    {
-    	String leftMargin = GeneratorUtil.blanks(iLeftMargin);
-    	return leftMargin + "return \"JavaClass : '" + getName() + "' \" ; \n";
-    }
+//    public String toStringMethodCodeLines( int iLeftMargin )
+//    {
+//    	String leftMargin = GeneratorUtil.blanks(iLeftMargin);
+//    	return leftMargin + "return \"JavaClass : '" + getName() + "' \" ; \n";
+//    }
     
 	/* (non-Javadoc)
 	 * Same as getName() 
@@ -252,6 +251,25 @@ public class EntityInContext
 		// NB : must return only the class name => do not change
 		// Usage example in ".vm" : ${beanClass}.class 
 		return getName() ;
+	}
+
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( text= { 
+			"Returns the attribute associated with the given database column name"
+		},
+		example="$entity.attributeByColumnName"
+	)
+	@VelocityReturnType("'attribute' object")
+	public JavaBeanClassAttribute getAttributeByColumnName(String columnName) throws GeneratorException {
+		if ( columnName == null ) {
+			throw new GeneratorException("Invalid argument, 'columnName' is null");
+		}
+		for( JavaBeanClassAttribute attribute : this.getAttributes() ) {
+			if ( columnName.equals( attribute.getDatabaseName() ) ) {
+				return attribute ;
+			}
+		}
+		throw new GeneratorException("No attribute with column name '" + columnName + "'");
 	}
 	
 	//-------------------------------------------------------------------------------------
@@ -738,11 +756,12 @@ public class EntityInContext
 	)
 	public String getSqlKeyColumns() 
 	{
-		if ( _sSqlKeyColumns == null ) // list not yet built
-		{
-			_sSqlKeyColumns = buildDbColumnsList( true ); 
-		}
-		return _sSqlKeyColumns ;
+//		if ( _sSqlKeyColumns == null ) // list not yet built
+//		{
+//			_sSqlKeyColumns = buildDbColumnsList( true ); 
+//		}
+//		return _sSqlKeyColumns ;
+		return buildDbColumnsList( true ); 
 	}
 	
 	//-------------------------------------------------------------------------------------
@@ -757,11 +776,12 @@ public class EntityInContext
 	)
 	public String getSqlNonKeyColumns() 
 	{
-		if ( _sSqlNonKeyColumns == null ) // list not yet built
-		{
-			_sSqlNonKeyColumns = buildDbColumnsList( false ); 
-		}
-		return _sSqlNonKeyColumns ;
+//		if ( _sSqlNonKeyColumns == null ) // list not yet built
+//		{
+//			_sSqlNonKeyColumns = buildDbColumnsList( false ); 
+//		}
+//		return _sSqlNonKeyColumns ;
+		return buildDbColumnsList( false ); 
 	}
 
 	//-------------------------------------------------------------------------------------
@@ -778,14 +798,15 @@ public class EntityInContext
 	@VelocityReturnType("List of 'attribute' objects")
 	public List<JavaBeanClassAttribute> getNonTextAttributes() 
 	{
-		if ( _nonTextAttributes == null ) // list not yet built
-		{
-			_nonTextAttributes = buildTextAttributesList ( false ); // NOT LONG TEXT
-			if ( _nonTextAttributes != null ) {
-				return _nonTextAttributes ;
-			}
-		}
-		return VOID_ATTRIBUTES_LIST ;
+//		if ( _nonTextAttributes == null ) // list not yet built
+//		{
+//			_nonTextAttributes = buildTextAttributesList ( false ); // NOT LONG TEXT
+//			if ( _nonTextAttributes != null ) {
+//				return _nonTextAttributes ;
+//			}
+//		}
+//		return VOID_ATTRIBUTES_LIST ;
+		return buildTextAttributesList ( false ); // NOT LONG TEXT
 	}
 
 	//-------------------------------------------------------------------------------------
@@ -802,14 +823,15 @@ public class EntityInContext
 	@VelocityReturnType("List of 'attribute' objects")
 	public List<JavaBeanClassAttribute> getTextAttributes() 
 	{
-		if ( _textAttributes == null ) // list not yet built
-		{
-			_textAttributes = buildTextAttributesList ( true ); // Special "LONG TEXT"
-			if ( _textAttributes != null ) {
-				return _textAttributes ;
-			}
-		}
-		return VOID_ATTRIBUTES_LIST ;
+//		if ( _textAttributes == null ) // list not yet built
+//		{
+//			_textAttributes = buildTextAttributesList ( true ); // Special "LONG TEXT"
+//			if ( _textAttributes != null ) {
+//				return _textAttributes ;
+//			}
+//		}
+//		return VOID_ATTRIBUTES_LIST ;
+		return buildTextAttributesList ( true ); // Special "LONG TEXT"
 	}
 
 	//-------------------------------------------------------------------------------------
@@ -908,7 +930,9 @@ public class EntityInContext
 			""
 	},
 	example = {
-			"$entity.autoincrementedKeyAttribute"
+			"#if ( $entity.hasAutoIncrementedKey() )",
+			"$entity.autoincrementedKeyAttribute",
+			"#end"
 	}
 	)
 	@VelocityReturnType("'attribute' object")
@@ -947,17 +971,28 @@ public class EntityInContext
 	)
     public List<String> referencedEntityTypes(List<JavaBeanClassAttribute> attributes) throws GeneratorException {
 		List<String> referencedEntityTypes = new LinkedList<String>();
-		for ( JavaBeanClassAttribute field : attributes ) {
-			//--- Is this field involved in a link ?
+		for ( JavaBeanClassAttribute attribute : attributes ) {
+			//--- Is this attribute involved in a link ?
 			for( LinkInContext link : this.getLinks()  ) {
-				if( link.isOwningSide() && link.hasJoinColumns() ) {
-					for( String joinColumn : link.getJoinColumns() ) {
-						if( joinColumn.equals(field.getDatabaseName() ) ) {						
-							String referencedEntityType = link.getTargetEntitySimpleType() ;
-							if ( referencedEntityTypes.contains(referencedEntityType) == false ) {
-								//--- Not already in the list => add it
-								referencedEntityTypes.add( link.getTargetEntitySimpleType() );
-							}
+//				if( link.isOwningSide() && link.hasJoinColumns() ) {
+//					for( String joinColumn : link.getJoinColumns() ) {
+//						if( joinColumn.equals(attribute.getDatabaseName() ) ) {						
+//							String referencedEntityType = link.getTargetEntitySimpleType() ;
+//							if ( referencedEntityTypes.contains(referencedEntityType) == false ) {
+//								//--- Not already in the list => add it
+//								referencedEntityTypes.add( link.getTargetEntitySimpleType() );
+//							}
+//						}
+//					}
+//				}
+				if( link.isOwningSide() ) {
+					//--- Only if the link uses one of the given attributes
+					if ( link.usesAttribute(attribute) ) {
+						String referencedEntityType = link.getTargetEntitySimpleType() ;
+						//--- Found => add it in the list
+						if ( referencedEntityTypes.contains(referencedEntityType) == false ) {
+							//--- Not already in the list => add it
+							referencedEntityTypes.add( link.getTargetEntitySimpleType() );
 						}
 					}
 				}
@@ -978,9 +1013,11 @@ public class EntityInContext
 	)
     public List<String> referencedEntityTypes() throws GeneratorException {
 		List<String> referencedEntityTypes = new LinkedList<String>();
+		//--- Search all the referenced entities (from all the "owning side" links)
 		for( LinkInContext link : this.getLinks()  ) {
 			if ( link.isOwningSide() ) {
 				String referencedEntityType = link.getTargetEntitySimpleType() ;
+				//--- Found => add it in the list
 				if ( referencedEntityTypes.contains(referencedEntityType) == false ) {
 					//--- Not already in the list => add it
 					referencedEntityTypes.add( referencedEntityType );
@@ -1046,7 +1083,7 @@ public class EntityInContext
 	{
     	if ( _attributes != null )
     	{
-            StringBuffer sb = new StringBuffer(60);
+            StringBuffer sb = new StringBuffer();
             int iCount = 0 ;
     		int n = _attributes.size();
         	for ( int i = 0 ; i < n ; i++ )        		

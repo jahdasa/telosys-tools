@@ -1,10 +1,13 @@
 package org.telosys.tools.test.velocity.context.doc;
 
+import java.util.List;
+
 import junit.framework.TestCase;
 
 import org.telosys.tools.generator.context.doc.ClassInfo;
 import org.telosys.tools.generator.context.doc.ContextInfo;
 import org.telosys.tools.generator.context.doc.MethodInfo;
+import org.telosys.tools.generator.context.names.ContextName;
 
 
 public class ContextInfoTest  extends TestCase {
@@ -60,7 +63,7 @@ public class ContextInfoTest  extends TestCase {
 		print("Predefined names", names);
 		
 		//assertTrue ( names.length == 6 );
-		assertTrue ( names.length == 7 ); // ver 2.1.0
+		assertTrue ( names.length == 9 ); // ver 2.1.0
 	}
 	
 	//------------------------------------------------------------------------------------------
@@ -88,6 +91,15 @@ public class ContextInfoTest  extends TestCase {
 		
 		classInfo = getClassInfo("foo");
 		assertNull( classInfo );
+
+		classInfo = getClassInfo(ContextName.LINK_ATTRIBUTE );
+		assertNotNull( classInfo );
+		List<MethodInfo> methodsInfo = classInfo.getMethodsInfo();
+		for ( MethodInfo mi : methodsInfo ) {
+			System.out.println(" . " + mi );
+		}
+		assertEquals(2, classInfo.getMethodsCount());
+		
 	}
 
 	//------------------------------------------------------------------------------------------

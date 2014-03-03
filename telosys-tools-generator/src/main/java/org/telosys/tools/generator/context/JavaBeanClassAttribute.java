@@ -58,7 +58,7 @@ import org.telosys.tools.repository.persistence.util.RepositoryConst;
 //-------------------------------------------------------------------------------------
 public class JavaBeanClassAttribute 
 {
-	public final static int NO_MAXLENGTH   = -1 ;
+//	public final static int NO_MAXLENGTH   = -1 ;
 
     public final static int NO_DATE_TYPE   = 0 ;
     public final static int DATE_ONLY      = 1 ;
@@ -75,10 +75,9 @@ public class JavaBeanClassAttribute
     
 	//--- Basic minimal attribute info -------------------------------------------------
 	private final String  _sName ;  // attribute name 
-	//private String  _sType ;  // Short java type without package, without blank, eg : "int", "BigDecimal", "Date"
 	private final String  _sSimpleType ;  // Short java type without package, without blank, eg : "int", "BigDecimal", "Date"
 	private final String  _sFullType ;    // Full java type with package, : "java.math.BigDecimal", "java.util.Date"
-	private boolean _bUseFullType = false ;
+	private boolean       _bUseFullType = false ;
 	
 	private final String  _sInitialValue ; // can be null 
 //	private final String  _sGetter ; // Dynamic since v 2.0.7
@@ -87,64 +86,64 @@ public class JavaBeanClassAttribute
 	private final String  _sDefaultValue ; // can be null 
 	
 	//--- Database info -------------------------------------------------
-    private boolean _bKeyElement       = false ;  // True if primary key
-    private boolean _bUsedInForeignKey = false ;
-    private boolean _bAutoIncremented  = false ;  // True if auto-incremented by the database
-    private String  _sDataBaseName     = null ;  // Column name in the DB table
-    private String  _sDataBaseType     = null ;  // Column type in the DB table
-    private int     _iJdbcTypeCode     = 0 ;     // JDBC type code for this column
-    private String  _sJdbcTypeName     = null ;  // JDBC type name : added in ver 2.0.7
-    private int     _iDatabaseSize     = 0 ;     // Size of this column (if Varchar ) etc..
-    private String  _sDatabaseDefaultValue = null ; // keep null (do not initialize to "" )  
-    private boolean _bDatabaseNotNull  = false ;  // True if "not null" in the database
+    private final boolean _bKeyElement      ;  // True if primary key
+    private final boolean _bUsedInForeignKey  ;
+    private final boolean _bAutoIncremented  ;  // True if auto-incremented by the database
+    private final String  _sDataBaseName     ;  // Column name in the DB table
+    private final String  _sDataBaseType      ;  // Column type in the DB table
+    private final int     _iJdbcTypeCode    ;     // JDBC type code for this column
+    private final String  _sJdbcTypeName    ;  // JDBC type name : added in ver 2.0.7
+    private final int     _iDatabaseSize   ;     // Size of this column (if Varchar ) etc..
+    private final String  _sDatabaseDefaultValue ; // keep null (do not initialize to "" )  
+    private final boolean _bDatabaseNotNull ;  // True if "not null" in the database
     
     //--- Further info for ALL ---------------------------------------
-    private boolean _bNotNull   = false ;
-    private String  _sLabel     = "" ; // v 2.0.3
-    private String  _sInputType = "" ; // v 2.0.3
+    private final boolean _bNotNull   ;
+    private final String  _sLabel     ; // v 2.0.3
+    private final String  _sInputType ; // v 2.0.3
 
     //--- Further info for BOOLEAN -----------------------------------
-    private String  _sBooleanTrueValue  = "" ; // eg "1", ""Yes"", ""true""
-    private String  _sBooleanFalseValue = "" ; // eg "0", ""No"",  ""false""
+    private final String  _sBooleanTrueValue  ; // eg "1", ""Yes"", ""true""
+    private final String  _sBooleanFalseValue ; // eg "0", ""No"",  ""false""
     
     //--- Further info for DATE/TIME ---------------------------------
-    private int     _iDateType        = DATE_ONLY ;  // By default only DATE
-    private boolean _bDatePast        = false ;
-    private boolean _bDateFuture      = false ;
-    private boolean _bDateBefore      = false ;
-    private String  _sDateBeforeValue = "" ;
-    private boolean _bDateAfter       = false ;
-    private String  _sDateAfterValue  = "" ;
+    private final int     _iDateType       ;  // By default only DATE
+    private final boolean _bDatePast        ;
+    private final boolean _bDateFuture     ;
+    private final boolean _bDateBefore      ;
+    private final String  _sDateBeforeValue  ;
+    private final boolean _bDateAfter       ;
+    private final String  _sDateAfterValue   ;
 
     //--- Further info for NUMBER ------------------------------------
-    private String  _sMinValue = "" ; 
-    private String  _sMaxValue = "" ; 
+    private final String  _sMinValue ; 
+    private final String  _sMaxValue ; 
 
     //--- Further info for STRING ------------------------------------
-    private boolean _bLongText  = false ;  // True if must be stored as a separate tag in the XML flow
-    private boolean _bNotEmpty  = false ;
-    private boolean _bNotBlank  = false ;
-    private String  _sMinLength = "" ; 
-    private String  _sMaxLength = "" ; 
-    private String  _sPattern   = "" ; 
+    private final boolean _bLongText   ;  // True if must be stored as a separate tag in the XML flow
+    private final boolean _bNotEmpty   ;
+    private final boolean _bNotBlank   ;
+    private final String  _sMinLength  ; 
+    private final String  _sMaxLength  ; 
+    private final String  _sPattern    ; 
     
     
 	//--- JPA KEY Generation infos -------------------------------------------------
-    private boolean _bGeneratedValue = false ;  // True if GeneratedValue ( annotation "@GeneratedValue" )
-	private String  _sGeneratedValueStrategy  = null ; // "AUTO", "IDENTITY", "SEQUENCE", "TABLE" 
-	private String  _sGeneratedValueGenerator = null ;
+    private final boolean _bGeneratedValue ;  // True if GeneratedValue ( annotation "@GeneratedValue" )
+	private final String  _sGeneratedValueStrategy ; // "AUTO", "IDENTITY", "SEQUENCE", "TABLE" 
+	private final String  _sGeneratedValueGenerator ;
 	
-    private boolean _bSequenceGenerator = false ;  // True if SequenceGenerator ( annotation "@SequenceGenerator" )
-	private String  _sSequenceGeneratorName           = null ;
-	private String  _sSequenceGeneratorSequenceName   = null ;
-	private int     _iSequenceGeneratorAllocationSize = -1;
+    private final boolean _bSequenceGenerator  ;  // True if SequenceGenerator ( annotation "@SequenceGenerator" )
+	private final String  _sSequenceGeneratorName     ;
+	private final String  _sSequenceGeneratorSequenceName   ;
+	private final int     _iSequenceGeneratorAllocationSize ;
 
-    private boolean _bTableGenerator = false ;  // True if TableGenerator ( annotation "@TableGenerator" )
-	private String  _sTableGeneratorName            = null ;
-	private String  _sTableGeneratorTable           = null ;
-	private String  _sTableGeneratorPkColumnName    = null ;
-	private String  _sTableGeneratorValueColumnName = null ;
-	private String  _sTableGeneratorPkColumnValue   = null ;
+    private final boolean _bTableGenerator ;  // True if TableGenerator ( annotation "@TableGenerator" )
+	private final String  _sTableGeneratorName  ;
+	private final String  _sTableGeneratorTable           ;
+	private final String  _sTableGeneratorPkColumnName     ;
+	private final String  _sTableGeneratorValueColumnName  ;
+	private final String  _sTableGeneratorPkColumnValue   ;
 
 //	//-----------------------------------------------------------------------------------------------
 //	/**
@@ -244,7 +243,7 @@ public class JavaBeanClassAttribute
         _bDateAfter  = column.isDateAfter();
         _sDateAfterValue  = column.getDateAfterValue();
         
-		//--- Further info for JPA 
+		//--- Further info for JPA         
         if ( column.isAutoIncremented() ) {
 		    _bGeneratedValue = true ;
 			_sGeneratedValueStrategy  = null ; // "AUTO" is the default strategy 
@@ -256,9 +255,14 @@ public class JavaBeanClassAttribute
 				_sGeneratedValueStrategy  = column.getGeneratedValue().getStrategy();
 				_sGeneratedValueGenerator = column.getGeneratedValue().getGenerator();
 			}
+			else {
+				_bGeneratedValue = false;
+				_sGeneratedValueStrategy  = null;
+				_sGeneratedValueGenerator = null;
+			}
         }
 			        
-		if (column.getTableGenerator() != null) {
+		if ( column.getTableGenerator() != null ) {
 		    _bTableGenerator = true ;
 			_sTableGeneratorName = column.getTableGenerator().getName();
 			_sTableGeneratorTable = column.getTableGenerator().getTable();
@@ -266,12 +270,26 @@ public class JavaBeanClassAttribute
 			_sTableGeneratorValueColumnName = column.getTableGenerator().getValueColumnName();
 			_sTableGeneratorPkColumnValue = column.getTableGenerator().getPkColumnValue();
 		}
+		else {
+		    _bTableGenerator = false ;
+			_sTableGeneratorName = null ;
+			_sTableGeneratorTable = null ;
+			_sTableGeneratorPkColumnName = null ;
+			_sTableGeneratorValueColumnName = null;
+			_sTableGeneratorPkColumnValue = null;
+		}
 
 		if (column.getSequenceGenerator() != null) {
 		    _bSequenceGenerator = true;
 			_sSequenceGeneratorName = column.getSequenceGenerator().getName();
 			_sSequenceGeneratorSequenceName = column.getSequenceGenerator().getSequenceName();
 			_iSequenceGeneratorAllocationSize = column.getSequenceGenerator().getAllocationSize();
+		}
+		else {
+		    _bSequenceGenerator = false;
+			_sSequenceGeneratorName = null;
+			_sSequenceGeneratorSequenceName = null;
+			_iSequenceGeneratorAllocationSize = -1;
 		}
 		
 	}
@@ -730,18 +748,24 @@ public class JavaBeanClassAttribute
     	}
     	
 		for ( LinkInContext link : links ) {
-			if ( link.isOwningSide() && link.hasJoinColumns() ) {
-				String[] joinColumns = link.getJoinColumns() ;
-				if ( joinColumns != null ) {
-					for ( int i = 0 ; i < joinColumns.length ; i++ ) {
-						String colName = joinColumns[i];
-						if ( _sDataBaseName.equalsIgnoreCase( colName ) ) {
-							//--- Yes : this attribute's mapping column is a 'Join Column' 
-							return true ;
-						}
-					}
-				}
+//			if ( link.isOwningSide() && link.hasJoinColumns() ) {
+//				String[] joinColumns = link.getJoinColumns() ;
+//				if ( joinColumns != null ) {
+//					for ( int i = 0 ; i < joinColumns.length ; i++ ) {
+//						String colName = joinColumns[i];
+//						if ( _sDataBaseName.equalsIgnoreCase( colName ) ) {
+//							//--- Yes : this attribute's mapping column is a 'Join Column' 
+//							return true ;
+//						}
+//					}
+//				}
+//			}
+			if( link.isOwningSide() ) {
+				if ( link.usesAttribute(this) ) {
+					return true ;
+				}					
 			}
+			
 		}
 		return false ;
     }
@@ -1731,13 +1755,17 @@ public class JavaBeanClassAttribute
 	)
 	public String getReferencedEntityType() throws GeneratorException {
 		for( LinkInContext link : _entity.getLinks()  ) {
-			if( link.isOwningSide() && link.hasJoinColumns() ) {
-				String[] joinColumns = link.getJoinColumns() ;
-				if ( joinColumns != null && joinColumns.length == 1 ) {
-					if( joinColumns[0].equals(this.getDatabaseName() ) ) {
-						return link.getTargetEntitySimpleType() ;
-					}
-				}
+//			if( link.isOwningSide() && link.hasJoinColumns() ) {
+//				String[] joinColumns = link.getJoinColumns() ;
+//				if ( joinColumns != null && joinColumns.length == 1 ) {
+//					if( joinColumns[0].equals(this.getDatabaseName() ) ) {
+//						return link.getTargetEntitySimpleType() ;
+//					}
+//				}
+			if( link.isOwningSide() && link.getAttributesCount() == 1 ) {
+				if ( link.usesAttribute(this) ) {
+					return link.getTargetEntitySimpleType() ;
+				}					
 			}
 		}
 		return "";

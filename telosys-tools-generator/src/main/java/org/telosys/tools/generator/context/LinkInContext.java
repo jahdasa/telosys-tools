@@ -15,6 +15,9 @@
  */
 package org.telosys.tools.generator.context;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.telosys.tools.commons.JavaClassUtil;
 import org.telosys.tools.generator.EntitiesManager;
 import org.telosys.tools.generator.GeneratorContextException;
@@ -24,7 +27,6 @@ import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityObject;
 import org.telosys.tools.generator.context.names.ContextName;
 import org.telosys.tools.repository.model.JoinColumn;
-import org.telosys.tools.repository.model.JoinColumns;
 import org.telosys.tools.repository.model.JoinTable;
 import org.telosys.tools.repository.model.Link;
 
@@ -53,13 +55,13 @@ import org.telosys.tools.repository.model.Link;
 //-------------------------------------------------------------------------------------
 public class LinkInContext {
 	
+    private final EntityInContext _entity ; // The entity the link belongs to
+
 	private final Link    _link;
-	//private final Entity  _targetEntity;
-	//private final EntityInContext  _targetEntity;
 	private final EntitiesManager  _entitiesManager;
 
-//	private final String  _sGetter;
-//	private final String  _sSetter;
+	private final List<JoinColumnInContext> _joinColumns ; 
+	
 	
 	//-------------------------------------------------------------------------------------
 	/**
@@ -69,8 +71,9 @@ public class LinkInContext {
 	 */
 	//public LinkInContext(final Link link, final Entity targetEntity ) 
 	//public LinkInContext(final Link link, final EntityInContext targetEntity ) 
-	public LinkInContext(final Link link, final EntitiesManager entitiesManager ) 
+	public LinkInContext(final EntityInContext entity, final Link link, final EntitiesManager entitiesManager ) 
 	{
+		this._entity = entity ;
 		this._link = link;
 //		this._targetEntity  = targetEntity;
 		this._entitiesManager  = entitiesManager;
@@ -79,6 +82,18 @@ public class LinkInContext {
 ////		_sSetter = Util.buildSetter(this.getJavaName());		
 //		_sGetter = Util.buildGetter(this.getFieldName(), this.getFieldType());
 //		_sSetter = Util.buildSetter(this.getFieldName());
+		
+		//--- Build the list of "join columns"
+		_joinColumns = new LinkedList<JoinColumnInContext>();
+		if ( _link.getJoinColumns() != null ) {
+			JoinColumn[] joinColumns = _link.getJoinColumns().getAll();
+			for ( JoinColumn col : joinColumns ) {
+				_joinColumns.add( new JoinColumnInContext(col) ) ;
+			}
+		}
+//		else {
+//			throw new GeneratorContextException("Invalid link : no 'Join Columns'");
+//		}
 		
 	}
 
@@ -134,133 +149,6 @@ public class LinkInContext {
         return s + sTrailingBlanks;
     }
 
-//	/**
-//	 * Builds a string with the cascade attribute <br>
-//	 * ie : "", "cascade = CascadeType.ALL", "cascade = CascadeType.PERSIST", "cascade = { CascadeType.PERSIST, CascadeType.REMOVE }"
-//	 * @param link
-//	 * @return
-//	 */
-//	private String buildCascade(Link link)
-//	{
-//		// JPA doc : By default no operations are cascaded
-//		if ( link.isCascadeALL() ) { 
-//			return "cascade = CascadeType.ALL" ; 
-//		}
-//		else {
-//			int n = 0 ;
-//			if ( link.isCascadeMERGE() ) n++ ;
-//			if ( link.isCascadePERSIST() ) n++ ;
-//			if ( link.isCascadeREFRESH() ) n++ ;
-//			if ( link.isCascadeREMOVE() ) n++ ;
-//			if ( n == 0 ) {
-//				return "" ;
-//			}
-//			else {
-//				StringBuilder sb = new StringBuilder();
-//				sb.append("cascade = ");
-//				if ( n > 1 ) {
-//					sb.append("{ ");
-//				}
-//				int c = 0 ;
-//				if ( link.isCascadeMERGE()  ) { 
-//					if ( c > 0 ) { sb.append(", "); } 
-//					sb.append("CascadeType.MERGE"  ); 
-//					c++; 
-//				}
-//				if ( link.isCascadePERSIST()) { 
-//					if ( c > 0 ) { sb.append(", "); } 
-//					sb.append("CascadeType.PERSIST"); 
-//					c++; 
-//				}
-//				if ( link.isCascadeREFRESH()) { 
-//					if ( c > 0 ) { sb.append(", "); } 
-//					sb.append("CascadeType.REFRESH"); 
-//					c++; 
-//				}
-//				if ( link.isCascadeREMOVE() ) { 
-//					if ( c > 0 ) { sb.append(", "); } 
-//					sb.append("CascadeType.REMOVE" ); 
-//					c++; 
-//				}
-//				if ( n > 1 ) {
-//					sb.append(" }");
-//				}
-//				return sb.toString();
-//			}
-//		}
-//	}
-
-//	private String buildFetch(Link link)
-//	{
-//		// JPA doc : default = EAGER
-//		if ( link.isFetchEAGER() ) { 
-//			return "fetch = FetchType.EAGER" ; 
-//		}
-//		if ( link.isFetchLAZY()  ) { 
-//			return "fetch = FetchType.LAZY" ;
-//		}
-//		return "";
-//	}
-	
-//	private String buildOptional(Link link)
-//	{
-//		// JPA doc : default = true
-//		if ( link.isOptionalTrue() ) { 
-//			return "optional = true" ; 
-//		}
-//		if ( link.isOptionalFalse() ) { 
-//			return "optional = false" ; 
-//		}
-//		return "";
-//	}
-	
-//	/**
-//	 * Return the further information for the cardinality annotation ( cascade, fetch, optional ) <br>
-//	 * ie : "cascade = CascadeType.ALL, fetch = FetchType.EAGER"
-//	 * @param link
-//	 * @return
-//	 */
-//	private String getCardinalityFurtherInformation(Link link)
-//	{
-//		/*
-//		 * JPA documentation
-//		 * OneToOne   : cascade + fecth + optional
-//		 * ManyToOne  : cascade + fecth + optional
-//		 * OneToMany  : cascade + fecth 
-//		 * ManyToMany : cascade + fecth 
-//		 */
-//		int n = 0 ;
-//		StringBuilder sb = new StringBuilder();
-//
-//		//--- CASCADE 
-//		String sCascade = buildCascade(link); // "cascade = ..." 
-//		if ( ! StrUtil.nullOrVoid( sCascade ) ) {
-//			if ( n > 0 ) sb.append(", ");
-//			sb.append(sCascade);
-//			n++ ;
-//		}
-//
-//		//--- FETCH 
-//		String sFetch = buildFetch(link); // "fetch = ..." 
-//		if ( ! StrUtil.nullOrVoid( sFetch ) ) {
-//			if ( n > 0 ) sb.append(", ");
-//			sb.append(sFetch);
-//			n++ ;
-//		}
-//		
-//		//--- OPTIONAL ( only for OneToOne and ManyToOne )
-//		if ( link.isTypeOneToOne() || link.isTypeManyToOne() ) {
-//			String sOptional = buildOptional(link); // "optional=true|false" 
-//			if ( ! StrUtil.nullOrVoid( sOptional ) ) {
-//				if ( n > 0 ) sb.append(", ");
-//				sb.append(sOptional);
-//				n++ ;
-//			}
-//		}
-//		
-//		return sb.toString();
-//	}
-	
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
 		text={	
@@ -317,10 +205,13 @@ public class LinkInContext {
 			}
 	)
 	public boolean hasJoinColumns() {
-		//return _link.getJoinColumns() != null ;
-		JoinColumns joinColumns = _link.getJoinColumns() ;
-		if ( joinColumns != null ) {
-			return ( joinColumns.size() > 0 ) ; 
+//		JoinColumns joinColumns = _link.getJoinColumns() ;
+//		if ( joinColumns != null ) {
+//			return ( joinColumns.size() > 0 ) ; 
+//		}
+//		return false ;
+		if ( _joinColumns != null ) {
+			return ( _joinColumns.size() > 0 ) ; 
 		}
 		return false ;
 	}
@@ -331,27 +222,85 @@ public class LinkInContext {
 			"Returns the 'join columns' for the link "
 			}
 	)
-	public String[] getJoinColumns() {
-		JoinColumns joinColumns = _link.getJoinColumns() ;
-		if ( joinColumns != null ) {
-			JoinColumn[] columns = joinColumns.getAll();
-			String[] colNames = new String[columns.length] ;
-			for ( int i = 0 ; i < columns.length ; i++ ) {
-				JoinColumn col = columns[i] ;
-				if ( col != null ) {
-					colNames[i] = columns[i].getName();
-				}
-				else {
-					throw new GeneratorContextException("Invalid link : null 'Join Column' in 'Join Columns' collection");
-				}
-			}
-			return colNames ;
+//	public String[] getJoinColumns() {
+//		JoinColumns joinColumns = _link.getJoinColumns() ;
+//		if ( joinColumns != null ) {
+//			JoinColumn[] columns = joinColumns.getAll();
+//			String[] colNames = new String[columns.length] ;
+//			for ( int i = 0 ; i < columns.length ; i++ ) {
+//				JoinColumn col = columns[i] ;
+//				if ( col != null ) {
+//					colNames[i] = columns[i].getName();
+//				}
+//				else {
+//					throw new GeneratorContextException("Invalid link : null 'Join Column' in 'Join Columns' collection");
+//				}
+//			}
+//			return colNames ;
+//		}
+//		else {
+//			throw new GeneratorContextException("No 'Join Columns' for this link");
+//		}
+//	}
+	public List<JoinColumnInContext> getJoinColumns() {
+		return _joinColumns ;
+	}
+	
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod ( text= { 
+			"Returns the number of attributes used to define the link"
+		},
+		example="$link.attributesCount",
+		since="2.1.0"
+	)
+	public int getAttributesCount() 
+	{
+		if ( _joinColumns != null )
+		{
+			return _joinColumns.size() ;
 		}
-		else {
-			throw new GeneratorContextException("No 'Join Columns' for this link");
-		}
+		return 0 ;
 	}
 
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the attributes for the two sides of the link "
+			}
+	)
+	public List<LinkAttributeInContext> getAttributes() throws GeneratorException {
+		List<LinkAttributeInContext> list = new LinkedList<LinkAttributeInContext>();
+		if ( _joinColumns != null ) {
+			for ( JoinColumnInContext jc : _joinColumns ) {
+				//--- ORIGIN attribute
+				JavaBeanClassAttribute attribOrigin = _entity.getAttributeByColumnName(jc.getName());
+				//--- TARGET attribute
+				EntityInContext referencedEntity = this.getTargetEntity();
+				JavaBeanClassAttribute attribTarget = referencedEntity.getAttributeByColumnName(jc.getReferencedColumnName());
+				//--- New attribute mapping in the list
+				list.add( new LinkAttributeInContext(attribOrigin, attribTarget) );
+			}
+		}
+		return list ;
+	}
+	
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns TRUE if the given attribute is used by the link "
+			}
+	)
+	public boolean usesAttribute(JavaBeanClassAttribute attribute) {
+		if ( _joinColumns != null ) {
+			for ( JoinColumnInContext jc : _joinColumns ) {
+				if ( attribute.getDatabaseName().equals( jc.getName() ) ) {
+					return true ;
+				}
+			}
+		}
+		return false ;
+	}
+	
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
 		text={	
@@ -478,7 +427,6 @@ public class LinkInContext {
 	@VelocityMethod(
 		text={	
 			"Returns the entity referenced by the link ",
-			"eg : 'Book', 'Customer', ...",
 			""
 			},
 		since = "2.1.0"
