@@ -171,7 +171,7 @@ public class Jpa {
 			"fieldsMapped : list of all the fields mapped by JPA "},
 		since = "2.0.7"
 			)
-	public String linkAnnotations( int marginSize, LinkInContext entityLink, List<JavaBeanClassAttribute> fieldsList )
+	public String linkAnnotations( int marginSize, LinkInContext entityLink, List<AttributeInContext> fieldsList )
 				throws GeneratorException {
 		
 		Link   _link         = entityLink.getLink(); 
@@ -459,7 +459,7 @@ public class Jpa {
 	 * @param fieldsList
 	 */
 	private void processJoinColumns(AnnotationsBuilder annotations, JoinColumns joinColumns, 
-			int linkCardinality, List<JavaBeanClassAttribute> fieldsList ) 
+			int linkCardinality, List<AttributeInContext> fieldsList ) 
 	{
 		if ( joinColumns != null ) 
 		{
@@ -558,7 +558,7 @@ public class Jpa {
 	 * @param linkCardinality
 	 * @return
 	 */
-	private String[] getJoinColumnAnnotations( JoinColumn[] joinColumns, int linkCardinality, List<JavaBeanClassAttribute> fieldsList ) 
+	private String[] getJoinColumnAnnotations( JoinColumn[] joinColumns, int linkCardinality, List<AttributeInContext> fieldsList ) 
 	{
 		if ( null == joinColumns ) return null ;
 		if ( joinColumns.length == 0 ) return null ;
@@ -577,7 +577,7 @@ public class Jpa {
 	 * @param mappedFields
 	 * @return
 	 */
-	private String getJoinColumnAnnotation(JoinColumn joinColumn, int linkCardinality, List<JavaBeanClassAttribute> mappedFields ) {
+	private String getJoinColumnAnnotation(JoinColumn joinColumn, int linkCardinality, List<AttributeInContext> mappedFields ) {
 		StringBuilder annotation = new StringBuilder();
 		annotation.append( "@JoinColumn(");
 		annotation.append( "name=\"" + joinColumn.getName()+"\"" );
@@ -607,11 +607,11 @@ public class Jpa {
 		return annotation.toString();
 	}
 	
-	private boolean isFieldAlreadyMapped (JoinColumn joinColumn, List<JavaBeanClassAttribute> mappedFields ) {
+	private boolean isFieldAlreadyMapped (JoinColumn joinColumn, List<AttributeInContext> mappedFields ) {
 		if ( mappedFields != null ) {
 			String dbColumnName = joinColumn.getName(); // ie "PUBLISHER_ID" in "BOOK"
 			if ( dbColumnName != null ) {
-				for ( JavaBeanClassAttribute field : mappedFields ) {
+				for ( AttributeInContext field : mappedFields ) {
 					if ( dbColumnName.equals( field.getDatabaseName() ) ) {
 						// Found in the list of mapped fields => already mapped as a field
 						return true ;
@@ -667,7 +667,7 @@ public class Jpa {
 			},
 		since = "2.0.7"
 	)
-	public String fieldAnnotations(int iLeftMargin, JavaBeanClassAttribute attribute )
+	public String fieldAnnotations(int iLeftMargin, AttributeInContext attribute )
     {
 		AnnotationsForJPA annotationsJPA = new AnnotationsForJPA(attribute);
 		return annotationsJPA.getJpaAnnotations(iLeftMargin, AnnotationsForJPA.EMBEDDED_ID_FALSE );
@@ -687,7 +687,7 @@ public class Jpa {
 			},
 		since = "2.0.7"
 		)
-	public String embeddedIdAnnotations(int iLeftMargin, JavaBeanClassAttribute attribute )
+	public String embeddedIdAnnotations(int iLeftMargin, AttributeInContext attribute )
     {
 		AnnotationsForJPA annotationsJPA = new AnnotationsForJPA(attribute);
 		return annotationsJPA.getJpaAnnotations(iLeftMargin, AnnotationsForJPA.EMBEDDED_ID_TRUE );

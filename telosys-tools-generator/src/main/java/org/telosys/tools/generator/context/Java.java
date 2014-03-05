@@ -51,7 +51,7 @@ public class Java {
 			"fieldsList : list of fields to be used in the equals method"},
 		since = "2.0.7"
 			)
-	public String equalsMethod( String className, List<JavaBeanClassAttribute> fieldsList ) {
+	public String equalsMethod( String className, List<AttributeInContext> fieldsList ) {
 		
 		return equalsMethod( className , fieldsList, new LinesBuilder() ); 
 	}
@@ -70,13 +70,13 @@ public class Java {
 			"indentSpaces : number of spaces to be used for each indentation level"},
 		since = "2.0.7"
 			)
-	public String equalsMethod( String className, List<JavaBeanClassAttribute> fieldsList, int indentSpaces ) {
+	public String equalsMethod( String className, List<AttributeInContext> fieldsList, int indentSpaces ) {
 		
 		return equalsMethod( className , fieldsList, new LinesBuilder(indentSpaces) ); 
 	}
 	
 	//-------------------------------------------------------------------------------------
-	private String equalsMethod( String className, List<JavaBeanClassAttribute> fieldsList, LinesBuilder lb ) {
+	private String equalsMethod( String className, List<AttributeInContext> fieldsList, LinesBuilder lb ) {
 
 		int indent = 1 ;
 		lb.append(indent, "public boolean equals(Object obj) { ");
@@ -90,7 +90,7 @@ public class Java {
 		lb.append( indent, className + " other = (" + className + ") obj; ");
 		
 		if ( fieldsList != null ) {
-			for ( JavaBeanClassAttribute attribute : fieldsList ) {
+			for ( AttributeInContext attribute : fieldsList ) {
 				
 				String attributeName = attribute.getName() ;
 				lb.append(indent, "//--- Attribute " + attributeName );
@@ -147,7 +147,7 @@ public class Java {
 				"fieldsList : list of fields to be used in the equals method"},
 			since = "2.0.7"
 				)
-	public String hashCodeMethod( String className, List<JavaBeanClassAttribute> fieldsList ) {
+	public String hashCodeMethod( String className, List<AttributeInContext> fieldsList ) {
 		return hashCodeMethod( className , fieldsList, new LinesBuilder() ); 
 	}
 	
@@ -165,12 +165,12 @@ public class Java {
 				"indentSpaces : number of spaces to be used for each indentation level"},
 			since = "2.0.7"
 				)
-	public String hashCodeMethod( String className, List<JavaBeanClassAttribute> fieldsList, int indentSpaces ) {
+	public String hashCodeMethod( String className, List<AttributeInContext> fieldsList, int indentSpaces ) {
 		return hashCodeMethod( className , fieldsList, new LinesBuilder(indentSpaces) ); 
 	}
 	
 	//-------------------------------------------------------------------------------------
-	private String hashCodeMethod( String className, List<JavaBeanClassAttribute> fieldsList, LinesBuilder lb ) {
+	private String hashCodeMethod( String className, List<AttributeInContext> fieldsList, LinesBuilder lb ) {
 
 		int indent = 1 ;
 		lb.append(indent, "public int hashCode() { ");
@@ -182,7 +182,7 @@ public class Java {
 			lb.append(indent, "");
 			
 			if ( fieldsList != null ) {
-				for ( JavaBeanClassAttribute attribute : fieldsList ) {
+				for ( AttributeInContext attribute : fieldsList ) {
 					
 					String attributeName = attribute.getName() ;
 					lb.append(indent, "//--- Attribute " + attributeName );
@@ -249,10 +249,10 @@ public class Java {
 				"attributes : list of attributes" },
 			since = "2.0.7"
 				)
-	public List<String> imports( List<JavaBeanClassAttribute> attributesList ) {
+	public List<String> imports( List<AttributeInContext> attributesList ) {
 		if ( attributesList != null ) {
 			JavaBeanClassImports imports = new JavaBeanClassImports();
-			for ( JavaBeanClassAttribute attribute : attributesList ) {
+			for ( AttributeInContext attribute : attributesList ) {
 				// register the type to be imported if necessary
 				imports.declareType( attribute.getFullType() ); 
 			}
@@ -282,7 +282,7 @@ public class Java {
 		if ( entity != null ) {
 			JavaBeanClassImports imports = new JavaBeanClassImports();
 			//--- All the attributes
-			for ( JavaBeanClassAttribute attribute : entity.getAttributes() ) {
+			for ( AttributeInContext attribute : entity.getAttributes() ) {
 				// register the type to be imported if necessary
 				imports.declareType( attribute.getFullType() ); 
 			}
@@ -339,7 +339,7 @@ public class Java {
 			"indentSpaces : number of spaces to be used for each indentation level"},
 		since = "2.1.0"
 			)
-	public String toStringMethod( List<JavaBeanClassAttribute> attributes, int indentSpaces ) {
+	public String toStringMethod( List<AttributeInContext> attributes, int indentSpaces ) {
 
 		LinesBuilder lb = new LinesBuilder(indentSpaces) ;
 		int indent = 1 ;
@@ -374,7 +374,7 @@ public class Java {
 			"embeddedIdName : variable name for the embedded id (used only if the entity has a composite primary key) " },
 		since = "2.0.7"
 			)
-	public String toStringMethod( EntityInContext entity, List<JavaBeanClassAttribute> nonKeyAttributes, String embeddedIdName ) {
+	public String toStringMethod( EntityInContext entity, List<AttributeInContext> nonKeyAttributes, String embeddedIdName ) {
 			
 		return toStringMethod( entity , nonKeyAttributes, embeddedIdName, new LinesBuilder() ); 
 	}
@@ -396,13 +396,13 @@ public class Java {
 			"indentSpaces : number of spaces to be used for each indentation level"},
 		since = "2.0.7"
 			)
-	public String toStringMethod( EntityInContext entity, List<JavaBeanClassAttribute> nonKeyAttributes, String embeddedIdName, int indentSpaces ) {
+	public String toStringMethod( EntityInContext entity, List<AttributeInContext> nonKeyAttributes, String embeddedIdName, int indentSpaces ) {
 		
 		return toStringMethod( entity , nonKeyAttributes, embeddedIdName, new LinesBuilder(indentSpaces) ); 
 	}
 	
 	//-------------------------------------------------------------------------------------
-	private String toStringMethod( EntityInContext entity, List<JavaBeanClassAttribute> nonKeyAttributes, String embeddedIdName, LinesBuilder lb ) {
+	private String toStringMethod( EntityInContext entity, List<AttributeInContext> nonKeyAttributes, String embeddedIdName, LinesBuilder lb ) {
 
 		int indent = 1 ;
 		lb.append(indent, "public String toString() { ");
@@ -419,7 +419,7 @@ public class Java {
 		}
 		else {
 			// No embedded id ( or no name for it )
-			List<JavaBeanClassAttribute> keyAttributes = entity.getKeyAttributes() ;
+			List<AttributeInContext> keyAttributes = entity.getKeyAttributes() ;
 			count = count + toStringForAttributes( keyAttributes, lb, indent );
 		}
 		lb.append(indent, "sb.append(\"]:\"); ");
@@ -444,11 +444,11 @@ public class Java {
      * @param indent
      * @return
      */
-    private int toStringForAttributes( List<JavaBeanClassAttribute> attributes, LinesBuilder lb, int indent  )
+    private int toStringForAttributes( List<AttributeInContext> attributes, LinesBuilder lb, int indent  )
     {    	
     	if ( null == attributes ) return 0 ;
     	int count = 0 ;
-    	for ( JavaBeanClassAttribute attribute : attributes ) {
+    	for ( AttributeInContext attribute : attributes ) {
     		if ( usableInToString( attribute ) ) {
                 if ( count > 0 ) // if it's not the first one
                 {
@@ -489,7 +489,7 @@ public class Java {
      * @param sType
      * @return
      */
-    private boolean usableInToString( JavaBeanClassAttribute attribute )
+    private boolean usableInToString( AttributeInContext attribute )
     {
     	if ( attribute.isArrayType() ) return false ;
     	if ( attribute.isLongText() ) return false ;

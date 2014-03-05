@@ -152,11 +152,11 @@ public class Fn {
 		parameters = { "fields : list of fields to be added in the arguments list" },
 		since = "2.0.5"
 			)
-	public String argumentsList( List<JavaBeanClassAttribute> fieldsList ) {
+	public String argumentsList( List<AttributeInContext> fieldsList ) {
 		if ( fieldsList != null ) {
 			StringBuilder sb = new StringBuilder();
 			int n = 0 ;
-			for ( JavaBeanClassAttribute field : fieldsList ) {
+			for ( AttributeInContext field : fieldsList ) {
 				if ( n > 0 ) sb.append(", ");
 				sb.append( field.getName() ) ;
 				n++;
@@ -179,11 +179,11 @@ public class Fn {
 		parameters = { "fields : list of fields to be added in the arguments list" },
 		since = "2.0.5"
 			)
-	public String argumentsListWithType( List<JavaBeanClassAttribute> fieldsList ) {
+	public String argumentsListWithType( List<AttributeInContext> fieldsList ) {
 		if ( fieldsList != null ) {
 			StringBuilder sb = new StringBuilder();
 			int n = 0 ;
-			for ( JavaBeanClassAttribute field : fieldsList ) {
+			for ( AttributeInContext field : fieldsList ) {
 				if ( n > 0 ) sb.append(", ");
 				sb.append( field.getType() ) ;
 				sb.append( " " ) ;
@@ -210,11 +210,11 @@ public class Fn {
 			"fields : list of fields to be added in the arguments list" },
 		since = "2.0.5"
 			)
-	public String argumentsListWithGetter( String objectName, List<JavaBeanClassAttribute> fieldsList ) {
+	public String argumentsListWithGetter( String objectName, List<AttributeInContext> fieldsList ) {
 		if ( fieldsList != null ) {
 			StringBuilder sb = new StringBuilder();
 			int n = 0 ;
-			for ( JavaBeanClassAttribute field : fieldsList ) {
+			for ( AttributeInContext field : fieldsList ) {
 				if ( n > 0 ) sb.append(", ");
 				sb.append( objectName ) ;
 				sb.append( "." ) ;

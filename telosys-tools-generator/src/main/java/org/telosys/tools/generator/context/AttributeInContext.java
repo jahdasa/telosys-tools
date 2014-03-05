@@ -56,7 +56,7 @@ import org.telosys.tools.repository.persistence.util.RepositoryConst;
 		
  )
 //-------------------------------------------------------------------------------------
-public class JavaBeanClassAttribute 
+public class AttributeInContext 
 {
 //	public final static int NO_MAXLENGTH   = -1 ;
 
@@ -176,7 +176,7 @@ public class JavaBeanClassAttribute
 	 * Constructor to create a Java Class Attribute from the given model-column definition  
 	 * @param column the column of the repository model
 	 */
-	public JavaBeanClassAttribute(final EntityInContext entity, final Column column) 
+	public AttributeInContext(final EntityInContext entity, final Column column) 
 	{
 		_entity = entity ;
 		

@@ -33,7 +33,7 @@ import org.telosys.tools.generator.context.EnvInContext;
 import org.telosys.tools.generator.context.Fn;
 import org.telosys.tools.generator.context.GenerationInContext;
 import org.telosys.tools.generator.context.Java;
-import org.telosys.tools.generator.context.JavaBeanClassAttribute;
+import org.telosys.tools.generator.context.AttributeInContext;
 import org.telosys.tools.generator.context.JavaBeanClassForeignKey;
 import org.telosys.tools.generator.context.JavaBeanClassForeignKeyColumn;
 import org.telosys.tools.generator.context.JoinColumnInContext;
@@ -226,7 +226,7 @@ public class DocBuilder {
 		BeanValidation.class, // ver 2.0.7
 		//JavaBeanClass.class,
 		EntityInContext.class, // replaces JavaBeanClass.class ( ver 2.1.0 )
-		JavaBeanClassAttribute.class,
+		AttributeInContext.class,
 		JavaBeanClassForeignKey.class, // ver 2.0.7
 		JavaBeanClassForeignKeyColumn.class, // ver 2.0.7
 		JoinColumnInContext.class, // ver 2.1.0

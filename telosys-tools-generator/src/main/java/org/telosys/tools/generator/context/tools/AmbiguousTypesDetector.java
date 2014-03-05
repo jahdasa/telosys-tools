@@ -19,7 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.telosys.tools.commons.JavaClassUtil;
-import org.telosys.tools.generator.context.JavaBeanClassAttribute;
+import org.telosys.tools.generator.context.AttributeInContext;
 
 public class AmbiguousTypesDetector {
 
@@ -32,12 +32,12 @@ public class AmbiguousTypesDetector {
 	 * Register all the attributes full types
 	 * @param attributes 
 	 */
-	public AmbiguousTypesDetector(List<JavaBeanClassAttribute> attributes) {
+	public AmbiguousTypesDetector(List<AttributeInContext> attributes) {
 		super();
 		//this._attributes = attributes;
 		
 		_fullTypesList = new LinkedList<String>();
-		for ( JavaBeanClassAttribute attribute : attributes ) {
+		for ( AttributeInContext attribute : attributes ) {
 			if ( attribute.isPrimitiveType() != true ) {
 				registerType( attribute.getFullType() ); // "java.math.BigDecimal", "java.util.Date", ...
 			}

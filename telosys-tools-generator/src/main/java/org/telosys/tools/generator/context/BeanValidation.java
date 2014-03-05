@@ -48,7 +48,7 @@ public class BeanValidation {
 			},
 		since = "2.0.7"
 	)
-	public String annotations(int iLeftMargin, JavaBeanClassAttribute attribute )
+	public String annotations(int iLeftMargin, AttributeInContext attribute )
     {
 		AnnotationsForBeanValidation annotations = new AnnotationsForBeanValidation(attribute);
 		return annotations.getValidationAnnotations(iLeftMargin );

@@ -18,7 +18,7 @@ package org.telosys.tools.generator.context.tools;
 import java.sql.Types;
 
 import org.telosys.tools.commons.StrUtil;
-import org.telosys.tools.generator.context.JavaBeanClassAttribute;
+import org.telosys.tools.generator.context.AttributeInContext;
 
 /**
  * This class manages the JPA annotations for a given Java attribute ( a field mapped on a column )
@@ -41,13 +41,13 @@ public class AnnotationsForJPA
 	private static final String AUTO     = "auto";
 
 	
-	private JavaBeanClassAttribute _attribute = null ;
+	private AttributeInContext _attribute = null ;
 	
 	/**
 	 * Constructor
 	 * @param attribute
 	 */
-	public AnnotationsForJPA(JavaBeanClassAttribute attribute) {
+	public AnnotationsForJPA(AttributeInContext attribute) {
 		super();
 		this._attribute = attribute;
 	}
@@ -110,13 +110,13 @@ public class AnnotationsForJPA
 		{
 			switch ( _attribute.getDateType()  ) 
 			{
-			case JavaBeanClassAttribute.DATE_ONLY :
+			case AttributeInContext.DATE_ONLY :
 				annotationTemporal(annotations, "DATE");
 				break;
-			case JavaBeanClassAttribute.TIME_ONLY :
+			case AttributeInContext.TIME_ONLY :
 				annotationTemporal(annotations, "TIME");
 				break;
-			case JavaBeanClassAttribute.DATE_AND_TIME :
+			case AttributeInContext.DATE_AND_TIME :
 				annotationTemporal(annotations, "TIMESTAMP");
 				break;
 			}

@@ -273,10 +273,10 @@ public class LinkInContext {
 		if ( _joinColumns != null ) {
 			for ( JoinColumnInContext jc : _joinColumns ) {
 				//--- ORIGIN attribute
-				JavaBeanClassAttribute attribOrigin = _entity.getAttributeByColumnName(jc.getName());
+				AttributeInContext attribOrigin = _entity.getAttributeByColumnName(jc.getName());
 				//--- TARGET attribute
 				EntityInContext referencedEntity = this.getTargetEntity();
-				JavaBeanClassAttribute attribTarget = referencedEntity.getAttributeByColumnName(jc.getReferencedColumnName());
+				AttributeInContext attribTarget = referencedEntity.getAttributeByColumnName(jc.getReferencedColumnName());
 				//--- New attribute mapping in the list
 				list.add( new LinkAttributeInContext(attribOrigin, attribTarget) );
 			}
@@ -290,7 +290,7 @@ public class LinkInContext {
 			"Returns TRUE if the given attribute is used by the link "
 			}
 	)
-	public boolean usesAttribute(JavaBeanClassAttribute attribute) {
+	public boolean usesAttribute(AttributeInContext attribute) {
 		if ( _joinColumns != null ) {
 			for ( JoinColumnInContext jc : _joinColumns ) {
 				if ( attribute.getDatabaseName().equals( jc.getName() ) ) {

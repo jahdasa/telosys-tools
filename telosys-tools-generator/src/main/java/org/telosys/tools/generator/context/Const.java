@@ -86,19 +86,19 @@ public class Const {
 	
 	@VelocityConstant
 	public int getNO_DATE_TYPE() {
-		return JavaBeanClassAttribute.NO_DATE_TYPE ;
+		return AttributeInContext.NO_DATE_TYPE ;
 	}
 	@VelocityConstant
 	public int getDATE_ONLY() {
-		return JavaBeanClassAttribute.DATE_ONLY ;
+		return AttributeInContext.DATE_ONLY ;
 	}
 	@VelocityConstant
 	public int getTIME_ONLY() {
-		return JavaBeanClassAttribute.TIME_ONLY ;
+		return AttributeInContext.TIME_ONLY ;
 	}
 	@VelocityConstant
 	public int getDATE_AND_TIME() {
-		return JavaBeanClassAttribute.DATE_AND_TIME ;
+		return AttributeInContext.DATE_AND_TIME ;
 	}
 
 }

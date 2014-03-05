@@ -62,7 +62,7 @@ import org.telosys.tools.repository.model.Link;
 public class EntityInContext 
 {
 	//--- Static void lists
-	private final static List<JavaBeanClassAttribute>  VOID_ATTRIBUTES_LIST    = new LinkedList<JavaBeanClassAttribute>();
+	private final static List<AttributeInContext>  VOID_ATTRIBUTES_LIST    = new LinkedList<AttributeInContext>();
 	private final static List<JavaBeanClassForeignKey> VOID_FOREIGN_KEYS_LIST  = new LinkedList<JavaBeanClassForeignKey>();
 	private final static List<LinkInContext>           VOID_LINKS_LIST         = new LinkedList<LinkInContext>();
 	
@@ -78,9 +78,9 @@ public class EntityInContext
     private final String     _sDatabaseSchema   ; // The table's schema 
     private final String     _sDatabaseType     ; // The table's type "table" or "view" 
     
-	private final LinkedList<JavaBeanClassAttribute> _attributes ; // The attributes for this class ( ALL ATTRIBUTES )
-	private LinkedList<JavaBeanClassAttribute>  _keyAttributes     = null ; // The KEY attributes for this class
-	private LinkedList<JavaBeanClassAttribute>  _nonKeyAttributes  = null ; // The NON KEY attributes for this class
+	private final LinkedList<AttributeInContext> _attributes ; // The attributes for this class ( ALL ATTRIBUTES )
+	private LinkedList<AttributeInContext>  _keyAttributes     = null ; // The KEY attributes for this class
+	private LinkedList<AttributeInContext>  _nonKeyAttributes  = null ; // The NON KEY attributes for this class
 
 //	private String     _sSqlKeyColumns = null ;
 //	private String     _sSqlNonKeyColumns = null ;
@@ -121,10 +121,10 @@ public class EntityInContext
 		_sDatabaseType    = entity.getDatabaseType(); // ver 2.0.7
 		
 		//--- Initialize all the ATTRIBUTES for the current entity
-		_attributes = new LinkedList<JavaBeanClassAttribute>();
+		_attributes = new LinkedList<AttributeInContext>();
 		Collection<Column> entityColumns = entity.getColumnsCollection() ;
 		for ( Column column : entityColumns ) {
-			JavaBeanClassAttribute attribute = new JavaBeanClassAttribute(this, column);
+			AttributeInContext attribute = new AttributeInContext(this, column);
 			_attributes.add(attribute);
 		}
 
@@ -260,11 +260,11 @@ public class EntityInContext
 		example="$entity.attributeByColumnName"
 	)
 	@VelocityReturnType("'attribute' object")
-	public JavaBeanClassAttribute getAttributeByColumnName(String columnName) throws GeneratorException {
+	public AttributeInContext getAttributeByColumnName(String columnName) throws GeneratorException {
 		if ( columnName == null ) {
 			throw new GeneratorException("Invalid argument, 'columnName' is null");
 		}
-		for( JavaBeanClassAttribute attribute : this.getAttributes() ) {
+		for( AttributeInContext attribute : this.getAttributes() ) {
 			if ( columnName.equals( attribute.getDatabaseName() ) ) {
 				return attribute ;
 			}
@@ -283,7 +283,7 @@ public class EntityInContext
 		example="$entity.attributes"
 	)
 	@VelocityReturnType("List of 'attribute' objects")
-	public List<JavaBeanClassAttribute> getAttributes() 
+	public List<AttributeInContext> getAttributes() 
 	{
 		if ( _attributes != null )
 		{
@@ -369,7 +369,7 @@ public class EntityInContext
 	
 	//-------------------------------------------------------------------------------------
 	@VelocityNoDoc
-	public List<JavaBeanClassAttribute> getAttributesByCriteria( int c1  ) 
+	public List<AttributeInContext> getAttributesByCriteria( int c1  ) 
 	{
 		ContextLogger.log("getAttributesByCriteria(" + c1 + ")" );
 		checkCriterion(c1);
@@ -377,7 +377,7 @@ public class EntityInContext
 	}
 	//-------------------------------------------------------------------------------------
 	@VelocityNoDoc
-	public List<JavaBeanClassAttribute> getAttributesByCriteria( int c1, int c2 ) 
+	public List<AttributeInContext> getAttributesByCriteria( int c1, int c2 ) 
 	{
 		ContextLogger.log("getAttributesByCriteria(" + c1 + "," + c2 + ")" );
 		checkCriterion(c1);
@@ -386,7 +386,7 @@ public class EntityInContext
 	}
 	//-------------------------------------------------------------------------------------
 	@VelocityNoDoc
-	public List<JavaBeanClassAttribute> getAttributesByCriteria( int c1, int c2, int c3 ) 
+	public List<AttributeInContext> getAttributesByCriteria( int c1, int c2, int c3 ) 
 	{
 		ContextLogger.log("getAttributesByCriteria(" + c1 + "," + c2 + "," + c3 + ")" );
 		checkCriterion(c1);
@@ -413,7 +413,7 @@ public class EntityInContext
 	}
 	)
 	@VelocityReturnType("List of 'attribute' objects")
-	public List<JavaBeanClassAttribute> getAttributesByCriteria( int c1, int c2, int c3, int c4 ) 
+	public List<AttributeInContext> getAttributesByCriteria( int c1, int c2, int c3, int c4 ) 
 	{
 		ContextLogger.log("getAttributesByCriteria(" + c1 + "," + c2 + "," + c3 + "," + c4 + ")" );
 		checkCriterion(c1);
@@ -424,15 +424,15 @@ public class EntityInContext
 	}
 	
 	//-------------------------------------------------------------------------------------
-	private List<JavaBeanClassAttribute> getAttributesByAddedCriteria( int criteria ) 
+	private List<AttributeInContext> getAttributesByAddedCriteria( int criteria ) 
 	{
 		ContextLogger.log("getAttributesByAddedCriteria(" + criteria + ")" );
 		List<LinkInContext> allLinks = getLinks() ;
 		List<LinkInContext> selectedLinks = getSelectedLinks() ;
 		
-		LinkedList<JavaBeanClassAttribute> selectedAttributes = new LinkedList<JavaBeanClassAttribute>();
+		LinkedList<AttributeInContext> selectedAttributes = new LinkedList<AttributeInContext>();
 		
-		for ( JavaBeanClassAttribute attribute : _attributes ) {
+		for ( AttributeInContext attribute : _attributes ) {
 			Boolean selectedByKey  = null ;
 			Boolean selectedByText = null ;
 			Boolean selectedByLink = null ;
@@ -515,7 +515,7 @@ public class EntityInContext
 		}
 	)
 	@VelocityReturnType("List of 'attribute' objects")
-	public List<JavaBeanClassAttribute> getKeyAttributes() 
+	public List<AttributeInContext> getKeyAttributes() 
 	{
 		if ( _keyAttributes != null ) {
 			return _keyAttributes ;
@@ -561,7 +561,7 @@ public class EntityInContext
     	if( this.hasPrimaryKey() ) {
                StringBuilder sb = new StringBuilder();
                int n = 0 ;
-               for ( JavaBeanClassAttribute attribute : this.getKeyAttributes() ) {
+               for ( AttributeInContext attribute : this.getKeyAttributes() ) {
                       n++ ;
                       if ( n > 1 ) sb.append(separator);
                       sb.append(prefix);
@@ -602,7 +602,7 @@ public class EntityInContext
 		}
 	)
 	@VelocityReturnType("List of 'attribute' objects")
-	public List<JavaBeanClassAttribute> getNonKeyAttributes() 
+	public List<AttributeInContext> getNonKeyAttributes() 
 	{
 		if ( _nonKeyAttributes != null ) {
 			return _nonKeyAttributes ;
@@ -796,7 +796,7 @@ public class EntityInContext
 		}
 	)
 	@VelocityReturnType("List of 'attribute' objects")
-	public List<JavaBeanClassAttribute> getNonTextAttributes() 
+	public List<AttributeInContext> getNonTextAttributes() 
 	{
 //		if ( _nonTextAttributes == null ) // list not yet built
 //		{
@@ -821,7 +821,7 @@ public class EntityInContext
 		}
 	)
 	@VelocityReturnType("List of 'attribute' objects")
-	public List<JavaBeanClassAttribute> getTextAttributes() 
+	public List<AttributeInContext> getTextAttributes() 
 	{
 //		if ( _textAttributes == null ) // list not yet built
 //		{
@@ -851,7 +851,7 @@ public class EntityInContext
     		int n = _attributes.size();
         	for ( int i = 0 ; i < n ; i++ )        		
         	{
-        		JavaBeanClassAttribute attribute = (JavaBeanClassAttribute) _attributes.get(i);
+        		AttributeInContext attribute = (AttributeInContext) _attributes.get(i);
                 if ( attribute.isLongText() ) 
                 {
                 	return true ;
@@ -914,7 +914,7 @@ public class EntityInContext
 	public boolean hasAutoIncrementedKey() 
 	{
 		if ( _keyAttributes != null ) {
-			for ( JavaBeanClassAttribute keyAttribute : _keyAttributes ) {
+			for ( AttributeInContext keyAttribute : _keyAttributes ) {
 				if ( keyAttribute.isAutoIncremented() ) {
 					return true ; 
 				}
@@ -936,15 +936,15 @@ public class EntityInContext
 	}
 	)
 	@VelocityReturnType("'attribute' object")
-	public JavaBeanClassAttribute getAutoincrementedKeyAttribute() 
+	public AttributeInContext getAutoincrementedKeyAttribute() 
 	{
-		List<JavaBeanClassAttribute> keyAttributes = getKeyAttributes();
+		List<AttributeInContext> keyAttributes = getKeyAttributes();
     	if ( keyAttributes != null )
     	{
         	if ( keyAttributes.size() == 1 ) 
     		{
     			// Only one attribute in the PK
-    			JavaBeanClassAttribute attribute = keyAttributes.get(0);
+    			AttributeInContext attribute = keyAttributes.get(0);
     			if ( attribute != null ) {
                     if ( attribute.isAutoIncremented() ) 
                     {
@@ -969,9 +969,9 @@ public class EntityInContext
 		},
 		since="2.1.0"
 	)
-    public List<String> referencedEntityTypes(List<JavaBeanClassAttribute> attributes) throws GeneratorException {
+    public List<String> referencedEntityTypes(List<AttributeInContext> attributes) throws GeneratorException {
 		List<String> referencedEntityTypes = new LinkedList<String>();
-		for ( JavaBeanClassAttribute attribute : attributes ) {
+		for ( AttributeInContext attribute : attributes ) {
 			//--- Is this attribute involved in a link ?
 			for( LinkInContext link : this.getLinks()  ) {
 //				if( link.isOwningSide() && link.hasJoinColumns() ) {
@@ -1029,15 +1029,15 @@ public class EntityInContext
 
 	//-------------------------------------------------------------------------------------------------
 	//-------------------------------------------------------------------------------------------------
-	private LinkedList<JavaBeanClassAttribute> buildAttributesList ( boolean bKeyAttribute ) 
+	private LinkedList<AttributeInContext> buildAttributesList ( boolean bKeyAttribute ) 
 	{
-		LinkedList<JavaBeanClassAttribute> attributesList = new LinkedList<JavaBeanClassAttribute>();
+		LinkedList<AttributeInContext> attributesList = new LinkedList<AttributeInContext>();
     	if ( _attributes != null )
     	{
     		int n = _attributes.size();
         	for ( int i = 0 ; i < n ; i++ )        		
         	{
-        		JavaBeanClassAttribute attribute = _attributes.get(i);
+        		AttributeInContext attribute = _attributes.get(i);
                 if ( attribute.isKeyElement() == bKeyAttribute ) 
                 {
                 	attributesList.add(attribute);
@@ -1070,7 +1070,7 @@ public class EntityInContext
 		//--- Duplicated short types detection
 		AmbiguousTypesDetector duplicatedTypesDetector = new AmbiguousTypesDetector(_attributes);
 		List<String> ambiguousTypes = duplicatedTypesDetector.getAmbiguousTypes();
-		for ( JavaBeanClassAttribute attribute : _attributes ) {
+		for ( AttributeInContext attribute : _attributes ) {
 			//--- Is this attribute's type ambiguous ?
 			if ( ambiguousTypes.contains( attribute.getFullType() ) ) {
 				//--- Yes => force this attribute to use its "full type" for variable declaration
@@ -1088,7 +1088,7 @@ public class EntityInContext
     		int n = _attributes.size();
         	for ( int i = 0 ; i < n ; i++ )        		
         	{
-        		JavaBeanClassAttribute attribute = (JavaBeanClassAttribute) _attributes.get(i);
+        		AttributeInContext attribute = (AttributeInContext) _attributes.get(i);
                 if ( attribute.isKeyElement() == bKeyAttribute ) 
                 {
                 	if ( iCount > 0 ) // Not the first one
@@ -1109,15 +1109,15 @@ public class EntityInContext
 	 * @param bLongText
 	 * @return
 	 */
-	private LinkedList<JavaBeanClassAttribute> buildTextAttributesList ( boolean bLongText ) 
+	private LinkedList<AttributeInContext> buildTextAttributesList ( boolean bLongText ) 
 	{
     	if ( _attributes != null )
     	{
-			LinkedList<JavaBeanClassAttribute> list = new LinkedList<JavaBeanClassAttribute>();
+			LinkedList<AttributeInContext> list = new LinkedList<AttributeInContext>();
     		int n = _attributes.size();
         	for ( int i = 0 ; i < n ; i++ )        		
         	{
-        		JavaBeanClassAttribute attribute = _attributes.get(i);
+        		AttributeInContext attribute = _attributes.get(i);
                 if ( attribute.isLongText() == bLongText ) 
                 {
                 	list.add(attribute);

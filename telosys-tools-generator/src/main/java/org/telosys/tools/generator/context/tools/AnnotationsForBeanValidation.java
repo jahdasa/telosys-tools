@@ -17,7 +17,7 @@ package org.telosys.tools.generator.context.tools;
 
 import org.telosys.tools.commons.JavaTypeUtil;
 import org.telosys.tools.commons.StrUtil;
-import org.telosys.tools.generator.context.JavaBeanClassAttribute;
+import org.telosys.tools.generator.context.AttributeInContext;
 
 /**
  * Attribute (field) annotations for "Bean Validation"  ( JSR 303 strict )
@@ -27,13 +27,13 @@ import org.telosys.tools.generator.context.JavaBeanClassAttribute;
  */
 public class AnnotationsForBeanValidation
 {
-	private JavaBeanClassAttribute _attribute = null ;
+	private AttributeInContext _attribute = null ;
 	
 	/**
 	 * Constructor 
 	 * @param attribute
 	 */
-	public AnnotationsForBeanValidation(JavaBeanClassAttribute attribute) {
+	public AnnotationsForBeanValidation(AttributeInContext attribute) {
 		super();
 		this._attribute = attribute;
 	}

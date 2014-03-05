@@ -44,8 +44,8 @@ import org.telosys.tools.generator.context.names.ContextName;
 //-------------------------------------------------------------------------------------
 public class LinkAttributeInContext {
 	
-	private final JavaBeanClassAttribute  _originAttribute;
-	private final JavaBeanClassAttribute  _targetAttribute;
+	private final AttributeInContext  _originAttribute;
+	private final AttributeInContext  _targetAttribute;
 
 	//-------------------------------------------------------------------------------------
 	/**
@@ -54,7 +54,7 @@ public class LinkAttributeInContext {
 	 * @param targetAttribute
 	 */
 	public LinkAttributeInContext(
-			final JavaBeanClassAttribute originAttribute, final JavaBeanClassAttribute targetAttribute ) 
+			final AttributeInContext originAttribute, final AttributeInContext targetAttribute ) 
 	{
 		this._originAttribute = originAttribute;
 		this._targetAttribute = targetAttribute;		
@@ -66,7 +66,7 @@ public class LinkAttributeInContext {
 			"Returns the link's origin attribute "
 			}
 	)
-	public JavaBeanClassAttribute getOriginAttribute() 
+	public AttributeInContext getOriginAttribute() 
     {
         return _originAttribute ;
     }
@@ -77,7 +77,7 @@ public class LinkAttributeInContext {
 			"Returns the link's target attribute (referenced attribute) "
 			}
 	)
-	public JavaBeanClassAttribute getTargetAttribute() 
+	public AttributeInContext getTargetAttribute() 
     {
         return _targetAttribute ;
     }
