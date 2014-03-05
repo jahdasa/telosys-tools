@@ -20,14 +20,12 @@ import java.util.List;
 
 import org.telosys.tools.commons.JavaClassUtil;
 import org.telosys.tools.generator.EntitiesManager;
-import org.telosys.tools.generator.GeneratorContextException;
 import org.telosys.tools.generator.GeneratorException;
 import org.telosys.tools.generator.GeneratorUtil;
 import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityObject;
 import org.telosys.tools.generator.context.names.ContextName;
 import org.telosys.tools.repository.model.JoinColumn;
-import org.telosys.tools.repository.model.JoinTable;
 import org.telosys.tools.repository.model.Link;
 
 /**
@@ -55,12 +53,13 @@ import org.telosys.tools.repository.model.Link;
 //-------------------------------------------------------------------------------------
 public class LinkInContext {
 	
-    private final EntityInContext _entity ; // The entity the link belongs to
+    private final EntityInContext  _entity ; // The entity the link belongs to
 
-	private final Link    _link;
+	private final Link             _link;
 	private final EntitiesManager  _entitiesManager;
 
 	private final List<JoinColumnInContext> _joinColumns ; 
+	private final JoinTableInContext        _joinTable ; 
 	
 	
 	//-------------------------------------------------------------------------------------
@@ -91,16 +90,20 @@ public class LinkInContext {
 				_joinColumns.add( new JoinColumnInContext(col) ) ;
 			}
 		}
-//		else {
-//			throw new GeneratorContextException("Invalid link : no 'Join Columns'");
-//		}
 		
+		//--- Set the join table if any
+		if ( link.getJoinTable() != null ) {
+			_joinTable = new JoinTableInContext( link.getJoinTable() ) ;
+		}
+		else {
+			_joinTable = null ;
+		}
 	}
 
-	//-------------------------------------------------------------------------------------
-	protected Link getLink() {
-		return this._link ;
-	}
+//	//-------------------------------------------------------------------------------------
+//	protected Link getLink() {
+//		return this._link ;
+//	}
 	//-------------------------------------------------------------------------------------
 //	protected Entity getTargetEntity() {
 //		return this._targetEntity ;
@@ -178,26 +181,45 @@ public class LinkInContext {
 			}
 	)
 	public boolean hasJoinTable() {
-		return _link.getJoinTable() != null ;
+		//return _link.getJoinTable() != null ;
+		return _joinTable != null ;
 	}
 	
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
 		text={	
-			"Returns the 'join table' for the link ",
-			"Typically for JPA '@JoinTable'"
+			"Returns the name of the 'join table' for the link ",
+			"NB : can be null if the link doesn't have a 'join table'"
 			}
 	)
-	public String getJoinTable() {
-		JoinTable joinTable = _link.getJoinTable();
-		if ( joinTable != null ) {
-			return joinTable.getName();
+//	public String getJoinTable() {
+//		JoinTable joinTable = _link.getJoinTable();
+//		if ( joinTable != null ) {
+//			return joinTable.getName();
+//		}
+//		else {
+//			throw new GeneratorContextException("No 'Join Table' for this link");
+//		}
+//	}
+	public String getJoinTableName() {
+		if ( _joinTable != null ) {
+			return _joinTable.getName();
 		}
 		else {
-			throw new GeneratorContextException("No 'Join Table' for this link");
+			return null ;
 		}
 	}
 	
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the 'join table' object for the link ",
+			"NB : can be null if the link doesn't have a 'join table' "
+			}
+	)
+	public JoinTableInContext getJoinTable() {
+		return _joinTable ;
+	}
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
 		text={	
@@ -205,11 +227,6 @@ public class LinkInContext {
 			}
 	)
 	public boolean hasJoinColumns() {
-//		JoinColumns joinColumns = _link.getJoinColumns() ;
-//		if ( joinColumns != null ) {
-//			return ( joinColumns.size() > 0 ) ; 
-//		}
-//		return false ;
 		if ( _joinColumns != null ) {
 			return ( _joinColumns.size() > 0 ) ; 
 		}
@@ -450,12 +467,6 @@ public class LinkInContext {
 //		return entity.getName();
 		return this.getTargetEntity().getName();
 	}
-	//-------------------------------------------------------------------------------------
-//	protected String getTargetEntityClassName() {
-//		// TODO : $env Prefix & Suffix
-//		//return _targetEntity.getBeanJavaClass() ;
-//		return _targetEntity.getName();
-//	}
 	
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
@@ -479,7 +490,6 @@ public class LinkInContext {
 			"eg : 'OneToMany', 'ManyToOne', 'OneToOne', 'ManyToMany'"
 			}
 	)
-	//public String getType() { 
 	public String getCardinality() { // v 2.0.5
 		return _link.getCardinality();
 	}
