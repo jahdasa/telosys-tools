@@ -48,7 +48,7 @@ import org.telosys.tools.repository.model.ForeignKeyColumn;
 		}
  )
 //-------------------------------------------------------------------------------------
-public class JavaBeanClassForeignKey {
+public class ForeignKeyInContext {
 	
 	private final String  fkName ;
 	private final String  tableName ;
@@ -81,7 +81,7 @@ public class JavaBeanClassForeignKey {
 //	}
 
 	//-------------------------------------------------------------------------------------
-	public JavaBeanClassForeignKey(final ForeignKey metadataFK ) 
+	public ForeignKeyInContext(final ForeignKey metadataFK ) 
 	{
 		this.fkName = metadataFK.getName() ;
 		this.tableName = metadataFK.getTableName() ;

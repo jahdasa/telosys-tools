@@ -34,7 +34,7 @@ import org.telosys.tools.generator.context.Fn;
 import org.telosys.tools.generator.context.GenerationInContext;
 import org.telosys.tools.generator.context.Java;
 import org.telosys.tools.generator.context.AttributeInContext;
-import org.telosys.tools.generator.context.JavaBeanClassForeignKey;
+import org.telosys.tools.generator.context.ForeignKeyInContext;
 import org.telosys.tools.generator.context.ForeignKeyColumnInContext;
 import org.telosys.tools.generator.context.JoinColumnInContext;
 import org.telosys.tools.generator.context.Jpa;
@@ -227,7 +227,7 @@ public class DocBuilder {
 		//JavaBeanClass.class,
 		EntityInContext.class, // replaces JavaBeanClass.class ( ver 2.1.0 )
 		AttributeInContext.class,
-		JavaBeanClassForeignKey.class, // ver 2.0.7
+		ForeignKeyInContext.class, // ver 2.0.7
 		ForeignKeyColumnInContext.class, // ver 2.0.7
 		JoinColumnInContext.class, // ver 2.1.0
 		LinkInContext.class,

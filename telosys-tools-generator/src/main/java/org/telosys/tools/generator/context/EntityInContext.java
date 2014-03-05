@@ -63,7 +63,7 @@ public class EntityInContext
 {
 	//--- Static void lists
 	private final static List<AttributeInContext>  VOID_ATTRIBUTES_LIST    = new LinkedList<AttributeInContext>();
-	private final static List<JavaBeanClassForeignKey> VOID_FOREIGN_KEYS_LIST  = new LinkedList<JavaBeanClassForeignKey>();
+	private final static List<ForeignKeyInContext> VOID_FOREIGN_KEYS_LIST  = new LinkedList<ForeignKeyInContext>();
 	private final static List<LinkInContext>           VOID_LINKS_LIST         = new LinkedList<LinkInContext>();
 	
 	//private final static String   NONE = "" ;
@@ -85,7 +85,7 @@ public class EntityInContext
 //	private String     _sSqlKeyColumns = null ;
 //	private String     _sSqlNonKeyColumns = null ;
 	
-	private final LinkedList<JavaBeanClassForeignKey>  _foreignKeys ; // The database FOREIGN KEYS attributes for this entity ( v 2.0.7)
+	private final LinkedList<ForeignKeyInContext>  _foreignKeys ; // The database FOREIGN KEYS attributes for this entity ( v 2.0.7)
 	
 //	//--- XML mapper infos
 //	private LinkedList<JavaBeanClassAttribute> _nonTextAttributes  = null ; // Standard attributes for this class ( not "long text" )
@@ -147,10 +147,10 @@ public class EntityInContext
 		}
 		
 		//--- Init all the DATABASE FOREIGN KEYS  ( v 2.0.7 )
-		_foreignKeys = new LinkedList<JavaBeanClassForeignKey>();
+		_foreignKeys = new LinkedList<ForeignKeyInContext>();
 		Collection<ForeignKey> foreignKeys = entity.getForeignKeysCollection();
 		for ( ForeignKey fk : foreignKeys ) {
-			_foreignKeys.add( new JavaBeanClassForeignKey(fk ) );
+			_foreignKeys.add( new ForeignKeyInContext(fk ) );
 		}
 		
 		// import resolution
@@ -672,7 +672,7 @@ public class EntityInContext
 		since="2.0.7"		
 	)
 	@VelocityReturnType("List of 'foreign keys' objects")
-	public List<JavaBeanClassForeignKey> getDatabaseForeignKeys() 
+	public List<ForeignKeyInContext> getDatabaseForeignKeys() 
 	{
 		if ( _foreignKeys != null )
 		{
