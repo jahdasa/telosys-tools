@@ -41,7 +41,7 @@ import org.telosys.tools.generator.context.names.ContextName;
 		}
  )
 //-------------------------------------------------------------------------------------
-public class JavaBeanClassForeignKeyColumn //implements Comparable<JavaBeanClassForeignKeyColumn>
+public class ForeignKeyInContext
 {
 	private final int    _sequence ;
 
@@ -60,7 +60,7 @@ public class JavaBeanClassForeignKeyColumn //implements Comparable<JavaBeanClass
 //		this._deleteRule = deleteRule;
 //		this._deferrable = deferrable;
 //	}
-	public JavaBeanClassForeignKeyColumn( int sequence, String columnName, String referencedColumnName ) {
+	public ForeignKeyInContext( int sequence, String columnName, String referencedColumnName ) {
 		super();
 		this._sequence   = sequence;
 		this._columnName = columnName;

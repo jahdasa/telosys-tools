@@ -53,7 +53,7 @@ public class JavaBeanClassForeignKey {
 	private final String  fkName ;
 	private final String  tableName ;
 	private final String  targetTableName  ;
-	private final List<JavaBeanClassForeignKeyColumn> fkColumns ;
+	private final List<ForeignKeyInContext> fkColumns ;
 	
 	private int _updateRuleCode = 0 ;
 	private int _deleteRuleCode = 0 ;
@@ -90,13 +90,13 @@ public class JavaBeanClassForeignKey {
 		this._updateRuleCode = 0 ;
 		this._deleteRuleCode = 0 ;
 		this._deferrableCode = 0 ;
-		this.fkColumns = new LinkedList<JavaBeanClassForeignKeyColumn>() ;
+		this.fkColumns = new LinkedList<ForeignKeyInContext>() ;
 		if ( metadataFK.getForeignKeyColumnsCollection().size() > 0 ) {
 			for ( ForeignKeyColumn metadataFKColumn : metadataFK.getForeignKeyColumnsCollection() ) {
 				int    sequence = metadataFKColumn.getSequence();
 				String columnName = metadataFKColumn.getColumnName();
 				String referencedColumnName = metadataFKColumn.getColumnRef();
-				fkColumns.add( new JavaBeanClassForeignKeyColumn(sequence, columnName, referencedColumnName ) ) ;
+				fkColumns.add( new ForeignKeyInContext(sequence, columnName, referencedColumnName ) ) ;
 				//--- ON UPDATE, ON DELETE and DEFERRABLE (stored in each column in meta-data, keep the last one)
 				this._updateRuleCode = metadataFKColumn.getUpdateRuleCode() ;
 				this._deleteRuleCode = metadataFKColumn.getDeleteRuleCode() ;
@@ -143,7 +143,7 @@ public class JavaBeanClassForeignKey {
 			"(sorted in the original database order)"
 			}
 	)
-	public List<JavaBeanClassForeignKeyColumn> getColumns() {
+	public List<ForeignKeyInContext> getColumns() {
 		return this.fkColumns ;
 	}
 
