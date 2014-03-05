@@ -236,6 +236,27 @@ public class LinkInContext {
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
 		text={	
+			"Returns TRUE if the link has one (or more) 'join column' in the entity Primary Key",
+			"( one of its 'origin attributes' is the Primary Key or a part of the Primary Key )"
+			},
+		since="2.1.0"
+	)
+	public boolean hasAttributeInPrimaryKey() throws GeneratorException {
+		if ( _joinColumns != null ) {
+			for ( JoinColumnInContext jc : _joinColumns ) {
+				//--- ORIGIN attribute
+				AttributeInContext attribOrigin = _entity.getAttributeByColumnName(jc.getName());
+				if ( attribOrigin.isKeyElement() ) {
+					return true ;
+				}
+			}
+		}
+		return false ;
+	}
+	
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
 			"Returns the 'join columns' for the link "
 			}
 	)
