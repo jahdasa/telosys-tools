@@ -80,7 +80,7 @@ public class Jpa {
 	//public List<String> imports(JavaBeanClass entity) 
 	public List<String> imports(EntityInContext entity) 
 	{
-		JavaBeanClassImports _importsJpa = getImports(entity) ;
+		ImportsList _importsJpa = getImports(entity) ;
 		if ( _importsJpa != null )
 		{
 			return _importsJpa.getList() ;
@@ -89,8 +89,8 @@ public class Jpa {
 	}
 	
 	//private JavaBeanClassImports getImports(JavaBeanClass entity) {
-	private JavaBeanClassImports getImports(EntityInContext entity) {
-		JavaBeanClassImports jpaImports = new JavaBeanClassImports();
+	private ImportsList getImports(EntityInContext entity) {
+		ImportsList jpaImports = new ImportsList();
 
 		jpaImports.declareType("javax.persistence.*");
 		

@@ -27,11 +27,11 @@ import org.telosys.tools.commons.JavaTypeUtil;
  * @author Laurent GUERIN
  *
  */
-public class JavaBeanClassImports {
+public class ImportsList {
 
 	private LinkedList<String> _list = new LinkedList<String>() ; // List of Java "full types" to import ( eg : "java.math.BigDecimal" )
 	
-	public JavaBeanClassImports() 
+	public ImportsList() 
 	{
 		super();
 	}
