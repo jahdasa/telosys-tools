@@ -34,6 +34,7 @@ import org.telosys.tools.eclipse.plugin.commons.widgets.GridPanel;
 import org.telosys.tools.eclipse.plugin.commons.widgets.RefreshButton;
 import org.telosys.tools.eclipse.plugin.commons.widgets.SelectDeselectButtons;
 import org.telosys.tools.eclipse.plugin.commons.widgets.TargetsButton;
+import org.telosys.tools.eclipse.plugin.settings.SettingsManager;
 import org.telosys.tools.generator.target.TargetDefinition;
 import org.telosys.tools.repository.model.Entity;
 import org.telosys.tools.repository.model.RepositoryModel;
@@ -596,6 +597,28 @@ import org.telosys.tools.repository.model.RepositoryModel;
 		
 		//--- Re-populate the SWT table
 		populateTargetsTable(targetslist);
+		
+		//--- Enable the check box only if there's at least one resource
+		if ( _resourcesTargets.size() > 0 ) {
+			//--- This bundle has static resources 
+			String bundleName = getRepositoryEditor().getCurrentBundleName();
+        	SettingsManager settingsManager = new SettingsManager( getProject() ) ;        	
+        	if ( settingsManager.readBundleStaticResourcesCopiedFlag(bundleName) != true ) {
+        		//--- Not yet copied for this bundle => checked by default
+    			_checkboxStaticResources.setSelection(true);
+        	}
+        	else {
+        		//--- Already copied for this bundle => not checked by default
+    			_checkboxStaticResources.setSelection(false);
+        	}
+			_checkboxStaticResources.setEnabled(true) ;
+		}
+		else {
+			//--- No static resources
+			_checkboxStaticResources.setSelection(false);
+			_checkboxStaticResources.setEnabled(false) ;
+		}
+		
 	}
 
 	//----------------------------------------------------------------------------------------------
@@ -677,7 +700,7 @@ import org.telosys.tools.repository.model.RepositoryModel;
 				return true ; // Copy the resources 
 			}
 			else {
-				MsgBox.info("Noting to generate, nothing to copy.");
+				MsgBox.info("Nothing to generate, nothing to copy.");
 				return false ; // Nothing to do
 			}
 		}
@@ -768,6 +791,15 @@ import org.telosys.tools.repository.model.RepositoryModel;
     	
     	//return generationTask.generateTargets(selectedEntities, selectedTargets, resourcesTargets );
     	generationTask.generateTargets(selectedEntities, selectedTargets, resourcesTargets );
+    	
+    	if ( resourcesTargets != null ) {
+    		//--- Update the settings file : set the 'Bundle Static Resources Copied' Flag to 'TRUE'
+			String bundleName = getRepositoryEditor().getCurrentBundleName();
+        	SettingsManager settingsManager = new SettingsManager( getProject() ) ;
+        	settingsManager.updateBundleStaticResourcesCopiedFlag(bundleName, true);
+        	//--- Uncheck the check-box
+        	_checkboxStaticResources.setSelection(false);
+    	}
     }
     
 }

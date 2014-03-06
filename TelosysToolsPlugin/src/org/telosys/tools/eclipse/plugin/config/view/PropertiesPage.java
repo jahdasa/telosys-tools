@@ -40,6 +40,7 @@ import org.telosys.tools.eclipse.plugin.commons.TelosysPluginException;
 import org.telosys.tools.eclipse.plugin.commons.Util;
 import org.telosys.tools.eclipse.plugin.config.ProjectConfig;
 import org.telosys.tools.eclipse.plugin.config.ProjectConfigManager;
+import org.telosys.tools.eclipse.plugin.settings.SettingsManager;
 import org.telosys.tools.generator.GeneratorVersion;
 import org.telosys.tools.generator.context.names.ContextNames;
 
@@ -49,6 +50,8 @@ import org.telosys.tools.generator.context.names.ContextNames;
  * 
  */
 public class PropertiesPage extends PropertyPage {
+	
+	private final static boolean DEBUG_MODE = true ;
 
 	private final static String WEB_CONTENT     = "WebContent" ;
 	private final static String DATABASES_DBCFG = "databases.dbcfg" ;
@@ -273,7 +276,12 @@ public class PropertiesPage extends PropertyPage {
 			createTabDownload(tabFolder);
 			createTabAdvanced(tabFolder);
 			createTabAboutPlugin(tabFolder);
-	
+			
+			//--- This tab is for DEBUG only 
+			if ( DEBUG_MODE ) {
+				createTabDebug(tabFolder) ;
+			}
+			
 			//--- Init screen fields values
 			//initFields();
 			ProjectConfig projectConfig = loadProjectConfig();
@@ -1001,6 +1009,71 @@ public class PropertiesPage extends PropertyPage {
 		t = createTextField(tabContent, "Generator version :") ;
 		t.setEnabled(false);
 		t.setText( GeneratorVersion.GENERATOR_VERSION );
+	}	
+	
+	//------------------------------------------------------------------------------------------
+	/**
+	 * Creates the "About plugin" TabItem
+	 * @param tabFolder
+	 */
+	private void createTabDebug(TabFolder tabFolder) 
+	{
+		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
+		tabItem.setText(" Debug ");
+		
+		Composite tabContent = new Composite(tabFolder, SWT.NONE);
+		tabContent.setLayout(new GridLayout(2, false));
+		tabItem.setControl(tabContent);
+		
+		//-------------------------------------------------- ROW ------------------------------------
+		//--- Creates the Label 
+		Label label = new Label(tabContent, SWT.NONE);
+		label.setText("Settings test 1 : ");
+
+		new Label(tabContent, SWT.NONE).setText("xxx");
+		
+		//-------------------------------------------------- ROW ------------------------------------
+		//--- Creates the Button 
+		Button button = new Button(tabContent, SWT.PUSH);
+		button.setText("isBundleStaticResourcesCopied");
+//		button.setToolTipText(" Creates the Telosys Tools folders \n"
+//				+ " and the databases configuration file \n"
+//				+ " if they don't exist");
+		button.addSelectionListener(new SelectionListener() 
+    	{
+            public void widgetSelected(SelectionEvent arg0)
+            {
+            	
+            	SettingsManager settingsManager = new SettingsManager( getCurrentProject() ) ;
+            	boolean r = settingsManager.readBundleStaticResourcesCopiedFlag("fakeBundle");
+            	MsgBox.info("Result = " + r );
+            }
+            public void widgetDefaultSelected(SelectionEvent arg0)
+            {
+            }
+        }
+		);
+		
+		button = new Button(tabContent, SWT.PUSH);
+		button.setText("setBundleStaticResourcesCopied");
+//		button.setToolTipText(" Creates the Telosys Tools folders \n"
+//				+ " and the databases configuration file \n"
+//				+ " if they don't exist");
+		button.addSelectionListener(new SelectionListener() 
+    	{
+            public void widgetSelected(SelectionEvent arg0)
+            {
+            	
+            	SettingsManager settingsManager = new SettingsManager( getCurrentProject() ) ;
+            	settingsManager.updateBundleStaticResourcesCopiedFlag("fakeBundle", true);
+            	MsgBox.info("Done (set to TRUE)");
+            }
+            public void widgetDefaultSelected(SelectionEvent arg0)
+            {
+            }
+        }
+		);
+		
 	}	
 	
 	//------------------------------------------------------------------------------------------
