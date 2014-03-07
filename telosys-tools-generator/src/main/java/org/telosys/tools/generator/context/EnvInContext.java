@@ -50,7 +50,7 @@ public class EnvInContext {
 			"it is automatically applied when the entity class name is retrieved"
 			},
 		example={ 
-			"$env.setEntityClassNamePrefix( 'Bean' )" },
+			"#set ( $env.entityClassNamePrefix = 'Bean' )" },
 		parameters = { 
 			"prefix : the prefix to be used" 
 			},
@@ -61,6 +61,16 @@ public class EnvInContext {
 	}
 
 	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the current entity class name prefix.",
+			"The default value is a void string (never null)"
+			},
+		example={ 
+			"$env.entityClassNamePrefix" 
+			},
+		since = "2.1.0"
+			)
 	public String getEntityClassNamePrefix() {
 		return _entityClassNamePrefix;
 	}
@@ -73,7 +83,7 @@ public class EnvInContext {
 			"it is automatically applied when the entity class name is retrieved"
 			},
 		example={ 
-			"$env.setEntityClassNameSuffix( 'Entity' )" },
+			"#set ( $env.entityClassNameSuffix = 'Entity' )" },
 		parameters = { 
 			"suffix : the suffix to be used" 
 			},
@@ -84,6 +94,16 @@ public class EnvInContext {
 	}
 
 	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the current entity class name suffix.",
+			"The default value is a void string (never null)"
+			},
+		example={ 
+			"$env.entityClassNameSuffix" 
+			},
+		since = "2.1.0"
+			)
 	public String getEntityClassNameSuffix() {
 		return _entityClassNameSuffix;
 	}

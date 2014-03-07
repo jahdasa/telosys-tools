@@ -41,10 +41,10 @@ public class BeanValidation {
 			"Returns the 'Bean Validation' JSR-303 annotations for the given field (with a left margin)"
 			},
 		example={ 
-			"$beanValidation.fieldAnnotations( 4, $field )" },
+			"$beanValidation.fieldAnnotations( 4, $attribute )" },
 		parameters = { 
 			"leftMargin : the left margin (number of blanks) ",
-			"field : the field to be annotated "
+			"attribute : the attribute to be annotated "
 			},
 		since = "2.0.7"
 	)

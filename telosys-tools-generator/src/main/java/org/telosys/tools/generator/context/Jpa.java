@@ -163,6 +163,7 @@ public class Jpa {
 			"$jpa.linkAnnotations( 4, $link, $listOfMappedFields )" },
 		parameters = { 
 			"leftMargin : the left margin (number of blanks)",
+			"link : the link to be annotated",
 			"alreadyMappedFields : list of all the fields already mapped by JPA as 'simple fields' "},
 		since = "2.0.7"
 			)

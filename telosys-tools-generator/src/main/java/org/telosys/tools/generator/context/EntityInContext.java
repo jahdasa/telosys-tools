@@ -257,6 +257,9 @@ public class EntityInContext
 	@VelocityMethod ( text= { 
 			"Returns the attribute associated with the given database column name"
 		},
+		parameters = {
+			"columnName : the database column's name"
+		},
 		example="$entity.attributeByColumnName"
 	)
 	@VelocityReturnType("'attribute' object")
@@ -716,9 +719,14 @@ public class EntityInContext
 	
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod ( text= { 
-			"Returns TRUE if the database type is 'TABLE' "
+			"Returns TRUE if the database type of the entity is 'TABLE' ",
+			"(it can be a TABLE or a VIEW, see also 'isViewType') "
 		},
-		example="$entity.isTableType()",
+		example= {
+			"#if ( $entity.isTableType() )",
+			"...",
+			"#end"
+		},
 		since="2.0.7"
 	)
 	public boolean isTableType() 
@@ -731,9 +739,14 @@ public class EntityInContext
 	
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod ( text= { 
-			"Returns TRUE if the database type is 'VIEW' "
+			"Returns TRUE if the database type of the entity is 'VIEW' ",
+			"(it can be a TABLE or a VIEW, see also 'isTableType') "
 		},
-		example="$entity.isViewType()",
+		example= {
+				"#if ( $entity.isViewType() )",
+				"...",
+				"#end"
+			},
 		since="2.0.7"
 	)
 	public boolean isViewType() 
@@ -744,45 +757,45 @@ public class EntityInContext
 		return false;
 	}
 	
-	//-------------------------------------------------------------------------------------
-	@VelocityMethod ( text= { 
-			"Returns a String containing all the columns of the Primary Key",
-			"The returned column names are separated by a comma and have quotes characters",
-			"i.e. : '\"code\", \"type\"' "
-		},
-		example={	
-			"String KEY_COLUMNS[] = { $entity.sqlKeyColumns };"
-		}
-	)
-	public String getSqlKeyColumns() 
-	{
-//		if ( _sSqlKeyColumns == null ) // list not yet built
-//		{
-//			_sSqlKeyColumns = buildDbColumnsList( true ); 
+//	//-------------------------------------------------------------------------------------
+//	@VelocityMethod ( text= { 
+//			"Returns a String containing all the columns of the Primary Key",
+//			"The returned column names are separated by a comma and have quotes characters",
+//			"i.e. : '\"code\", \"type\"' "
+//		},
+//		example={	
+//			"String KEY_COLUMNS[] = { $entity.sqlKeyColumns };"
 //		}
-//		return _sSqlKeyColumns ;
-		return buildDbColumnsList( true ); 
-	}
+//	)
+//	public String getSqlKeyColumns() 
+//	{
+////		if ( _sSqlKeyColumns == null ) // list not yet built
+////		{
+////			_sSqlKeyColumns = buildDbColumnsList( true ); 
+////		}
+////		return _sSqlKeyColumns ;
+//		return buildDbColumnsList( true ); 
+//	}
 	
-	//-------------------------------------------------------------------------------------
-	@VelocityMethod ( text= { 
-			"Returns a String containing all the columns not used in the Primary Key ",
-			"The returned column names are separated by a comma and have quotes characters",
-			"i.e. : '\"code\", \"type\"' "
-		},
-		example={	
-			"String DATA_COLUMNS[] = { $entity.sqlNonKeyColumns };"
-		}
-	)
-	public String getSqlNonKeyColumns() 
-	{
-//		if ( _sSqlNonKeyColumns == null ) // list not yet built
-//		{
-//			_sSqlNonKeyColumns = buildDbColumnsList( false ); 
+//	//-------------------------------------------------------------------------------------
+//	@VelocityMethod ( text= { 
+//			"Returns a String containing all the columns not used in the Primary Key ",
+//			"The returned column names are separated by a comma and have quotes characters",
+//			"i.e. : '\"code\", \"type\"' "
+//		},
+//		example={	
+//			"String DATA_COLUMNS[] = { $entity.sqlNonKeyColumns };"
 //		}
-//		return _sSqlNonKeyColumns ;
-		return buildDbColumnsList( false ); 
-	}
+//	)
+//	public String getSqlNonKeyColumns() 
+//	{
+////		if ( _sSqlNonKeyColumns == null ) // list not yet built
+////		{
+////			_sSqlNonKeyColumns = buildDbColumnsList( false ); 
+////		}
+////		return _sSqlNonKeyColumns ;
+//		return buildDbColumnsList( false ); 
+//	}
 
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod ( text= { 
@@ -1079,30 +1092,30 @@ public class EntityInContext
 		}
 	}
 	
-	private String buildDbColumnsList ( boolean bKeyAttribute ) 
-	{
-    	if ( _attributes != null )
-    	{
-            StringBuffer sb = new StringBuffer();
-            int iCount = 0 ;
-    		int n = _attributes.size();
-        	for ( int i = 0 ; i < n ; i++ )        		
-        	{
-        		AttributeInContext attribute = (AttributeInContext) _attributes.get(i);
-                if ( attribute.isKeyElement() == bKeyAttribute ) 
-                {
-                	if ( iCount > 0 ) // Not the first one
-                	{
-                        sb.append( ", " ) ;
-                	}
-                    sb.append( "\"" + attribute.getDatabaseName().trim() + "\"" ) ;
-                    iCount++ ;
-                }        		
-        	}
-    		return sb.toString() ;
-    	}
-    	return "" ;
-	}
+//	private String buildDbColumnsList ( boolean bKeyAttribute ) 
+//	{
+//    	if ( _attributes != null )
+//    	{
+//            StringBuffer sb = new StringBuffer();
+//            int iCount = 0 ;
+//    		int n = _attributes.size();
+//        	for ( int i = 0 ; i < n ; i++ )        		
+//        	{
+//        		AttributeInContext attribute = (AttributeInContext) _attributes.get(i);
+//                if ( attribute.isKeyElement() == bKeyAttribute ) 
+//                {
+//                	if ( iCount > 0 ) // Not the first one
+//                	{
+//                        sb.append( ", " ) ;
+//                	}
+//                    sb.append( "\"" + attribute.getDatabaseName().trim() + "\"" ) ;
+//                    iCount++ ;
+//                }        		
+//        	}
+//    		return sb.toString() ;
+//    	}
+//    	return "" ;
+//	}
 
 	/**
 	 * "Text" or "non Text" attributes

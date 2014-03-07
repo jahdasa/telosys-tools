@@ -417,7 +417,7 @@ public class AttributeInContext
 		text={	
 			"Returns the Java wrapper type corresponding to the attribute's primitive type",
 			"Examples : 'Float' for 'float', 'Integer' for 'int', 'Boolean' for 'boolean', ... ",
-			"If the attribute's type is retuned as is if it's not a primitive type"
+			"The attribute's type is retuned as is if it's not a primitive type"
 			}
 	)
 	public String getWrapperType()

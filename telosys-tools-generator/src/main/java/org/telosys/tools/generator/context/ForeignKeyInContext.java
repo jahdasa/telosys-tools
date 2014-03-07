@@ -21,6 +21,7 @@ import java.util.List;
 import org.telosys.tools.commons.jdbctypes.MetadataUtil;
 import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityObject;
+import org.telosys.tools.generator.context.doc.VelocityReturnType;
 import org.telosys.tools.generator.context.names.ContextName;
 import org.telosys.tools.repository.model.ForeignKey;
 import org.telosys.tools.repository.model.ForeignKeyColumn;
@@ -141,8 +142,14 @@ public class ForeignKeyInContext {
 		text={	
 			"Returns all the columns composing the foreign key",
 			"(sorted in the original database order)"
+			},
+		example= {
+			"#foreach( $fkcol in $fk.columns ) ",
+			"...",
+			"#end"
 			}
 	)
+	@VelocityReturnType("List of 'Foreign Key Column' objects ( List of '$fkcol' )")
 	public List<ForeignKeyColumnInContext> getColumns() {
 		return this.fkColumns ;
 	}

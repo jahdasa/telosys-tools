@@ -24,6 +24,7 @@ import org.telosys.tools.generator.GeneratorException;
 import org.telosys.tools.generator.GeneratorUtil;
 import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityObject;
+import org.telosys.tools.generator.context.doc.VelocityReturnType;
 import org.telosys.tools.generator.context.names.ContextName;
 import org.telosys.tools.repository.model.JoinColumn;
 import org.telosys.tools.repository.model.Link;
@@ -306,6 +307,7 @@ public class LinkInContext {
 			"Returns the attributes for the two sides of the link "
 			}
 	)
+	@VelocityReturnType("List of '$linkAttribute' (origin-target association) ")	
 	public List<LinkAttributeInContext> getAttributes() throws GeneratorException {
 		List<LinkAttributeInContext> list = new LinkedList<LinkAttributeInContext>();
 		if ( _joinColumns != null ) {
@@ -326,6 +328,9 @@ public class LinkInContext {
 	@VelocityMethod(
 		text={	
 			"Returns TRUE if the given attribute is used by the link "
+		},
+		parameters = { 
+			"attribute : the attribute to be checked" 
 			}
 	)
 	public boolean usesAttribute(AttributeInContext attribute) {

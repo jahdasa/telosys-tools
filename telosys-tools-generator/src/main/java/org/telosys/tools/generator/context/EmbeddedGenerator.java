@@ -112,7 +112,7 @@ public class EmbeddedGenerator {
 			"Returns the generator's version "
 			},
 		example = {
-			"// Generator version by $generator.version "
+			"// Generator version : $generator.version "
 		}
 	)
 	public String getVersion()

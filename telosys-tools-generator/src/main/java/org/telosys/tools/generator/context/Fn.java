@@ -23,6 +23,7 @@ import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.commons.XmlUtil;
 import org.telosys.tools.generator.context.doc.VelocityMethod;
 import org.telosys.tools.generator.context.doc.VelocityObject;
+import org.telosys.tools.generator.context.doc.VelocityReturnType;
 import org.telosys.tools.generator.context.names.ContextName;
 
 /**
@@ -399,9 +400,10 @@ public class Fn {
 				"objectName : the name (or key) in the Velocity Context",
 				"defaultValue : the value to be returned if the object is not defined"},
 			example = {
-				"#if ( $fn.isDefined('myvar') ) " },
+				"$fn.get('groupId','defaultValue') " },
 			since = "2.1.0"
 			)
+	@VelocityReturnType("Any kind of object ")
 	public Object get(String objectName, Object defaultValue) {
 		Object o = _velocityContext.get(objectName);
 		return ( o != null ? o : defaultValue );
