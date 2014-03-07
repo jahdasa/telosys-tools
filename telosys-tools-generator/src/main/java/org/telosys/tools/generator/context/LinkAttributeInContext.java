@@ -35,8 +35,9 @@ import org.telosys.tools.generator.context.names.ContextName;
 		since = "2.1.0",
 		example= {
 				"",
-//				"#foreach( $link in $entity.selectedLinks )",
-//				"    private $link.formattedFieldType(10) $link.formattedFieldName(12);",
+				"#foreach( $linkAttribute in $link.attributes )",
+				" from $linkAttribute.originAttribute.name ",
+				" to   $linkAttribute.targetAttribute.name ",
 				"#end"				
 		}
 		
