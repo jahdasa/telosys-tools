@@ -51,7 +51,7 @@ import org.telosys.tools.generator.context.names.ContextNames;
  */
 public class PropertiesPage extends PropertyPage {
 	
-	private final static boolean DEBUG_MODE = true ;
+	private final static boolean DEBUG_MODE = false ;
 
 	private final static String WEB_CONTENT     = "WebContent" ;
 	private final static String DATABASES_DBCFG = "databases.dbcfg" ;
