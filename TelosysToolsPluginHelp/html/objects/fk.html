@@ -60,10 +60,17 @@ Since : 2.0.7<br>
   <TD>Attributes and methods</TD>			
 </TR>		
 <TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.columns : List<JavaBeanClassForeignKeyColumn></B> </CODE>
+<TD class="doc" ><CODE class="simpledesc"> <B>.columns : List of 'Foreign Key Column' objects ( List of '$fkcol' )</B> </CODE>
 <p class="doc">
 Returns all the columns composing the foreign key<br>
 (sorted in the original database order)<br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;#foreach( $fkcol in $fk.columns ) <br>
+&nbsp;&nbsp;&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;#end<br>
+</code>
 </p>
 </TD>
 </TR>

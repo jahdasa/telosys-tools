@@ -49,7 +49,7 @@ Object giving access to the lightweight model <br>
   <TD>Attributes and methods</TD>			
 </TR>		
 <TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.allEntites : List<JavaBeanClass></B> </CODE>
+<TD class="doc" ><CODE class="simpledesc"> <B>.allEntites : List<EntityInContext></B> </CODE>
 <p class="doc">
 Returns a list containing all the entities defined in the model<br>
 </p>
@@ -74,7 +74,7 @@ This is the product name return by the JDBC meta-data<br>
 </TD>
 </TR>
 <TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.getEntityByClassName(String name) : JavaBeanClass</B> </CODE>
+<TD class="doc" ><CODE class="simpledesc"> <B>.getEntityByClassName(String name) : EntityInContext</B> </CODE>
 <p class="doc">
 Returns the entity identified by the given class name<br>
 or null if not found<br>
@@ -85,7 +85,7 @@ or null if not found<br>
 </TD>
 </TR>
 <TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.getEntityByTableName(String name) : JavaBeanClass</B> </CODE>
+<TD class="doc" ><CODE class="simpledesc"> <B>.getEntityByTableName(String name) : EntityInContext</B> </CODE>
 <p class="doc">
 Returns the entity identified by the given database table name<br>
 or null if not found<br>

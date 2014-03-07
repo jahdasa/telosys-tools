@@ -51,7 +51,7 @@ Since : 2.0.7<br>
   <TD>Attributes and methods</TD>			
 </TR>		
 <TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.embeddedIdAnnotations(int leftMargin, JavaBeanClassAttribute field) : String</B> </CODE>
+<TD class="doc" ><CODE class="simpledesc"> <B>.embeddedIdAnnotations(int leftMargin, AttributeInContext field) : String</B> </CODE>
 <p class="doc">
 Returns the JPA annotations for an 'embedded id' (with a left margin)<br>
 ( there's no '@Id' for an embedded id )<br>
@@ -70,7 +70,7 @@ Returns the JPA annotations for an 'embedded id' (with a left margin)<br>
 </TD>
 </TR>
 <TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.entityAnnotations(int leftMargin, JavaBeanClass entity) : String</B> </CODE>
+<TD class="doc" ><CODE class="simpledesc"> <B>.entityAnnotations(int leftMargin, EntityInContext entity) : String</B> </CODE>
 <p class="doc">
 Returns a multiline String containing all the Java JPA annotations required for the current entity<br>
 with the given left marging before each line<br>
@@ -89,7 +89,7 @@ with the given left marging before each line<br>
 </TD>
 </TR>
 <TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.fieldAnnotations(int leftMargin, JavaBeanClassAttribute field) : String</B> </CODE>
+<TD class="doc" ><CODE class="simpledesc"> <B>.fieldAnnotations(int leftMargin, AttributeInContext field) : String</B> </CODE>
 <p class="doc">
 Returns the JPA annotations for the given field (with a left margin)<br>
 <br>
@@ -107,7 +107,7 @@ Returns the JPA annotations for the given field (with a left margin)<br>
 </TD>
 </TR>
 <TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.imports(JavaBeanClass entity) : List of 'String'</B> </CODE>
+<TD class="doc" ><CODE class="simpledesc"> <B>.imports(EntityInContext entity) : List of 'String'</B> </CODE>
 <p class="doc">
 Returns a list of all the Java classes required by the current entity for JPA<br>
 ( this version always returns 'javax.persistence.*' )<br>
@@ -127,7 +127,7 @@ Returns a list of all the Java classes required by the current entity for JPA<br
 </TD>
 </TR>
 <TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.linkAnnotations(int leftMargin, JavaBeanClassLink fieldsMapped, List ?) : String</B> </CODE>
+<TD class="doc" ><CODE class="simpledesc"> <B>.linkAnnotations(int leftMargin, LinkInContext link, List alreadyMappedFields) : String</B> </CODE>
 <p class="doc">
 Returns a string containing all the JPA annotations for the given link<br>
 The list of mapped fields is used to determine if a JoinColumn is already mapped as a field<br>
@@ -135,8 +135,8 @@ If a JoinColumn is based on a field already mapped then 'insertable=false, updat
 <br>
 <b>Parameters : </b><br>
 &nbsp;&nbsp;&nbsp;<b>leftMargin</b> : the left margin (number of blanks)<br>
-&nbsp;&nbsp;&nbsp;<b>fieldsMapped</b> : list of all the fields mapped by JPA<br>
-&nbsp;&nbsp;&nbsp;<b>?</b> : <br>
+&nbsp;&nbsp;&nbsp;<b>link</b> : the link to be annotated<br>
+&nbsp;&nbsp;&nbsp;<b>alreadyMappedFields</b> : list of all the fields already mapped by JPA as 'simple fields'<br>
 <br>
 <b>Example : </b><br>
 <code>

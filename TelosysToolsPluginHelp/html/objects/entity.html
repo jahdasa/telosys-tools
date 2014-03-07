@@ -89,7 +89,9 @@ or null if none<br>
 <br>
 <b>Example : </b><br>
 <code>
+&nbsp;&nbsp;&nbsp;#if ( $entity.hasAutoIncrementedKey() )<br>
 &nbsp;&nbsp;&nbsp;$entity.autoincrementedKeyAttribute<br>
+&nbsp;&nbsp;&nbsp;#end<br>
 </code>
 </p>
 </TD>
@@ -186,6 +188,21 @@ Returns the full class name for the entity (ie : "my.package.MyClass" )<br>
 </TD>
 </TR>
 <TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.getAttributeByColumnName(String columnName) : 'attribute' object</B> </CODE>
+<p class="doc">
+Returns the attribute associated with the given database column name<br>
+<br>
+<b>Parameters : </b><br>
+&nbsp;&nbsp;&nbsp;<b>columnName</b> : the database column's name<br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;$entity.attributeByColumnName<br>
+</code>
+</p>
+</TD>
+</TR>
+<TR>
 <TD class="doc" ><CODE class="simpledesc"> <B>.getAttributesByCriteria(int crit1, int crit2, int crit3, int crit4) : List of 'attribute' objects</B> </CODE>
 <p class="doc">
 Returns all the attributes of this entity matching the given criteria<br>
@@ -272,11 +289,14 @@ Returns TRUE if this entity has at least one attribute tagged as 'long text'<br>
 <TR>
 <TD class="doc" ><CODE class="simpledesc"> <B>.isTableType() : boolean</B> </CODE>
 <p class="doc">
-Returns TRUE if the database type is 'TABLE' <br>
+Returns TRUE if the database type of the entity is 'TABLE' <br>
+(it can be a TABLE or a VIEW, see also 'isViewType') <br>
 <br>
 <b>Example : </b><br>
 <code>
-&nbsp;&nbsp;&nbsp;$entity.isTableType()<br>
+&nbsp;&nbsp;&nbsp;#if ( $entity.isTableType() )<br>
+&nbsp;&nbsp;&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;#end<br>
 </code>
 <br>
 <b>Since : </b>2.0.7<br>
@@ -286,11 +306,14 @@ Returns TRUE if the database type is 'TABLE' <br>
 <TR>
 <TD class="doc" ><CODE class="simpledesc"> <B>.isViewType() : boolean</B> </CODE>
 <p class="doc">
-Returns TRUE if the database type is 'VIEW' <br>
+Returns TRUE if the database type of the entity is 'VIEW' <br>
+(it can be a TABLE or a VIEW, see also 'isTableType') <br>
 <br>
 <b>Example : </b><br>
 <code>
-&nbsp;&nbsp;&nbsp;$entity.isViewType()<br>
+&nbsp;&nbsp;&nbsp;#if ( $entity.isViewType() )<br>
+&nbsp;&nbsp;&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;#end<br>
 </code>
 <br>
 <b>Since : </b>2.0.7<br>
@@ -322,6 +345,46 @@ Returns the number of attributes used in the Primary Key for this entity<br>
 </code>
 <br>
 <b>Since : </b>2.0.7<br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.keyAttributesNamesAsString(String separator) : String</B> </CODE>
+<p class="doc">
+Returns the key attributes names as a string.<br>
+The attributes names are separated by the given separator<br>
+with a prefix/suffix for each attribute name<br>
+<br>
+<b>Parameters : </b><br>
+&nbsp;&nbsp;&nbsp;<b>separator</b> : the separator to be put between each attribute name<br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;$entity.keyAttributesNamesAsString('/') <br>
+</code>
+<br>
+<b>Since : </b>2.1.0<br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.keyAttributesNamesAsString(String separator, String prefix, String suffix) : String</B> </CODE>
+<p class="doc">
+Returns the key attributes names as a string.<br>
+The attributes names are separated by the given separator<br>
+with a prefix/suffix for each attribute name<br>
+<br>
+<b>Parameters : </b><br>
+&nbsp;&nbsp;&nbsp;<b>separator</b> : the separator to be put between each attribute name<br>
+&nbsp;&nbsp;&nbsp;<b>prefix</b> : the prefix to be put before each attribute name<br>
+&nbsp;&nbsp;&nbsp;<b>suffix</b> : the prefix to be put after each attribute name<br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;$entity.keyAttributesNamesAsString('/', '{{', '}}') <br>
+</code>
+<br>
+<b>Since : </b>2.1.0<br>
 </p>
 </TD>
 </TR>
@@ -407,6 +470,39 @@ Returns the package name (or void) for the entity ( ie : "my.package" or "" )<br
 </TD>
 </TR>
 <TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.referencedEntityTypes() : List<String></B> </CODE>
+<p class="doc">
+Returns a list of 'simple type' for all the entities referenced by the current entity<br>
+(based on the 'owning side' links)<br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;#set( $referencedEntities = $entity.referencedEntityTypes() )<br>
+</code>
+<br>
+<b>Since : </b>2.1.0<br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.referencedEntityTypes(List attributes) : List<String></B> </CODE>
+<p class="doc">
+Returns a list of 'simple type' for each entity referenced by the given attributes<br>
+<br>
+<br>
+<b>Parameters : </b><br>
+&nbsp;&nbsp;&nbsp;<b>attributes</b> : list of attributes to be used to search the referenced entities<br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;#set( $referencedEntities = $entity.referencedEntityTypes( $entity.nonKeyAttributes ) )<br>
+</code>
+<br>
+<b>Since : </b>2.1.0<br>
+</p>
+</TD>
+</TR>
+<TR>
 <TD class="doc" ><CODE class="simpledesc"> <B>.selectedLinks : List of 'link' objects</B> </CODE>
 <p class="doc">
 Returns a list of all the links selected in the model for the current entity<br>
@@ -416,46 +512,6 @@ Returns a list of all the links selected in the model for the current entity<br>
 &nbsp;&nbsp;&nbsp;#foreach( $link in $entity.selectedLinks )<br>
 &nbsp;&nbsp;&nbsp;...<br>
 &nbsp;&nbsp;&nbsp;#end<br>
-</code>
-</p>
-</TD>
-</TR>
-<TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.sqlKeyColumns : String</B> </CODE>
-<p class="doc">
-Returns a String containing all the columns of the Primary Key<br>
-The returned column names are separated by a comma and have quotes characters<br>
-i.e. : '"code", "type"' <br>
-<br>
-<b>Example : </b><br>
-<code>
-&nbsp;&nbsp;&nbsp;String KEY_COLUMNS[] = { $entity.sqlKeyColumns };<br>
-</code>
-</p>
-</TD>
-</TR>
-<TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.sqlNonKeyColumns : String</B> </CODE>
-<p class="doc">
-Returns a String containing all the columns not used in the Primary Key <br>
-The returned column names are separated by a comma and have quotes characters<br>
-i.e. : '"code", "type"' <br>
-<br>
-<b>Example : </b><br>
-<code>
-&nbsp;&nbsp;&nbsp;String DATA_COLUMNS[] = { $entity.sqlNonKeyColumns };<br>
-</code>
-</p>
-</TD>
-</TR>
-<TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.superClass : String</B> </CODE>
-<p class="doc">
-Returns the super class for the entity's class (or void if none)<br>
-<br>
-<b>Example : </b><br>
-<code>
-&nbsp;&nbsp;&nbsp;$entity.superClass<br>
 </code>
 </p>
 </TD>
@@ -472,21 +528,6 @@ Returns the attributes tagged as 'long text' for this entity<br>
 &nbsp;&nbsp;&nbsp;...<br>
 &nbsp;&nbsp;&nbsp;#end<br>
 </code>
-</p>
-</TD>
-</TR>
-<TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.toStringInstruction : String</B> </CODE>
-<p class="doc">
-</p>
-</TD>
-</TR>
-<TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.toStringMethodCodeLines(int ?) : String</B> </CODE>
-<p class="doc">
-<br>
-<b>Parameters : </b><br>
-&nbsp;&nbsp;&nbsp;<b>?</b> : <br>
 </p>
 </TD>
 </TR>

@@ -2,7 +2,7 @@
 <html>								
 <head>								
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">	
-	<title> $today</title>	
+	<title> $joinColumn</title>	
 	<style type="text/css">		
 	h1 {							
 		font-size:28px;				
@@ -39,46 +39,64 @@
 	</style>						
 </head>							
 <body>											
-<h1> $today</h1>	
+<h1> $joinColumn</h1>	
 <p class="desc">								
-Object providing the current system date and time <br>
+This object provides the description of a 'join column' <br>
 <br>
+<br>
+Since : 2.1.0<br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;#foreach( $joinColumn in $link.joinColumns )<br>
+&nbsp;&nbsp;&nbsp; Column name = $joinColumn.name<br>
+&nbsp;&nbsp;&nbsp;#end<br>
+</code>
 </p>		
 <table width="100%" border="1" cellspacing="0">		
 <TR class="title">										
   <TD>Attributes and methods</TD>			
 </TR>		
 <TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.date : String</B> </CODE>
+<TD class="doc" ><CODE class="simpledesc"> <B>.isInsertable() : boolean</B> </CODE>
 <p class="doc">
-Returns the current date with the default format<br>
+Returns TRUE if 'insertable' <br>
 </p>
 </TD>
 </TR>
 <TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.date(String format) : String</B> </CODE>
+<TD class="doc" ><CODE class="simpledesc"> <B>.isNullable() : boolean</B> </CODE>
 <p class="doc">
-Returns the current date formatted with the given format<br>
-<br>
-<b>Parameters : </b><br>
-&nbsp;&nbsp;&nbsp;<b>format</b> : the Java date format (cf 'SimpleDateFormat' JavaDoc)<br>
+Returns TRUE if 'nullable' <br>
 </p>
 </TD>
 </TR>
 <TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.time : String</B> </CODE>
+<TD class="doc" ><CODE class="simpledesc"> <B>.isUnique() : boolean</B> </CODE>
 <p class="doc">
-Returns the current time with the default format<br>
+Returns TRUE if 'unique' <br>
 </p>
 </TD>
 </TR>
 <TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.time(String format) : String</B> </CODE>
+<TD class="doc" ><CODE class="simpledesc"> <B>.isUpdatable() : boolean</B> </CODE>
 <p class="doc">
-Returns the current time formatted with the given format<br>
-<br>
-<b>Parameters : </b><br>
-&nbsp;&nbsp;&nbsp;<b>format</b> : the Java date format (cf 'SimpleDateFormat' JavaDoc)<br>
+Returns TRUE if 'updatable' <br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.name : String</B> </CODE>
+<p class="doc">
+Returns the origin side's column name <br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.referencedColumnName : String</B> </CODE>
+<p class="doc">
+Returns the referenced column name (target side) <br>
 </p>
 </TD>
 </TR>

@@ -106,6 +106,24 @@ Returns a string containing a list of fields (type and name) separated by a comm
 </TD>
 </TR>
 <TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.capitalize(String string) : String</B> </CODE>
+<p class="doc">
+Capitalizes the given string<br>
+changing the first letter to upper case<br>
+<br>
+<b>Parameters : </b><br>
+&nbsp;&nbsp;&nbsp;<b>string</b> : the string to be capitalized<br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;$fn.capitalize($var)<br>
+</code>
+<br>
+<b>Since : </b>2.1.0<br>
+</p>
+</TD>
+</TR>
+<TR>
 <TD class="doc" ><CODE class="simpledesc"> <B>.concatLists(List list1, List list2) : List<?></B> </CODE>
 <p class="doc">
 Concatenates 2 lists ( add all the elements of the second list at the end of the first one ) <br>
@@ -148,6 +166,25 @@ Converts the first character to upper case<br>
 </TD>
 </TR>
 <TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.get(String objectName, Object defaultValue) : Any kind of object </B> </CODE>
+<p class="doc">
+Returns the object stored with the given name in the Velocity Context<br>
+If there's no object for the given name the default value is returned<br>
+<br>
+<b>Parameters : </b><br>
+&nbsp;&nbsp;&nbsp;<b>objectName</b> : the name (or key) in the Velocity Context<br>
+&nbsp;&nbsp;&nbsp;<b>defaultValue</b> : the value to be returned if the object is not defined<br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;$fn.get('groupId','defaultValue') <br>
+</code>
+<br>
+<b>Since : </b>2.1.0<br>
+</p>
+</TD>
+</TR>
+<TR>
 <TD class="doc" ><CODE class="simpledesc"> <B>.isBlank(String s) : boolean</B> </CODE>
 <p class="doc">
 Returns true if the given string is 'blank' <br>
@@ -157,6 +194,23 @@ Returns true if the given string is 'blank' <br>
 &nbsp;&nbsp;&nbsp;<b>s</b> : the string to be tested<br>
 <br>
 <b>Since : </b>2.0.3<br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.isDefined(String objectName) : boolean</B> </CODE>
+<p class="doc">
+Returns TRUE if the given object name is defined in the Velocity Context<br>
+<br>
+<b>Parameters : </b><br>
+&nbsp;&nbsp;&nbsp;<b>objectName</b> : the name (or key) in the Velocity Context<br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;#if ( $fn.isDefined('myvar') ) <br>
+</code>
+<br>
+<b>Since : </b>2.1.0<br>
 </p>
 </TD>
 </TR>
@@ -270,6 +324,24 @@ Converts  all of the characters in the given string to upper case<br>
 &nbsp;&nbsp;&nbsp;<b>s</b> : the string to be converted<br>
 <br>
 <b>Since : </b>2.0.7<br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.uncapitalize(String string) : String</B> </CODE>
+<p class="doc">
+Uncapitalizes the given string<br>
+changing the first letter to lower case<br>
+<br>
+<b>Parameters : </b><br>
+&nbsp;&nbsp;&nbsp;<b>string</b> : the string to be uncapitalized<br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;$fn.uncapitalize($var) <br>
+</code>
+<br>
+<b>Since : </b>2.1.0<br>
 </p>
 </TD>
 </TR>

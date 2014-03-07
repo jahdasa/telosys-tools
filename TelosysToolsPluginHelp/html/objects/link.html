@@ -50,7 +50,7 @@ Each link is retrieved from the entity class <br>
 <code>
 &nbsp;&nbsp;&nbsp;<br>
 &nbsp;&nbsp;&nbsp;#foreach( $link in $entity.selectedLinks )<br>
-&nbsp;&nbsp;&nbsp;    private $link.formatedType(10) $link.formatedName(12);<br>
+&nbsp;&nbsp;&nbsp;    private $link.formattedFieldType(10) $link.formattedFieldName(12);<br>
 &nbsp;&nbsp;&nbsp;#end<br>
 </code>
 </p>		
@@ -58,6 +58,27 @@ Each link is retrieved from the entity class <br>
 <TR class="title">										
   <TD>Attributes and methods</TD>			
 </TR>		
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.attributes : List of '$linkAttribute' (origin-target association) </B> </CODE>
+<p class="doc">
+Returns the attributes for the two sides of the link <br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.attributesCount : int</B> </CODE>
+<p class="doc">
+Returns the number of attributes used to define the link<br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;$link.attributesCount<br>
+</code>
+<br>
+<b>Since : </b>2.1.0<br>
+</p>
+</TD>
+</TR>
 <TR>
 <TD class="doc" ><CODE class="simpledesc"> <B>.cardinality : String</B> </CODE>
 <p class="doc">
@@ -81,7 +102,40 @@ Returns the 'fetch type' ( 'DEFAULT' or 'EAGER' or 'LAZY' )<br>
 </TD>
 </TR>
 <TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.formatedName(int n) : String</B> </CODE>
+<TD class="doc" ><CODE class="simpledesc"> <B>.fieldFullType : String</B> </CODE>
+<p class="doc">
+Returns the field 'full type' for the link ( eg 'java.util.List' ) <br>
+for OneToMany/ManyToMany : the collection full type ( 'java.util.List', ...)<br>
+for ManyToOne/OneToOne : the targeted entity full type ( 'my.package.Person', 'my.package.Customer', ... ) <br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.fieldName : String</B> </CODE>
+<p class="doc">
+Returns the field name for the link (attribute name in the entity class)<br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.fieldSimpleType : String</B> </CODE>
+<p class="doc">
+Returns the field 'simple type' for the link <br>
+for OneToMany/ManyToMany : the collection short type ( 'List', ...)<br>
+for ManyToOne/OneToOne : the targeted entity short type ( 'Person', 'Customer', ... ) <br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.fieldType : String</B> </CODE>
+<p class="doc">
+Returns the type of the link <br>
+eg : List, List<Person>, Person, ...<br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.formattedFieldName(int n) : String</B> </CODE>
 <p class="doc">
 Returns the link's name with n trailing blanks <br>
 <br>
@@ -91,9 +145,10 @@ Returns the link's name with n trailing blanks <br>
 </TD>
 </TR>
 <TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.formatedType(int n) : String</B> </CODE>
+<TD class="doc" ><CODE class="simpledesc"> <B>.formattedFieldType(int n) : String</B> </CODE>
 <p class="doc">
 Returns the link's type with n trailing blanks <br>
+eg : List, List<Person>, Person, ...<br>
 <br>
 <b>Parameters : </b><br>
 &nbsp;&nbsp;&nbsp;<b>n</b> : the number of blanks to be added at the end of the name<br>
@@ -104,6 +159,16 @@ Returns the link's type with n trailing blanks <br>
 <TD class="doc" ><CODE class="simpledesc"> <B>.getter : String</B> </CODE>
 <p class="doc">
 Returns the Java getter for the link e.g. 'getPerson' for link 'person' <br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.hasAttributeInPrimaryKey() : boolean</B> </CODE>
+<p class="doc">
+Returns TRUE if the link has one (or more) 'join column' in the entity Primary Key<br>
+( one of its 'origin attributes' is the Primary Key or a part of the Primary Key )<br>
+<br>
+<b>Since : </b>2.1.0<br>
 </p>
 </TD>
 </TR>
@@ -125,6 +190,7 @@ Returns TRUE if the link has a 'join table'<br>
 <TD class="doc" ><CODE class="simpledesc"> <B>.id : String</B> </CODE>
 <p class="doc">
 Returns the unique id of the link in the repository (id used by the tool)<br>
+(not supposed to be used in a generated file)<br>
 </p>
 </TD>
 </TR>
@@ -248,46 +314,25 @@ Returns TRUE if the link is selected (ckeckbox ckecked in the GUI)<br>
 </TD>
 </TR>
 <TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.javaName : String</B> </CODE>
-<p class="doc">
-Returns the Java field name for the link<br>
-</p>
-</TD>
-</TR>
-<TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.javaTypeFull : String</B> </CODE>
-<p class="doc">
-Returns the full Java type for the link ( eg 'java.util.List' ) <br>
-</p>
-</TD>
-</TR>
-<TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.javaTypeShort : String</B> </CODE>
-<p class="doc">
-Returns the short Java type for the link ( eg 'List' ) <br>
-</p>
-</TD>
-</TR>
-<TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.joinColumns : String[]</B> </CODE>
+<TD class="doc" ><CODE class="simpledesc"> <B>.joinColumns : List<JoinColumnInContext></B> </CODE>
 <p class="doc">
 Returns the 'join columns' for the link <br>
 </p>
 </TD>
 </TR>
 <TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.joinTable : String</B> </CODE>
+<TD class="doc" ><CODE class="simpledesc"> <B>.joinTable : JoinTableInContext</B> </CODE>
 <p class="doc">
-Returns the 'join table' for the link <br>
-Typically for JPA '@JoinTable'<br>
+Returns the 'join table' object for the link <br>
+NB : can be null if the link doesn't have a 'join table' <br>
 </p>
 </TD>
 </TR>
 <TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.linkType : String</B> </CODE>
+<TD class="doc" ><CODE class="simpledesc"> <B>.joinTableName : String</B> </CODE>
 <p class="doc">
-Returns the type of the link <br>
-eg : List, List<Person>, Person, ...<br>
+Returns the name of the 'join table' for the link <br>
+NB : can be null if the link doesn't have a 'join table'<br>
 </p>
 </TD>
 </TR>
@@ -315,9 +360,29 @@ Returns the Java setter for the link e.g. 'setPerson' for link 'person' <br>
 </TD>
 </TR>
 <TR>
-<TD class="doc" ><CODE class="simpledesc"> <B>.targetEntityType : String</B> </CODE>
+<TD class="doc" ><CODE class="simpledesc"> <B>.targetEntity : EntityInContext</B> </CODE>
+<p class="doc">
+Returns the entity referenced by the link <br>
+<br>
+<br>
+<b>Since : </b>2.1.0<br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.targetEntityFullType : String</B> </CODE>
 <p class="doc">
 Returns the type of the entity referenced by the link <br>
+eg : 'my.package.Book', 'my.package.Customer', ...<br>
+<br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.targetEntitySimpleType : String</B> </CODE>
+<p class="doc">
+Returns the type of the entity referenced by the link <br>
+eg : 'Book', 'Customer', ...<br>
 <br>
 </p>
 </TD>
@@ -326,6 +391,16 @@ Returns the type of the entity referenced by the link <br>
 <TD class="doc" ><CODE class="simpledesc"> <B>.targetTableName : String</B> </CODE>
 <p class="doc">
 Returns the name of the target table (table referenced by the link)<br>
+</p>
+</TD>
+</TR>
+<TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.usesAttribute(AttributeInContext attribute) : boolean</B> </CODE>
+<p class="doc">
+Returns TRUE if the given attribute is used by the link <br>
+<br>
+<b>Parameters : </b><br>
+&nbsp;&nbsp;&nbsp;<b>attribute</b> : the attribute to be checked<br>
 </p>
 </TD>
 </TR>
