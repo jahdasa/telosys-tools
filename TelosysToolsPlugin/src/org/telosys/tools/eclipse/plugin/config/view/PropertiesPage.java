@@ -55,6 +55,7 @@ public class PropertiesPage extends PropertyPage {
 
 	private final static String WEB_CONTENT     = "WebContent" ;
 	private final static String DATABASES_DBCFG = "databases.dbcfg" ;
+	private final static String DEFAULT_GITHUB_USER_NAME = "telosys-tools" ;
 
     //--- Tab "General"
 	private Text _tProjectName = null ;
@@ -696,7 +697,7 @@ public class PropertiesPage extends PropertyPage {
 		GridData gd = getCellGridData2();
 		gd.widthHint   = Col2With ;
 		_tGitHubUserName.setLayoutData(gd);
-		_tGitHubUserName.setText("telosys-tools-community");
+		_tGitHubUserName.setText(DEFAULT_GITHUB_USER_NAME);
 		
 		//------------------------------------------------------------------------------------
 		//--- Void Label + Button  
