@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.telosys.tools.eclipse.feature_2.1.0.jar" id="org.telosys.tools.eclipse.feature" version="2.1.0"/>
+   <category-def name="TelosysToolbox" label="Telosys Toolbox">
+      <description>
+         Set of tools for code generation
+      </description>
+   </category-def>
+</site>
