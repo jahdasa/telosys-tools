@@ -7,7 +7,6 @@ import junit.framework.TestCase;
 
 import org.telosys.tools.commons.github.GitHubClient;
 import org.telosys.tools.commons.github.GitHubRepository;
-import org.telosys.tools.commons.github.GitHubUtil;
 import org.telosys.tools.tests.commons.TestsFolders;
 import org.telosys.tools.tests.commons.http.HttpTestConfig;
 
@@ -16,13 +15,13 @@ public class GitHubClientTest extends TestCase {
 	private final static String GITHUB_USER = "telosys-tools" ;
 	// "telosys-tools-beta" ;
 		
-	public void testGetRepositories() {
+	public void testGetRepositories() throws Exception  {
 		
 		System.out.println("Getting repositories... ");
 
 		Properties properties = HttpTestConfig.getSpecificProxyProperties();
 		
-		GitHubClient gitHubClient = new GitHubClient(GitHubUtil.getDefaultGitHubURLPattern(), properties);
+		GitHubClient gitHubClient = new GitHubClient( properties);
 		String jsonResult = gitHubClient.getRepositoriesJSON(GITHUB_USER);
 		System.out.println(jsonResult);
 		
@@ -34,10 +33,10 @@ public class GitHubClientTest extends TestCase {
 		}
 	}
 	
-	public void testDownloadRepository() {
+	public void testDownloadRepository() throws Exception {
 		
 		Properties properties = HttpTestConfig.getSpecificProxyProperties();		
-		GitHubClient gitHubClient = new GitHubClient(GitHubUtil.getDefaultGitHubURLPattern(), properties);
+		GitHubClient gitHubClient = new GitHubClient( properties);
 		
 		String repoName = "basic-templates-TT210" ;
 		String destinationFile = TestsFolders.getTestsDownloadFolder() + "/" + repoName + ".zip" ;

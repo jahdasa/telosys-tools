@@ -1,6 +1,8 @@
 package org.telosys.tools.tests.commons.cfg;
 
 import java.io.File;
+import java.util.Properties;
+import java.util.Set;
 
 import junit.framework.TestCase;
 
@@ -9,6 +11,7 @@ import org.telosys.tools.commons.TelosysToolsException;
 import org.telosys.tools.commons.cfg.TelosysToolsCfg;
 import org.telosys.tools.commons.cfg.TelosysToolsCfgManager;
 import org.telosys.tools.commons.variables.Variable;
+import org.telosys.tools.tests.commons.TestsFolders;
 
 public class TelosysToolsCfgManagerTest extends TestCase {
 
@@ -26,14 +29,23 @@ public class TelosysToolsCfgManagerTest extends TestCase {
 		System.out.println( "getDatabasesDbCfgFile             = " + telosysToolsCfg.getDatabasesDbCfgFile());
 		System.out.println( "getDatabasesDbCfgFileAbsolutePath = " + telosysToolsCfg.getDatabasesDbCfgFileAbsolutePath());
 		
-		Variable[] variables = telosysToolsCfg.getAllVariables();
-		print(variables);
+		print(telosysToolsCfg.getAllVariables());
+		
+		print(telosysToolsCfg.getProperties());
 	}
 	
 	public void print(Variable[] variables) {
 		System.out.println("VARIABLES : ");
 		for ( Variable v : variables ) {
 			System.out.println(" . " + v.getName() + " = " + v.getValue() + " ( " + v.getSymbolicName() + " )");
+		}
+	}
+	
+	public void print(Properties properties) {
+		System.out.println("PROPERTIES : ");
+		Set<Object> keys = properties.keySet();
+		for ( Object k : keys ) {
+			System.out.println(" . " + k + " = " + properties.get(k) );
 		}
 	}
 	
@@ -47,13 +59,15 @@ public class TelosysToolsCfgManagerTest extends TestCase {
 		return sb.toString();
 	}
 	
-	/**
-	 * ZERO database configuration
-	 * @throws TelosysToolsException
-	 */
+	private File getTelosysToolCfgFile() throws TelosysToolsException {
+		//return FileUtil.getFileByClassPath("/cfg/telosys-tools.cfg");
+		String fileName = TestsFolders.getTestsRootFolder() + "/telosys-tools.cfg" ;
+		return new File(fileName) ;
+	}
+	
 	public void testLoad0() throws TelosysToolsException {
 		printSeparator();
-		File file = FileUtil.getFileByClassPath("/cfg/telosys-tools.cfg");
+		File file = getTelosysToolCfgFile();
 		String projectFolder = file.getParent();
 		print(file);
 		
@@ -62,9 +76,37 @@ public class TelosysToolsCfgManagerTest extends TestCase {
 		
 		print(telosysToolsCfg);
 		
-//		assertEquals(0, databasesConfigurations.getDatabaseDefaultId() ) ;
-//		assertEquals(4, databasesConfigurations.getDatabaseMaxId() ) ;
+		assertEquals("org.demo", telosysToolsCfg.getRootPackage() );
+		//assertEquals("org.demo.bean", telosysToolsCfg.getEntityPackage() );
+		
+		assertEquals("8080", telosysToolsCfg.getProperties().getProperty("http.proxyPort") );
+	}
 
+	public void testLoadUpdateSave() throws TelosysToolsException {
+		printSeparator();
+		File file = getTelosysToolCfgFile();
+		String projectFolder = file.getParent();
+		print(file);
+		
+		TelosysToolsCfgManager cfgManager = new TelosysToolsCfgManager(projectFolder);
+		
+		System.out.println("Load");
+		TelosysToolsCfg telosysToolsCfg = cfgManager.loadProjectConfig();
+
+		System.out.println("Update");
+		telosysToolsCfg.setEntityPackage("org.demo.entity");
+		assertEquals("org.demo.entity", telosysToolsCfg.getEntityPackage() );
+		assertEquals("8080", telosysToolsCfg.getProperties().getProperty("http.proxyPort") );
+
+		System.out.println("Save");
+		cfgManager.saveProjectConfig(telosysToolsCfg);
+		
+		System.out.println("Re-Load");
+		telosysToolsCfg = cfgManager.loadProjectConfig();
+		assertEquals("org.demo.entity", telosysToolsCfg.getEntityPackage() );
+		assertEquals("8080", telosysToolsCfg.getProperties().getProperty("http.proxyPort") );
+		
+		
 	}
 
 //	/**
