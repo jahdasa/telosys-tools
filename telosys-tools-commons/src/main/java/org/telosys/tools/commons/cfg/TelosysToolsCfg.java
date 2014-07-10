@@ -46,9 +46,10 @@ public class TelosysToolsCfg
     
 	
 	//----------------------------------------------------------------------------------------
-	private final String  _projectAbsolutePath ; 
-	private final String  _cfgFileAbsolutePath ; 
-	private final boolean _initializedFromFile ;
+	private final String     _projectAbsolutePath ; 
+	private final String     _cfgFileAbsolutePath ; 
+	private final boolean    _initializedFromFile ; 
+	private final Properties _cfgFileProperties ; 
 
 	//----------------------------------------------------------------------------------------
 	//--- Project folders default values
@@ -96,6 +97,7 @@ public class TelosysToolsCfg
     	_cfgFileAbsolutePath = cfgFileAbsolutePath ;
     	
     	_initializedFromFile = initFromProperties(prop);
+    	_cfgFileProperties = prop ;
     }
     
     /**
@@ -113,6 +115,7 @@ public class TelosysToolsCfg
     	_cfgFileAbsolutePath = cfgManager.getCfgFileAbsolutePath();
     	
     	_initializedFromFile = false ;
+    	_cfgFileProperties = null ;
 		//--- No properties => keep the default values 
     	//--- Init with default specific variables
     	//_specificVariables = getDefaultSpecificVariables();
@@ -179,9 +182,10 @@ public class TelosysToolsCfg
      * Returns a set of properties containing the current configuration
      * @return
      */
-    protected Properties getProperties()
+    public Properties getProperties()
 	{
-    	Properties properties = new Properties();
+    	//Properties properties = new Properties();
+    	Properties properties = this._cfgFileProperties ; // v 2.1.1 (keep original properties and update)
     	
     	//--- General 
     	properties.setProperty(REPOS_FOLDER,     _sRepositoriesFolder);
