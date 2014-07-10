@@ -29,15 +29,37 @@ public class HttpClient {
 	private final HttpClientConfig configuration ;
 	private boolean isConfigured = false ;
 	
+	/**
+	 * Constructor without http configuration (no proxy)
+	 */
 	public HttpClient() {
 		super();
 		this.configuration = null;
 	}
 	
+	/**
+	 * Constructor with http configuration (proxy)
+	 * @param configuration
+	 */
 	public HttpClient(HttpClientConfig configuration) {
 		super();
 		this.configuration = configuration;
 	}
+	
+	/**
+	 * Constructor with http configuration defined by properties
+	 * @param proxyProperties proxy properties or null if none
+	 */
+	public HttpClient(Properties proxyProperties) {
+		super();
+		if ( proxyProperties != null ) {
+			this.configuration = new HttpClientConfig(proxyProperties);
+		}
+		else {
+			this.configuration = null ;
+		}
+	}
+	
 	private final void config( HttpClientConfig configuration ) {
 		if ( ! isConfigured ) {
 			if ( configuration != null ) {
