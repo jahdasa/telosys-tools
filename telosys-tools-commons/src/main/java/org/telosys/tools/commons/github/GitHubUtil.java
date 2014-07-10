@@ -47,16 +47,16 @@ public class GitHubUtil {
 		});
 	}
 
-	//--------------------------------------------------------------------------------------------------
-	/**
-	 * Returns the default GitHun URL pattern usable to download a repository <br>
-	 * The pattern contains 2 variables : "${USER}" and "${REPO}" <br>
-	 * e.g. "https://github.com/${USER}/${REPO}/archive/master.zip" 
-	 * @return
-	 */
-	public static String getDefaultGitHubURLPattern() {
-		return "https://github.com/${USER}/${REPO}/archive/master.zip" ;
-	}
+//	//--------------------------------------------------------------------------------------------------
+//	/**
+//	 * Returns the default GitHun URL pattern usable to download a repository <br>
+//	 * The pattern contains 2 variables : "${USER}" and "${REPO}" <br>
+//	 * e.g. "https://github.com/${USER}/${REPO}/archive/master.zip" 
+//	 * @return
+//	 */
+//	public static String getDefaultGitHubURLPattern() {
+//		return "https://github.com/${USER}/${REPO}/archive/master.zip" ;
+//	}
 	
 	//--------------------------------------------------------------------------------------------------
 	/**

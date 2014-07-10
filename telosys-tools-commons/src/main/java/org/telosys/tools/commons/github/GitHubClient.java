@@ -36,18 +36,25 @@ public class GitHubClient {
 
 	private final static String GIT_HUB_HOST_URL = "https://api.github.com" ;
 	
-	private final String     gitHubURLPattern ;
+	private final static String GIT_HUB_REPO_URL_PATTERN =  "https://github.com/${USER}/${REPO}/archive/master.zip" ;
+
+	
+//	private final String     gitHubURLPattern ;
 	private final Properties proxyProperties ;
 	
 	/**
 	 * Constructor
 	 * @param proxyProperties
 	 */
-	public GitHubClient(String gitHubURLPattern, Properties proxyProperties) {
+	public GitHubClient(Properties proxyProperties) {
 		super();
-		this.gitHubURLPattern = gitHubURLPattern ;
 		this.proxyProperties = proxyProperties;
 	}
+//	public GitHubClient(String gitHubURLPattern, Properties proxyProperties) {
+//		super();
+//		this.gitHubURLPattern = gitHubURLPattern ;
+//		this.proxyProperties = proxyProperties;
+//	}
 
 	/**
 	 * Returns the GitHub response in JSON format (REST API)
@@ -77,7 +84,7 @@ public class GitHubClient {
 	 * @param userName
 	 * @return
 	 */
-	public List<GitHubRepository> getRepositories( String userName ) {
+	public List<GitHubRepository> getRepositories( String userName ) throws Exception{
 
 		List<GitHubRepository> repositories = new LinkedList<GitHubRepository>();
 		String json = getRepositoriesJSON( userName );
@@ -97,10 +104,10 @@ public class GitHubClient {
 				}
 			}
 			else {
-				throw new RuntimeException ( "JSON error : array expected as root");
+				throw new Exception ( "JSON error : array expected as root");
 			}
 		} catch (ParseException e) {
-			throw new RuntimeException ( "JSON error : cannot parse the JSON response.");
+			throw new Exception ( "JSON error : cannot parse the JSON response.");
 		}
 		GitHubUtil.sortByName(repositories);
 		return repositories ;
@@ -113,14 +120,14 @@ public class GitHubClient {
 	 * @param defaultValue
 	 * @return
 	 */
-	private String getStringAttribute( JSONObject jsonObject, String attributeName, String defaultValue ) {
+	private String getStringAttribute( JSONObject jsonObject, String attributeName, String defaultValue ) throws Exception {
 		Object oAttributeValue = jsonObject.get( attributeName );
 		if ( oAttributeValue != null ) {
 			if ( oAttributeValue instanceof String) {
 				return (String)oAttributeValue ;
 			}
 			else {
-				throw new RuntimeException ( "JSON error : attribute '" + attributeName + "' is not a String");
+				throw new Exception ( "JSON error : attribute '" + attributeName + "' is not a String");
 			}
 		}
 		else {
@@ -128,7 +135,7 @@ public class GitHubClient {
 				return defaultValue ;
 			}
 			else {
-				throw new RuntimeException ( "JSON error : attribute '" + attributeName + "' not found");
+				throw new Exception ( "JSON error : attribute '" + attributeName + "' not found");
 			}
 		}
 	}
@@ -139,19 +146,19 @@ public class GitHubClient {
 	 * @param attributeName
 	 * @return
 	 */
-	private long getLongAttribute( JSONObject jsonObject, String attributeName ) {
+	private long getLongAttribute( JSONObject jsonObject, String attributeName ) throws Exception{
 		Object oAttributeValue = jsonObject.get( attributeName );
 		if ( oAttributeValue != null ) {
 			if ( oAttributeValue instanceof Long) {
 				return ((Long)oAttributeValue).longValue();
 			}
 			else {
-				throw new RuntimeException ( "JSON error : attribute '" + attributeName 
+				throw new Exception ( "JSON error : attribute '" + attributeName 
 						+ "' is not a Integer ("+oAttributeValue.getClass().getCanonicalName()+")");
 			}
 		}
 		else {
-			throw new RuntimeException ( "JSON error : attribute '" + attributeName + "' not found");
+			throw new Exception ( "JSON error : attribute '" + attributeName + "' not found");
 		}
 	}
 	
@@ -160,15 +167,18 @@ public class GitHubClient {
 	 * @param userName GitHub user name
 	 * @param repoName GitHub repository name
 	 * @param destinationFile the full file name on the filesystem 
+	 * @return file size (bytes count)
 	 */
-	public final void downloadRepository(String userName, String repoName, String destinationFile) {
-		String url = GitHubUtil.buildGitHubURL(userName, repoName, gitHubURLPattern);
+	public final long downloadRepository(String userName, String repoName, String destinationFile) throws Exception {
+		String url = GitHubUtil.buildGitHubURL(userName, repoName, GIT_HUB_REPO_URL_PATTERN);
 
+		long bytesCount = 0 ;
 		HttpClient httpClient = new HttpClient(proxyProperties);
 		try {
-			httpClient.downloadFile(url, destinationFile);
+			bytesCount = httpClient.downloadFile(url, destinationFile);
 		} catch (Exception e) {
-			throw new RuntimeException ("Cannot download file (http error)", e);
+			throw new Exception ("Cannot download file (http error)", e);
 		}
+		return bytesCount ;
 	}
 }
