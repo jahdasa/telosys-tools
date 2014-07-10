@@ -17,6 +17,13 @@ public class GitHubRepository {
 	private final long   size ;
 	
 	
+	/**
+	 * Constructor
+	 * @param id
+	 * @param name
+	 * @param description
+	 * @param size
+	 */
 	public GitHubRepository(long id, String name, String description, long size) {
 		super();
 		this.id = id;

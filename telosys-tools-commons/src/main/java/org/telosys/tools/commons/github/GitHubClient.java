@@ -12,19 +12,29 @@ import org.telosys.tools.commons.http.HttpClient;
 import org.telosys.tools.commons.http.HttpClientConfig;
 import org.telosys.tools.commons.http.HttpResponse;
 
+/**
+ * Client side for GitHub API 
+ * 
+ * @author L. Guerin
+ *
+ */
 public class GitHubClient {
 
 	private final static String GIT_HUB_HOST_URL = "https://api.github.com" ;
 	
 	private final Properties proxyProperties ;
 	
+	/**
+	 * Constructor
+	 * @param proxyProperties
+	 */
 	public GitHubClient(Properties proxyProperties) {
 		super();
 		this.proxyProperties = proxyProperties;
 	}
 
 	/**
-	 * Returns the REST API response in JSON format
+	 * Returns the GitHub response in JSON format (REST API)
 	 * @param userName
 	 * @return
 	 */
@@ -46,7 +56,7 @@ public class GitHubClient {
 	}
 
 	/**
-	 * Return the repositories for the given GitHub user name 
+	 * Returns the repositories available on GitHub for the given user name 
 	 * @param userName
 	 * @return
 	 */
@@ -80,7 +90,7 @@ public class GitHubClient {
 	}
 
 	/**
-	 * Returns the String value of the given attribute name
+	 * Returns the String value for the given attribute name
 	 * @param jsonObject
 	 * @param attributeName
 	 * @param defaultValue
@@ -107,7 +117,7 @@ public class GitHubClient {
 	}
 
 	/**
-	 * Returns the integer value of the given attribute name
+	 * Returns the integer value for the given attribute name
 	 * @param jsonObject
 	 * @param attributeName
 	 * @return

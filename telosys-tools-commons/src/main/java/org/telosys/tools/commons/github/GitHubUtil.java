@@ -4,6 +4,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * Utility class for GitHub
+ * 
+ * @author L. Guerin
+ *
+ */
 public class GitHubUtil {
 
 	public static void sortByName( List<GitHubRepository> list ) {
