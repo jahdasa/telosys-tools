@@ -24,7 +24,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.telosys.tools.commons.http.HttpClient;
-import org.telosys.tools.commons.http.HttpClientConfig;
 import org.telosys.tools.commons.http.HttpResponse;
 
 /**
@@ -37,14 +36,16 @@ public class GitHubClient {
 
 	private final static String GIT_HUB_HOST_URL = "https://api.github.com" ;
 	
+	private final String     gitHubURLPattern ;
 	private final Properties proxyProperties ;
 	
 	/**
 	 * Constructor
 	 * @param proxyProperties
 	 */
-	public GitHubClient(Properties proxyProperties) {
+	public GitHubClient(String gitHubURLPattern, Properties proxyProperties) {
 		super();
+		this.gitHubURLPattern = gitHubURLPattern ;
 		this.proxyProperties = proxyProperties;
 	}
 
@@ -56,11 +57,12 @@ public class GitHubClient {
 	public String getRepositoriesJSON( String userName ) {
 
 		String urlString = GIT_HUB_HOST_URL + "/users/" + userName + "/repos" ;
-		HttpClientConfig httpClientConfig = null ;
-		if ( proxyProperties != null ) {
-			httpClientConfig = new HttpClientConfig(proxyProperties);
-		}
-		HttpClient httpClient = new HttpClient(httpClientConfig);
+//		HttpClientConfig httpClientConfig = null ;
+//		if ( proxyProperties != null ) {
+//			httpClientConfig = new HttpClientConfig(proxyProperties);
+//		}
+//		HttpClient httpClient = new HttpClient(httpClientConfig);
+		HttpClient httpClient = new HttpClient(proxyProperties);
 		HttpResponse response;
 		try {
 			response = httpClient.get(urlString, null);
@@ -150,6 +152,23 @@ public class GitHubClient {
 		}
 		else {
 			throw new RuntimeException ( "JSON error : attribute '" + attributeName + "' not found");
+		}
+	}
+	
+	/**
+	 * Download a GitHub repository (zip file)
+	 * @param userName GitHub user name
+	 * @param repoName GitHub repository name
+	 * @param destinationFile the full file name on the filesystem 
+	 */
+	public final void downloadRepository(String userName, String repoName, String destinationFile) {
+		String url = GitHubUtil.buildGitHubURL(userName, repoName, gitHubURLPattern);
+
+		HttpClient httpClient = new HttpClient(proxyProperties);
+		try {
+			httpClient.downloadFile(url, destinationFile);
+		} catch (Exception e) {
+			throw new RuntimeException ("Cannot download file (http error)", e);
 		}
 	}
 }
