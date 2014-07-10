@@ -3,7 +3,7 @@ package org.telosys.tools.commons;
 public class Status {
 
 	private boolean       done = false ;
-	private int           code = 0 ;
+//	private int           code = 0 ;
 	private String        message = "" ;
 	private Exception     exception = null ;
 	private StringBuffer  log = new StringBuffer() ;
@@ -16,12 +16,12 @@ public class Status {
 		this.done = flag;
 	}
 	//----------------------------------------------------------------
-	public int getCode() {
-		return code;
-	}
-	public void setCode(int code) {
-		this.code = code;
-	}
+//	public int getCode() {
+//		return code;
+//	}
+//	public void setCode(int code) {
+//		this.code = code;
+//	}
 	//----------------------------------------------------------------
 	public String getMessage() {
 		return message;
