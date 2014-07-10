@@ -23,57 +23,6 @@ public class GitHubClient {
 		this.proxyProperties = proxyProperties;
 	}
 
-//	/**
-//	 * Returns the REST API response in JSON format
-//	 * @param userName
-//	 * @return
-//	 */
-//	public String getRepositoriesJSON_OLD( String userName ) {
-//
-//		String urlString = GIT_HUB_HOST_URL + "/users/" + userName + "/repos" ;
-// 
-//        URL url;
-//		try {
-//			url = new URL(urlString);
-//		} catch (MalformedURLException e) {
-//			throw new RuntimeException ("MalformedURLException", e);
-//		}
-//		
-//		String result = null ;
-//        try {
-//			url.openConnection();
-//			InputStream reader = url.openStream();
-//	        int BUFFER_SIZE = 128 * 1024 ;
-//	        byte[] buffer = new byte[BUFFER_SIZE];
-//	        int totalBytesRead = 0;
-//	        int bytesRead = 0;
-//
-//			ByteArrayOutputStream writer = new ByteArrayOutputStream();
-//	 
-//	        while ((bytesRead = reader.read(buffer)) > 0)
-//	        {  
-//	           writer.write(buffer, 0, bytesRead);
-//	           buffer = new byte[BUFFER_SIZE];
-//	           totalBytesRead += bytesRead;
-//	        }
-//
-//	        writer.close();
-//	        reader.close();
-//	        result = writer.toString() ;
-//	        
-//		} catch (FileNotFoundException e) {
-//			// GitHub returns HTTP 404 "Not found" if the user doesn't exist 
-//			// with response content :
-//			// 	{
-//			//	  "message": "Not Found"
-//			//	}
-//			throw new RuntimeException ("Not found");
-//		} catch (IOException e) {
-//			throw new RuntimeException ("IOException", e);
-//		}
-//		return result ;
-//	}
-
 	/**
 	 * Returns the REST API response in JSON format
 	 * @param userName
