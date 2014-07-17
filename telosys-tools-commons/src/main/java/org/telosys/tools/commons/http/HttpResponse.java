@@ -41,36 +41,65 @@ public class HttpResponse {
 	
 	public HttpResponse(HttpURLConnection connection) throws Exception 
 	{
-		try {
-			contentType     = connection.getContentType();
-			contentLength   = connection.getContentLength();
-			contentEncoding = connection.getContentEncoding();
+		contentType     = connection.getContentType();
+		
+		// the content length of the resource that this connection's URL references, 
+		// -1 if the content length is not known, or if the content length is greater than Integer.MAX_VALUE.
+		contentLength   = connection.getContentLength();
+		
+		contentEncoding = connection.getContentEncoding();
+		
+		statusCode      = connection.getResponseCode();
+		statusMessage   = connection.getResponseMessage();
 			
-			statusCode      = connection.getResponseCode();
-			statusMessage   = connection.getResponseMessage();
-			
-			bodyContent = readResponseBody(connection);
-			
-		} catch (IOException e) {
-			throw new Exception("Cannot create HttpResponse", e); 
-		}
+//		try {
+//			bodyContent = readResponseBody(connection);			
+//		} catch (IOException e) {
+//			throw new Exception("Cannot create HttpResponse", e); 
+//		}
+		bodyContent = readResponseBody(connection);			
 		headerFields = connection.getHeaderFields();
 	}
 	
 	private byte[] readResponseBody( HttpURLConnection connection ) throws IOException
 	{
+		InputStream is = getInputStream(connection);
+		if ( is != null ) {
+			return readResponseBody(is);
+		}
+		return new byte[0];
+	}
+	
+	private InputStream getInputStream( HttpURLConnection connection ) //throws IOException
+	{
+		InputStream is = null ;
+		try {
+			is = connection.getInputStream();
+		} catch (Exception e) {
+			// Throws:
+			//    . IOException - if an I/O error occurs while creating the input stream.
+			//                    eg "FileNotFound" if http 404
+			//    . UnknownServiceException - if the protocol does not support input.
+		}
+		return is ;
+	}
+
+	private byte[] readResponseBody( InputStream is ) throws IOException
+	{
 		byte[] buffer = new byte[1024] ; 
 		int totalLength = 0 ;
 
-		int len = 0 ;
-		InputStream is = connection.getInputStream();
 		ByteArrayOutputStream baos = new ByteArrayOutputStream (1024);
+		int len = 0 ;
+		
 		while ( ( len = is.read(buffer) ) > 0 )
 		{
 			baos.write(buffer, 0, len);
 			totalLength = totalLength + len ;
 		}
 		baos.close();
+		is.close();
+		
 		return baos.toByteArray();
 	}
 	
