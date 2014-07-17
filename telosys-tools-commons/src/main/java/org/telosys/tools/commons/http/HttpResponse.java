@@ -37,7 +37,8 @@ public class HttpResponse {
 
 	private Map<String, List<String>> headerFields = null ;
 	
-	private byte[] bodyContent = new byte[0];
+	private byte[]  bodyContent = new byte[0];
+	private boolean bodyContentAccessible = false ;
 	
 	public HttpResponse(HttpURLConnection connection) throws Exception 
 	{
@@ -45,7 +46,7 @@ public class HttpResponse {
 		
 		// the content length of the resource that this connection's URL references, 
 		// -1 if the content length is not known, or if the content length is greater than Integer.MAX_VALUE.
-		contentLength   = connection.getContentLength();
+		contentLength   = connection.getContentLength(); // Can be -1 even if there's a content in the response (?)
 		
 		contentEncoding = connection.getContentEncoding();
 		
@@ -57,17 +58,22 @@ public class HttpResponse {
 //		} catch (IOException e) {
 //			throw new Exception("Cannot create HttpResponse", e); 
 //		}
-		bodyContent = readResponseBody(connection);			
+		if ( statusCode == HttpURLConnection.HTTP_OK ) {
+			bodyContent = readResponseBody(connection);
+			contentLength = bodyContent.length ;
+		}
 		headerFields = connection.getHeaderFields();
 	}
 	
 	private byte[] readResponseBody( HttpURLConnection connection ) throws IOException
 	{
+		byte[] body = new byte[0];
 		InputStream is = getInputStream(connection);
 		if ( is != null ) {
-			return readResponseBody(is);
+			body = readResponseBody(is);
+			is.close();
 		}
-		return new byte[0];
+		return body;
 	}
 	
 	private InputStream getInputStream( HttpURLConnection connection ) //throws IOException
@@ -75,11 +81,14 @@ public class HttpResponse {
 		InputStream is = null ;
 		try {
 			is = connection.getInputStream();
+			bodyContentAccessible = true ;
 		} catch (Exception e) {
 			// Throws:
 			//    . IOException - if an I/O error occurs while creating the input stream.
 			//                    eg "FileNotFound" if http 404
 			//    . UnknownServiceException - if the protocol does not support input.
+			is = null ;
+			bodyContentAccessible = false ;
 		}
 		return is ;
 	}
@@ -98,39 +107,35 @@ public class HttpResponse {
 			totalLength = totalLength + len ;
 		}
 		baos.close();
-		is.close();
 		
 		return baos.toByteArray();
 	}
 	
-	public int getStatusCode()
-	{
+	public int getStatusCode() {
 		return statusCode ;
 	}
 	
-	public String getStatusMessage()
-	{
+	public String getStatusMessage() {
 		return statusMessage ;
 	}
 	
-	public int getContentLength()
-	{
+	public int getContentLength() {
 		return contentLength ;
 	}
 	
-	public String getContentType()
-	{
+	public String getContentType() {
 		return contentType ;
 	}
 	
-	public String getContentEncoding()
-	{
+	public String getContentEncoding() {
 		return contentEncoding ;
 	}
 	
-	public byte[] getBodyContent()
-	{
+	public byte[] getBodyContent() {
 		return bodyContent ;
+	}
+	public boolean isBodyContentAccessible() {
+		return bodyContentAccessible ;
 	}
 	
 	public String getHeader(String name)
@@ -145,8 +150,7 @@ public class HttpResponse {
 		return null ;
 	}
 	
-	public Map<String, List<String>> getHeaderMap()
-	{
+	public Map<String, List<String>> getHeaderMap() {
 		return  headerFields;
 	}
 }
