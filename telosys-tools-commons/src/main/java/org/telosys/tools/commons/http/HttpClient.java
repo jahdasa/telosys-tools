@@ -101,6 +101,11 @@ public class HttpClient {
 	//---------------------------------------------------------------------
 	// GET
 	//---------------------------------------------------------------------
+	public HttpResponse get(HttpRequest request)  throws Exception  
+	{
+		return get(request.getURL(), request.getHeadersMap());
+	}
+	
 	public HttpResponse get(String url, Map<String, String> headers)  throws Exception  
 	{
 		return get(getURL(url), headers);
@@ -114,6 +119,11 @@ public class HttpClient {
 	//---------------------------------------------------------------------
 	// HEAD
 	//---------------------------------------------------------------------
+	public HttpResponse head(HttpRequest request)  throws Exception  
+	{
+		return head(request.getURL(), request.getHeadersMap());
+	}
+	
 	public HttpResponse head(String url, Map<String, String> headers)  throws Exception  
 	{
 		return head(getURL(url), headers);
@@ -127,10 +137,15 @@ public class HttpClient {
 	//---------------------------------------------------------------------
 	// POST
 	//---------------------------------------------------------------------
-	public HttpResponse post(String url, Map<String, String> headers, String data) throws Exception 
+	public HttpResponse post(HttpRequest request)  throws Exception  
 	{
-		return post(getURL(url), headers, data.getBytes() );
+		return post(request.getURL(), request.getHeadersMap(), request.getContent());
 	}
+	
+//	public HttpResponse post(String url, Map<String, String> headers, String data) throws Exception 
+//	{
+//		return post(getURL(url), headers, data.getBytes() );
+//	}
 	public HttpResponse post(String url, Map<String, String> headers, byte[] data) throws Exception 
 	{
 		return post(getURL(url), headers, data );
@@ -143,10 +158,14 @@ public class HttpClient {
 	//---------------------------------------------------------------------
 	// PUT
 	//---------------------------------------------------------------------
-	public HttpResponse put(String url, Map<String, String> headers, String data) throws Exception 
+	public HttpResponse put(HttpRequest request)  throws Exception  
 	{
-		return put(getURL(url), headers, data.getBytes() );
+		return put(request.getURL(), request.getHeadersMap(), request.getContent());
 	}
+//	public HttpResponse put(String url, Map<String, String> headers, String data) throws Exception 
+//	{
+//		return put(getURL(url), headers, data.getBytes() );
+//	}
 	public HttpResponse put(String url, Map<String, String> headers, byte[] data) throws Exception 
 	{
 		return put(getURL(url), headers, data );
@@ -159,6 +178,11 @@ public class HttpClient {
 	//---------------------------------------------------------------------
 	// DELETE
 	//---------------------------------------------------------------------
+	public HttpResponse delete(HttpRequest request)  throws Exception  
+	{
+		return delete(request.getURL(), request.getHeadersMap());
+	}
+	
 	public HttpResponse delete(String url, Map<String, String> headers ) throws Exception 
 	{
 		return delete(getURL(url), headers);

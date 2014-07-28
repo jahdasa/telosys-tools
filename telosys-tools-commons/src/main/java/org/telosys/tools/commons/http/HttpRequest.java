@@ -28,24 +28,59 @@ public class HttpRequest {
 	
 	private byte[]  content = VOID_CONTENT ;
 	
+	/**
+	 * Constructor
+	 * @param url
+	 */
 	public HttpRequest(String url) 
 	{
 		this.url = url ;
 		this.headers = new HashMap<String, String>();
 	}
 	
+	/**
+	 * Constructor
+	 * @param url
+	 * @param initialHeaders http headers (copied in the request)
+	 */
+	public HttpRequest(String url, Map<String, String> initialHeaders ) 
+	{
+		this.url = url ;
+		this.headers = new HashMap<String, String>();
+		for ( String name : initialHeaders.keySet() ) {
+			headers.put(name, initialHeaders.get(name) ) ;
+		}
+	}
+	
+	/**
+	 * Returns the request URL
+	 * @return
+	 */
 	public String getURL() {
 		return url ;
 	}
 	
+	/**
+	 * Set a request http header
+	 * @param name
+	 * @param value
+	 */
 	public void setHeader(String name, String value) {
 		this.headers.put(name, value);
 	}
 	
+	/**
+	 * Returns the current http headers
+	 * @return
+	 */
 	public Map<String, String> getHeadersMap() {
 		return  this.headers;
 	}
 
+	/**
+	 * Set the request content (data to  be transmitted to the server)
+	 * @param contentToSet
+	 */
 	public void setContent(String contentToSet) {
 		if ( contentToSet != null ) {
 			this.content = contentToSet.getBytes() ;
@@ -54,6 +89,11 @@ public class HttpRequest {
 			this.content = VOID_CONTENT ;
 		}
 	}
+	
+	/**
+	 * Set the request content (data to  be transmitted to the server)
+	 * @param contentToSet
+	 */
 	public void setContent(byte[] contentToSet) {
 		if ( contentToSet != null ) {
 			this.content = contentToSet ;
@@ -62,7 +102,18 @@ public class HttpRequest {
 			this.content = VOID_CONTENT ;
 		}
 	}
+	
+	/**
+	 * Returns the request content (data to  be transmitted to the server)
+	 * @return
+	 */
 	public byte[] getContent() {
 		return  this.content;
 	}
+
+	@Override
+	public String toString() {
+		return "HttpRequest : " + url + "(content length = " + content.length + ")";
+	}
+
 }

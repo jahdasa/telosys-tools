@@ -6,6 +6,7 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.telosys.tools.commons.http.HttpClient;
+import org.telosys.tools.commons.http.HttpRequest;
 import org.telosys.tools.commons.http.HttpResponse;
 
 /**
@@ -36,9 +37,9 @@ public class HttpClientTest extends TestCase {
 	
 	//==========================================================================================
 
-	public void testGet() throws Exception {
+	public void testGet1() throws Exception {
 		//showSystemProxies();
-		System.out.println("--- Test http GET --- ");		
+		System.out.println("--- Test http GET 1 --- ");		
 		HttpClient c = getHttpClient();
 		Map<String, String> headers = getHeaders();
 		
@@ -55,10 +56,29 @@ public class HttpClientTest extends TestCase {
 	}
 	
 	//==========================================================================================
+
+	public void testGet2() throws Exception {
+		System.out.println("--- Test http GET 2 --- ");		
+		HttpClient c = getHttpClient();
+		Map<String, String> headers = getHeaders();
+		
+		doGet(c, "http://myhttp.info/", headers, 200);
+		doGet(c, "https://www.google.fr", headers, 200);
+	}
 	
-	public void testHead() throws Exception {
+	public void doGet(HttpClient httpClient, HttpRequest request, int expectedRetCode) throws Exception {
+		System.out.println("GET " + request + " ...");
+		HttpResponse response = httpClient.get(request);
+		assertEquals(expectedRetCode, response.getStatusCode());
+		System.out.println(" Ret Code = " +response.getStatusCode() );
+		System.out.println(" ---------- " );
+	}
+	
+	//==========================================================================================
+	
+	public void testHead1() throws Exception {
 		//showSystemProxies();
-		System.out.println("--- Test http HEAD --- ");		
+		System.out.println("--- Test http HEAD 1 --- ");		
 		HttpClient c = getHttpClient();
 		Map<String, String> headers = getHeaders();
 		
@@ -69,6 +89,45 @@ public class HttpClientTest extends TestCase {
 	public void doHead(HttpClient httpClient, String url, Map<String, String> headers, int expectedRetCode) throws Exception {
 		System.out.println("HEAD " + url + " ...");
 		HttpResponse response = httpClient.head(url, headers);
+		assertEquals(expectedRetCode, response.getStatusCode());
+		System.out.println(" Ret Code = " +response.getStatusCode() );
+		System.out.println(" ---------- " );
+	}
+	
+	//==========================================================================================
+	
+	public void testHead2() throws Exception {
+		//showSystemProxies();
+		System.out.println("--- Test http HEAD 2 --- ");		
+		HttpClient c = getHttpClient();
+		Map<String, String> headers = getHeaders();
+
+		doHead(c, new HttpRequest("http://myhttp.info/",   headers), 200);
+		doHead(c, new HttpRequest("https://www.google.fr", headers), 200);
+	}
+	
+	public void doHead(HttpClient httpClient, HttpRequest request, int expectedRetCode) throws Exception {
+		System.out.println("HEAD " + request + " ...");
+		HttpResponse response = httpClient.head(request);
+		assertEquals(expectedRetCode, response.getStatusCode());
+		System.out.println(" Ret Code = " +response.getStatusCode() );
+		System.out.println(" ---------- " );
+	}
+	
+	//==========================================================================================
+	
+	public void testDelete2() throws Exception {
+		//showSystemProxies();
+		System.out.println("--- Test http DELETE 2 --- ");		
+		HttpClient c = getHttpClient();
+		Map<String, String> headers = getHeaders();
+		
+		doDelete(c, new HttpRequest("http://myhttp.info/", headers), 200);
+	}
+	
+	public void doDelete(HttpClient httpClient, HttpRequest request, int expectedRetCode) throws Exception {
+		System.out.println("DELETE 2 " + request + " ...");
+		HttpResponse response = httpClient.delete(request);
 		assertEquals(expectedRetCode, response.getStatusCode());
 		System.out.println(" Ret Code = " +response.getStatusCode() );
 		System.out.println(" ---------- " );
