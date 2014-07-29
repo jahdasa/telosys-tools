@@ -122,20 +122,20 @@ public class DownloadTaskWithProgress implements IRunnableWithProgress
 
 					BundleStatus status ;
 					if ( bInstall ) {
-						loggerTextArea.append("-> Download & install #" + count + " '" + githubRepoName + "' ... \n");
+						loggerTextArea.append("-> #" + count + " Download & Install '" + githubRepoName + "' ... \n");
 						status = bm.downloadAndInstallBundle(this.user, githubRepoName);
 					}
 					else {
-						loggerTextArea.append("-> Download #" + count + " '" + githubRepoName + "' ... \n");
+						loggerTextArea.append("-> #" + count + " Download '" + githubRepoName + "' ... \n");
 						status = bm.downloadBundle(this.user, githubRepoName);
 					}
 					if ( status.isDone() ) {
 						loggerTextArea.append("OK, done. \n");
 					}
 					else {
-						loggerTextArea.append(status.getMessage() );
+						loggerTextArea.append(status.getMessage() + "\n");
 						if ( status.getException() != null ) {
-							loggerTextArea.append("Exception : " + status.getException() );
+							loggerTextArea.append("Exception : " + status.getException() + "\n" );
 						}
 					}
 					EclipseWksUtil.refresh( new File(bm.getDownloadsFolderFullPath()) );
@@ -143,6 +143,7 @@ public class DownloadTaskWithProgress implements IRunnableWithProgress
 						EclipseWksUtil.refresh( new File(bm.getBundlesFolderFullPath()) );
 					}
 					progressMonitor.worked(1); // One unit done (not cumulative)
+					loggerTextArea.append("\n");
 				}
 			}
 			

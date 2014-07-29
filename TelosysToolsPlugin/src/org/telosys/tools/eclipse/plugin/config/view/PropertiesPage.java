@@ -29,6 +29,8 @@ import org.eclipse.ui.dialogs.PropertyPage;
 import org.telosys.tools.commons.FileUtil;
 import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.commons.cfg.TelosysToolsCfg;
+import org.telosys.tools.commons.github.GitHubClient;
+import org.telosys.tools.commons.http.HttpUtil;
 import org.telosys.tools.commons.variables.Variable;
 import org.telosys.tools.eclipse.plugin.MyPlugin;
 import org.telosys.tools.eclipse.plugin.PluginBuildInfo;
@@ -76,7 +78,7 @@ public class PropertiesPage extends PropertyPage {
 	
 	//--- Tab "Download"
 	private Text    _tGitHubUserName = null;
-	private Text    _tGitHubUrlPattern  = null;
+	//private Text    _tGitHubUrlPattern  = null;
 	private List    _listGitHubRepositories = null ;
 	private Button  _checkBoxUnzipDownload = null ;
 	private Text    _tLogger = null ;
@@ -313,16 +315,16 @@ public class PropertiesPage extends PropertyPage {
 		//-------------------------------------------------------------------------------
 		
 		_tProjectName = createTextField(tabContent, "Project name : ") ;
-		_tProjectName.setEnabled(false);	
+		_tProjectName.setEditable(false);	
 
 		_tWorkspaceLocation = createTextField(tabContent, "Workspace location :") ;
-		_tWorkspaceLocation.setEnabled(false);		
+		_tWorkspaceLocation.setEditable(false);		
 
 		_tProjectLocation = createTextField(tabContent, "Project location :") ;
-		_tProjectLocation.setEnabled(false);		
+		_tProjectLocation.setEditable(false);		
 
 		_tPluginConfigFile = createTextField(tabContent, "Project config file : ") ;
-		_tPluginConfigFile.setEnabled(false);	
+		_tPluginConfigFile.setEditable(false);	
 		
 		//-------------------------------------------------------------------------------
 		_tRepositoriesFolder = createTextField(tabContent, "Models folder :") ;
@@ -518,35 +520,6 @@ public class PropertiesPage extends PropertyPage {
 
 	}
 	
-    
-//	//------------------------------------------------------------------------------------------
-//	/**
-//	 * Creates the "Classes names" TabItem
-//	 * @param tabFolder
-//	 */
-//	private void createTabClassesNames(TabFolder tabFolder) {
-//		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
-//		tabItem.setText("Classes names");
-//		
-//		Composite tabContent = new Composite(tabFolder, SWT.NONE);
-//		tabContent.setLayout(new GridLayout(3, false));
-//		tabItem.setControl(tabContent);
-//
-////		String sSyntax = "Syntax : Prefix${" + ConfigDefaults.BEANNAME + "}Suffix " ;
-////		
-////		_tVOListClassName = createTextField(tabContent, "VOList class ") ;
-////		createTwoLabels(tabContent, "", 
-////				sSyntax + " ( default : '" + ConfigDefaults.DEFAULT_LIST_CLASS_NAME + "' )");
-////
-////		_tDAOClassName = createTextField(tabContent, "DAO class ") ;
-////		createTwoLabels(tabContent, "", 
-////				sSyntax + " ( default : '" + ConfigDefaults.DEFAULT_DAO_CLASS_NAME + "' )");
-////
-////		_tXmlMapperClassName = createTextField(tabContent, "XML mapper class ") ;
-////		createTwoLabels(tabContent, "", 
-////				sSyntax + " ( default : '" + ConfigDefaults.DEFAULT_XML_MAPPER_CLASS_NAME + "' )");
-//	}
-	
 	//------------------------------------------------------------------------------------------
 	/**
 	 * Creates the "Variables" TabItem
@@ -738,21 +711,18 @@ public class PropertiesPage extends PropertyPage {
 		gd.heightHint  = 120 ;
 		gd.widthHint   = Col2With - 10 ;
 		_listGitHubRepositories.setLayoutData(gd);
-//		for (int i = 1; i <= 5; i++) {
-//			_listGitHubRepositories.add("Item Number " + i);
-//		}
-//		_listGitHubRepositories.add("basic-templates-TT203");
 		
 		//------------------------------------------------------------------------------------
-		//--- Label + Text field 
-		label = new Label(tabContent, SWT.NONE);
-		label.setText("GitHub URL pattern : ");
-		
-		_tGitHubUrlPattern = new Text(tabContent, SWT.BORDER);
-		gd = getCellGridData2();
-		gd.widthHint   = Col2With ;
-		_tGitHubUrlPattern.setLayoutData(gd);
-		_tGitHubUrlPattern.setText("https://github.com/${USER}/${REPO}/archive/master.zip");
+// Removed in v 2.1.1
+//		//--- Label + Text field 
+//		label = new Label(tabContent, SWT.NONE);
+//		label.setText("GitHub URL pattern : ");
+//		
+//		_tGitHubUrlPattern = new Text(tabContent, SWT.BORDER);
+//		gd = getCellGridData2();
+//		gd.widthHint   = Col2With ;
+//		_tGitHubUrlPattern.setLayoutData(gd);
+//		_tGitHubUrlPattern.setText("https://github.com/${USER}/${REPO}/archive/master.zip");
 		
 		//------------------------------------------------------------------------------------
 		//--- Void Label + Composite [ Button + CheckBox ]  
@@ -861,10 +831,10 @@ public class PropertiesPage extends PropertyPage {
 		if ( null == sDownloadFolder ) {
 			return 0 ;
 		}
-		String sGitHubUrlPattern = getGitHubUrlPattern() ;
-		if ( null == sGitHubUrlPattern ) {
-			return 0 ;
-		}
+//		String sGitHubUrlPattern = getGitHubUrlPattern() ;
+//		if ( null == sGitHubUrlPattern ) {
+//			return 0 ;
+//		}
 		if ( null == repoNames ) {
 			MsgBox.error("Selection is null !");
 			return 0 ;
@@ -903,19 +873,20 @@ public class PropertiesPage extends PropertyPage {
 		return task.getResult();
 	}
 	
-	private String getGitHubUrlPattern() {
-		String sPattern = _tGitHubUrlPattern.getText();
-		// ${USER}/${REPO}
-		if ( sPattern.indexOf("${USER}") < 0 ) {
-			MsgBox.warning("Invalid GitHub URL pattern, '${USER}' expected");
-			return null ;
-		}
-		if ( sPattern.indexOf("${REPO}") < 0 ) {
-			MsgBox.warning("Invalid GitHub URL pattern, '${REPO}' expected");
-			return null ;
-		}
-		return sPattern ;
-	}
+// REMOVED in ver 2.1.1
+//	private String getGitHubUrlPattern() {
+//		String sPattern = _tGitHubUrlPattern.getText();
+//		// ${USER}/${REPO}
+//		if ( sPattern.indexOf("${USER}") < 0 ) {
+//			MsgBox.warning("Invalid GitHub URL pattern, '${USER}' expected");
+//			return null ;
+//		}
+//		if ( sPattern.indexOf("${REPO}") < 0 ) {
+//			MsgBox.warning("Invalid GitHub URL pattern, '${REPO}' expected");
+//			return null ;
+//		}
+//		return sPattern ;
+//	}
 	
 	private String getDownloadFolder() {
 		String sFolder = _tDownloadsFolder.getText().trim();
@@ -988,32 +959,40 @@ public class PropertiesPage extends PropertyPage {
 		
 		Text t = null ; 
 		t = createTextField(tabContent, "Name :") ;
-		t.setEnabled(false);
+		t.setEditable(false);
 		t.setText( MyPlugin.getName() );
 		
 		t = createTextField(tabContent, "Version :") ;
-		t.setEnabled(false);
+		t.setEditable(false);
 		t.setText( MyPlugin.getVersion() + " - " + PluginBuildInfo.BUILD_ID + "  ( " + PluginBuildInfo.BUILD_DATE + " ) ");
 		
 		t = createTextField(tabContent, "Id :") ;
-		t.setEnabled(false);
+		t.setEditable(false);
 		t.setText( MyPlugin.getId() );
 		
 		t = createTextField(tabContent, "Directory URL :") ;
-		t.setEnabled(false);
+		t.setEditable(false);
 		t.setText( MyPlugin.getBaseURLAsString() );
 		
 		t = createTextField(tabContent, "Directory :") ;
-		t.setEnabled(false);
+		t.setEditable(false);
 		t.setText( MyPlugin.getDirectory() );
 		
 		t = createTextField(tabContent, "Resources dir :") ;
-		t.setEnabled(false);
+		t.setEditable(false);
 		t.setText( MyPlugin.getResourcesDirectory() );
 		
 		t = createTextField(tabContent, "Generator version :") ;
-		t.setEnabled(false);
+		t.setEditable(false);
 		t.setText( GeneratorVersion.GENERATOR_VERSION );
+
+		t = createTextField(tabContent, "GitHub URL pattern :") ;
+		t.setEditable(false);
+		t.setText( GitHubClient.GIT_HUB_REPO_URL_PATTERN );
+		
+		t = createTextArea(tabContent, "Http proxy config :") ;
+		t.setEditable(false);
+		t.setText( HttpUtil.getSystemProxyPropertiesAsString("-----") );
 	}	
 	
 	//------------------------------------------------------------------------------------------
@@ -1203,6 +1182,20 @@ public class PropertiesPage extends PropertyPage {
 		Text textField = new Text(composite, SWT.BORDER);
 		textField.setLayoutData(getColSpan(1));
 		return textField;
+	}
+
+	//------------------------------------------------------------------------------------------
+	private Text createTextArea(Composite composite, String sLabel) {
+		//--- Creates the Label 
+		Label label = new Label(composite, SWT.NONE);
+		label.setText(sLabel);
+		//--- Creates the Text area 
+		Text textArea = new Text (composite, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL );
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		gd.heightHint     = 100 ;
+		textArea.setLayoutData(gd);
+		return textArea;
 	}
 
 	//------------------------------------------------------------------------------------------
@@ -1431,102 +1424,4 @@ public class PropertiesPage extends PropertyPage {
 		return true ;
 	}
 	
-	//------------------------------------------------------------------------------------------
-//	/**
-//	 * Populates the given properties with screen fields values
-//	 * @param props
-//	 */
-//	private void fieldsToProperties(Properties props) 
-//	{
-//		log("fieldsToProperties ...");
-//		
-//		//--- Tab "General"
-//		props.put(TelosysToolsCfg.REPOS_FOLDER,      _tRepositoriesFolder.getText() );
-//		props.put(TelosysToolsCfg.TEMPLATES_FOLDER,  _tTemplatesFolder.getText() );
-//		props.put(TelosysToolsCfg.DOWNLOADS_FOLDER,  _tDownloadsFolder.getText() );
-//		props.put(TelosysToolsCfg.LIBRARIES_FOLDER,  _tLibrariesFolder.getText() );
-//				
-//		//--- Tab "Packages"
-//		//props.put(GeneratorConfigConst.ENTITIES_PACKAGE,  _tEntityPackage.getText());
-//		props.put(VariablesNames.ENTITY_PKG,  _tEntityPackage.getText());
-//		props.put(VariablesNames.ROOT_PKG,    _tRootPackage.getText());
-//		
-//		//--- Tab "Folders" ( considered as pre-defined variables )
-//		props.put(VariablesNames.SRC,       _tSrcFolder.getText() );
-//		props.put(VariablesNames.RES,       _tResFolder.getText() );
-//		props.put(VariablesNames.WEB,       _tWebFolder.getText() );
-//		props.put(VariablesNames.TEST_SRC,  _tTestSrcFolder.getText() );
-//		props.put(VariablesNames.TEST_RES,  _tTestResFolder.getText() );
-//		props.put(VariablesNames.DOC,       _tDocFolder.getText() );
-//		props.put(VariablesNames.TMP,       _tTmpFolder.getText() );
-//
-//		//--- Tab "Variables"		
-//		log("propertiesToFields : variables ...");
-//
-//		Object[] items = _variablesTable.getItems();
-//		Variable[] variables = new Variable[items.length];
-//		for ( int i = 0 ; i < items.length ; i++ )
-//		{
-//			if ( items[i] instanceof Variable )
-//			{
-//				variables[i] = (Variable) items[i] ;
-//			}
-//			else
-//			{
-//				MsgBox.error("Item [" + i + "] is not an instance of VariableItem" );
-//				return;
-//			}
-//		}
-//		
-//		//--- Check 
-//		String[] invalidNames = ContextNames.getInvalidVariableNames(variables);
-//		if ( invalidNames != null )
-//		{
-//			//--- Invalid names
-//			StringBuffer sb = new StringBuffer();
-//			for ( int i = 0 ; i < invalidNames.length ; i++ )
-//			{
-//				if ( i > 0 ) sb.append(", ");
-//				sb.append("'"+invalidNames[i]+"'");
-//			}
-//			MsgBox.error("Invalid variable name(s) : " + sb.toString() 
-//					+ "\n Name(s) reserved for standard variables."
-//					+ "\n The current variables will not be saved !");
-//		}
-//		else
-//		{
-//			log("propertiesToFields : all variables names OK => put in properties");
-//			//--- All names OK
-//			VariablesUtil.putVariablesInProperties( variables, props );
-//		}
-//
-//		//--- Tab "Advanced"
-////		props.put(PropName.TEMPLATES_DIRECTORY, _tTemplatesDirText.getText() );
-//		/*
-//		if (checkTemplate.getSelection()) {
-//			//--- Specific templates
-//			props.put(PropName.SPECIFIC_TEMPLATES,  "1");
-//			props.put(PropName.TEMPLATE_DIRECTORY, templateDirText.getText());
-//		} else {
-//			//--- Default templates
-//			props.put(PropName.SPECIFIC_TEMPLATES, "0");
-//			props
-//					.put(PropName.TEMPLATE_DIRECTORY, Plugin
-//							.getTemplatesDirectory());
-//		}
-//
-//		//--- "SPECIFIC" Radio Button
-//		if (specificCheck.getSelection()) {
-//			//--- "SPECIFIC" Radio Button SELECTED
-//			props.put(PropName.SPECIFIC_INIT_CHECK, "1");
-//			props.put(PropName.INIT_CHECK_CLASS_NAME, checkClassText.getText());
-//			props.put(PropName.INIT_CHECK_CLASS_DIR, checkClassDirText.getText());
-//		} else {
-//			props.put(PropName.SPECIFIC_INIT_CHECK, "0");
-//			props.put(PropName.INIT_CHECK_CLASS_NAME, "");
-//			props.put(PropName.INIT_CHECK_CLASS_DIR, "");
-//		}
-//*/
-//		log("fieldsToProperties : END ");
-//	}
 }
