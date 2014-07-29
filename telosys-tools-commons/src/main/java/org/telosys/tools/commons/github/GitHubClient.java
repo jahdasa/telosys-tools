@@ -34,9 +34,9 @@ import org.telosys.tools.commons.http.HttpResponse;
  */
 public class GitHubClient {
 
-	private final static String GIT_HUB_HOST_URL = "https://api.github.com" ;
+	public final static String GIT_HUB_HOST_URL = "https://api.github.com" ;
 	
-	private final static String GIT_HUB_REPO_URL_PATTERN =  "https://github.com/${USER}/${REPO}/archive/master.zip" ;
+	public final static String GIT_HUB_REPO_URL_PATTERN =  "https://github.com/${USER}/${REPO}/archive/master.zip" ;
 
 	
 //	private final String     gitHubURLPattern ;

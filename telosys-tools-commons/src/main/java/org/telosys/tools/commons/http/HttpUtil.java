@@ -22,10 +22,40 @@ import java.net.ProxySelector;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Properties;
 
 public class HttpUtil {
 	
-	public static void showSystemProxies(PrintStream out) {
+	//------------------------------------------------------------------------------------------
+	/**
+	 * Return multi-line string containing all the current system properties regarding http/https proxy 
+	 * @param separator separator line to be put between http and https (or null if no separator)
+	 * @return
+	 */
+	public final static String getSystemProxyPropertiesAsString(String separator) {
+		StringBuffer sb = new StringBuffer();
+		getSystemProxyPropertiesAsString("http",  sb);
+		if ( separator != null ) {
+			sb.append(separator+"\n");
+		}
+		getSystemProxyPropertiesAsString("https", sb);
+		return sb.toString();
+	}
+	//------------------------------------------------------------------------------------------
+	private final static void getSystemProxyPropertiesAsString(String prefix, StringBuffer sb) {
+		String[] names = { "proxyHost", "proxyPort", "proxySet", "nonProxyHosts"} ;
+		Properties prop = System.getProperties();
+		for ( String name : names ) {
+			String fullName = prefix + "." + name ;
+			String value = prop.getProperty(fullName) ;
+			if ( value != null ) {
+				sb.append(fullName + "=" + value + "\n");
+			}
+		}
+	}
+	
+	//------------------------------------------------------------------------------------------
+	public final static void showSystemProxies(PrintStream out) {
 		// Show system proxies on Windows : 
 		// > netsh winhttp show proxy" 
 		// The proxy settings for WinHTTP are not the proxy settings for Microsoft Internet Explorer
