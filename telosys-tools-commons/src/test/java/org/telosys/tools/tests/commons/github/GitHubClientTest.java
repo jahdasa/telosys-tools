@@ -17,11 +17,33 @@ public class GitHubClientTest extends TestCase {
 		
 	public void testGetRepositories() throws Exception  {
 		
+		System.out.println("Getting repositories with properties ... ");
+
+//		Properties properties = HttpTestConfig.getSpecificProxyProperties();
+//		
+//		GitHubClient gitHubClient = new GitHubClient( properties);
+//		String jsonResult = gitHubClient.getRepositoriesJSON(GITHUB_USER);
+//		System.out.println(jsonResult);
+//		
+//		List<GitHubRepository> repositories = gitHubClient.getRepositories(GITHUB_USER);
+//		System.out.println("Repositories (" + repositories.size() + ") : ");
+//		for ( GitHubRepository repo : repositories ) {
+//			System.out.println(" .  '" + repo.getName() + "' / " 
+//					+ repo.getId() + " / '" + repo.getDescription() + "' / " + repo.getSize() );
+//		}
+		getRepositories( HttpTestConfig.getSpecificProxyProperties() );
+	}
+	
+	public void testGetRepositoriesWithoutProperties() throws Exception  {		
+		System.out.println("Getting repositories without properties (null argument) ... ");
+		getRepositories( null );
+	}
+	
+	public void getRepositories( Properties properties ) throws Exception  {
+		
 		System.out.println("Getting repositories... ");
 
-		Properties properties = HttpTestConfig.getSpecificProxyProperties();
-		
-		GitHubClient gitHubClient = new GitHubClient( properties);
+		GitHubClient gitHubClient = new GitHubClient( properties );
 		String jsonResult = gitHubClient.getRepositoriesJSON(GITHUB_USER);
 		System.out.println(jsonResult);
 		

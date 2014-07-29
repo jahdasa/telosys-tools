@@ -184,8 +184,16 @@ public class TelosysToolsCfg
      */
     public Properties getProperties()
 	{
-    	//Properties properties = new Properties();
-    	Properties properties = this._cfgFileProperties ; // v 2.1.1 (keep original properties and update)
+    	// Properties properties = new Properties(); 
+    	Properties properties = null ; 
+    	// v 2.1.1 (keep original properties if any and update)
+    	if ( this._cfgFileProperties != null ) { 
+    		// We have original properties => keep them
+        	properties = this._cfgFileProperties ; 
+    	}
+    	else {
+    		properties = new Properties(); 
+    	}
     	
     	//--- General 
     	properties.setProperty(REPOS_FOLDER,     _sRepositoriesFolder);
