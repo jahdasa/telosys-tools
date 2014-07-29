@@ -1,5 +1,6 @@
 package org.telosys.tools.tests.commons.bundles;
 
+import java.util.List;
 import java.util.Properties;
 
 import junit.framework.TestCase;
@@ -13,15 +14,17 @@ import org.telosys.tools.tests.commons.TestsFolders;
 
 public class BundlesManagerTest extends TestCase {
 
-	private void printProperty(Properties properties, String name) {
-		System.out.println(name + " : " + properties.getProperty(name));
-	}
+	TelosysToolsCfg telosysToolsCfg = null ;
 	
-	private BundlesManager getBundlesManager() {
+	
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		System.out.println("===== [ SETUP ] =====");
 		TelosysToolsCfgManager cfgManager = new TelosysToolsCfgManager(TestsFolders.getTestsRootFolder());
-		TelosysToolsCfg telosysToolsCfg;
+		//TelosysToolsCfg telosysToolsCfg;
 		try {
-			telosysToolsCfg = cfgManager.loadProjectConfig();
+			this.telosysToolsCfg = cfgManager.loadProjectConfig();
 		} catch (TelosysToolsException e) {
 			e.printStackTrace();
 			throw new RuntimeException("Cannot load project properties", e);
@@ -32,6 +35,27 @@ public class BundlesManagerTest extends TestCase {
 		printProperty(properties, "http.proxyPort");
 		printProperty(properties, "https.proxyHost");
 		printProperty(properties, "https.proxyPort");
+	}
+
+	private void printProperty(Properties properties, String name) {
+		System.out.println(name + " : " + properties.getProperty(name));
+	}
+	
+	private BundlesManager getBundlesManager() {
+//		TelosysToolsCfgManager cfgManager = new TelosysToolsCfgManager(TestsFolders.getTestsRootFolder());
+//		//TelosysToolsCfg telosysToolsCfg;
+//		try {
+//			this.telosysToolsCfg = cfgManager.loadProjectConfig();
+//		} catch (TelosysToolsException e) {
+//			e.printStackTrace();
+//			throw new RuntimeException("Cannot load project properties", e);
+//		}
+//		Properties properties = telosysToolsCfg.getProperties();
+//		System.out.println("HTTP properties : ");
+//		printProperty(properties, "http.proxyHost");
+//		printProperty(properties, "http.proxyPort");
+//		printProperty(properties, "https.proxyHost");
+//		printProperty(properties, "https.proxyPort");
 		BundlesManager bm = new BundlesManager( telosysToolsCfg );
 		return bm;
 	}
@@ -39,20 +63,40 @@ public class BundlesManagerTest extends TestCase {
 	public void testFolder() throws TelosysToolsException {
 		System.out.println("========== File system folder  ");
 
-		String bundlesFolder = TestsFolders.getTestsBundlesFolder();
-		System.out.println("Bundles folder : '" + bundlesFolder + "'");
-//		BundlesManager bm = new BundlesManager( telosysToolsCfg );
+		String bundlesFolderInConfig = TestsFolders.getTestsBundlesFolder();
+		System.out.println("Bundles folder in config : '" + bundlesFolderInConfig + "'");
 		BundlesManager bm = getBundlesManager();
+		
+		System.out.println("Getting downloads folder ...");
+		String downloadsFolder = bm.getDownloadsFolderFullPath() ;
+		System.out.println(" result = '" + downloadsFolder + "'... ");
+		assertEquals(telosysToolsCfg.getDownloadsFolderAbsolutePath(), downloadsFolder);
+
+		System.out.println("Getting bundles folder ...");
+		String bundlesFolder = bm.getBundlesFolderFullPath() ;
+		System.out.println(" result = '" + bundlesFolder + "'... ");
+		assertEquals(telosysToolsCfg.getTemplatesFolderAbsolutePath(), bundlesFolder);
+		
 		
 		String bundleName = "foo";
 		System.out.println("Getting folder for " + bundleName + "'... ");		
-		String folder = bm.getFileSystemFolder(bundleName);
+		String folder = bm.getBundleFolderFullPath(bundleName);
 		System.out.println(" result = '" + folder + "'... ");
 		
-		String expected = bundlesFolder + "/" + bundleName ;
+		String expected = telosysToolsCfg.getTemplatesFolderAbsolutePath() + "/" + bundleName ;
 		assertEquals(expected, folder);
 	}
 
+	public void testBundlesList() throws Exception {
+		System.out.println("========== List of available bundles  ");
+
+		BundlesManager bm = getBundlesManager();
+		List<String> bundles = bm.getBundlesList("telosys-tools") ;
+		for ( String s : bundles ) {
+			System.out.println(" . " + s );
+		}
+	}
+	
 	public void testIsBundleInstalled() throws TelosysToolsException {
 		System.out.println("========== isBundleAlreadyInstalled  ");
 		BundlesManager bm = getBundlesManager();

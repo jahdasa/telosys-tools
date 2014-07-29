@@ -16,11 +16,14 @@
 package org.telosys.tools.commons.bundles;
 
 import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.telosys.tools.commons.FileUtil;
 import org.telosys.tools.commons.ZipUtil;
 import org.telosys.tools.commons.cfg.TelosysToolsCfg;
 import org.telosys.tools.commons.github.GitHubClient;
+import org.telosys.tools.commons.github.GitHubRepository;
 
 
 /**
@@ -45,14 +48,33 @@ public class BundlesManager {
 
 	//--------------------------------------------------------------------------------------------------
 	/**
-	 * Returns the file system folder's full path for the given bundle name
+	 * Returns the DOWNLOADS folder's full path in the file system <br>
+	 * ( e.g. 'X:/dir/myproject/TelosysTools/downloads' )
+	 * @return
+	 */
+	public String getDownloadsFolderFullPath() {
+		return cfg.getDownloadsFolderAbsolutePath() ;
+	}
+	
+	//--------------------------------------------------------------------------------------------------
+	/**
+	 * Returns the BUNDLES folder's full path in the file system <br>
+	 * ( e.g. 'X:/dir/myproject/TelosysTools/templates' )
+	 * @return
+	 */
+	public String getBundlesFolderFullPath() {
+		return cfg.getTemplatesFolderAbsolutePath() ;
+	}
+	
+	//--------------------------------------------------------------------------------------------------
+	/**
+	 * Returns the file system folder's full path for the given bundle name <br>
+	 * ( e.g. 'X:/dir/myproject/TelosysTools/templates/bundleName' )
 	 * @param bundleName
 	 * @return
 	 */
-	public String getFileSystemFolder( String bundleName ) {
-		//String bundlesFolder = cfg.getTemplatesFolder();
-		String bundlesFolder = cfg.getTemplatesFolderAbsolutePath();
-		return FileUtil.buildFilePath( bundlesFolder, bundleName);
+	public String getBundleFolderFullPath( String bundleName ) {
+		return FileUtil.buildFilePath( getBundlesFolderFullPath() , bundleName);
 	}
 	
 	//--------------------------------------------------------------------------------------------------
@@ -62,8 +84,8 @@ public class BundlesManager {
 	 * @return
 	 */
 	public boolean isBundleAlreadyInstalled( String bundleName ) {
-		File file = new File(getFileSystemFolder(bundleName)) ;
-		if ( file.exists() ) {
+		File bundlesFolder = new File(getBundleFolderFullPath(bundleName)) ;
+		if ( bundlesFolder.exists() ) {
 			return true ;
 		}
 		else {
@@ -125,6 +147,30 @@ public class BundlesManager {
 	
 	//--------------------------------------------------------------------------------------------------
 	/**
+	 * @return
+	 */
+	/**
+	 * Return a list of bundles available on the given user's name on GitHub
+	 * @param userName the GitHub user name
+	 * @return
+	 * @throws Exception
+	 */
+	public List<String> getBundlesList( String userName ) throws Exception {
+		List<String> bundles = new LinkedList<String>();
+		GitHubClient gitHubClient = new GitHubClient( cfg.getProperties() ) ; 
+		List<GitHubRepository> repositories = gitHubClient.getRepositories( userName );
+		for ( GitHubRepository repo : repositories ) {
+// Removed in ver 2.1.0 ( "size" is not reliable in the GitHub API ) 
+//							if ( repo.getSize() > 0 ) {
+//								_listGitHubRepositories.add( repo.getName() );
+//							}
+			bundles.add( repo.getName() );
+		}
+		return bundles ;
+	}
+	
+	//--------------------------------------------------------------------------------------------------
+	/**
 	 * Build the filesystem full path for the given repository name and destination folder
 	 * @param repoName GitHub repository name
 	 * @param sDownloadFolder
@@ -156,11 +202,11 @@ public class BundlesManager {
 			return status ;
 		}
 		else {
-			String filesystemFolder = getFileSystemFolder(bundleName) ;
+			String bundleFolder = getBundleFolderFullPath(bundleName) ;
 			status.log("-> Install '" + zipFileName + "' ");
-			status.log("   in '" + filesystemFolder + "' ");
+			status.log("   in '" + bundleFolder + "' ");
 			try {
-				ZipUtil.unzip(zipFileName, filesystemFolder, true ) ;
+				ZipUtil.unzip(zipFileName, bundleFolder, true ) ;
 				status.setDone(true);
 				status.setMessage("OK, bundle installed.");
 			} catch (Exception e) {
