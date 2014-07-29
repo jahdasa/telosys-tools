@@ -37,7 +37,7 @@ public class BundlesManagerTest extends TestCase {
 	}
 	
 	public void testFolder() throws TelosysToolsException {
-		
+		System.out.println("========== File system folder  ");
 
 		String bundlesFolder = TestsFolders.getTestsBundlesFolder();
 		System.out.println("Bundles folder : '" + bundlesFolder + "'");
@@ -54,13 +54,14 @@ public class BundlesManagerTest extends TestCase {
 	}
 
 	public void testIsBundleInstalled() throws TelosysToolsException {
-		
+		System.out.println("========== isBundleAlreadyInstalled  ");
 		BundlesManager bm = getBundlesManager();
 		boolean b = bm.isBundleAlreadyInstalled("no-installed");
 		assertFalse(b);
 	}
 
 	public void testDownloadBundle() throws TelosysToolsException {
+		System.out.println("========== Download  ");
 		String bundleName = "persistence-jpa-TT210-R2" ;
 		BundlesManager bm = getBundlesManager();
 		System.out.println("Downloading bundle '" + bundleName + "'...");
@@ -77,6 +78,7 @@ public class BundlesManagerTest extends TestCase {
 	}
 
 	public void testDownloadBundleInSpecificFolder() throws TelosysToolsException {
+		System.out.println("========== Download in specific folder ");
 		String bundleName = "basic-templates-TT210" ;
 		BundlesManager bm = getBundlesManager();
 		System.out.println("Downloading bundle '" + bundleName + "'...");
@@ -92,7 +94,8 @@ public class BundlesManagerTest extends TestCase {
 		assertNull(status.getException());
 	}
 
-	public void testDownloadAndInstallBundle() throws TelosysToolsException {
+	public void testDownloadThenInstallBundle() throws TelosysToolsException {
+		System.out.println("========== Download + Install ");
 		String bundleName = "persistence-jpa-TT210-R2" ;
 		BundlesManager bm = getBundlesManager();
 		System.out.println("Downloading bundle '" + bundleName + "'...");
@@ -118,6 +121,26 @@ public class BundlesManagerTest extends TestCase {
 			System.out.println("Satus log : "  );
 			System.out.println( status2.getLog() );
 		}
+	}
+
+	public void testDownloadAndInstallBundle() throws TelosysToolsException {
+		System.out.println("========== downloadAndInstallBundle ");
+		String bundleName = "persistence-jpa-TT210-R2" ;
+		BundlesManager bm = getBundlesManager();
+
+		BundleStatus status = bm.downloadAndInstallBundle("telosys-tools", bundleName);
+
+		System.out.println("Satus message : " + status.getMessage() );
+		System.out.println("Satus is done ? : " + status.isDone() );
+		System.out.println("Zip file : " + status.getZipFile());
+		if ( status.getException() != null ) {
+			System.out.println("Exception : " + status.getException());
+		}
+		
+		assertTrue(status.isDone() );
+		assertNull(status.getException());
+		System.out.println("Satus log : "  );
+		System.out.println( status.getLog() );
 	}
 
 }

@@ -84,6 +84,18 @@ public class BundlesManager {
 		return downloadBundle( userName, bundleName, cfg.getDownloadsFolder() ) ;
 	}
 
+	public BundleStatus downloadAndInstallBundle( String userName, String bundleName ) {
+		
+		BundleStatus status1 = downloadBundle( userName, bundleName, cfg.getDownloadsFolder() ) ;
+		if ( status1.isDone() && status1.getException() == null ) {
+			BundleStatus status2 = installBundle(status1.getZipFile(), bundleName);
+			return status2 ;
+		}
+		else {
+			return status1 ;
+		}
+	}
+
 	//--------------------------------------------------------------------------------------------------
 	/**
 	 * Download a bundle (GitHub repo) in a specific project folder
@@ -96,6 +108,8 @@ public class BundlesManager {
 		BundleStatus status = new BundleStatus();
 		GitHubClient gitHubClient = new GitHubClient( cfg.getProperties() ) ; 
 		String destinationFile = buildDestinationFileName(bundleName, downloadFolderInProject) ;
+		status.log("-> Download bundle '" + bundleName + "' ");
+		status.log("   in '" + destinationFile + "' ");
 		try {
 			gitHubClient.downloadRepository(userName, bundleName, destinationFile);
 			status.setDone(true);
@@ -103,7 +117,7 @@ public class BundlesManager {
 			status.setZipFile(destinationFile);
 		} catch (Exception e) {
 			status.setDone(false);
-			status.setMessage("ERROR, cannot download bundle '" + bundleName + "'.");
+			status.setMessage("ERROR: cannot download bundle '" + bundleName + "'.");
 			status.setException(e);
 		}
 		return status ;
@@ -121,7 +135,6 @@ public class BundlesManager {
 		String sFile = repoName + ".zip" ;
 		String pathInProject = FileUtil.buildFilePath(sDownloadFolder, sFile);
 		// file path in Operating System 
-		//String projectDir = EclipseProjUtil.getProjectDir(this.project);
 		String fullPath = FileUtil.buildFilePath(cfg.getProjectAbsolutePath(), pathInProject);
 		return fullPath;
 	}
@@ -137,9 +150,6 @@ public class BundlesManager {
 		
 		BundleStatus status = new BundleStatus();
 		
-		// Destination folder in project : "TelosysTools/templates/bundle-name"
-		//String filesystemFolder = buildDestinationFolder(bundleFolderInProject) ;
-		
 		if ( isBundleAlreadyInstalled( bundleName ) ) {
 			status.setDone(false);
 			status.setMessage("Bundle already installed.");
@@ -147,20 +157,17 @@ public class BundlesManager {
 		}
 		else {
 			String filesystemFolder = getFileSystemFolder(bundleName) ;
-			status.log("-> Install '" + zipFileName + "' \n");
-			status.log("   in '" + filesystemFolder + "' \n");
+			status.log("-> Install '" + zipFileName + "' ");
+			status.log("   in '" + filesystemFolder + "' ");
 			try {
 				ZipUtil.unzip(zipFileName, filesystemFolder, true ) ;
+				status.setDone(true);
+				status.setMessage("OK, bundle installed.");
 			} catch (Exception e) {
 				status.setDone(false);
-				String msg = "Cannot unzip "+ zipFileName + "\n" ;
-				status.log("ERROR \n");
-				status.log(msg);
+				status.setMessage("ERROR: Cannot unzip "+ zipFileName);
 				status.setException(e);
-				return status ;
 			}
-			status.setDone(true);
-			status.setMessage("OK, bundle installed.");
 			return status ;
 		}
 	}
