@@ -837,7 +837,10 @@ public class PropertiesPage extends PropertyPage {
 		String sGitHubUserName = getGitHubUserName();
 		if ( sGitHubUserName != null ) {
 			//--- Create the task
-			PopulateListTaskWithProgress task = new PopulateListTaskWithProgress( sGitHubUserName, _listGitHubRepositories );
+			PopulateListTaskWithProgress task = new PopulateListTaskWithProgress( 
+					getTelosysToolsCfgFromFields(),
+					sGitHubUserName, 
+					_listGitHubRepositories );
 			
 			//--- Run the task with monitor
 			ProgressMonitorDialog progressMonitorDialog = new ProgressMonitorDialog( Util.getActiveWindowShell() ) ;
@@ -874,13 +877,14 @@ public class PropertiesPage extends PropertyPage {
 		//--- Run the generation task via the progress monitor 
 		DownloadTaskWithProgress task = null ;
 		try {
-			task = new DownloadTaskWithProgress(this.getCurrentProject(), 
+			task = new DownloadTaskWithProgress(//this.getCurrentProject(), 
+					getTelosysToolsCfgFromFields(),
 					getGitHubUserName(), 
 					repoNames, 
-					sDownloadFolder, 
-					sGitHubUrlPattern, 
+//					sDownloadFolder, 
+//					sGitHubUrlPattern, 
 					bUnzip, // Unzip or not the downloaded file
-					sTemplatesFolder, // ie "TelosysTools/templates"
+//					sTemplatesFolder, // ie "TelosysTools/templates"
 					_tLogger );
 		} catch (TelosysPluginException e) {
     		MsgBox.error("Cannot create DownloadTaskWithProgress instance", e);
@@ -947,7 +951,7 @@ public class PropertiesPage extends PropertyPage {
 		String user = _tGitHubUserName.getText().trim();
 		if ( user.length() == 0  ) {
 			MsgBox.warning("GitHub user name is void");
-			return null ;
+			return "" ;
 		}
 		return user ;
 	}
@@ -1283,13 +1287,10 @@ public class PropertiesPage extends PropertyPage {
 	protected void performApply() 
 	{
 		try {
-			//Properties props = new Properties();
-			//fieldsToProperties(props);
 			ProjectConfig projectConfig = new ProjectConfig(getCurrentProject());
-			fieldsToConfig(projectConfig);
+			fieldsToConfig( projectConfig );
 			
 			//-- Save the Telosys-Tools configuration for the current project
-			//saveProperties(props);	
 			saveProjectConfig( projectConfig ); 
 			
 		} catch ( Exception e ) {
@@ -1354,8 +1355,7 @@ public class PropertiesPage extends PropertyPage {
 	 * Populates the given properties with screen fields values
 	 * @param props
 	 */
-	private void fieldsToConfig( ProjectConfig projectConfig ) 
-	{
+	private void fieldsToConfig( ProjectConfig projectConfig ) {
 		log("fieldsToConfig ...");
 		TelosysToolsCfg telosysToolsCfg = projectConfig.getTelosysToolsCfg();
 		
@@ -1386,7 +1386,12 @@ public class PropertiesPage extends PropertyPage {
 		}
 		log("fieldsToConfig : END");
 	}
-	
+	//------------------------------------------------------------------------------------------
+	private TelosysToolsCfg getTelosysToolsCfgFromFields() {
+		ProjectConfig projectConfig = new ProjectConfig(getCurrentProject());
+		fieldsToConfig( projectConfig );
+		return projectConfig.getTelosysToolsCfg();
+	}	
 	//------------------------------------------------------------------------------------------
 	private Variable[] getVariablesFromView() {
 		Object[] items = _variablesTable.getItems();
