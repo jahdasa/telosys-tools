@@ -45,5 +45,4 @@ public class Status {
 		this.log.append("\n");
 	}
 	
-	
 }

@@ -37,4 +37,22 @@ public class ZipUtilTest extends TestCase {
 		return r ;
 	}
 
+	public void testUnZip1() throws Exception {
+		System.out.println("Unzip file... ");
+		ZipUtil.unzip("D:/tmp/telosys-tools-tests/TelosysTools/downloads/persistence-jpa-TT210-R2.zip", 
+				"D:/tmp/telosys-tools-tests/TelosysTools/templates/persistence-jpa-TT210-R2", true);
+	}
+
+	public void testUnZip2() throws Exception {
+		System.out.println("Unzip file... ");
+		Exception error = null ;
+		try {
+			ZipUtil.unzip("D:/tmp/telosys-tools-tests/TelosysTools/downloads/persistence-jpa-TT210-R2.zip", 
+					"D:/tmp/telosys-tools-tests/TelosysTools/templates/inex", false);
+		} catch (Exception e) {
+			error = e ;
+		}
+		System.out.println("Expected error : " + error.getMessage() );
+		assertNotNull(error);
+	}
 }

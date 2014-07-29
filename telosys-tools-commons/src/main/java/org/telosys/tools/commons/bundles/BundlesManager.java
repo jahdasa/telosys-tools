@@ -18,7 +18,6 @@ package org.telosys.tools.commons.bundles;
 import java.io.File;
 
 import org.telosys.tools.commons.FileUtil;
-import org.telosys.tools.commons.Status;
 import org.telosys.tools.commons.ZipUtil;
 import org.telosys.tools.commons.cfg.TelosysToolsCfg;
 import org.telosys.tools.commons.github.GitHubClient;
@@ -51,7 +50,8 @@ public class BundlesManager {
 	 * @return
 	 */
 	public String getFileSystemFolder( String bundleName ) {
-		String bundlesFolder = cfg.getTemplatesFolder();
+		//String bundlesFolder = cfg.getTemplatesFolder();
+		String bundlesFolder = cfg.getTemplatesFolderAbsolutePath();
 		return FileUtil.buildFilePath( bundlesFolder, bundleName);
 	}
 	
@@ -75,11 +75,11 @@ public class BundlesManager {
 	/**
 	 * Downloads a bundle (GitHub repo) in the downloads folder defined in the current configuration<br>
 	 * e.g. downloads a zip file in 'TelosysTools/downloads'  
-	 * @param userName
-	 * @param bundleName
+	 * @param userName the GitHub user name (e.g. "telosys-tools")
+	 * @param bundleName the bundle name, in other words the GitHub repository name 
 	 * @return
 	 */
-	public Status downloadBundle( String userName, String bundleName ) {
+	public BundleStatus downloadBundle( String userName, String bundleName ) {
 		
 		return downloadBundle( userName, bundleName, cfg.getDownloadsFolder() ) ;
 	}
@@ -92,14 +92,15 @@ public class BundlesManager {
 	 * @param downloadFolderInProject
 	 * @return
 	 */
-	public Status downloadBundle( String userName, String bundleName, String downloadFolderInProject )  {
-		Status status = new Status();
+	public BundleStatus downloadBundle( String userName, String bundleName, String downloadFolderInProject )  {
+		BundleStatus status = new BundleStatus();
 		GitHubClient gitHubClient = new GitHubClient( cfg.getProperties() ) ; 
 		String destinationFile = buildDestinationFileName(bundleName, downloadFolderInProject) ;
 		try {
 			gitHubClient.downloadRepository(userName, bundleName, destinationFile);
 			status.setDone(true);
 			status.setMessage("OK, bundle '" + bundleName + "' downloaded.");
+			status.setZipFile(destinationFile);
 		} catch (Exception e) {
 			status.setDone(false);
 			status.setMessage("ERROR, cannot download bundle '" + bundleName + "'.");
@@ -132,9 +133,9 @@ public class BundlesManager {
 	 * @param bundleName
 	 * @return
 	 */
-	public Status installBundle( String zipFileName, String bundleName ) {
+	public BundleStatus installBundle( String zipFileName, String bundleName ) {
 		
-		Status status = new Status();
+		BundleStatus status = new BundleStatus();
 		
 		// Destination folder in project : "TelosysTools/templates/bundle-name"
 		//String filesystemFolder = buildDestinationFolder(bundleFolderInProject) ;
@@ -163,6 +164,4 @@ public class BundlesManager {
 			return status ;
 		}
 	}
-	
-	
 }

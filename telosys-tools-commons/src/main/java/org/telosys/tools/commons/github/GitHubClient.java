@@ -174,11 +174,12 @@ public class GitHubClient {
 
 		long bytesCount = 0 ;
 		HttpClient httpClient = new HttpClient(proxyProperties);
-		try {
-			bytesCount = httpClient.downloadFile(url, destinationFile);
-		} catch (Exception e) {
-			throw new Exception ("Cannot download file (http error)", e);
-		}
+//		try {
+//			bytesCount = httpClient.downloadFile(url, destinationFile);
+//		} catch (Exception e) {
+//			throw new Exception ("Cannot download file (http error)", e);
+//		}
+		bytesCount = httpClient.downloadFile(url, destinationFile);
 		return bytesCount ;
 	}
 }

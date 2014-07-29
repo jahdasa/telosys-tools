@@ -36,17 +36,19 @@ public class ZipUtil {
 
 		log("UnZip file '" + zipFile + "'");
 		log("        in '" + outputFolder + "'");
-		try {
 
-			//--- Check output directory existence
-			File folder = new File(outputFolder);
-			if (!folder.exists()) {
-				if (createFolder) {
-					folder.mkdir();
-				} else {
-					throw new Exception("Cannot create folder '" + outputFolder + "'");
-				}
+		//--- Check output directory existence
+		File folder = new File(outputFolder);
+		if (!folder.exists()) {
+			if (createFolder) {
+				// folder.mkdir();
+				folder.mkdirs(); // creates all parent directories 
+			} else {
+				throw new Exception("UnZip error : folder '" + outputFolder + "' doesn't exist");
 			}
+		}
+
+		try {
 
 			//--- Read each entry in the zip file
 			ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile));
@@ -88,9 +90,6 @@ public class ZipUtil {
 		} catch (IOException ex) {
 			log("IOException : " + ex.getMessage() );
 			throw new Exception("UnZip Error (IOException)", ex);
-		} catch (Throwable t) {
-			log("Unexpected Exception : " + t.getMessage() );
-			throw new Exception("UnZip Error (IOException)", t);
 		}
 	}
 	

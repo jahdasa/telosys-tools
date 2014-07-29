@@ -15,6 +15,7 @@
  */
 package org.telosys.tools.commons.http;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -305,6 +306,7 @@ public class HttpClient {
 	private long downloadFile(URL url, String destFileName ) throws Exception {
 
 		config(configuration);
+		checkDestination(destFileName);
 		
         long totalBytesRead = 0L;		
         try {
@@ -332,4 +334,11 @@ public class HttpClient {
 		return totalBytesRead ;
 	}
 	
+	private void checkDestination(String destFileName) throws Exception {
+		File file = new File (destFileName) ;
+		File parent = file.getParentFile();
+		if ( parent.exists() == false ) {
+			throw new Exception("Download folder doesn't exist '" + parent.getAbsolutePath() + "' ");
+		}
+	}
 }
