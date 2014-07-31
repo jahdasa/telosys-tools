@@ -56,7 +56,12 @@ public class EclipseProjUtil {
 			IPath path = project.getLocation();
 			if ( path != null )
 			{
-				return path.toString();			
+				// The standard toString method creates a platform-neutral encoding of the path as a String.		
+				//return path.toString() ;	
+				
+				// The toOSString method creates a platform-specific encoding suitable for passing 
+				// to java.io.File or other API that deals directly with the file system
+				return path.toOSString() ;
 			}
 			else
 			{
@@ -188,47 +193,92 @@ public class EclipseProjUtil {
 	
 	//----------------------------------------------------------------------------------
 	/**
-	 * Refresh the given project resource 
+	 * Refresh the given project file 
 	 * @param project
-	 * @param sPath resource path ( '/aaa/bbb' or 'aaa/bbb' ) 
+	 * @param path file path ( '/aaa/bbb.txt' or 'aaa/bbb.txt' ) 
 	 */
-	public static void refreshResource(IProject project, String sPath) 
+	public static void refreshFile(IProject project, String path) 
 	{
-		refreshResource( project, new Path(sPath) );
+		refreshFile( project, new Path(path) );
 	}
 	
 	/**
-	 * Refresh the given project resource 
+	 * Refresh the given project folder 
+	 * @param project
+	 * @param path resource path ( '/aaa/bbb' or 'aaa/bbb' ) 
+	 */
+	public static void refreshFolder(IProject project, String path) 
+	{
+		refreshFolder( project, new Path(path) );
+	}
+	
+	/**
+	 * Refresh the given project file 
+	 * @param project
+	 * @param path file path ( '/aaa/bbb.txt' or 'aaa/bbb.txt' ) 
+	 */
+	public static void refreshFile(IProject project, Path path) 
+	{
+		IFile iFile = project.getFile( path ) ;
+		//if ( iFile.exists() ) { 
+		// Do not test existence here 
+		// Unknown file while not refreshed => considered as non existent !
+			try {
+				iFile.refreshLocal(IResource.DEPTH_ZERO, null);
+			} catch (CoreException e) {
+				MsgBox.error("Cannot refresh file '" + path + "' !\n" + "CoreException \n" + e.getMessage() );
+			}
+//		}
+//		else {
+//			MsgBox.error("Cannot refresh file '" + path + "' !\n" + "This file doesn't exist" );
+//		}
+	}
+	
+	/**
+	 * Refresh the given project folder
+	 * @param project
+	 * @param path folder path ( '/aaa/bbb' or 'aaa/bbb' ) 
+	 */
+	public static void refreshFolder(IProject project, Path path) 
+	{
+		IFolder iFolder = project.getFolder( path ) ;
+//		if ( iFolder.exists() ) {
+			try {
+				iFolder.refreshLocal(IResource.DEPTH_INFINITE, null);
+			} catch (CoreException e) {
+				MsgBox.error("Cannot refresh folder '" + path + "' !\n" + "CoreException \n" + e.getMessage() );
+			}
+//		}
+//		else {
+//			MsgBox.error("Cannot refresh folder '" + path + "' !\n" + "This folder doesn't exist" );
+//		}
+	}
+	
+	/**
+	 * Refresh the given project resource (file or folder)
 	 * @param project
 	 * @param path resource path ( '/aaa/bbb' or 'aaa/bbb' ) 
 	 */
 	public static void refreshResource(IProject project, Path path) 
 	{
-//		IResource resource = getResource(project, path);
-//		if ( resource != null )
-//		{
-//			try {
-//				resource.refreshLocal(IResource.DEPTH_ZERO, null);
-//			} catch (CoreException e) {
-//				MsgBox.error("Cannot refresh file '" + path + "' !\n" 
-//						+ "CoreException \n"
-//						+ e.getMessage() );
-//			}
-//		}
-//		else
-//		{
-//			MsgBox.error("Cannot refresh file '" + path + "' !\n" 
-//					+ "File not found." );
-//		}
-
-		IResource resource = project.getFile( path ) ;
-		try {
-			resource.refreshLocal(IResource.DEPTH_ZERO, null);
-		} catch (CoreException e) {
-			MsgBox.error("Cannot refresh file '" + path + "' !\n" 
-			+ "CoreException \n" + e.getMessage() );
+		IResource iResource = project.getFile( path ) ;
+		if ( iResource.exists() ) {
+			try {
+				if ( iResource instanceof IFile ) {
+					IFile iFile = (IFile) iResource ;
+					iFile.refreshLocal(IResource.DEPTH_ZERO, null);
+				}
+				else if ( iResource instanceof IFolder ) {
+					IFolder iFolder = (IFolder) iResource ;
+					iFolder.refreshLocal(IResource.DEPTH_INFINITE, null);
+				}
+			} catch (CoreException e) {
+				MsgBox.error("Cannot refresh '" + path + "' !\n" + "CoreException \n" + e.getMessage() );
+			}
 		}
-		
+		else {
+			MsgBox.error("Cannot refresh '" + path + "' !\n" + "This resource doesn't exist" );
+		}
 	}
 	
     //------------------------------------------------------------------------------------------------
