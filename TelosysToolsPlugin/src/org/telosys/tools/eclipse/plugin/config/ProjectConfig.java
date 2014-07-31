@@ -9,6 +9,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
 import org.telosys.tools.commons.FileUtil;
 import org.telosys.tools.commons.cfg.TelosysToolsCfg;
+import org.telosys.tools.eclipse.plugin.commons.EclipseProjUtil;
 import org.telosys.tools.eclipse.plugin.commons.MsgBox;
 import org.telosys.tools.generator.GeneratorException;
 import org.telosys.tools.generator.target.TargetDefinition;
@@ -44,31 +45,7 @@ public class ProjectConfig
     public ProjectConfig ( IProject project )
     {
     	if ( project != null) {
-        	
     		_sProjectName = project.getName() ; 
-        	
-//        	//--- Project location
-//        	if ( project.getLocation() != null ) {
-//            	_sProjectLocation = project.getLocation().toOSString() ;     	
-//        	}
-//        	else {
-//        		MsgBox.error("ProjectConfig constructor : project location is null");
-//        		_sProjectLocation = "unknown" ; 
-//        	}
-//
-//        	//--- Workspace location
-//        	IWorkspace wks = project.getWorkspace();
-//        	IWorkspaceRoot wksRoot = wks.getRoot();
-//        	IPath wksLocation = wksRoot.getLocation();
-//        	if ( wksLocation != null )
-//        	{
-//        		_sWorkspaceLocation = wksLocation.toOSString() ;
-//        	}
-//        	else
-//        	{
-//        		MsgBox.error("ProjectConfig constructor : workspace location is null");
-//        		_sWorkspaceLocation = "unknown" ; 
-//        	}
         	_sProjectLocation = getProjectLocation(project);
         	_sWorkspaceLocation = getWorkspaceLocation(project);
     	}
@@ -105,11 +82,12 @@ public class ProjectConfig
 	
 	private String getProjectLocation ( IProject project )
 	{
-    	if ( project.getLocation() != null ) {
-        	return project.getLocation().toOSString() ;     	
+    	if ( project != null ) {
+        	//return project.getLocation().toOSString() ;
+    		return EclipseProjUtil.getProjectDir(project);
     	}
     	else {
-    		MsgBox.error("ProjectConfig constructor : project location is null");
+    		MsgBox.error("ProjectConfig constructor : project is null");
     		return "unknown" ; 
     	}
 	}
