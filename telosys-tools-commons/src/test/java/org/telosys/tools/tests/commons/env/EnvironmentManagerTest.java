@@ -17,20 +17,41 @@ public class EnvironmentManagerTest extends TestCase {
 		System.out.println("File   : " + file.toString());
 		System.out.println("Parent : " + file.getParent());
 	}
+	private EnvironmentManager getEnvironmentManager() {
+		return new EnvironmentManager( TestsFolders.getTestsRootFolder() );
+	}
 	
 	public void testGetEnvironmentDirectory() throws TelosysToolsException {
 		printSeparator();
 		System.out.println("getEnvironmentDirectory()...");
-		EnvironmentManager em = new EnvironmentManager( TestsFolders.getTestsRootFolder() );
-		String dir = em.getEnvironmentDirectory();
+		EnvironmentManager em = getEnvironmentManager() ;
+		String dir = em.getEnvironmentFolderFullPath();
 		System.out.println(dir);
 		assertEquals(TestsFolders.getTestsRootFolder() , dir);
+	}
+
+	public void testGetTelosysToolsConfigFile() throws TelosysToolsException {
+		printSeparator();
+		System.out.println("getTelosysToolsConfigFile()...");
+		EnvironmentManager em = getEnvironmentManager() ;
+		String cfgFile = em.getTelosysToolsConfigFileFullPath();
+		System.out.println(cfgFile);
+		assertEquals(TestsFolders.getTestsRootFolder()+"/telosys-tools.cfg" , cfgFile);
+	}
+	
+	public void testGetTelosysToolsFolderFullPath() throws TelosysToolsException {
+		printSeparator();
+		System.out.println("getTelosysToolsConfigFile()...");
+		EnvironmentManager em = getEnvironmentManager() ;
+		String folder = em.getTelosysToolsFolderFullPath();
+		System.out.println(folder);
+		assertEquals(TestsFolders.getTestsRootFolder()+"/TelosysTools" , folder);
 	}
 	
 	public void testCreateFolder() throws TelosysToolsException {
 		printSeparator();
 		System.out.println("createFolder('foo1')...");
-		EnvironmentManager em = new EnvironmentManager( TestsFolders.getTestsRootFolder() );
+		EnvironmentManager em = getEnvironmentManager() ;
 		StringBuffer sb = new StringBuffer();
 		em.createFolder("foo1", sb);
 		System.out.println(sb.toString());
@@ -40,9 +61,9 @@ public class EnvironmentManagerTest extends TestCase {
 		printSeparator();
 		System.out.println("testInitTelosysToolsConfigFile()...");
 
-		EnvironmentManager em = new EnvironmentManager( TestsFolders.getTestsRootFolder() );
+		EnvironmentManager em = getEnvironmentManager();
 
-		String filePath = em.getTelosysToolsConfigFile();
+		String filePath = em.getTelosysToolsConfigFileFullPath();
 		System.out.println("File : " + filePath);
 		File file = new File(filePath);
 		if ( file.exists() ) {
@@ -62,7 +83,7 @@ public class EnvironmentManagerTest extends TestCase {
 		printSeparator();
 		System.out.println("testInitDatabasesConfigFile()...");
 
-		EnvironmentManager em = new EnvironmentManager( TestsFolders.getTestsRootFolder() );
+		EnvironmentManager em = getEnvironmentManager();
 
 //		String filePath = em.getTelosysToolsConfigFile();
 //		System.out.println("File : " + filePath);

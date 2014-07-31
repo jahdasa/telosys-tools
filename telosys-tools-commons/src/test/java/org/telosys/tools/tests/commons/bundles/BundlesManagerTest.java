@@ -11,6 +11,7 @@ import org.telosys.tools.commons.bundles.BundlesManager;
 import org.telosys.tools.commons.cfg.TelosysToolsCfg;
 import org.telosys.tools.commons.cfg.TelosysToolsCfgManager;
 import org.telosys.tools.tests.commons.TestsFolders;
+import org.telosys.tools.tests.commons.http.HttpTestConfig;
 
 public class BundlesManagerTest extends TestCase {
 
@@ -21,41 +22,56 @@ public class BundlesManagerTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		System.out.println("===== [ SETUP ] =====");
+		System.out.println("Loading configuration from folder : " + TestsFolders.getTestsRootFolder() );
 		TelosysToolsCfgManager cfgManager = new TelosysToolsCfgManager(TestsFolders.getTestsRootFolder());
-		//TelosysToolsCfg telosysToolsCfg;
 		try {
 			this.telosysToolsCfg = cfgManager.loadProjectConfig();
 		} catch (TelosysToolsException e) {
 			e.printStackTrace();
 			throw new RuntimeException("Cannot load project properties", e);
 		}
-		Properties properties = telosysToolsCfg.getProperties();
-		System.out.println("HTTP properties : ");
-		printProperty(properties, "http.proxyHost");
-		printProperty(properties, "http.proxyPort");
-		printProperty(properties, "https.proxyHost");
-		printProperty(properties, "https.proxyPort");
-	}
 
+		
+		
+		Properties configProperties = telosysToolsCfg.getProperties();
+		
+//		System.out.println("Forcing http properties from " + TestsFolders.getTestsProxyPropertiesFile() +" ...");
+//		PropertiesManager pm = new PropertiesManager(TestsFolders.getTestsProxyPropertiesFile());
+//		Properties proxyProperties = pm.load();
+//		if ( proxyProperties == null ) {
+//			throw new RuntimeException("ERROR : No proxy properties");
+//		}
+		System.out.println("Forcing http properties ...");
+		Properties proxyProperties = HttpTestConfig.getSpecificProxyProperties();
+		setProperty(configProperties, proxyProperties, "http.proxyHost");
+		setProperty(configProperties, proxyProperties, "http.proxyPort");
+		setProperty(configProperties, proxyProperties, "https.proxyHost");
+		setProperty(configProperties, proxyProperties, "https.proxyPort");
+		
+		System.out.println("HTTP properties : ");
+		printProperty(configProperties, "http.proxyHost");
+		printProperty(configProperties, "http.proxyPort");
+		printProperty(configProperties, "https.proxyHost");
+		printProperty(configProperties, "https.proxyPort");
+	}
+	private void setProperty(Properties configProperties, Properties proxyProperties, String name) {
+		System.out.print("Property '"+name+"' ");
+		String value = proxyProperties.getProperty(name) ;
+		if ( value != null ) {
+			configProperties.setProperty(name, value);
+			System.out.print(" set to '"+value+"' ");
+		}
+		else {
+			System.out.print(" null (not set)");
+		}
+		System.out.println("");
+	}
+	
 	private void printProperty(Properties properties, String name) {
 		System.out.println(name + " : " + properties.getProperty(name));
 	}
 	
 	private BundlesManager getBundlesManager() {
-//		TelosysToolsCfgManager cfgManager = new TelosysToolsCfgManager(TestsFolders.getTestsRootFolder());
-//		//TelosysToolsCfg telosysToolsCfg;
-//		try {
-//			this.telosysToolsCfg = cfgManager.loadProjectConfig();
-//		} catch (TelosysToolsException e) {
-//			e.printStackTrace();
-//			throw new RuntimeException("Cannot load project properties", e);
-//		}
-//		Properties properties = telosysToolsCfg.getProperties();
-//		System.out.println("HTTP properties : ");
-//		printProperty(properties, "http.proxyHost");
-//		printProperty(properties, "http.proxyPort");
-//		printProperty(properties, "https.proxyHost");
-//		printProperty(properties, "https.proxyPort");
 		BundlesManager bm = new BundlesManager( telosysToolsCfg );
 		return bm;
 	}

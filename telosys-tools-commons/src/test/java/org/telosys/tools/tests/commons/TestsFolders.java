@@ -16,5 +16,9 @@ public class TestsFolders {
 		return TESTS_ROOT_FOLDER + "/TelosysTools/downloads";
 	}
 	
+	public final static String getTestsProxyPropertiesFile() {
+		return TESTS_ROOT_FOLDER + "/proxy.properties";
+	}
+	
 	
 }
