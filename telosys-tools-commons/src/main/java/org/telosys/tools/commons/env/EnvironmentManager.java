@@ -34,12 +34,13 @@ import org.telosys.tools.commons.StrUtil;
  */
 public class EnvironmentManager {
 
-	public final static String TELOSYS_TOOLS_CFG = "telosys-tools.cfg" ;
+	private final static String TELOSYS_TOOLS_CFG         = "telosys-tools.cfg" ;
 	
-	public final static String DATABASES_DBCFG   = "databases.dbcfg" ;
+	private final static String DATABASES_DBCFG           = "databases.dbcfg" ;
+
+	private final static String TELOSYS_TOOLS_FOLDER_NAME = "TelosysTools" ;
 
 	private final String environmentDirectory ;
-	
 	
 	/**
 	 * Constructor
@@ -55,29 +56,47 @@ public class EnvironmentManager {
 	 * Returns the environment directory (OS full path)
 	 * @return
 	 */
-	public String getEnvironmentDirectory() {
+	public String getEnvironmentFolderFullPath() {
 		return environmentDirectory;
 	}
 
 	/**
-	 * Returns the TelosysTools configuration file path (OS full path)
+	 * Returns the TelosysTools configuration file path (OS full path)<br>
+	 * ( e.g. 'X:/dir/myproject/telosys-tools.cfg' )
 	 * @return
 	 */
-	public String getTelosysToolsConfigFile() {
+	public String getTelosysToolsConfigFileFullPath() {
 		return FileUtil.buildFilePath(environmentDirectory, TELOSYS_TOOLS_CFG) ;
+	}
+
+	/**
+	 * Returns the TelosysTools folder name ( e.g. "TelosysTools" )
+	 * @return
+	 */
+	public String getTelosysToolsFolderName() {
+		return TELOSYS_TOOLS_FOLDER_NAME ;
+	}
+
+	/**
+	 * Returns the TelosysTools folder full path (OS full path)<br>
+	 * ( e.g. 'X:/dir/myproject/TelosysTools' )
+	 * @return
+	 */
+	public String getTelosysToolsFolderFullPath() {
+		return FileUtil.buildFilePath(environmentDirectory, TELOSYS_TOOLS_FOLDER_NAME) ;
 	}
 
 	/**
 	 * Initializes the environment using the standard folders and configuration files
 	 * @param sb
 	 */
-	public void initStandardEnvironment(StringBuffer sb){
-		createFolder( "TelosysTools", sb );
-		createFolder( "TelosysTools/downloads", sb );
-		createFolder( "TelosysTools/lib", sb );
-		createFolder( "TelosysTools/templates", sb );
-		initDatabasesConfigFile( "TelosysTools", sb );
-		initTelosysToolsConfigFile( sb);		
+	public void initStandardEnvironment(StringBuffer sb) {
+		createFolder( TELOSYS_TOOLS_FOLDER_NAME, sb );
+		createFolder( TELOSYS_TOOLS_FOLDER_NAME + "/downloads", sb );
+		createFolder( TELOSYS_TOOLS_FOLDER_NAME + "/lib", sb );
+		createFolder( TELOSYS_TOOLS_FOLDER_NAME + "/templates", sb );
+		initDatabasesConfigFile(sb);
+		initTelosysToolsConfigFile(sb);
 	}
 	
 	/**
@@ -121,19 +140,30 @@ public class EnvironmentManager {
 	
 	/**
 	 * Initializes the Telosys Tools databases configuration file <br>
-	 * Copy the default databases configuration file in the given environment sub-folder 
-	 * @param folder
+	 * Copy the default databases configuration file in the standard folder ( in "TelosysTools" )
+	 * If the destination file already exists it is not copied 
+	 * @param sb 
+	 */
+	public void initDatabasesConfigFile( StringBuffer sb ){
+		initDatabasesConfigFile( TELOSYS_TOOLS_FOLDER_NAME, sb );
+	}
+	
+	/**
+	 * Initializes the Telosys Tools databases configuration file <br>
+	 * Copy the default databases configuration file in the given environment sub-folder <br>
+	 * If the destination file already exists it is not copied 
+	 * @param folderName the folder (in the environment folder) where to create the file
 	 * @param sb
 	 */
-	public void initDatabasesConfigFile( String folder, StringBuffer sb ){
-		String dirFullPath = fullPathInEnvironmentDir(folder);
+	public void initDatabasesConfigFile( String folderName, StringBuffer sb ){
+		String dirFullPath = fullPathInEnvironmentDir(folderName);
 		File destinationDir = new File (dirFullPath) ;
 		if ( destinationDir.exists() != true ) {
-			sb.append("ERROR : cannot create '" + DATABASES_DBCFG + "' file, directory '" + folder + "' doesn't exist ! \n");
+			sb.append("ERROR : cannot create '" + DATABASES_DBCFG + "' file, directory '" + folderName + "' doesn't exist ! \n");
 			return ;
 		}
 		if ( destinationDir.isDirectory() != true ) {
-			sb.append("ERROR : cannot create '" + DATABASES_DBCFG + "' file, '" + folder + "' is not a directory ! \n");
+			sb.append("ERROR : cannot create '" + DATABASES_DBCFG + "' file, '" + folderName + "' is not a directory ! \n");
 			return ;
 		}
 		
