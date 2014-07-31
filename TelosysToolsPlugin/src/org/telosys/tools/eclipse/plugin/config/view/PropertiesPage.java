@@ -1,8 +1,6 @@
 package org.telosys.tools.eclipse.plugin.config.view;
 
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -26,9 +24,8 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PropertyPage;
-import org.telosys.tools.commons.FileUtil;
-import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.commons.cfg.TelosysToolsCfg;
+import org.telosys.tools.commons.env.EnvironmentManager;
 import org.telosys.tools.commons.github.GitHubClient;
 import org.telosys.tools.commons.http.HttpUtil;
 import org.telosys.tools.commons.variables.Variable;
@@ -37,7 +34,6 @@ import org.telosys.tools.eclipse.plugin.PluginBuildInfo;
 import org.telosys.tools.eclipse.plugin.commons.EclipseProjUtil;
 import org.telosys.tools.eclipse.plugin.commons.MsgBox;
 import org.telosys.tools.eclipse.plugin.commons.PluginLogger;
-import org.telosys.tools.eclipse.plugin.commons.PluginResources;
 import org.telosys.tools.eclipse.plugin.commons.TelosysPluginException;
 import org.telosys.tools.eclipse.plugin.commons.Util;
 import org.telosys.tools.eclipse.plugin.config.ProjectConfig;
@@ -56,7 +52,6 @@ public class PropertiesPage extends PropertyPage {
 	private final static boolean DEBUG_MODE = false ;
 
 	private final static String WEB_CONTENT     = "WebContent" ;
-	private final static String DATABASES_DBCFG = "databases.dbcfg" ;
 	private final static String DEFAULT_GITHUB_USER_NAME = "telosys-tools" ;
 
     //--- Tab "General"
@@ -273,7 +268,6 @@ public class PropertiesPage extends PropertyPage {
 			
 			createTabGeneral(tabFolder);
 			createTabPackages(tabFolder); 
-			// createTabClassesNames(tabFolder); // TODO : remove method ??
 			createTabFolders(tabFolder); 
 			createTabVariables(tabFolder);
 			createTabDownload(tabFolder);
@@ -286,9 +280,9 @@ public class PropertiesPage extends PropertyPage {
 			}
 			
 			//--- Init screen fields values
-			//initFields();
-			ProjectConfig projectConfig = loadProjectConfig();
-			configToFields( projectConfig );
+//			ProjectConfig projectConfig = loadProjectConfig();
+//			configToFields( projectConfig );
+			initFieldsFromConfigurationFile();
 
 		} 
 		catch ( Exception e )
@@ -365,90 +359,117 @@ public class PropertiesPage extends PropertyPage {
         }
 		);
 	}
+//	//------------------------------------------------------------------------------------------
+//	private void initTelosysToolsEnvOLD() {
+//		IProject project = getCurrentProject();
+//		StringBuffer sb = new StringBuffer();
+//		sb.append("Telosys Tools environment initialized.\n\n");
+//		createFolder(project, _tRepositoriesFolder, sb ) ;
+//		createFolder(project, _tTemplatesFolder, sb ) ;
+//		createFolder(project, _tDownloadsFolder, sb ) ;
+//		createFolder(project, _tLibrariesFolder, sb ) ;
+//		initDatabasesConfigFile(project, _tTemplatesFolder.getText(), sb);
+//		MsgBox.info(sb.toString());
+//	}
 	//------------------------------------------------------------------------------------------
-	private void initTelosysToolsEnv(){
-		IProject project = getCurrentProject();
+	private void initTelosysToolsEnv() {
+		//IProject project = getCurrentProject();
+		//String projectFolderFullPath = project.getLocation().toFile().getAbsolutePath();
+		IProject currentProject = getCurrentProject();
+		String projectFolderFullPath = EclipseProjUtil.getProjectDir( currentProject );
+		EnvironmentManager em = new EnvironmentManager( projectFolderFullPath );
 		StringBuffer sb = new StringBuffer();
-		sb.append("Telosys Tools environment initialized.\n\n");
-		createFolder(project, _tRepositoriesFolder, sb ) ;
-		createFolder(project, _tTemplatesFolder, sb ) ;
-		createFolder(project, _tDownloadsFolder, sb ) ;
-		createFolder(project, _tLibrariesFolder, sb ) ;
-		initDatabasesConfigFile(project, _tTemplatesFolder.getText(), sb);
-		MsgBox.info(sb.toString());
+		sb.append("Project initialization \n");
+		sb.append("Project folder : '" + projectFolderFullPath + "' \n");
+		sb.append("\n");
+		// Init environment files
+		em.initStandardEnvironment(sb);
+		// Refresh potential new files : 
+		EclipseProjUtil.refreshFile(currentProject, em.getTelosysToolsConfigFileName() ); // file "telosys-tools.cfg"
+		EclipseProjUtil.refreshFolder(currentProject, em.getTelosysToolsFolderName() ); // folder "TelosysTools"
+		initFieldsFromConfigurationFile() ;
+		MsgBox.info(sb.toString());		
 	}
 	//------------------------------------------------------------------------------------------
-	private void createFolder(IProject project, Text folderText, StringBuffer sb){
-		String folderName = folderText.getText() ;
-		if ( ! StrUtil.nullOrVoid(folderName) )  {
-			folderName = folderName.trim() ;
-			if ( EclipseProjUtil.folderExists(project, folderName) ) {
-				sb.append(". folder '" + folderName + "' exists (not created)");
-			}
-			else {
-				boolean created = EclipseProjUtil.createFolder(project, folderName ) ;	
-				if ( created ) {
-					sb.append(". folder '" + folderName + "' created");
-				}
-				else {
-					sb.append(". folder '" + folderName + "' not created (ERROR)");
-				}
-			}
-		}
-		sb.append("\n");
-	}	
-	//------------------------------------------------------------------------------------------
-	private void initDatabasesConfigFile(IProject project, String sTemplatesFolder, StringBuffer sb){
-		
-		//--- File provided with the plugin distribution
-		//String pluginResourcesFolder = MyPlugin.getResourcesDirectory();
-		//String  fullFileName = FileUtil.buildFilePath(pluginResourcesFolder, DATABASES_DBCFG );
-		
-		//--- Destination file (in the project)
-		if ( StrUtil.nullOrVoid(sTemplatesFolder) ) {
-			MsgBox.error("Templates folder is void !");
-			return ;
-		}
-		StringBuffer sbDestination = new StringBuffer();
-		String s = sTemplatesFolder.trim();
-		String[] parts = StrUtil.split(s, '/');
-		for ( int i = 0 ; i < ( parts.length - 1 ) ; i++ ) {
-			if ( i > 0 ) {
-				sbDestination.append("/");
-			}
-			sbDestination.append(parts[i]);
-		}
-		sbDestination.append("/");
-		sbDestination.append(DATABASES_DBCFG);		
-		String destinationInProject = sbDestination.toString() ;
-		
-		//--- Destination file (in the filesystem)
-		String destinationAbsolutePath = EclipseProjUtil.getAbsolutePathInFileSystem(project, destinationInProject);
-		//MsgBox.info("Destination absolute path : \n" + destinationAbsolutePath );
-		File file = new File(destinationAbsolutePath) ;
-		if ( file.exists() ) {
-			//--- Already exists : no change
-			sb.append(". file '" + destinationInProject + "' exists (not copied)");
-		}
-		else {
-			//--- Doesn't exist yet : Initialize by copy ( from plugin folder to project folder )
-			URL databaseConfigURL = PluginResources.getResourceURL(DATABASES_DBCFG);
-			if ( databaseConfigURL != null ) {
-				try {
-					FileUtil.copy(databaseConfigURL, destinationAbsolutePath, false);
-					EclipseProjUtil.refreshResource(project, destinationInProject);
-					sb.append(". file '" + destinationInProject + "' copied");
-				} catch (Exception e) {
-					MsgBox.error("Cannot copy '" + DATABASES_DBCFG + "' file. \n\n"
-							+ "Source (URL) : \n" + databaseConfigURL.toString() + "\n\n" 
-							+ "Destination : \n" + destinationAbsolutePath + "\n" 
-						 ) ;
-					sb.append(". ERROR : cannot copy file '" + destinationInProject + "' ");
-				}
-			}
-		}
-		sb.append("\n");
+	/**
+	 * Reload the configuration from the "cfg" file and reset the fields values from this configuration 
+	 */
+	private void initFieldsFromConfigurationFile() {
+		ProjectConfig projectConfig = loadProjectConfig();
+		configToFields( projectConfig );
 	}
+	//------------------------------------------------------------------------------------------
+//	private void createFolder(IProject project, Text folderText, StringBuffer sb){
+//		String folderName = folderText.getText() ;
+//		if ( ! StrUtil.nullOrVoid(folderName) )  {
+//			folderName = folderName.trim() ;
+//			if ( EclipseProjUtil.folderExists(project, folderName) ) {
+//				sb.append(". folder '" + folderName + "' exists (not created)");
+//			}
+//			else {
+//				boolean created = EclipseProjUtil.createFolder(project, folderName ) ;	
+//				if ( created ) {
+//					sb.append(". folder '" + folderName + "' created");
+//				}
+//				else {
+//					sb.append(". folder '" + folderName + "' not created (ERROR)");
+//				}
+//			}
+//		}
+//		sb.append("\n");
+//	}	
+	//------------------------------------------------------------------------------------------
+//	private void initDatabasesConfigFile(IProject project, String sTemplatesFolder, StringBuffer sb){
+//		
+//		//--- File provided with the plugin distribution
+//		//String pluginResourcesFolder = MyPlugin.getResourcesDirectory();
+//		//String  fullFileName = FileUtil.buildFilePath(pluginResourcesFolder, DATABASES_DBCFG );
+//		
+//		//--- Destination file (in the project)
+//		if ( StrUtil.nullOrVoid(sTemplatesFolder) ) {
+//			MsgBox.error("Templates folder is void !");
+//			return ;
+//		}
+//		StringBuffer sbDestination = new StringBuffer();
+//		String s = sTemplatesFolder.trim();
+//		String[] parts = StrUtil.split(s, '/');
+//		for ( int i = 0 ; i < ( parts.length - 1 ) ; i++ ) {
+//			if ( i > 0 ) {
+//				sbDestination.append("/");
+//			}
+//			sbDestination.append(parts[i]);
+//		}
+//		sbDestination.append("/");
+//		sbDestination.append(DATABASES_DBCFG);		
+//		String destinationInProject = sbDestination.toString() ;
+//		
+//		//--- Destination file (in the filesystem)
+//		String destinationAbsolutePath = EclipseProjUtil.getAbsolutePathInFileSystem(project, destinationInProject);
+//		//MsgBox.info("Destination absolute path : \n" + destinationAbsolutePath );
+//		File file = new File(destinationAbsolutePath) ;
+//		if ( file.exists() ) {
+//			//--- Already exists : no change
+//			sb.append(". file '" + destinationInProject + "' exists (not copied)");
+//		}
+//		else {
+//			//--- Doesn't exist yet : Initialize by copy ( from plugin folder to project folder )
+//			URL databaseConfigURL = PluginResources.getResourceURL(DATABASES_DBCFG);
+//			if ( databaseConfigURL != null ) {
+//				try {
+//					FileUtil.copy(databaseConfigURL, destinationAbsolutePath, false);
+//					EclipseProjUtil.refreshResource(project, destinationInProject);
+//					sb.append(". file '" + destinationInProject + "' copied");
+//				} catch (Exception e) {
+//					MsgBox.error("Cannot copy '" + DATABASES_DBCFG + "' file. \n\n"
+//							+ "Source (URL) : \n" + databaseConfigURL.toString() + "\n\n" 
+//							+ "Destination : \n" + destinationAbsolutePath + "\n" 
+//						 ) ;
+//					sb.append(". ERROR : cannot copy file '" + destinationInProject + "' ");
+//				}
+//			}
+//		}
+//		sb.append("\n");
+//	}
 	
 	//------------------------------------------------------------------------------------------
 	/**
@@ -1073,7 +1094,7 @@ public class PropertiesPage extends PropertyPage {
 		buttons.setLayout(new FillLayout());
 
 		Button mavenButton = new Button(buttons, SWT.PUSH);
-		mavenButton.setText("Maven folders");
+		mavenButton.setText("Maven project folders");
 		mavenButton.addSelectionListener(new SelectionListener() 
     	{
             public void widgetSelected(SelectionEvent arg0)
@@ -1091,19 +1112,18 @@ public class PropertiesPage extends PropertyPage {
 		);
 
 		Button projectButton = new Button(buttons, SWT.PUSH);
-		projectButton.setText("Project folders");
+		projectButton.setText("Eclipse project folders");
 		projectButton.addSelectionListener(new SelectionListener() 
     	{
             public void widgetSelected(SelectionEvent event)
             {
             	//Object source = event.getSource();
             	//MsgBox.info("source : " + source.getClass().getCanonicalName() );
-            	String projectSourceFolder = getProjectSourceFolder(); 
-            	_tSrcFolder.setText( projectSourceFolder );
-            	_tResFolder.setText("");
+            	_tSrcFolder.setText( getProjectSourceFolder() );
+            	_tResFolder.setText( "src-resources" );
             	_tWebFolder.setText( getProjectWebContentFolder() );
-            	_tTestSrcFolder.setText( projectSourceFolder );
-            	_tTestResFolder.setText("");
+            	_tTestSrcFolder.setText( "src-test-java" );
+            	_tTestResFolder.setText( "src-test-resources" );
             }
             public void widgetDefaultSelected(SelectionEvent event)
             {
@@ -1152,12 +1172,7 @@ public class PropertiesPage extends PropertyPage {
 			// Exists 
 			return WEB_CONTENT ;
 		}
-//		IResource res = EclipseProjUtil.getResource(project, "/"+WEB_CONTENT);
-//		if ( res != null ) {
-//			// Exists 
-//			return WEB_CONTENT ;
-//		}
-		return "" ;
+		return "src-web" ;
 	}	
 	//------------------------------------------------------------------------------------------
 	private Text createTextField(Composite composite, String sLabel) {
