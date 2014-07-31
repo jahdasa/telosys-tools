@@ -28,13 +28,13 @@ public class ConfigDefaults {
 	// Default classe names
 	//---------------------------------------------------------------------------
  
-	 public final static String DEFAULT_BEAN_CLASS_NAME       =  "${" + BEANNAME + "}" ;
-	 
-	 public final static String DEFAULT_LIST_CLASS_NAME       =  "${" + BEANNAME + "}List" ;
-
-	 public final static String DEFAULT_DAO_CLASS_NAME        =  "${" + BEANNAME + "}DAO" ;
-	 
-	 public final static String DEFAULT_XML_MAPPER_CLASS_NAME =  "${" + BEANNAME + "}Xml" ;
+//	 public final static String DEFAULT_BEAN_CLASS_NAME       =  "${" + BEANNAME + "}" ;
+//	 
+//	 public final static String DEFAULT_LIST_CLASS_NAME       =  "${" + BEANNAME + "}List" ;
+//
+//	 public final static String DEFAULT_DAO_CLASS_NAME        =  "${" + BEANNAME + "}DAO" ;
+//	 
+//	 public final static String DEFAULT_XML_MAPPER_CLASS_NAME =  "${" + BEANNAME + "}Xml" ;
 	 
 	 //---------------------------------------------------------------------------
 	 
