@@ -61,6 +61,15 @@ public class EnvironmentManager {
 	}
 
 	/**
+	 * Returns the TelosysTools configuration file name<br>
+	 * ( e.g. 'telosys-tools.cfg' )
+	 * @return
+	 */
+	public String getTelosysToolsConfigFileName() {
+		return TELOSYS_TOOLS_CFG ;
+	}
+
+	/**
 	 * Returns the TelosysTools configuration file path (OS full path)<br>
 	 * ( e.g. 'X:/dir/myproject/telosys-tools.cfg' )
 	 * @return
