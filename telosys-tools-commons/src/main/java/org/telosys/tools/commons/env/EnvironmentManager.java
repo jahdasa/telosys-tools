@@ -186,7 +186,7 @@ public class EnvironmentManager {
 	private void copyFileFromMetaInf(String destFullPath, String fileName, StringBuffer sb){
 		File destFile = new File (destFullPath) ;
 		if ( destFile.exists() ) {
-			sb.append(". file '" + destFullPath + "' exists (not created)");
+			sb.append(". file '" + destFullPath + "' exists (not created) \n");
 		}
 		else {
 			String fileNameInMetaInf = META_INF_FILES + fileName ;
@@ -208,27 +208,6 @@ public class EnvironmentManager {
 		        {
 		            sb.append("ERROR : cannot create output file '" + destFullPath + "' ! \n");
 		        }
-		        
-//		        //--- Copy and close
-//				byte buffer[] = new byte[BUFFER_SIZE];
-//				int len = 0;
-//				
-//				try
-//	            {
-//	                while ((len = is.read(buffer)) > 0)
-//	                {
-//	                	fos.write(buffer, 0, len);
-//	                }
-//	                is.close();
-//	                fos.close();
-//	                
-//	    			sb.append(". file '" + destFullPath + "' created.");
-//	                
-//	            } catch (IOException ioex)
-//	            {
-//		            sb.append("ERROR : IOException : " + ioex.getMessage() );
-//	            }
-
 			}
 			else {
 				sb.append("ERROR : '" + fileName + "' input file not found in jar ! \n");
