@@ -20,5 +20,8 @@ public class TestsFolders {
 		return TESTS_ROOT_FOLDER + "/proxy.properties";
 	}
 	
+	public final static String getFullFileName(String fileName) {
+		return TESTS_ROOT_FOLDER + "/" + fileName ;
+	}
 	
 }

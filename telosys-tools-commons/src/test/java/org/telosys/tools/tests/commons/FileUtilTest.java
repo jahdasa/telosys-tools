@@ -9,7 +9,7 @@ import org.telosys.tools.commons.FileUtil;
 
 public class FileUtilTest extends TestCase {
 
-	public void testFileCopy() throws IOException, Exception {
+	public void testCopyWithFileName() throws IOException, Exception {
 		
 		String fileName = "/testfilecopy/origin/file1.txt" ;
 		System.out.println("Searching file '" + fileName + "' by classpath..." );
@@ -36,6 +36,45 @@ public class FileUtilTest extends TestCase {
 		System.out.println("Destination file : " + destFullFileName );
 		
 		FileUtil.copy(originalFullFileName, destFullFileName, true);
+	}
+	
+	public void testCopyWithFileObject() throws IOException, Exception {
+		
+		String sourceFileName = TestsFolders.getFullFileName("file1.txt");
+		String destinationFileName = TestsFolders.getFullFileName("file1-bis.txt");
+		System.out.println("Copy from file '" + sourceFileName + "' to '" + destinationFileName + "'" );
+
+		File sourceFile = new File(sourceFileName);
+		File destinationFile = new File(destinationFileName);
+		assertTrue ( sourceFile.exists()) ;
+		
+		FileUtil.copy(sourceFile, destinationFile, true);
+	}
+	
+	public void testCopyWithFileObject2() throws IOException, Exception {
+		
+		String sourceFileName = TestsFolders.getFullFileName("file1.txt");
+		String destinationFileName = TestsFolders.getFullFileName("foo/bar/file1-bis.txt");
+		System.out.println("Copy from file '" + sourceFileName + "' to '" + destinationFileName + "'" );
+
+		File sourceFile = new File(sourceFileName);
+		File destinationFile = new File(destinationFileName);
+		assertTrue ( sourceFile.exists()) ;
+		
+		FileUtil.copy(sourceFile, destinationFile, false);
+	}
+
+	public void testCopyFileToDirectory() throws IOException, Exception {
+		
+		String sourceFileName = TestsFolders.getFullFileName("file1.txt");
+		String destinationDirectoryName = TestsFolders.getFullFileName("mydir/dest");
+		System.out.println("Copy from file '" + sourceFileName + "' to '" + destinationDirectoryName + "'" );
+
+		File sourceFile = new File(sourceFileName);
+		File destinationDirectory = new File(destinationDirectoryName);
+		assertTrue ( sourceFile.exists()) ;
+		
+		FileUtil.copyToDirectory(sourceFile, destinationDirectory, true);
 	}
 	
 	public void testFolderCopy() throws IOException, Exception {

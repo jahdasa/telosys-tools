@@ -78,7 +78,8 @@ public class FileUtil {
         
         //--- Create output file folder is non existent 
         if ( createFolder ) {
-        	createFolderIfNecessary(outputFileName);
+        	//createFolderIfNecessary(outputFileName);
+        	createParentFolderIfNecessary(new File(outputFileName));        	
         }
     	
         //--- Open output file
@@ -90,6 +91,64 @@ public class FileUtil {
         {
             throw new Exception("copy : cannot open output file.", ex);
         }
+        
+        //--- Copy and close
+        copyAndClose( fis, fos);
+    }
+
+    //----------------------------------------------------------------------------------------------------
+    /**
+     * Copies a file into another one 
+     * @param inputFile
+     * @param outputFile
+     * @param createFolder if true creates the destination folder if necessary
+     * @throws Exception
+     */
+    public static void copy(File inputFile, File outputFile, boolean createFolder) throws Exception
+    {
+        //--- Open input file
+		FileInputStream fis = new FileInputStream(inputFile);
+        
+        //--- Create output file folder is non existent 
+        if ( createFolder ) {
+        	createParentFolderIfNecessary(outputFile);
+        }
+    	
+        //--- Open output file
+		FileOutputStream fos = new FileOutputStream(outputFile);
+        
+        //--- Copy and close
+        copyAndClose( fis, fos);
+    }
+
+    //----------------------------------------------------------------------------------------------------
+    /**
+     * Copies a file into a directory 
+     * @param inputFile 
+     * @param directory 
+     * @param createFolder if true creates the destination folder if necessary
+     * @throws Exception
+     */
+    public static void copyToDirectory(File inputFile, File directory, boolean createFolder) throws Exception
+    {
+    	if ( directory.exists() ) {
+    		if ( ! directory.isDirectory() ) {
+    			throw new Exception(directory + " is not a directory");
+    		}
+    	}
+    	String outputFileFullPath = FileUtil.buildFilePath(directory.getAbsolutePath(), inputFile.getName());
+    	File outputFile = new File(outputFileFullPath);
+    	
+        //--- Open input file
+		FileInputStream fis = new FileInputStream(inputFile);
+        
+        //--- Create output file folder is non existent 
+        if ( createFolder ) {
+        	createParentFolderIfNecessary(outputFile);
+        }
+    	
+        //--- Open output file
+		FileOutputStream fos = new FileOutputStream(outputFile);
         
         //--- Copy and close
         copyAndClose( fis, fos);
@@ -115,7 +174,8 @@ public class FileUtil {
         
         //--- Create output file folder is non existent 
         if ( createFolder ) {
-        	createFolderIfNecessary(outputFileName);
+        	//createFolderIfNecessary(outputFileName);
+        	createParentFolderIfNecessary(new File(outputFileName));        	
         }		
 
     	//--- Open output stream
@@ -135,10 +195,10 @@ public class FileUtil {
     //----------------------------------------------------------------------------------------------------
     /**
      * Creates the parent folder for the given file if it doesn't exist
-     * @param fullFileName
+     * @param file 
      */
-    private static void createFolderIfNecessary( String fullFileName ) {
-    	File file = new File(fullFileName) ;
+    private static void createParentFolderIfNecessary( File file) {
+    	//File file = new File(fullFileName) ;
     	File parent = file.getParentFile() ;
     	if ( parent != null ) {
     		if ( parent.exists() == false ) {
