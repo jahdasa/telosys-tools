@@ -18,12 +18,12 @@ package org.telosys.tools.commons.io;
 public interface OverwriteChooser {
 
 	public final static int YES        = 0 ;
-	public final static int YES_TO_ALL = 1 ;
+//	public final static int YES_TO_ALL = 1 ;
 	public final static int NO         = 2 ;
-	public final static int NO_TO_ALL  = 3 ;
+//	public final static int NO_TO_ALL  = 3 ;
 	public final static int CANCEL     = 4 ;
 	
-	int choose(String fileName) ;
+	int choose(String fullFileName) ;
 
 	int choose(String fileName, String folderName) ;
 }
