@@ -52,7 +52,7 @@ public class ResourcesCopier {
 	 * Copies a file to another one, or a file to a directory, or a directory in another one <br>
 	 * @param origin original file or folder
 	 * @param destination  destination file or folder
-	 * @return
+	 * @return the number of files copied (or -1 if the copy has been canceled)
 	 * @throws Exception
 	 */
 	public int copy(File origin , File destination) throws Exception {
@@ -62,21 +62,31 @@ public class ResourcesCopier {
 		if ( destination == null ) {
 			throw new IllegalArgumentException("destination is null");
 		}
-		int n = 0 ; 
-		if ( origin.isFile() && destination.exists() && destination.isDirectory() ) {
-			// Copy a single file to an existing directory
-			//FileUtil.copyToDirectory(origin, destination, true);
-			// n = 1 ;
-			n = copyFileToFolder(origin, destination);
+		try {
+			int n = 0 ; 
+			if ( origin.isFile() && destination.exists() && destination.isDirectory() ) {
+				// Copy a single file to an existing directory
+				n = copyFileToFolder(origin, destination);
+			}
+			else {
+				// Copy file to file or folder to folder
+				n = recursiveCopy(origin, destination); 
+			}
+			return n ;
 		}
-		else {
-			// copy file to file or folder to folder
-			n = recursiveCopy(origin, destination); 
+		catch(CancelException e) {
+			return -1;
 		}
-		return n ;
 	}
 	
 	//----------------------------------------------------------------------------------------------------
+	/**
+	 * Copy a single file in a folder
+	 * @param inputFile
+	 * @param directory
+	 * @return
+	 * @throws Exception
+	 */
 	private int copyFileToFolder(File inputFile , File directory) throws Exception {
     	String outputFileFullPath = FileUtil.buildFilePath(directory.getAbsolutePath(), inputFile.getName());
     	File outputFile = new File(outputFileFullPath);
@@ -181,6 +191,12 @@ public class ResourcesCopier {
 //		
 //	}
 	
+	/**
+	 * Uses the given OverwriteChooser instance to determine if the file must be overwritten
+	 * @param file
+	 * @return
+	 * @throws Exception
+	 */
 	private boolean getOverwriteChoice(File file) throws Exception {
 		log("destination file exists => confirmation") ;
 		int choice = _overwriteChooser.choose(file.getName(), file.getParent() );

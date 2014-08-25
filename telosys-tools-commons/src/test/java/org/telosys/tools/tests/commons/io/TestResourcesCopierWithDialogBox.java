@@ -2,109 +2,104 @@ package org.telosys.tools.tests.commons.io;
 
 import java.io.File;
 
-import junit.framework.TestCase;
-
-import org.telosys.tools.commons.io.DefaultOverwriteChooser;
+import org.telosys.tools.commons.io.DialogBoxOverwriteChooser;
 import org.telosys.tools.commons.io.OverwriteChooser;
 import org.telosys.tools.commons.io.ResourcesCopier;
 import org.telosys.tools.tests.commons.TestsFolders;
 
-public class ResourcesCopierTest extends TestCase {
+public class TestResourcesCopierWithDialogBox {
 
-	
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-//		System.out.println("===== [ SETUP ] =====");
-//		System.out.println("Loading configuration from folder : " + TestsFolders.getTestsRootFolder() );
+	public static void main(String[] args) {
+
+		testCopyFileToFile1() ;
 	}
-
+	
 	//----------- File to File ------------------
-	public void testCopyFileToFile1()  {
+	public static void testCopyFileToFile1() {
 		int n = copy (	getOriginFile("file1.txt"), 
 						getDestinationFile("file1-copy.txt"), 
 						OverwriteChooser.YES);
-		assertEquals(1, n);
+		showResult(n);
 	}
 
-	public void testCopyFileToFile2() {
+	public static void testCopyFileToFile2()  {
 		int n = copy (	getOriginFile("file1.txt"), 
 						getDestinationFile("file1-copy.txt"), 
 						OverwriteChooser.NO);
-		assertEquals(0, n);
+		showResult(n);
 	}
 
 	//----------- Folder to Folder ------------------
-	public void testCopyFolderToFolder1() {
+	public static void testCopyFolderToFolder1() {
 		int n = copy (	getOriginFile("foo"), 
 						getDestinationFile("foo2"), 
 						OverwriteChooser.YES);
-		assertTrue(n > 0 );
+		showResult(n);
 	}
 	
-	public void testCopyFolderToFolder2()  {
+	public static void testCopyFolderToFolder2() {
 		int n = copy (	getOriginFile("foo"), 
 						getDestinationFile("foo3"), 
 						OverwriteChooser.YES);
-		assertTrue(n > 0 );
+		showResult(n);
 	}
 
-	public void testCopyFolderToFolder3() {
+	public static void testCopyFolderToFolder3()  {
 		int n = copy (	getOriginFile("foo/bar"), 
 						getDestinationFile("foo-bar"), 
 						OverwriteChooser.YES);
-		assertTrue(n > 0 );
+		showResult(n);
 	}
 	
-	public void testCopyFolderToFolder4()  {
+	public static void testCopyFolderToFolder4()  {
 		int n = copy (	getOriginFile("foo/bar"), 
 						getDestinationFile("foo-bar"), 
 						OverwriteChooser.NO);
-		assertTrue(n == 0 );
+		showResult(n);
 	}
 	
 	//----------- File to Folder ------------------
-	public void testCopyFileToFolder1()  {
+	public static void testCopyFileToFolder1()  {
 		int n = copy (	getOriginFile("foo/fileA.txt"), 
 						getDestinationFile("mydir"), 
 						OverwriteChooser.YES);
-		assertTrue(n == 1 );
+		showResult(n);
 	}
-	public void testCopyFileToFolder1bis() {
+	public static void testCopyFileToFolder1bis() {
 		int n = copy (	getOriginFile("foo/fileA.txt"), 
 						getDestinationFile("mydir"), 
 						OverwriteChooser.NO);
-		assertTrue(n == 0 );
+		showResult(n);
 	}
 	
-	public void testCopyFileToFolder2()  {
+	public static void testCopyFileToFolder2()  {
 		int n = copy (	getOriginFile("foo/fileA.txt"), 
 						getDestinationFile("mydir/dest-A"), 
 						OverwriteChooser.YES);
-		assertTrue(n == 1 );
+		showResult(n);
 	}
-	public void testCopyFileToFolder2bis() {
+	public static void testCopyFileToFolder2bis() {
 		int n = copy (	getOriginFile("foo/fileA.txt"), 
 						getDestinationFile("mydir/dest-A"), 
 						OverwriteChooser.NO);
-		assertTrue(n == 0 );
+		showResult(n);
 	}
 	
 	//----------------------------------------------
-	private File getOriginFile(String fileOrFolderName ) {
+	private static File getOriginFile(String fileOrFolderName ) {
 		return new File(TestsFolders.getFullFileName("resources-origin/" + fileOrFolderName));
 	}
 	
-	private File getDestinationFile(String fileOrFolderName ) {
+	private static File getDestinationFile(String fileOrFolderName ) {
 		return new File(TestsFolders.getFullFileName("resources-destination/" + fileOrFolderName));
 	}
 	
-	private int copy(File source, File destination, int choice ) {
+	private static int copy(File source, File destination, int choice ) {
 		int n = 0 ;
 		System.out.println("===== COPY ");
 		System.out.println("  from : " + source  );
 		System.out.println("  to   : " + destination );
-		ResourcesCopier copier = new ResourcesCopier(new DefaultOverwriteChooser(choice));
+		ResourcesCopier copier = new ResourcesCopier(new DialogBoxOverwriteChooser());
 		try {
 			n = copier.copy(source, destination);
 			System.out.println(n + " file(s) copied");
@@ -115,4 +110,8 @@ public class ResourcesCopierTest extends TestCase {
 		return n ;
 	}
 	
+	//----------------------------------------------
+	private static void showResult(int n) {
+		System.out.println("Result : " + n);
+	}
 }
