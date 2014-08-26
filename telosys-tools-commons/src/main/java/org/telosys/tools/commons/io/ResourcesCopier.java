@@ -18,35 +18,28 @@ package org.telosys.tools.commons.io ;
 import java.io.File;
 
 import org.telosys.tools.commons.FileUtil;
-import org.telosys.tools.commons.TelosysToolsLogger;
 import org.telosys.tools.commons.exception.CancelException;
 
 
 public class ResourcesCopier {
 	
-	private final TelosysToolsLogger _logger;
 	private final OverwriteChooser   _overwriteChooser;
-//	private Boolean overwriteGlobalChoice = null ;
-
-	public ResourcesCopier(OverwriteChooser overwriteChooser) {
-		super();
-		this._logger = null ;
-		this._overwriteChooser = overwriteChooser ;
-	}
-	
-	public ResourcesCopier(OverwriteChooser overwriteChooser, TelosysToolsLogger _logger) {
-		super();
-		this._logger = _logger;
-		this._overwriteChooser = overwriteChooser ;
-	}
 
 	//----------------------------------------------------------------------------------------------------
-	private void log(String s) {
-		if (_logger != null) {
-			_logger.log( this.getClass().getSimpleName() + " : " + s);
+	/**
+	 * Constructor
+	 * @param overwriteChooser an OverwriteChooser implementation (if null overwrite is always 'YES')
+	 */
+	public ResourcesCopier(OverwriteChooser overwriteChooser) {
+		super();
+		if ( overwriteChooser != null ) {
+			this._overwriteChooser = overwriteChooser ;
+		}
+		else {
+			this._overwriteChooser = new DefaultOverwriteChooser(OverwriteChooser.YES) ;
 		}
 	}
-
+	
 	//----------------------------------------------------------------------------------------------------
 	/**
 	 * Copies a file to another one, or a file to a directory, or a directory in another one <br>
@@ -198,9 +191,7 @@ public class ResourcesCopier {
 	 * @throws Exception
 	 */
 	private boolean getOverwriteChoice(File file) throws Exception {
-		log("destination file exists => confirmation") ;
 		int choice = _overwriteChooser.choose(file.getName(), file.getParent() );
-		log(" choice = " + choice) ;
 		switch (choice) {
 			case OverwriteChooser.YES :
 				return true ;
