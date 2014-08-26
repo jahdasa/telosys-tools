@@ -50,7 +50,7 @@ public class FileUtil {
     	String s2 = file ;
     	if ( file.startsWith("/") || file.startsWith("\\") )
     	{
-    		s1 = file.substring(1);
+    		s2 = file.substring(1);
     	}
     	
 		return s1 + "/" + s2 ;

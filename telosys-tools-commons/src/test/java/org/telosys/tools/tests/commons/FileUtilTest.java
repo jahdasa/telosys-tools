@@ -112,5 +112,41 @@ public class FileUtilTest extends TestCase {
 	}
 	
 
+	public void testBuildFilePath1()  {
+		String dir = "D:\\workspaces\\runtime-EclipseApplication\\myapp/TelosysTools/templates/front-springmvc-TT210-R2/resources" ;
+		String file = "/src/main/webapp" ;
+		String s = FileUtil.buildFilePath(dir, file);
+		System.out.println("s = " + s );
+		assertEquals(dir+file, s);
+	}
+	
+	public void testBuildFilePath2a()  {
+		String dir = "D:\\aaa\\bbb/ccc/ddd/" ;
+		String file = "/xxx/yyy/zzz.txt" ;
+		String s = FileUtil.buildFilePath(dir, file);
+		System.out.println("s = " + s );
+		assertEquals(dir+"xxx/yyy/zzz.txt", s);
+	}
+	public void testBuildFilePath2b()  {
+		String dir = "D:\\aaa\\bbb/ccc" ;
+		String file = "/xxx/yyy/zzz.txt" ;
+		String s = FileUtil.buildFilePath(dir, file);
+		System.out.println("s = " + s );
+		assertEquals("D:\\aaa\\bbb/ccc/xxx/yyy/zzz.txt", s);
+	}
 
+	public void testBuildFilePath3()  {
+		String dir = "D:\\aaa\\bbb/ccc/ddd" ;
+		String file = "/xxx/yyy/zzz.txt" ;
+		String s = FileUtil.buildFilePath(dir, file);
+		System.out.println("s = " + s );
+		assertEquals(dir+file, s);
+	}
+	public void testBuildFilePath4()  {
+		String dir = "D:\\aaa\\bbb/ccc/ddd" ;
+		String file = "\\xxx/yyy/zzz.txt" ;
+		String s = FileUtil.buildFilePath(dir, file);
+		System.out.println("s = " + s );
+		assertEquals(dir+"/xxx/yyy/zzz.txt", s);
+	}
 }
