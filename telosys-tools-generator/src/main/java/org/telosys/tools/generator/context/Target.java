@@ -54,23 +54,25 @@ public class Target
 
 	private final String    entityName ;
 
-	private final boolean   templateOnly ;
+//	private final boolean   templateOnly ; // v 2.1.1
+
+	// Removed in v 2.1.1
+//	/**
+//	 * Constructor for special target containing only the template <br>
+//	 * Used by Wizards generators
+//	 * 
+//	 * @param template
+//	 */
+//	public Target( String template ) {
+//		super();
+//		this.targetName = null;
+//		this.file = null ;
+//		this.folder = null;
+//		this.template = template.trim();
+//		this.entityName = null ;
+////		this.templateOnly = true ; // v 2.1.1
+//	}
 	
-	/**
-	 * Constructor for special target containing only the template <br>
-	 * Used by Wizards generators
-	 * 
-	 * @param template
-	 */
-	public Target( String template ) {
-		super();
-		this.targetName = null;
-		this.file = null ;
-		this.folder = null;
-		this.template = template.trim();
-		this.entityName = null ;
-		this.templateOnly = true ;
-	}
 	/**
 	 * Constructor
 	 * @param targetDefinition  the initial target as defined in the targets configuration file
@@ -89,7 +91,7 @@ public class Target
 		//--- Specialization for the given entity
 		this.entityName = entityName ;
 
-		this.templateOnly = false ;
+//		this.templateOnly = false ; // v 2.1.1
 		
 		//--- Replace the "$" variables in _sFile and _sFolder
 		VariablesManager variablesManager = null ;
@@ -102,16 +104,17 @@ public class Target
 		this.folder = replaceVariables( targetDefinition.getFolder(), entityJavaClassName, variablesManager );
 	}
 
-	/**
-	 * Returns true if this target contains only the template file <br>
-	 * ( not a "real target", true for Wizards generation ) 
-	 * 
-	 * @return
-	 */
-	@VelocityNoDoc
-	public boolean isTemplateOnly() {
-		return this.templateOnly ;
-	}
+	// removed in v 2.1.1	
+//	/**
+//	 * Returns true if this target contains only the template file <br>
+//	 * ( not a "real target", true for Wizards generation ) 
+//	 * 
+//	 * @return
+//	 */
+//	@VelocityNoDoc
+//	public boolean isTemplateOnly() {
+//		return this.templateOnly ;
+//	}
 	
 	//-------------------------------------------------------------------------------------
 	@VelocityMethod(
@@ -358,8 +361,8 @@ public class Target
 	public String toString() {
 		return "Target [targetName=" + targetName + ", file=" + file
 				+ ", folder=" + folder + ", template=" + template
-				+ ", entityName=" + entityName + ", templateOnly="
-				+ templateOnly + "]";
+				+ ", entityName=" + entityName + "]";
+//				+ ", templateOnly=" + templateOnly + "]"; // v 2.1.1
 	}
 	
 	
