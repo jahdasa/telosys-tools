@@ -104,7 +104,8 @@ public class ResourcesCopierTest extends TestCase {
 		System.out.println("===== COPY ");
 		System.out.println("  from : " + source  );
 		System.out.println("  to   : " + destination );
-		ResourcesCopier copier = new ResourcesCopier(new DefaultOverwriteChooser(choice));
+		System.out.println("  choice = " + choice );
+		ResourcesCopier copier = new ResourcesCopier(new DefaultOverwriteChooser(choice), new CopyHandlerLogger() );
 		try {
 			n = copier.copy(source, destination);
 			System.out.println(n + " file(s) copied");

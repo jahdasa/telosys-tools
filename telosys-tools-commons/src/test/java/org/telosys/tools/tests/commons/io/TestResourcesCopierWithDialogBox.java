@@ -99,7 +99,7 @@ public class TestResourcesCopierWithDialogBox {
 		System.out.println("===== COPY ");
 		System.out.println("  from : " + source  );
 		System.out.println("  to   : " + destination );
-		ResourcesCopier copier = new ResourcesCopier(new DialogBoxOverwriteChooser());
+		ResourcesCopier copier = new ResourcesCopier(new DialogBoxOverwriteChooser(), null);
 		try {
 			n = copier.copy(source, destination);
 			System.out.println(n + " file(s) copied");

@@ -24,13 +24,14 @@ import org.telosys.tools.commons.exception.CancelException;
 public class ResourcesCopier {
 	
 	private final OverwriteChooser   _overwriteChooser;
+	private final CopyHandler        _copyHandler;
 
 	//----------------------------------------------------------------------------------------------------
 	/**
 	 * Constructor
 	 * @param overwriteChooser an OverwriteChooser implementation (if null overwrite is always 'YES')
 	 */
-	public ResourcesCopier(OverwriteChooser overwriteChooser) {
+	public ResourcesCopier(OverwriteChooser overwriteChooser, CopyHandler copyHandler) {
 		super();
 		if ( overwriteChooser != null ) {
 			this._overwriteChooser = overwriteChooser ;
@@ -38,6 +39,7 @@ public class ResourcesCopier {
 		else {
 			this._overwriteChooser = new DefaultOverwriteChooser(OverwriteChooser.YES) ;
 		}
+		_copyHandler = copyHandler ;
 	}
 	
 	//----------------------------------------------------------------------------------------------------
@@ -86,7 +88,8 @@ public class ResourcesCopier {
 		if ( outputFile.exists() ) {
 			if ( getOverwriteChoice(outputFile) ) {
 				// overwrite the existing file
-	    		FileUtil.copy(inputFile, outputFile, true);
+	    		//FileUtil.copy(inputFile, outputFile, true);
+	    		copyFile(inputFile, outputFile);
         		return 1 ;
 			}
 			else {
@@ -95,7 +98,8 @@ public class ResourcesCopier {
 			}
 		}
 		else {
-    		FileUtil.copy(inputFile, outputFile, true);
+    		//FileUtil.copy(inputFile, outputFile, true);
+    		copyFile(inputFile, outputFile);
     		return 1 ;
 		}
 	}
@@ -132,7 +136,8 @@ public class ResourcesCopier {
         			// Destination exists and is a file
     				if ( getOverwriteChoice(destination) ) {
     					// overwrite the existing file
-    		    		FileUtil.copy(origin, destination, true);
+    		    		//FileUtil.copy(origin, destination, true);
+    		    		copyFile(origin, destination);
     	        		return 1 ;
     				}
     				// else : "NO"
@@ -144,45 +149,32 @@ public class ResourcesCopier {
     		}
     		else {
     			// Destination doesn't exist => copy 
-        		FileUtil.copy(origin, destination, true);
+        		//FileUtil.copy(origin, destination, true);
+	    		copyFile(origin, destination);
         		return 1 ;
     		}
 	    }
 	    return count ;
 	}
 	
-//	private boolean getOverwriteChoice(File file) throws Exception {
-//		if ( overwriteGlobalChoice != null ) {
-//			log("destination file exists : global choice set : " + overwriteGlobalChoice ) ;
-//			return overwriteGlobalChoice ;
-//		}
-//		else {
-//			log("destination file exists : global choice not set => message box for confirmation") ;
-////			String fileFolder = destFile.getParent().getFullPath().toString() ;
-////			int choice = OverwriteDialogBox.confirm(destFile.getName(), fileFolder );
-//			int choice = _overwriteChooser.choose(file.getName(), file.getParent() );
-//			log(" choice = " + choice) ;
-//			switch (choice) {
-//			
-//			case OverwriteChooser.YES_TO_ALL :
-//				overwriteGlobalChoice = true ;
-//			case OverwriteChooser.YES :
-//				return true ;
-//
-//			case OverwriteChooser.NO_TO_ALL :
-//				overwriteGlobalChoice = false ;
-//			case OverwriteChooser.NO :
-//				return false ;
-//
-//			default: // CANCEL
-//				throw new Exception("CANCEL");
-////				taskCanceled = true ;
-////				copy = false ;
-////				break;
-//			}
-//		}
-//		
-//	}
+	/**
+	 * Copy a single file to another one (creates or overwrites if the file exists)<br>
+	 * and notify the handler before and after the copy
+	 * @param origin
+	 * @param destination
+	 * @throws Exception
+	 */
+	private void copyFile(File origin, File destination) throws Exception {
+		if ( _copyHandler != null ) {
+			_copyHandler.beforeCopy(origin, destination);
+		}
+		
+		FileUtil.copy(origin, destination, true);
+
+		if ( _copyHandler != null ) {
+			_copyHandler.afterCopy(origin, destination);
+		}
+	}
 	
 	/**
 	 * Uses the given OverwriteChooser instance to determine if the file must be overwritten
