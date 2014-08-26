@@ -11,11 +11,15 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.telosys.tools.commons.TelosysToolsLogger;
+import org.telosys.tools.commons.io.CopyHandler;
+import org.telosys.tools.commons.io.OverwriteChooser;
 import org.telosys.tools.commons.variables.Variable;
-import org.telosys.tools.eclipse.plugin.commons.BundleResourcesManager;
+import org.telosys.tools.eclipse.plugin.commons.CopyHandlerForRefresh;
 import org.telosys.tools.eclipse.plugin.commons.MsgBox;
 import org.telosys.tools.eclipse.plugin.commons.TelosysPluginException;
+import org.telosys.tools.eclipse.plugin.commons.dialogbox.OverwriteChooserDialogBox;
 import org.telosys.tools.eclipse.plugin.config.ProjectConfig;
+import org.telosys.tools.generator.BundleResourcesManager;
 import org.telosys.tools.generator.Generator;
 import org.telosys.tools.generator.GeneratorException;
 import org.telosys.tools.generator.config.GeneratorConfig;
@@ -46,7 +50,7 @@ public class GenerationTaskWithProgress implements IRunnableWithProgress
 	private final String               _bundleName ;
 	private final ProjectConfig        _projectConfig ;
 	private final TelosysToolsLogger   _logger ;
-
+	
 	//private String _currentEntityName = ENTITY_NONE ;
 	private Target _currentTarget = null ;
 	
@@ -220,9 +224,20 @@ public class GenerationTaskWithProgress implements IRunnableWithProgress
 		if ( resourcesTargetsDefinitions != null ) {
 			_logger.log(this, "run : copy resources " );
 			
-			BundleResourcesManager resourcesManager = new BundleResourcesManager(_project, _bundleName, _projectConfig, _logger);
+//			BundleResourcesManager resourcesManager = new BundleResourcesManager(_project, _bundleName, _projectConfig, _logger);
+//			try {
+//				count = resourcesManager.copyResourcesInProject(resourcesTargetsDefinitions);
+//			} catch (Exception e) {
+//				throw new InvocationTargetException(e);
+//			}
+			
+			OverwriteChooser overwriteChooser = new OverwriteChooserDialogBox() ; 
+			CopyHandler copyHandler = new CopyHandlerForRefresh() ;
+			
+			BundleResourcesManager resourcesManager = new BundleResourcesManager(_projectConfig.getTelosysToolsCfg(), 
+					_bundleName, _logger);
 			try {
-				count = resourcesManager.copyResourcesInProject(resourcesTargetsDefinitions);
+				count = resourcesManager.copyTargetsResourcesInProject(resourcesTargetsDefinitions, overwriteChooser, copyHandler);
 			} catch (Exception e) {
 				throw new InvocationTargetException(e);
 			}
