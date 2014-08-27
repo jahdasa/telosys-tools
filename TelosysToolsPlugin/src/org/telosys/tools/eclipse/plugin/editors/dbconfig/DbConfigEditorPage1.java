@@ -8,8 +8,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
-import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -1123,7 +1121,7 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 		MsgBox.error(sb.toString(), e );
     }
     
-    private ConnectionManager getConnectionManager() 
+    private ConnectionManager createConnectionManager() 
     {
         TelosysToolsLogger logger = _editor.getTextWidgetLogger();
 
@@ -1294,9 +1292,36 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     	DatabaseConfiguration databaseConfiguration = getCurrentDatabaseConfig(true) ;
         if ( null == databaseConfiguration ) return null ;
         
-		ConnectionManager cm = getConnectionManager();
+		ConnectionManager cm = createConnectionManager();
         if ( null == cm ) return null ;
 
+        try {
+			return cm.getConnection(databaseConfiguration);
+		} catch (TelosysToolsException e) {
+			logException(e);
+			Throwable cause = e.getCause();
+			if ( cause != null && cause instanceof SQLException ) {
+				SQLException sqlException = (SQLException)cause;
+	            MsgBox.error("Cannot connect to the database ! "
+	                      + "\n SQLException :"
+	                      + "\n . Message   : " + sqlException.getMessage() 
+	                      + "\n . ErrorCode : " + sqlException.getErrorCode() 
+	                      + "\n . SQLState  : " + sqlException.getSQLState() 
+	                      );
+			}
+			else {
+				msgBoxErrorWithClassPath("Cannot connect to the database !", e, cm.getLibraries());
+			}
+		} catch (Throwable e) {
+			logException(e);
+		    MsgBox.error("Cannot connect to the database ! "
+		            + "\n Exception : " + e.getClass().getName()
+		            + "\n . Message : " + e.getMessage() 
+		            );
+		}
+		return null ;
+
+/***
         Connection con = null ;
 		try {
 			//--- Connection parameters, from DatabaseConfiguration (always up to date thanks to field binding )
@@ -1342,6 +1367,7 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 			return null ;
 		}
 		return con ;
+***/
     }
     
     private void closeConnection(Connection con) 
@@ -2062,7 +2088,7 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
         	return ;
 		}
         
-        ConnectionManager cm = getConnectionManager();
+        ConnectionManager cm = createConnectionManager();
         
         if ( db != null && cm != null )
         {
