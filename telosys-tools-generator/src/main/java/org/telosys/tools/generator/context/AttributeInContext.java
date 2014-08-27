@@ -94,6 +94,7 @@ public class AttributeInContext
     private final int     _iJdbcTypeCode    ;     // JDBC type code for this column
     private final String  _sJdbcTypeName    ;  // JDBC type name : added in ver 2.0.7
     private final int     _iDatabaseSize   ;     // Size of this column (if Varchar ) etc..
+    private final String  _sDatabaseComment ;     // Comment of this column ( v 2.1.1 - #LCH )
     private final String  _sDatabaseDefaultValue ; // keep null (do not initialize to "" )  
     private final boolean _bDatabaseNotNull ;  // True if "not null" in the database
     
@@ -201,6 +202,7 @@ public class AttributeInContext
         _bUsedInForeignKey = column.isForeignKey();
         _bAutoIncremented  = column.isAutoIncremented();
         _iDatabaseSize     = column.getDatabaseSize() ;
+        _sDatabaseComment  = column.getDatabaseComment() ; // Added in v 2.1.1 - #LCH
         _sDatabaseDefaultValue = column.getDatabaseDefaultValue(); 
         _bDatabaseNotNull  = column.isDatabaseNotNull();
         
@@ -594,6 +596,18 @@ public class AttributeInContext
     public int getDatabaseSize()
     {
         return _iDatabaseSize ;
+    }
+
+	//-------------------------------------------------------------------------------------
+	@VelocityMethod(
+		text={	
+			"Returns the database comment for the attribute"
+			},
+		since="2.1.1"
+	)
+    public String getDatabaseComment()
+    {
+        return _sDatabaseComment;
     }
 
 	//-------------------------------------------------------------------------------------
