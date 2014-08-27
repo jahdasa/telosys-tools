@@ -51,5 +51,8 @@ class ConstXML {
 	 public final static String DB_METADATA_ATTR_TABLE_NAME_PATTERN = "table-name-pattern";
 	 public final static String DB_METADATA_ATTR_TABLE_TYPES = "table-types";
 	 
+	 public final static String DB_METADATA_ATTR_TABLE_NAME_INCLUDE = "table-name-include"; // ver 2.1.1
+	 public final static String DB_METADATA_ATTR_TABLE_NAME_EXCLUDE = "table-name-exclude"; // ver 2.1.1
+	 
 	 //---------------------------------------------------------------------------
 }

@@ -167,6 +167,8 @@ public class DbConfigManager {
                 databaseConfiguration.setMetadataSchema(elemMetadata.getAttribute(ConstXML.DB_METADATA_ATTR_SCHEMA));
                 databaseConfiguration.setMetadataTableNamePattern(elemMetadata.getAttribute(ConstXML.DB_METADATA_ATTR_TABLE_NAME_PATTERN));
                 databaseConfiguration.setMetadataTableTypes(elemMetadata.getAttribute(ConstXML.DB_METADATA_ATTR_TABLE_TYPES));                
+                databaseConfiguration.setMetadataTableNameInclude(elemMetadata.getAttribute(ConstXML.DB_METADATA_ATTR_TABLE_NAME_INCLUDE)); // ver 2.1.1
+                databaseConfiguration.setMetadataTableNameExclude(elemMetadata.getAttribute(ConstXML.DB_METADATA_ATTR_TABLE_NAME_EXCLUDE)); // ver 2.1.1
             }
         }
         
@@ -208,6 +210,8 @@ public class DbConfigManager {
 		e.setAttribute(ConstXML.DB_METADATA_ATTR_SCHEMA, databaseConfiguration.getMetadataSchema() );
 		e.setAttribute(ConstXML.DB_METADATA_ATTR_TABLE_NAME_PATTERN, databaseConfiguration.getMetadataTableNamePattern() );
 		e.setAttribute(ConstXML.DB_METADATA_ATTR_TABLE_TYPES, databaseConfiguration.getMetadataTableTypes() );
+		e.setAttribute(ConstXML.DB_METADATA_ATTR_TABLE_NAME_INCLUDE, databaseConfiguration.getMetadataTableNameInclude() ); // ver 2.1.1
+		e.setAttribute(ConstXML.DB_METADATA_ATTR_TABLE_NAME_EXCLUDE, databaseConfiguration.getMetadataTableNameExclude() ); // ver 2.1.1
 		return e ;
 	}
 }

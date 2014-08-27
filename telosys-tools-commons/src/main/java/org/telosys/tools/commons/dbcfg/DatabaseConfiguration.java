@@ -51,6 +51,10 @@ public class DatabaseConfiguration
     private String     metadataSchema           = null;
 
     private String     metadataTableNamePattern = null;
+    
+    private String     metadataTableNameInclude = null; // ver 2.1.1
+    
+    private String     metadataTableNameExclude = null; // ver 2.1.1
 
     private String     metadataTableTypes       = null;
 
@@ -82,7 +86,10 @@ public class DatabaseConfiguration
     	this.metadataCatalog          = databaseType.getMetadataCatalog();
     	this.metadataSchema           = TO_BE_DEFINED ;
     	this.metadataTableNamePattern = "%" ;
+    	this.metadataTableNameInclude = "" ;
+    	this.metadataTableNameExclude = "" ;
     	this.metadataTableTypes       = "TABLE" ;
+    	
     }
 
 	//----------------------------------------------------------------------------------
@@ -221,6 +228,22 @@ public class DatabaseConfiguration
     }
 	public void setMetadataTableNamePattern(String metadataTableNamePattern) {
 		this.metadataTableNamePattern = metadataTableNamePattern;
+	}
+
+    public String getMetadataTableNameInclude()
+    {
+        return metadataTableNameInclude;
+    }
+	public void setMetadataTableNameInclude(String metadataTableNameInclude) {
+		this.metadataTableNameInclude = metadataTableNameInclude;
+	}
+
+    public String getMetadataTableNameExclude()
+    {
+        return metadataTableNameExclude;
+    }
+	public void setMetadataTableNameExclude(String metadataTableNameExclude) {
+		this.metadataTableNameExclude = metadataTableNameExclude;
 	}
 
     public String getMetadataTableTypes()
