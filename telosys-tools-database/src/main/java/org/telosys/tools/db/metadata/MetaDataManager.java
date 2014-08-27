@@ -24,6 +24,7 @@ import java.sql.Statement;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.telosys.tools.commons.StandardTool;
 import org.telosys.tools.commons.TelosysToolsLogger;
@@ -113,16 +114,19 @@ public class MetaDataManager extends StandardTool
 	 * @param schema
 	 * @param tableNamePattern
 	 * @param tableTypes
+	 * @param tableNameInclude
+	 * @param tableNameExclude
 	 * @return
 	 * @throws SQLException
 	 */
 	public List<TableMetaData> getTables(Connection con, String catalog, String schema, 
-			String tableNamePattern, String[] tableTypes ) throws SQLException
+			String tableNamePattern, String[] tableTypes,
+			String tableNameInclude, String tableNameExclude ) throws SQLException
 	{
 		//--- Get the database Meta-Data
 		DatabaseMetaData dbmd = con.getMetaData();		
 		
-		return getTables( dbmd, catalog, schema, tableNamePattern, tableTypes );
+		return getTables( dbmd, catalog, schema, tableNamePattern, tableTypes, tableNameInclude, tableNameExclude );
 	}
 
 	//--------------------------------------------------------------------------------------------
@@ -150,12 +154,19 @@ public class MetaDataManager extends StandardTool
 	 * @param tableTypes
 	 *    a list of table types to include; null returns all types 
 	 * 
+	 * @param tableNameInclude 
+	 *    Pattern of tables names to include
+	 * 
+	 * @param tableNameExclude
+	 *    Pattern of tables names to exclude
+	 * 
 	 * @return
 	 * 
 	 * @throws SQLException
 	 */
 	public List<TableMetaData> getTables(DatabaseMetaData dbmd, String catalog, String schema, 
-			String tableNamePattern, String[] tableTypes ) throws SQLException
+			String tableNamePattern, String[] tableTypes,
+			String tableNameInclude, String tableNameExclude ) throws SQLException
 	{
 		log("getTables(..., '" + catalog + "', '" + schema + "', '" + tableNamePattern + "', " + tableTypes + ")");
 		
@@ -179,6 +190,18 @@ public class MetaDataManager extends StandardTool
 		ResultSet rs = dbmd.getTables(catalogToUse, schemaToUse, tableNamePattern, tableTypes);
 
 		log("getTables : result set ready" );
+		
+		//--- Regexp of table names to include
+		Pattern patternTableNameInclude = null;
+		if(tableNameInclude != null && ! "".equals(tableNameInclude.trim())) {
+			patternTableNameInclude = Pattern.compile(tableNameInclude);
+		}
+		
+		//--- Regexp of table names to exclude
+		Pattern patternTableNameExclude = null;
+		if(tableNameExclude != null && ! "".equals(tableNameExclude.trim())) {
+			patternTableNameExclude = Pattern.compile(tableNameExclude);
+		}
 
 		LinkedList<TableMetaData> tables = new LinkedList<TableMetaData>();
 		
@@ -192,7 +215,10 @@ public class MetaDataManager extends StandardTool
 			TableMetaData tableMetaData = MetaDataBuilder.buildTableMetaData(rs);
 			log("getTables : table #" + iTablesCount +  " built ( name = " + tableMetaData.getTableName() + " )");
 
+			String tableName = tableMetaData.getTableName();
 			
+			boolean isExclude = isExcludedTable(tableName, patternTableNameInclude, patternTableNameExclude);
+						
 //			//--- Primary Key columns for the current table
 //			List pkColumns = getPKColumns(dbmd, tableMetaData.getCatalogName(), tableMetaData.getSchemaName(), tableMetaData.getTableName() );
 //
@@ -202,11 +228,40 @@ public class MetaDataManager extends StandardTool
 //			//--- All columns of the current table
 //			List columns = getColumns(dbmd, tableMetaData.getCatalogName(), tableMetaData.getSchemaName(), tableMetaData.getTableName() );
 			
-			tables.addLast(tableMetaData);
+			if( ! isExclude ) {
+				tables.addLast(tableMetaData);
+			}
 		}
 		rs.close();
 		
 		return tables ;
+	}
+	
+	/**
+	 * Cehck if the table is excluded or included.
+	 * @param tableName Table name
+	 * @param patternTableNameInclude Regexp of the table name to include
+	 * @param patternTableNameExclude Regexp of the table name to exclude
+	 * @return is excluded
+	 */
+	protected boolean isExcludedTable(String tableName, Pattern patternTableNameInclude, Pattern patternTableNameExclude) {
+		//--- Test if the table name matches with the regexp of excluded tables names
+		boolean isExclude;
+		if( patternTableNameExclude == null ) {
+			//--- Regexp is not defined : the table is not excluded
+			isExclude = false;
+		} else {
+			isExclude = patternTableNameExclude.matcher(tableName).matches();
+		}
+
+		//--- Test if the table name matches with the regexp of included tables names, only in the case where the table name is not excluded
+		if( ! isExclude ) {
+			if( patternTableNameInclude != null ) {
+				boolean isInclude = patternTableNameInclude.matcher(tableName).matches();
+				isExclude = ! isInclude;
+			}
+		}
+		return isExclude;
 	}
 	
 	

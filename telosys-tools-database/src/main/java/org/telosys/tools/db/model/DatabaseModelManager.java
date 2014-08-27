@@ -36,7 +36,8 @@ public class DatabaseModelManager extends StandardTool
 	}
 
 	public DatabaseTables getDatabaseTables(Connection con, String catalog, String schema, 
-			String tableNamePattern, String[] tableTypes ) throws SQLException
+			String tableNamePattern, String[] tableTypes,
+			String tableNameInclude, String tableNameExclude ) throws SQLException
 	{
 		DatabaseTables databaseTables = new DatabaseTables();
 		
@@ -46,7 +47,7 @@ public class DatabaseModelManager extends StandardTool
 		DatabaseMetaData dbmd = con.getMetaData();		
 
 		//--- Initialize the tables ( table, columns, PK, FK ) 
-		List<TableMetaData> tablesMetaData = mgr.getTables(dbmd, catalog, schema, tableNamePattern, tableTypes);	
+		List<TableMetaData> tablesMetaData = mgr.getTables(dbmd, catalog, schema, tableNamePattern, tableTypes, tableNameInclude, tableNameExclude);	
 		
 		//--- For each table get columns, primary key and foreign keys
 		for ( TableMetaData tableMetaData : tablesMetaData ) {
@@ -74,23 +75,20 @@ public class DatabaseModelManager extends StandardTool
 		return databaseTables ;
 	}
 	
-	private void findAutoIncrementedColums( MetaDataManager mgr, Connection con, DatabaseTable databaseTable )
+	private void findAutoIncrementedColums( MetaDataManager mgr, Connection con, DatabaseTable databaseTable ) throws SQLException
 	{
 		List<String> autoIncrColumns = null ;
 		
-		try {
-			autoIncrColumns = mgr.getAutoIncrementedColumns(con, databaseTable.getSchemaName(), databaseTable.getTableName() );
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			// ERROR : cannot get autoincremented columns
-		}
+//		try {
+//			autoIncrColumns = mgr.getAutoIncrementedColumns(con, databaseTable.getSchemaName(), databaseTable.getTableName() );
+//		} catch (SQLException e) {
+//			// TODO Auto-generated catch block
+//			// ERROR : cannot get autoincremented columns
+//		}
+		autoIncrColumns = mgr.getAutoIncrementedColumns(con, databaseTable.getSchemaName(), databaseTable.getTableName() );
 		
 		if ( autoIncrColumns != null ) {
 			if ( ! autoIncrColumns.isEmpty() ) {
-//				Iterator it = autoIncrColumns.iterator();
-//				while ( it.hasNext() )
-//				{
-//					String columnName = (String) it.next();
 				for ( String columnName : autoIncrColumns ) {
 					DatabaseColumn c = databaseTable.getColumnByName(columnName);
 					if ( c != null ) {
