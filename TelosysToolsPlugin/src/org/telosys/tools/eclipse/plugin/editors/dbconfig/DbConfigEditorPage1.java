@@ -137,6 +137,8 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 	private Text _tMetaDataSchema = null;
 	private Text _tMetaDataTablePattern = null;
 	private Text _tMetaDataTableTypes = null;
+	private Text _tMetaDataTableInclude = null;
+	private Text _tMetaDataTableExclude = null;
 
     private Text _tMetaData = null ;
     
@@ -571,11 +573,16 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 	
 			_tMetaDataTableTypes = createTextWithLabel(panel, "Table types (separated by blanks)", gd, true );
 			
+			_tMetaDataTableInclude = createTextWithLabel(panel, "Regex pattern to include tables", gd, true ); // v 2.1.1
 			
+			_tMetaDataTableExclude = createTextWithLabel(panel, "Regex pattern to exclude tables", gd, true ); // v 2.1.1
+						
 			bindViewToModel(_tMetaDataCatalog,      "setMetadataCatalog",          String.class);
 			bindViewToModel(_tMetaDataSchema,       "setMetadataSchema",           String.class);
 			bindViewToModel(_tMetaDataTablePattern, "setMetadataTableNamePattern", String.class);
 			bindViewToModel(_tMetaDataTableTypes,   "setMetadataTableTypes",       String.class);
+			bindViewToModel(_tMetaDataTableInclude, "setMetadataTableNameInclude", String.class);
+			bindViewToModel(_tMetaDataTableExclude, "setMetadataTableNameExclude", String.class);
 		}
 	}
 	//----------------------------------------------------------------------------------------------
@@ -853,6 +860,8 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 		_tMetaDataSchema.setText("");
 		_tMetaDataTablePattern.setText("");
 		_tMetaDataTableTypes.setText("");
+		_tMetaDataTableInclude.setText("");
+		_tMetaDataTableExclude.setText("");
 		_tMetaData.setText("");
 
 		//--- Tab
@@ -914,6 +923,8 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 			    _tMetaDataTablePattern.setText( nn( db.getMetadataTableNamePattern() ) );
 			    //_tMetaDataTableTypes.setText( arrayToString ( db.getMetadataTableTypes() ) );
 			    _tMetaDataTableTypes.setText( db.getMetadataTableTypes() );
+			    _tMetaDataTableInclude.setText( nn( db.getMetadataTableNameInclude() ) );
+			    _tMetaDataTableExclude.setText( nn( db.getMetadataTableNameExclude() ) );
 			}
 			else 
 			{
@@ -1460,6 +1471,8 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     		String sSchema  = db.getMetadataSchema() ;
     		String sTableNamePattern = db.getMetadataTableNamePattern() ;
     		String[] tableTypes = db.getMetadataTableTypesArray() ;
+    		String sTableNameInclude = db.getMetadataTableNameInclude() ;
+    		String sTableNameExclude = db.getMetadataTableNameExclude() ;
     		
     		log("get DatabaseMetaData from connection...");
 			DatabaseMetaData dbmd = null ;
@@ -1484,8 +1497,10 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     		log(" . schema  = " + quote(sSchema) );
     		log(" . pattern = " + quote(sTableNamePattern) );
     		log(" . types   = " + arrayToString(tableTypes) );
+    		log(" . include   = " + quote(sTableNameInclude) );
+    		log(" . exclude   = " + quote(sTableNameExclude) );
     		try {
-				tables = metaDataManager.getTables(dbmd, sCatalog, sSchema, sTableNamePattern, tableTypes );
+				tables = metaDataManager.getTables(dbmd, sCatalog, sSchema, sTableNamePattern, tableTypes, sTableNameInclude, sTableNameExclude );
 			} catch (SQLException e) {
 				tables = null ;
 		    	logException(e);
@@ -2006,7 +2021,8 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 		RepositoryUpdator updator = new RepositoryUpdator(entityInformationProvider, uiInformationProvider, logger,  updateLogger);
 		int nbChanges = updator.updateRepository(con, repositoryModel, 
 				db.getMetadataCatalog(), db.getMetadataSchema(), 
-				db.getMetadataTableNamePattern(), db.getMetadataTableTypesArray() );
+				db.getMetadataTableNamePattern(), db.getMetadataTableTypesArray(),
+				db.getMetadataTableNameInclude(), db.getMetadataTableNameExclude());
 		
 		//--- 3) SAVE the repository in the file
 		logger.info("Save repository in file " + repositoryFile.getAbsolutePath());
