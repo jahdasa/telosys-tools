@@ -67,7 +67,8 @@ public class DbConfigManagerTest extends TestCase {
 	 */
 	public void testLoad0() throws TelosysToolsException {
 		printSeparator();
-		File file = FileUtil.getFileByClassPath("/dbcfg/databases-test0.dbcfg");
+		//File file = FileUtil.getFileByClassPath("/dbcfg/databases-test0.dbcfg");
+		File file = new File("src/test/resources/dbcfg/databases-test0.dbcfg");
 		print(file);
 		
 		DbConfigManager dbDonfigManager = new DbConfigManager(file);

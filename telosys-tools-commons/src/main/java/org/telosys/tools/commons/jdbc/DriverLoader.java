@@ -49,15 +49,31 @@ public class DriverLoader extends GenericTool
     //-----------------------------------------------------------------------------
     // Attributes
     //-----------------------------------------------------------------------------
+    private final String[]                  _libraries ;
+
     private final MyClassLoader             _loader ; // Specific Class Loader instance
 
     private final Hashtable<String,Driver>  _drivers = new Hashtable<String,Driver>(); // Loaded drivers
     
     //-----------------------------------------------------------------------------
-    // The unique constructor
+    /**
+     * Constructor for a driver loader without list of libraries where to search the driver class<br>
+     * The current class loader will be used.
+     * @param logger
+     * @since 2.1.1
+     */
+    public DriverLoader( TelosysToolsLogger logger ) 
+    {
+    	super(logger);
+    	// No libraries => void array
+    	_libraries = new String[0] ; 
+    	
+    	_loader = null ;
+    }
+    
     //-----------------------------------------------------------------------------
     /**
-     * Constructor 
+     * Constructor for a driver loader with a list of libraries where to search the driver class
      * 
      * @param libraries
      * @param logger
@@ -69,12 +85,13 @@ public class DriverLoader extends GenericTool
     	log ( "DriverLoader constructor ... " );
         if ( libraries == null )
         {
-        	throwException( "DriverLoader constructor : paths[] is null !" );
+        	throwException( "DriverLoader constructor : 'libraries' is null !" );
         }
         else if ( libraries.length == 0 )
         {
-        	throwException( "DriverLoader constructor : paths[] is void !" );
+        	throwException( "DriverLoader constructor : 'libraries' is void !" );
         }
+    	_libraries = libraries ;
         
         ClassLoader parentLoader = ClassLoader.getSystemClassLoader();
         //--- Convert String[] to URL[] (eliminate void and malformed urls )
@@ -119,15 +136,23 @@ public class DriverLoader extends GenericTool
     }
     
     //-----------------------------------------------------------------------------
+    /**
+     * Returns the libraries used by this instance to search the JDBC Driver
+     * @return
+     */
+    public String[] getLibraries() {
+    	return this._libraries ;
+    }
+    
+    //-----------------------------------------------------------------------------
     // The method to provide a driver (via the specific class loader)
     //-----------------------------------------------------------------------------
     public Driver getDriver(String sDriverClassName) throws TelosysToolsException
     {
-        Class<?> driverClass = null;
         Driver driverInstance = null;
 
         //--- Try to find an existing instance of this type of driver 
-        driverInstance = (Driver) _drivers.get(sDriverClassName);
+        driverInstance = _drivers.get(sDriverClassName);
         if ( driverInstance != null )
         {
             log ("Driver already loaded");
@@ -135,51 +160,64 @@ public class DriverLoader extends GenericTool
         }
                         
         //--- Try to load the driver class with the specific class loader
-        if (_loader == null)
-        {
-        	throwException("Class loader is not initialized (_loader == null)");
-        }
+        log ("Loading the driver class '" + sDriverClassName  + "' ...");
+        Class<?> driverClass = null;
         try
         {
-            log ("Loading the driver class '" + sDriverClassName  + "' ...");
-            driverClass = _loader.loadClass(sDriverClassName);
+            if (_loader != null) {
+                log ("Loading with specific class loader ...");
+                driverClass = _loader.loadClass(sDriverClassName);
+            }
+            else {
+            	//throwException("Class loader is not initialized (_loader == null)");
+                log ("Loading with default class loader ...");
+            	driverClass = loadWithDefaultClassLoader(sDriverClassName) ; // v 2.1.1 #LGU
+            }
         } catch (ClassNotFoundException e)
         {
         	throwException("Cannot load class '" + sDriverClassName + "' (ClassNotFoundException)", e);
         }
-
-        //--- Try to create an instance of this driver
-        if (driverClass != null)
-        {
-            log ("Driver class loaded.");
-            try
-            {
-                driverInstance = (Driver) driverClass.newInstance();
-            } 
-            catch (InstantiationException e)
-            {
-            	throwException("Cannot create driver instance (InstantiationException)", e);
-            } 
-            catch (IllegalAccessException e)
-            {
-            	throwException("Cannot create driver instance (IllegalAccessException)", e);
-            }
-
-
+        if (driverClass == null) {
+        	// Unexpected situation 
+        	throwException("Cannot load class '" + sDriverClassName + "' (unknown reason)");
         }
 
-        if ( driverInstance != null )
-        {
+        //--- Try to create an instance of this driver
+        log ("Driver class loaded." );
+        log ("Creating new driver instance ..." );
+        try {
+            driverInstance = (Driver) driverClass.newInstance();
+        } 
+        catch (InstantiationException e) {
+        	throwException("Cannot create driver instance (InstantiationException)", e);
+        } 
+        catch (IllegalAccessException e) {
+        	throwException("Cannot create driver instance (IllegalAccessException)", e);
+        }
+
+        if ( driverInstance != null ) {
             log ("Driver instance created.");
             //--- Store the driver instance ( for the future )
             _drivers.put(sDriverClassName, driverInstance);
         }
-        else
-        {
+        else {
         	throwException("Cannot create driver instance (unknown reason)");
         }
         
         return driverInstance ;
+    }
+    
+    /**
+     * Loads the driver using the current class loader
+     * @param driverClassName
+     * @return
+     * @throws ClassNotFoundException
+     */
+    private Class<?> loadWithDefaultClassLoader(String driverClassName) throws ClassNotFoundException
+    {
+    	ClassLoader classLoader = this.getClass().getClassLoader();
+		Class<?> clazz = classLoader.loadClass(driverClassName);
+		return clazz ;
     }
     
     //-----------------------------------------------------------------------------
