@@ -42,6 +42,7 @@ public class ColumnWrapper {
 		column.setForeignKey(StrUtil.getBoolean(elem.getAttribute(RepositoryConst.COLUMN_DB_FOREIGN_KEY)));
 		column.setAutoIncremented(StrUtil.getBoolean(elem.getAttribute(RepositoryConst.COLUMN_DB_AUTO_INCREMENTED))); // #LGU 04/08/2011
 		column.setDatabaseDefaultValue( elem.getAttribute(RepositoryConst.COLUMN_DB_DEFAULT_VALUE) ); // #LGU 10/08/2011
+		column.setDatabaseComment( elem.getAttribute(RepositoryConst.COLUMN_DB_COMMENT) ); // v 2.1.1 #LCH 20/08/2014
 		column.setDatabasePosition(StrUtil.getInt(elem.getAttribute(RepositoryConst.COLUMN_DB_POSITION))); // #LGU 10/08/2011
 
 		column.setJdbcTypeCode(StrUtil.getInt(elem.getAttribute(RepositoryConst.COLUMN_JDBC_TYPE_CODE)));
@@ -126,9 +127,10 @@ public class ColumnWrapper {
 		}		
 		element.setAttribute(RepositoryConst.COLUMN_DB_POSITION, Integer.toString( column.getDatabasePosition() ) ); // #LGU 10/08/2011
 		element.setAttribute(RepositoryConst.COLUMN_DB_DEFAULT_VALUE, column.getDatabaseDefaultValue() ); // #LGU 10/08/2011
+		element.setAttribute(RepositoryConst.COLUMN_DB_COMMENT, column.getDatabaseComment() ); // v 2.1.1 #LCH 20/08/2014
 		
 		element.setAttribute(RepositoryConst.COLUMN_JDBC_TYPE_CODE, Integer.toString(column.getJdbcTypeCode()));
-
+		
 		//--- JAVA OBJECT
 		element.setAttribute(RepositoryConst.COLUMN_JAVA_NAME, column.getJavaName());
 		element.setAttribute(RepositoryConst.COLUMN_JAVA_TYPE, column.getJavaType());
@@ -214,7 +216,7 @@ public class ColumnWrapper {
 
 		element.setAttribute(RepositoryConst.COLUMN_LABEL,      column.getLabel()     ); // #LGU 20/02/2013
 		element.setAttribute(RepositoryConst.COLUMN_INPUT_TYPE, column.getInputType() ); // #LGU 20/02/2013
-		
+
 		return element;
 	}
 

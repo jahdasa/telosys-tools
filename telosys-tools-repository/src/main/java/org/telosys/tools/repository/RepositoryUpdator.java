@@ -83,6 +83,7 @@ public class RepositoryUpdator extends RepositoryManager
 		r = r + updateTypeCode(column, col.getJdbcTypeCode()); // JDBC type code 
 		r = r + updateNotNull(column, col.getNotNullAsString()); // Not null
 		r = r + updateSize(column, col.getSize()); // Size
+		r = r + updateComment(column, col.getComment()); // Database comment - v 2.1.1 #LCH 
 
 //		// --- If this column is in the Table Primary Key
 		r = r + updatePrimaryKey(column, col.isInPrimaryKey()); // Column in Primary Key
@@ -144,6 +145,18 @@ public class RepositoryUpdator extends RepositoryManager
 		return r;
 	}
 
+	private int updateComment( Column column, String sComment)  // Database comment - v 2.1.1 #LCH 
+	{
+		int r = 0;
+		if ( ! column.getDatabaseComment().equals(sComment) )
+		{
+			_updateLogger.println(" . Column '" + column.getDatabaseName() + "' : Comment changed to " + sComment);
+			column.setDatabaseComment(sComment);
+			r++;
+		}
+		return r;
+	}
+
 	private int updatePrimaryKey( Column column, boolean isPrimaryKey) 
 	{
 		int r = 0;
@@ -172,7 +185,8 @@ public class RepositoryUpdator extends RepositoryManager
 	 * @throws TelosysToolsException
 	 */
 	public int updateRepository(Connection con, RepositoryModel repositoryModel, String sCatalog,
-			String sSchema, String sTableNamePattern, String[] arrayTableTypes) throws TelosysToolsException 
+			String sSchema, String sTableNamePattern, String[] arrayTableTypes,
+			String sTableNameInclude, String sTableNameExclude) throws TelosysToolsException 
 	{
 		int changesCount = 0 ;
 		//_logger.log("--> Update repository ( file = '" + file.getFullPath() + "' )");
@@ -189,7 +203,7 @@ public class RepositoryUpdator extends RepositoryManager
 				
 				//--- Load the Database Model
 				DatabaseModelManager manager = new DatabaseModelManager( this.getLogger() );
-				DatabaseTables dbTables = manager.getDatabaseTables(con, sCatalog, sSchema, sTableNamePattern, arrayTableTypes);
+				DatabaseTables dbTables = manager.getDatabaseTables(con, sCatalog, sSchema, sTableNamePattern, arrayTableTypes, sTableNameInclude, sTableNameExclude);
 
 				//updateRepository(repositoryModel, dbmd, sCatalog, sSchema, sTableNamePattern, arrayTableTypes);
 				changesCount = updateRepository(repositoryModel, dbTables);

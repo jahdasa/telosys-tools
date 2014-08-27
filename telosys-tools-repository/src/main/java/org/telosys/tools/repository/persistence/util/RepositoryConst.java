@@ -129,6 +129,7 @@ public class RepositoryConst {
 	public static final String COLUMN_DB_AUTO_INCREMENTED = "dbAutoIncremented"; // v 1.0  #LGU 04/08/2011
 	public static final String COLUMN_DB_POSITION         = "dbPosition"; // v 1.0  #LGU 10/08/2011
 	public static final String COLUMN_DB_DEFAULT_VALUE    = "dbDefaultValue"; // v 1.0  #LGU 10/08/2011
+	public static final String COLUMN_DB_COMMENT          = "dbComment"; // v 2.1.1 #LCH 20/08/2014
 	
 	public final static String COLUMN_JDBC_TYPE_CODE      = "jdbcTypeCode";
 

@@ -257,6 +257,8 @@ public abstract class RepositoryManager extends StandardTool
 		column.setDatabasePosition( dbCol.getOrdinalPosition() ); // #LGU 10/08/2011
 		
 		column.setDatabaseDefaultValue( dbCol.getDefaultValue() ); // #LGU 10/08/2011
+		
+		column.setDatabaseComment( dbCol.getComment() ); // v 2.1.1 - #LCH 20/08/2014
 
 		//--- Further information ( v 2.0.3 )
 //		column.setLabel(     _inichk.getAttributeLabel(dbColName, dbTypeName, iJdbcTypeCode) );

@@ -103,7 +103,9 @@ public class RepositoryGenerator extends RepositoryManager
 					databaseConfig.getMetadataCatalog(), 
 					databaseConfig.getMetadataSchema(), 
 					databaseConfig.getMetadataTableNamePattern(), 
-					databaseConfig.getMetadataTableTypesArray());
+					databaseConfig.getMetadataTableTypesArray(),
+					databaseConfig.getMetadataTableNameInclude(),
+					databaseConfig.getMetadataTableNameExclude());
 			
 		} catch (SQLException e) {
 			throw new TelosysToolsException("SQLException", e);
@@ -112,9 +114,10 @@ public class RepositoryGenerator extends RepositoryManager
 		return repositoryModel ;
 	}
 	
-	private void generateEntities(RepositoryModel repositoryModel, Connection con, 
+	private void generateEntities(RepositoryModel repositoryModel, Connection con,
 			String sCatalog, String sSchema,
-			String sTableNamePattern, String[] arrayTableTypes) throws SQLException 
+			String sTableNamePattern, String[] arrayTableTypes,
+			String sTableNameInclude, String sTableNameExclude) throws SQLException 
 	{
 		// --- Get METADATA parameters
 		if (sTableNamePattern == null) {
@@ -134,7 +137,7 @@ public class RepositoryGenerator extends RepositoryManager
 
 		//--- Load the Database Model
 		DatabaseModelManager manager = new DatabaseModelManager( this.getLogger() );
-		DatabaseTables dbTables = manager.getDatabaseTables(con, sCatalog, sSchema, sTableNamePattern, arrayTableTypes);
+		DatabaseTables dbTables = manager.getDatabaseTables(con, sCatalog, sSchema, sTableNamePattern, arrayTableTypes, sTableNameInclude, sTableNameExclude);
 
 		//--- For each table add an Entity in the repository
 		Iterator<DatabaseTable> iter = dbTables.iterator();

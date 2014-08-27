@@ -61,6 +61,8 @@ public class Column implements Comparable<Column>
 	
 	private String  _sDatabaseDefaultValue = null ;  // dbDefaultValue="" ( database default value ) #LGU 10/08/2011
 	
+	private String  _sDatabaseComment  = null ;  // comment=""
+	
 	//----- JDBC -----
 	
 	private int     _iJdbcTypeCode     = 0 ;     // dbTypeCode="4" - dbTypeCode="12"
@@ -240,6 +242,24 @@ public class Column implements Comparable<Column>
 	 */
 	public void setDatabaseDefaultValue(String v) { // #LGU 10/08/2011
 		_sDatabaseDefaultValue = v;
+	}
+
+	//-----------------------------------------------------------------------------
+
+	/**
+	 * Returns the column comment 
+	 * @return comment
+	 */
+	public String getDatabaseComment() {
+		return _sDatabaseComment;
+	}
+
+	/**
+	 * Set the column comment
+	 * @param databaseComment comment
+	 */
+	public void setDatabaseComment(String databaseComment) {
+		_sDatabaseComment = databaseComment;
 	}
 	
 	//-----------------------------------------------------------------------------
