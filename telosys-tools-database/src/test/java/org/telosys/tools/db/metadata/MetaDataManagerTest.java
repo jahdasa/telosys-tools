@@ -2,13 +2,12 @@ package org.telosys.tools.db.metadata;
 
 import java.util.regex.Pattern;
 
-import org.junit.Assert;
-import org.junit.Test;
+import junit.framework.Assert;
+import junit.framework.TestCase;
 
 
-public class MetaDataManagerTest {
+public class MetaDataManagerTest extends TestCase {
 	
-	@Test
 	public void testIsExcludedTable_patterns_null() {
 		// Given
 		MetaDataManager m = new MetaDataManager(null);
@@ -24,7 +23,6 @@ public class MetaDataManagerTest {
 		Assert.assertFalse(isExcluded);
 	}
 
-	@Test
 	public void testIsExcludedTable_not_excluded() {
 		// Given
 		MetaDataManager m = new MetaDataManager(null);
@@ -40,7 +38,6 @@ public class MetaDataManagerTest {
 		Assert.assertFalse(isExcluded);
 	}
 
-	@Test
 	public void testIsExcludedTable_excluded() {
 		// Given
 		MetaDataManager m = new MetaDataManager(null);
@@ -56,7 +53,6 @@ public class MetaDataManagerTest {
 		Assert.assertTrue(isExcluded);
 	}
 
-	@Test
 	public void testIsExcludedTable_not_included() {
 		// Given
 		MetaDataManager m = new MetaDataManager(null);
@@ -72,7 +68,6 @@ public class MetaDataManagerTest {
 		Assert.assertTrue(isExcluded);
 	}
 
-	@Test
 	public void testIsExcludedTable_included() {
 		// Given
 		MetaDataManager m = new MetaDataManager(null);
@@ -88,7 +83,6 @@ public class MetaDataManagerTest {
 		Assert.assertFalse(isExcluded);
 	}
 
-	@Test
 	public void testIsExcludedTable_excluded_and_included() {
 		// Given
 		MetaDataManager m = new MetaDataManager(null);
@@ -104,7 +98,6 @@ public class MetaDataManagerTest {
 		Assert.assertTrue(isExcluded);
 	}
 
-	@Test
 	public void testIsExcludedTable_excluded_and_not_included() {
 		// Given
 		MetaDataManager m = new MetaDataManager(null);
@@ -120,7 +113,6 @@ public class MetaDataManagerTest {
 		Assert.assertTrue(isExcluded);
 	}
 
-	@Test
 	public void testIsExcludedTable_not_excluded_and_included() {
 		// Given
 		MetaDataManager m = new MetaDataManager(null);
@@ -136,7 +128,6 @@ public class MetaDataManagerTest {
 		Assert.assertFalse(isExcluded);
 	}
 
-	@Test
 	public void testIsExcludedTable_not_excluded_and_not_included() {
 		// Given
 		MetaDataManager m = new MetaDataManager(null);
