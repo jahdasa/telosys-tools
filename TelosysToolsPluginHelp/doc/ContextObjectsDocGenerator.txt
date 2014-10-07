@@ -1,4 +1,19 @@
+--- NEW ---
 
+1) Generate the HTML files
+
+  Run DocGeneratorLauncher.java
+  Refresh project / Eclipse --> "F5"
+  Check result in "html/objects"
+
+2) Update files referencing the generated files 
+
+ . html/templates-objects.html
+ . TelosysToolsHelpCONTEXTS.xml
+ . TelosysToolsHelpTOC.xml
+ 
+--------------------------------------------------------------------------------------------------
+--- OLD ---
 1) Generate the HTML files
 
   In project "telosys-generator"
