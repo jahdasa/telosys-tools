@@ -35,7 +35,10 @@
 		<topic label="$fn"              href="html/objects/fn.html"/> 
 		<topic label="$generation"      href="html/objects/generation.html"/> 
 		<topic label="$generator"       href="html/objects/generator.html"/> 
+		<topic label="$h2"              href="html/objects/h2.html"/> 
 		<topic label="$java"            href="html/objects/java.html"/> 
+		<topic label="$jdbc"            href="html/objects/jdbc.html"/> 
+		<topic label="$jdbcFactory"     href="html/objects/jdbcFactory.html"/> 
 		<topic label="$joinColumn"      href="html/objects/joinColumn.html"/> 
 		<topic label="$jpa"             href="html/objects/jpa.html"/> 
 		<topic label="$link"            href="html/objects/link.html"/> 
