@@ -106,6 +106,25 @@ Returns a string containing a list of fields (type and name) separated by a comm
 </TD>
 </TR>
 <TR>
+<TD class="doc" ><CODE class="simpledesc"> <B>.buildValues(List attributes, int step) : ValuesInContext</B> </CODE>
+<p class="doc">
+Builds a list of values (one value for each attribute)<br>
+Those values are usable in test cases<br>
+<br>
+<b>Parameters : </b><br>
+&nbsp;&nbsp;&nbsp;<b>attributes</b> : list of attributes requiring values<br>
+&nbsp;&nbsp;&nbsp;<b>step</b> : a step (from 1 to N) used to change the values builded<br>
+<br>
+<b>Example : </b><br>
+<code>
+&nbsp;&nbsp;&nbsp;$fn.buildValues($entity.attributes, 1) <br>
+</code>
+<br>
+<b>Since : </b>2.1.1<br>
+</p>
+</TD>
+</TR>
+<TR>
 <TD class="doc" ><CODE class="simpledesc"> <B>.capitalize(String string) : String</B> </CODE>
 <p class="doc">
 Capitalizes the given string<br>
