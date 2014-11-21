@@ -23,6 +23,7 @@ import org.telosys.tools.eclipse.plugin.commons.Util;
 import org.telosys.tools.repository.LinksGenerator;
 import org.telosys.tools.repository.model.Link;
 import org.telosys.tools.repository.model.RepositoryModel;
+import org.telosys.tools.repository.rules.RepositoryRulesProvider;
 
 /**
  * Page 3 of the editor <br>
@@ -59,8 +60,7 @@ import org.telosys.tools.repository.model.RepositoryModel;
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.FormPage#createFormContent(org.eclipse.ui.forms.IManagedForm)
 	 */
-	protected void createFormContent(IManagedForm managedForm) 
-	{
+	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 				
 		// What do we have here ?
@@ -172,8 +172,7 @@ import org.telosys.tools.repository.model.RepositoryModel;
 //		linksCount.setText( "" + n + "/" + links.size() );
 //	}
 	
-	private Button createCheckBox(Composite parent, String text, GridData gd )
-	{
+	private Button createCheckBox(Composite parent, String text, GridData gd ) {
 		Button b = new Button(parent, SWT.CHECK);
         b.setText(text);
         b.setLayoutData( gd ) ;
@@ -181,13 +180,11 @@ import org.telosys.tools.repository.model.RepositoryModel;
         return b;
 	}
 	
-	protected void refreshCount()
-	{
+	protected void refreshCount() {
 		linksCount.setText( "" + linksView.getSize() + "/" + linksManager.countAllLinks() );
 	}
 	
-	protected void applyFilterCriteria()
-	{
+	protected void applyFilterCriteria() {
 		log("applyFilterCriteria()");
 
 		LinksCriteria criteria = new LinksCriteria();
@@ -205,8 +202,7 @@ import org.telosys.tools.repository.model.RepositoryModel;
 		refreshCount();
 	}
 	
-	private void setAllFilterChoices(boolean b)
-	{
+	private void setAllFilterChoices(boolean b) {
     	ckFilterOwningSide.setSelection(b);
     	ckFilterInverseSide.setSelection(b);
     	ckFilterManyToOne.setSelection(b);
@@ -215,17 +211,14 @@ import org.telosys.tools.repository.model.RepositoryModel;
     	ckFilterOneToOne.setSelection(b);
 	}
 	
-	private void selectAllFilterChoices()	
-	{
+	private void selectAllFilterChoices() {
 		setAllFilterChoices(true);
 	}
-	private void deselectAllFilterChoices()	
-	{
+	private void deselectAllFilterChoices()	{
 		setAllFilterChoices(false);
 	}
 	
-	private void createFilter(Composite scrolledFormBody)
-	{
+	private void createFilter(Composite scrolledFormBody) {
 		GridLayout gridLayout = new GridLayout(6, false); 
 		gridLayout.verticalSpacing = 0;
 		//Composite composite = new Composite(scrolledFormBody, SWT.NONE | SWT.BORDER );	
@@ -339,8 +332,7 @@ import org.telosys.tools.repository.model.RepositoryModel;
 		}
 	}
 	
-	private void createButtons(Composite scrolledFormBody)
-	{
+	private void createButtons(Composite scrolledFormBody) {
 		Composite composite = new Composite(scrolledFormBody, SWT.NONE);	
 		RowLayout rowLayout = new RowLayout () ;
 		rowLayout.type = SWT.HORIZONTAL ;
@@ -460,18 +452,17 @@ import org.telosys.tools.repository.model.RepositoryModel;
 	}
 
 	//----------------------------------------------------------------------------------------------
-	private void removeAllLinks()
-	{
+	private void removeAllLinks() {
 		RepositoryModel repositoryModel = getRepositoryModel();
 		repositoryModel.removeAllLinks();
 	}
 	//----------------------------------------------------------------------------------------------
-	private int generateLinks()
-	{
+	private int generateLinks() {
 		int n = 0 ;
 		RepositoryModel repositoryModel = getRepositoryModel();
 		
-		LinksGenerator linksGenerator = new LinksGenerator(getLogger());
+		//LinksGenerator linksGenerator = new LinksGenerator(getLogger());
+		LinksGenerator linksGenerator = new LinksGenerator(RepositoryRulesProvider.getRepositoryRules(), getLogger()); // v 2.1.1
 
 		try {
 			

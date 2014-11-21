@@ -68,12 +68,9 @@ import org.telosys.tools.eclipse.plugin.config.ProjectConfigManager;
 import org.telosys.tools.repository.RepositoryGenerator;
 import org.telosys.tools.repository.RepositoryUpdator;
 import org.telosys.tools.repository.UpdateLogWriter;
-import org.telosys.tools.repository.config.EntityInformationProvider;
-import org.telosys.tools.repository.config.EntityInformationProviderJava;
-import org.telosys.tools.repository.config.UserInterfaceInformationProvider;
-import org.telosys.tools.repository.config.UserInterfaceInformationProviderHTML5;
 import org.telosys.tools.repository.model.RepositoryModel;
 import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
+import org.telosys.tools.repository.rules.RepositoryRulesProvider;
 
 
 /**
@@ -1982,29 +1979,34 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 			Util.cursorArrow(shell);
 		}
     }
-    private EntityInformationProvider getEntityInformationProvider() {
-    	return new EntityInformationProviderJava();
-    }
-	private UserInterfaceInformationProvider getUserInterfaceInformationProvider() {
-    	return new UserInterfaceInformationProviderHTML5();
-	}
+    
+// #LGU ver 2.1.1
+//    private EntityInformationProvider getEntityInformationProvider() {
+//    	return new EntityInformationProviderJava();
+//    }
+//	private UserInterfaceInformationProvider getUserInterfaceInformationProvider() {
+//    	return new UserInterfaceInformationProviderHTML5();
+//	}
     
     private boolean generateRepository(Connection con, DatabaseConfiguration db, // ProjectConfig projectConfig, 
     		IFile repositoryFile,
     		TelosysToolsLogger logger ) 
     {
-    	EntityInformationProvider entityInformationProvider = getEntityInformationProvider();
-    	UserInterfaceInformationProvider uiInformationProvider = getUserInterfaceInformationProvider();
+// #LGU ver 2.1.1
+//    	EntityInformationProvider entityInformationProvider = getEntityInformationProvider();
+//    	UserInterfaceInformationProvider uiInformationProvider = getUserInterfaceInformationProvider();
     	
 		RepositoryModel repo = null ;
 
 		//--- 1) Generate the repository in memory
 		try {
-			RepositoryGenerator generator = new RepositoryGenerator(entityInformationProvider, uiInformationProvider, logger) ;			
-//			repo = generator.generate(con, 
-//					db.getDatabaseName(), db.getMetadataCatalog(), db.getMetadataSchema(), 
-//					db.getMetadataTableNamePattern(), db.getMetadataTableTypesArray() );
-			repo = generator.generate(con, db); // ver 2.1.0 (for Database Id in model )
+// #LGU ver 2.1.1
+//			RepositoryGenerator generator = new RepositoryGenerator(entityInformationProvider, uiInformationProvider, logger) ;
+			ConnectionManager connectionManager = createConnectionManager();
+			RepositoryGenerator generator = new RepositoryGenerator(connectionManager, RepositoryRulesProvider.getRepositoryRules(), logger) ;	
+			
+//			repo = generator.generate(con, db); // ver 2.1.0 (for Database Id in model )
+			repo = generator.generate(db); // ver 2.1.1
 		} catch (TelosysToolsException e) {
 			MsgBox.error("Cannot generate.", e);
 			return false ;
@@ -2029,8 +2031,9 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
     private int updateRepository(Connection con, DatabaseConfiguration db, ProjectConfig projectConfig, TelosysToolsLogger logger ) 
     	throws TelosysToolsException
     {
-    	EntityInformationProvider entityInformationProvider = getEntityInformationProvider();
-    	UserInterfaceInformationProvider uiInformationProvider = getUserInterfaceInformationProvider();
+// #LGU ver 2.1.1
+//    	EntityInformationProvider entityInformationProvider = getEntityInformationProvider();
+//    	UserInterfaceInformationProvider uiInformationProvider = getUserInterfaceInformationProvider();
 		
 		//--- 1) LOAD the repository from the file
 		File repositoryFile = getRepositoryFile( db.getDatabaseName() );
@@ -2044,11 +2047,15 @@ import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 		File updateLogFile = getUpdateLogFile( repositoryFile.getAbsolutePath() );
 		UpdateLogWriter    updateLogger      = new UpdateLogWriter( updateLogFile ) ;
 		
-		RepositoryUpdator updator = new RepositoryUpdator(entityInformationProvider, uiInformationProvider, logger,  updateLogger);
-		int nbChanges = updator.updateRepository(con, repositoryModel, 
-				db.getMetadataCatalog(), db.getMetadataSchema(), 
-				db.getMetadataTableNamePattern(), db.getMetadataTableTypesArray(),
-				db.getMetadataTableNameInclude(), db.getMetadataTableNameExclude());
+//		RepositoryUpdator updator = new RepositoryUpdator(entityInformationProvider, uiInformationProvider, logger,  updateLogger);
+		ConnectionManager connectionManager = createConnectionManager();
+		RepositoryUpdator updator = new RepositoryUpdator(connectionManager, RepositoryRulesProvider.getRepositoryRules(), logger,  updateLogger);// #LGU ver 2.1.1
+		
+//		int nbChanges = updator.updateRepository(con, repositoryModel, 
+//				db.getMetadataCatalog(), db.getMetadataSchema(), 
+//				db.getMetadataTableNamePattern(), db.getMetadataTableTypesArray(),
+//				db.getMetadataTableNameInclude(), db.getMetadataTableNameExclude());
+		int nbChanges = updator.updateRepository(db, repositoryModel); // #LGU ver 2.1.1
 		
 		//--- 3) SAVE the repository in the file
 		logger.info("Save repository in file " + repositoryFile.getAbsolutePath());
