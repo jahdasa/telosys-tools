@@ -68,6 +68,7 @@ import org.telosys.tools.eclipse.plugin.config.ProjectConfigManager;
 import org.telosys.tools.repository.RepositoryGenerator;
 import org.telosys.tools.repository.RepositoryUpdator;
 import org.telosys.tools.repository.UpdateLogWriter;
+import org.telosys.tools.repository.changelog.ChangeLog;
 import org.telosys.tools.repository.model.RepositoryModel;
 import org.telosys.tools.repository.persistence.StandardFilePersistenceManager;
 import org.telosys.tools.repository.rules.RepositoryRulesProvider;
@@ -2028,6 +2029,15 @@ import org.telosys.tools.repository.rules.RepositoryRulesProvider;
 		return true ;
     }
 
+    /**
+     * Updates the repository and returns the number of entities changed
+     * @param con
+     * @param db
+     * @param projectConfig
+     * @param logger
+     * @return
+     * @throws TelosysToolsException
+     */
     private int updateRepository(Connection con, DatabaseConfiguration db, ProjectConfig projectConfig, TelosysToolsLogger logger ) 
     	throws TelosysToolsException
     {
@@ -2055,14 +2065,16 @@ import org.telosys.tools.repository.rules.RepositoryRulesProvider;
 //				db.getMetadataCatalog(), db.getMetadataSchema(), 
 //				db.getMetadataTableNamePattern(), db.getMetadataTableTypesArray(),
 //				db.getMetadataTableNameInclude(), db.getMetadataTableNameExclude());
-		int nbChanges = updator.updateRepository(db, repositoryModel); // #LGU ver 2.1.1
+//		int nbChanges = updator.updateRepository(db, repositoryModel); // #LGU ver 2.1.1
+		ChangeLog changeLog = updator.updateRepository(db, repositoryModel); // #LGU ver 2.1.1
 		
 		//--- 3) SAVE the repository in the file
 		logger.info("Save repository in file " + repositoryFile.getAbsolutePath());
 		persistenceManager.save(repositoryModel);
 		logger.info("Repository saved.");
 		
-		return nbChanges ;
+		//return nbChanges ;
+		return changeLog.getNumberOfEntities() ;
     }
     
     /**
