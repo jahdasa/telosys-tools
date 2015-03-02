@@ -8,9 +8,10 @@
 
    <description url="http://www.telosys.org">
       Telosys Tools - Version 2.1.1
-Lightweight model manager
-Code generator
-Velocity templates editor
+The lightest and easiest code generator 
+including a lightweight model manager, 
+a code generator
+and a Velocity templates editor
    </description>
 
    <copyright>
